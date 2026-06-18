@@ -27,7 +27,7 @@ class HomeController extends Controller
             ->get()
             ->map(function($s) { $s->item_type = 'safari'; return $s; });
 
-        $featuredTours = $featuredTours->concat($featuredSafaris)->sortByDesc('created_at')->take(3);
+        $featuredTours = $featuredTours->concat($featuredSafaris)->sortByDesc('created_at')->take(6);
 
         $allPublishedTours = Tour::published()->count() + \App\Models\Safari::published()->count();
 

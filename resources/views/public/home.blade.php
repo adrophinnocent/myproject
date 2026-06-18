@@ -278,37 +278,110 @@
             </div>
         </div>
 
-        @if(isset($featuredTours))
         <div class="relative group">
             <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
-                @foreach($featuredTours as $tour)
-                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-                    <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all">
-                        <div class="relative h-56">
-                            <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
-                                <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? '' }}</span>
+                @if(isset($featuredTours) && $featuredTours->count() > 0)
+                    @foreach($featuredTours as $tour)
+                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
+                            <div class="relative h-56">
+                                <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover" loading="lazy">
                             </div>
-                            <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ $tour->title }}</a>
-                            </h3>
-                            <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
-                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                                <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
-                                <div class="flex gap-2">
-                                    <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                    <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
+                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
+                                    <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span>
+                                </div>
+                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
+                                    <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ $tour->title }}</a>
+                                </h3>
+                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
+                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                                    <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                @endforeach
+                    @endforeach
+                @endif
+                
+                <!-- Fallback tours if no database tours -->
+                @if(!isset($featuredTours) || $featuredTours->count() < 3)
+                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
+                            <div class="relative h-56">
+                                <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80" alt="Serengeti Safari" class="w-full h-full object-cover" loading="lazy">
+                            </div>
+                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
+                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
+                                    <span>7 Days / 6 Nights</span> • <span>Serengeti</span>
+                                </div>
+                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
+                                    <a href="#" class="hover:text-gold-600">Classic Serengeti Safari</a>
+                                </h3>
+                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Experience the Great Migration and witness incredible wildlife in their natural habitat.</p>
+                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                                    <div class="text-2xl font-display font-bold text-gold-600">$1,299</div>
+                                    <div class="flex gap-2">
+                                        <a href="#" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="#" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
+                            <div class="relative h-56">
+                                <img src="https://images.unsplash.com/photo-1508002366005-75a695ee2d17?w=800&q=80" alt="Kilimanjaro" class="w-full h-full object-cover" loading="lazy">
+                            </div>
+                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
+                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
+                                    <span>8 Days / 7 Nights</span> • <span>Kilimanjaro</span>
+                                </div>
+                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
+                                    <a href="#" class="hover:text-gold-600">Mount Kilimanjaro Climb</a>
+                                </h3>
+                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Summit the highest peak in Africa with our expert guides and professional support team.</p>
+                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                                    <div class="text-2xl font-display font-bold text-gold-600">$1,899</div>
+                                    <div class="flex gap-2">
+                                        <a href="#" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="#" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
+                            <div class="relative h-56">
+                                <img src="https://images.unsplash.com/photo-1506929562872-bb412f17e967?w=800&q=80" alt="Zanzibar" class="w-full h-full object-cover" loading="lazy">
+                            </div>
+                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
+                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
+                                    <span>5 Days / 4 Nights</span> • <span>Zanzibar</span>
+                                </div>
+                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
+                                    <a href="#" class="hover:text-gold-600">Zanzibar Beach Holiday</a>
+                                </h3>
+                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Relax on pristine white sand beaches and experience the rich culture of Zanzibar Island.</p>
+                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                                    <div class="text-2xl font-display font-bold text-gold-600">$899</div>
+                                    <div class="flex gap-2">
+                                        <a href="#" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="#" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
-        @endif
         
         <div class="text-center mt-12">
             <a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">
@@ -364,6 +437,161 @@
         @endif
     </div>
 </section>
+
+{{-- ========== INTERACTIVE SAFARI MAP ========== --}}
+<section class="py-20 md:py-28 bg-safari-light/5" x-data="{ selectedDestination: null, destinations: [
+    { name: 'Serengeti', id: 'serengeti', description: 'Witness the Great Migration', tours: ['Classic Serengeti Safari', 'Serengeti Migration Safari'] },
+    { name: 'Zanzibar', id: 'zanzibar', description: 'Pristine beaches & culture', tours: ['Zanzibar Beach Holiday', 'Stone Town Tour'] },
+    { name: 'Kilimanjaro', id: 'kilimanjaro', description: 'Climb Africa’s highest peak', tours: ['Mount Kilimanjaro Climb', 'Kilimanjaro Day Hike'] },
+    { name: 'Ngorongoro', id: 'ngorongoro', description: 'The Garden of Eden', tours: ['Ngorongoro Crater Day Trip', 'Ngorongoro Camping Safari'] },
+    { name: 'Lake Manyara', id: 'lake-manyara', description: 'Tree-climbing lions', tours: ['Lake Manyara Safari', 'Manyara & Tarangire Tour'] },
+    { name: 'Tarangire', id: 'tarangire', description: 'Massive elephant herds', tours: ['Tarangire Safari', 'Tarangire & Serengeti Combo'] }
+] }">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Explore Tanzania</span>
+            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Interactive Safari Map</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">Click on a destination below to discover amazing tours!</p>
+        </div>
+        
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Interactive Map -->
+            <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                <div class="relative">
+                    <!-- SVG Map of Tanzania -->
+                    <svg viewBox="0 0 400 400" class="w-full h-auto">
+                        <!-- Country outline -->
+                        <path d="M50 50 L350 60 L380 150 L370 300 L280 380 L100 360 L30 280 L40 100 Z" fill="#f0fdf4" stroke="#16a34a" stroke-width="3" class="drop-shadow-lg" />
+                        
+                        <!-- Clickable destination markers -->
+                        <g class="cursor-pointer" @click="selectedDestination = 'serengeti'" :class="{ 'opacity-100 scale-110': selectedDestination === 'serengeti', 'opacity-80 hover:opacity-100': selectedDestination !== 'serengeti' }">
+                            <circle cx="150" cy="180" r="16" fill="#D4AF37" stroke="#8f6e0a" stroke-width="2" />
+                            <circle cx="150" cy="180" r="8" fill="#fff" />
+                            <text x="150" y="215" text-anchor="middle" class="text-xs font-bold fill-gray-800">Serengeti</text>
+                        </g>
+                        
+                        <g class="cursor-pointer" @click="selectedDestination = 'ngorongoro'" :class="{ 'opacity-100 scale-110': selectedDestination === 'ngorongoro', 'opacity-80 hover:opacity-100': selectedDestination !== 'ngorongoro' }">
+                            <circle cx="200" cy="160" r="16" fill="#D4AF37" stroke="#8f6e0a" stroke-width="2" />
+                            <circle cx="200" cy="160" r="8" fill="#fff" />
+                            <text x="200" y="145" text-anchor="middle" class="text-xs font-bold fill-gray-800">Ngorongoro</text>
+                        </g>
+                        
+                        <g class="cursor-pointer" @click="selectedDestination = 'kilimanjaro'" :class="{ 'opacity-100 scale-110': selectedDestination === 'kilimanjaro', 'opacity-80 hover:opacity-100': selectedDestination !== 'kilimanjaro' }">
+                            <circle cx="300" cy="120" r="16" fill="#D4AF37" stroke="#8f6e0a" stroke-width="2" />
+                            <circle cx="300" cy="120" r="8" fill="#fff" />
+                            <text x="300" y="105" text-anchor="middle" class="text-xs font-bold fill-gray-800">Kilimanjaro</text>
+                        </g>
+                        
+                        <g class="cursor-pointer" @click="selectedDestination = 'lake-manyara'" :class="{ 'opacity-100 scale-110': selectedDestination === 'lake-manyara', 'opacity-80 hover:opacity-100': selectedDestination !== 'lake-manyara' }">
+                            <circle cx="220" cy="220" r="16" fill="#D4AF37" stroke="#8f6e0a" stroke-width="2" />
+                            <circle cx="220" cy="220" r="8" fill="#fff" />
+                            <text x="220" y="250" text-anchor="middle" class="text-xs font-bold fill-gray-800">Lake Manyara</text>
+                        </g>
+                        
+                        <g class="cursor-pointer" @click="selectedDestination = 'tarangire'" :class="{ 'opacity-100 scale-110': selectedDestination === 'tarangire', 'opacity-80 hover:opacity-100': selectedDestination !== 'tarangire' }">
+                            <circle cx="260" cy="200" r="16" fill="#D4AF37" stroke="#8f6e0a" stroke-width="2" />
+                            <circle cx="260" cy="200" r="8" fill="#fff" />
+                            <text x="260" y="230" text-anchor="middle" class="text-xs font-bold fill-gray-800">Tarangire</text>
+                        </g>
+                        
+                        <g class="cursor-pointer" @click="selectedDestination = 'zanzibar'" :class="{ 'opacity-100 scale-110': selectedDestination === 'zanzibar', 'opacity-80 hover:opacity-100': selectedDestination !== 'zanzibar' }">
+                            <circle cx="350" cy="280" r="16" fill="#D4AF37" stroke="#8f6e0a" stroke-width="2" />
+                            <circle cx="350" cy="280" r="8" fill="#fff" />
+                            <text x="350" y="310" text-anchor="middle" class="text-xs font-bold fill-gray-800">Zanzibar</text>
+                        </g>
+                    </svg>
+                </div>
+                <!-- Destination buttons for mobile -->
+                <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                    <template x-for="dest in destinations" :key="dest.id">
+                        <button @click="selectedDestination = dest.id"
+                                :class="selectedDestination === dest.id 
+                                    ? 'bg-gold-500 text-white' 
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                class="px-4 py-2 rounded-full text-sm font-semibold transition-all">
+                            <span x-text="dest.name"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+            
+            <!-- Tours for selected destination -->
+            <div>
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 h-full">
+                    <template x-if="selectedDestination">
+                        <div class="h-full flex flex-col">
+                            <template x-for="dest in destinations" :key="dest.id">
+                                <div x-show="selectedDestination === dest.id">
+                                    <h3 class="font-display text-3xl font-bold text-gray-900 mb-2" x-text="dest.name"></h3>
+                                    <p class="text-gray-600 mb-6" x-text="dest.description"></p>
+                                    <div class="space-y-4 flex-grow">
+                                        <template x-for="(tour, index) in dest.tours" :key="index">
+                                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-gold-300 hover:shadow-md transition-all cursor-pointer">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <h4 class="font-semibold text-gray-900" x-text="tour"></h4>
+                                                        <p class="text-sm text-gray-500">From $1,099</p>
+                                                    </div>
+                                                    <a href="#" class="btn-gold px-4 py-2 rounded-full text-sm font-bold">View</a>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="mt-6">
+                                        <a href="#" class="text-gold-600 font-semibold flex items-center gap-2 hover:gap-3 transition-all">
+                                            View all tours in this destination
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="!selectedDestination">
+                        <div class="h-full flex flex-col items-center justify-center text-center">
+                            <div class="w-24 h-24 rounded-full bg-gold-50 flex items-center justify-center mb-6">
+                                <svg class="w-12 h-12 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-2">Select a Destination</h3>
+                            <p class="text-gray-600 max-w-sm">Click on any of the gold markers on the map to see available tours!</p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ========== FAQ SECTION ========== --}}
+@if(isset($faqs) && $faqs->count() > 0)
+<section class="py-16 md:py-24 bg-[#fcfaf7] border-t border-gray-100" x-data="{ openFaq: null }">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Frequently Asked Questions</span>
+            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Everything You Need to Know</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="space-y-4">
+            @foreach($faqs as $faq)
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <button type="button" @click="openFaq = openFaq === {{ $loop->index }} ? null : {{ $loop->index }}" class="w-full px-6 py-5 flex items-center justify-between text-left">
+                    <h3 class="font-display text-lg md:text-xl font-semibold text-gray-900">{{ $faq->question ?? $faq->title ?? 'Question' }}</h3>
+                    <svg class="w-6 h-6 text-gray-500 transition-transform duration-300" :class="{ 'rotate-180': openFaq === {{ $loop->index }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="px-6 overflow-hidden transition-all duration-300" :class="openFaq === {{ $loop->index }} ? 'max-h-96 pb-5' : 'max-h-0'">
+                    <p class="text-gray-700 leading-relaxed">{{ $faq->answer ?? $faq->content ?? 'Answer goes here.' }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
 {{-- ========== TESTIMONIALS SECTION (HORIZONTAL CAROUSEL) ========== --}}
 <section class="py-16 md:py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100" x-data="{
@@ -492,29 +720,50 @@
     </div>
 </section>
 
-{{-- ========== LATEST BLOG SECTION ========== --}}
+{{-- ========== LATEST BLOG SECTION (HORIZONTAL CAROUSEL) ========== --}}
 @if(isset($latestPosts) && $latestPosts->count() > 0)
-<section id="blog" class="py-24 bg-gray-50 border-t border-gray-100">
+<section id="blog" class="py-24 bg-gray-50 border-t border-gray-100" x-data="{
+    scrollBy(distance) {
+        const slider = document.getElementById('blog-slider');
+        if (slider) {
+            slider.scrollBy({ left: distance, behavior: 'smooth' });
+        }
+    }
+}">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
-            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Safari Journal</span>
-            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Latest From The Blog</h2>
-            <div class="section-divider"></div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach($latestPosts as $post)
-            <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
-                <div class="relative h-64 overflow-hidden">
-                    <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all">
-                </div>
-                <div class="p-8">
-                    <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
-                        <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
-                    </h3>
-                    <p class="text-gray-600 text-sm line-clamp-3 leading-relaxed">{{ $post->excerpt }}</p>
-                </div>
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+            <div>
+                <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Safari Journal</span>
+                <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Latest From The Blog</h2>
+                <div class="section-divider"></div>
             </div>
-            @endforeach
+            <div class="flex gap-3">
+                <button @click="scrollBy(-380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7 7 7-7"/></svg>
+                </button>
+                <button @click="scrollBy(380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="relative group">
+            <div id="blog-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
+                @foreach($latestPosts as $post)
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                    <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group h-full">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500">
+                        </div>
+                        <div class="p-8 flex-grow">
+                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
+                                <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
+                            </h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 leading-relaxed">{{ $post->excerpt }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
         <div class="text-center mt-16">
             <a href="{{ route('blog.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">
