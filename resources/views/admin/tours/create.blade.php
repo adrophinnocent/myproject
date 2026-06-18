@@ -29,7 +29,6 @@
             <nav class="flex space-x-8">
                 <button type="button" onclick="showTab('basic')" id="tab-basic" class="tab-btn pb-4 border-b-2 font-medium text-sm border-[#D4AF37] text-[#D4AF37]">Basic Info</button>
                 <button type="button" onclick="showTab('pricing')" id="tab-pricing" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pricing</button>
-                <button type="button" onclick="showTab('destination')" id="tab-destination" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Destination</button>
                 <button type="button" onclick="showTab('duration')" id="tab-duration" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Duration</button>
                 <button type="button" onclick="showTab('experience')" id="tab-experience" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Experience</button>
                 <button type="button" onclick="showTab('itinerary')" id="tab-itinerary" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Itinerary</button>
@@ -55,6 +54,28 @@
                     <input type="text" id="tour-slug" name="slug" value="{{ old('slug') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                     <p class="mt-1 text-xs text-gray-500">Leave blank to auto-generate from title</p>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select name="category_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                        <option value="">Select Category</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+                    <select name="destination_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                        <option value="">Select Destination</option>
+                        @foreach($destinations as $dest)
+                        <option value="{{ $dest->id }}" {{ old('destination_id') == $dest->id ? 'selected' : '' }}>{{ $dest->name }}, {{ $dest->country }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Meeting Point</label>
+                    <input type="text" name="meeting_point" value="{{ old('meeting_point') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" placeholder="e.g. Arusha Airport or Hotel Lobby">
+                </div>
             </div>
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Short Description</label>
@@ -78,7 +99,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Price (USD / TZS)</label>
-                    <input type="number" step="0.01" name="price" value="{{ old('price') }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                    <input type="number" step="0.01" name="price" value="{{ old('price') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Child Price</label>
@@ -101,37 +122,13 @@
                 </div>
             </div>
         </div>
-        <div id="content-destination" class="tab-content hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <select name="category_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                        <option value="">Select Category</option>
-                        @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-                    <select name="destination_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                        <option value="">Select Destination</option>
-                        @foreach($destinations as $dest)
-                        <option value="{{ $dest->id }}" {{ old('destination_id') == $dest->id ? 'selected' : '' }}>{{ $dest->name }}, {{ $dest->country }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Meeting Point</label>
-                    <input type="text" name="meeting_point" value="{{ old('meeting_point') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-            </div>
+        <div id="content-destination" class="hidden">
         </div>
         <div id="content-duration" class="tab-content hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Number of Days</label>
-                    <input type="number" name="duration_days" value="{{ old('duration_days') }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                    <input type="number" name="duration_days" value="{{ old('duration_days') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Number of Nights</label>

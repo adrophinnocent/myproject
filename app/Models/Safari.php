@@ -6,11 +6,15 @@ use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Safari extends Model
 {
     use HasFactory, SoftDeletes, HasSlug;
+
+    protected $slugSource = 'title';
 
     protected $fillable = [
         'category_id', 'destination_id', 'title', 'slug', 'short_description', 'description',
@@ -20,7 +24,8 @@ class Safari extends Model
         'child_price', 'group_discount', 'departure_time', 'what_to_bring', 'good_to_know',
         'video_url', 'meta_keywords', 'is_published', 'is_featured', 'is_bestseller', 'is_new',
         'availability_notes', 'min_age', 'max_age', 'languages_offered', 'safari_type',
-        'seasonal_pricing', 'availability_dates', 'booking_deadline_days', 'sort_order', 'views_count'
+        'seasonal_pricing', 'availability_dates', 'booking_deadline_days', 'sort_order', 'views_count',
+        'location_name', 'latitude', 'longitude'
     ];
 
     protected $casts = [
@@ -39,17 +44,17 @@ class Safari extends Model
         'is_new' => 'boolean',
     ];
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function destination()
+    public function destination(): BelongsTo
     {
         return $this->belongsTo(Destination::class);
     }
 
-    public function reviews()
+    public function reviews(): HasMany
     {
         return $this->hasMany(Review::class)->where('is_approved', true);
     }
@@ -64,12 +69,12 @@ class Safari extends Model
         return $this->reviews()->count();
     }
 
-    public function getFeaturedImageUrlAttribute()
+    public function getFeaturedImageUrlAttribute(): string
     {
         return $this->featured_image ? asset('storage/' . $this->featured_image) : asset('images/tour-placeholder.jpg');
     }
 
-    public function getFormattedPriceAttribute()
+    public function getFormattedPriceAttribute(): string
     {
         return '$' . number_format($this->price, 0);
     }
@@ -79,7 +84,33 @@ class Safari extends Model
         return "{$this->duration_days} Days / " . ($this->duration_nights ?: ($this->duration_days - 1)) . " Nights";
     }
 
-    public function getTranslation($field)
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    // Scopes
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('is_published', true);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopeBestseller(Builder $query): Builder
+    {
+        return $query->where('is_bestseller', true);
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->title;
+    }
+
+    public function getTranslation(string $field): mixed
     {
         return $this->{$field};
     }

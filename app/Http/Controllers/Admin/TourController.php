@@ -8,6 +8,7 @@ use App\Models\Destination;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class TourController extends Controller
 {
@@ -21,6 +22,7 @@ class TourController extends Controller
     public function togglePublish(Tour $tour)
     {
         $tour->update(['is_published' => !$tour->is_published]);
+        Cache::forget('nav_categories_v7');
 
         return back()->with('success', 'Tour '.($tour->is_published ? 'published' : 'unpublished').'!');
     }
@@ -93,9 +95,10 @@ class TourController extends Controller
             'limited_offer' => 'nullable',
             'availability_notes' => 'nullable|string',
             'gallery_images.*' => 'nullable|image|max:10240',
+            'translations' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'gallery_images']);
+        $data = $request->except(['featured_image', 'gallery_images', 'translations']);
         $data['is_published'] = $request->has('is_published') ? 1 : 0;
         $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
         $data['is_bestseller'] = $request->has('is_bestseller') ? 1 : 0;
@@ -120,6 +123,18 @@ class TourController extends Controller
                 ]);
             }
         }
+
+        // Save Translations
+        if ($request->has('translations')) {
+            foreach ($request->translations as $locale => $fields) {
+                $tour->translations()->updateOrCreate(
+                    ['locale' => $locale],
+                    $fields
+                );
+            }
+        }
+
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.tours.index')->with('success', 'Tour created successfully!');
     }
@@ -197,9 +212,10 @@ class TourController extends Controller
             'limited_offer' => 'nullable',
             'availability_notes' => 'nullable|string',
             'gallery_images.*' => 'nullable|image|max:10240',
+            'translations' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'gallery_images']);
+        $data = $request->except(['featured_image', 'gallery_images', 'translations']);
         $data['is_published'] = $request->has('is_published') ? 1 : 0;
         $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
         $data['is_bestseller'] = $request->has('is_bestseller') ? 1 : 0;
@@ -211,12 +227,22 @@ class TourController extends Controller
 
         if ($request->hasFile('featured_image')) {
             if ($tour->featured_image) {
-                Storage::disk('public')->delete($tour->featured_image);
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($tour->featured_image);
             }
             $data['featured_image'] = $request->file('featured_image')->store('tours', 'public');
         }
 
         $tour->update($data);
+
+        // Save Translations
+        if ($request->has('translations')) {
+            foreach ($request->translations as $locale => $fields) {
+                $tour->translations()->updateOrCreate(
+                    ['locale' => $locale],
+                    $fields
+                );
+            }
+        }
 
         if ($request->hasFile('gallery_images')) {
             foreach ($request->file('gallery_images') as $image) {
@@ -227,6 +253,8 @@ class TourController extends Controller
                 ]);
             }
         }
+
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.tours.index')->with('success', 'Tour updated successfully!');
     }
@@ -245,6 +273,7 @@ class TourController extends Controller
             Storage::disk('public')->delete($tour->featured_image);
         }
         $tour->delete();
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.tours.index')->with('success', 'Tour deleted successfully!');
     }

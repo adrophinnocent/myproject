@@ -9,35 +9,25 @@ class TourSeeder extends Seeder
 {
     public function run(): void
     {
-        $tours = [
-            [
-                'title' => 'Serengeti & Ngorongoro Classic Safari',
-                'slug' => 'serengeti-ngorongoro-classic-safari',
-                'category_id' => 1,
-                'destination_id' => 1,
-                'short_description' => 'Experience the best of the Serengeti and Ngorongoro Crater.',
-                'price' => 5700,
-                'duration_days' => 7,
-                'duration_nights' => 6,
-                'is_published' => true,
-                'is_featured' => true,
-            ],
-            [
-                'title' => 'Machame Route Kilimanjaro Trek',
-                'slug' => 'machame-route-kilimanjaro-trek',
-                'category_id' => 2,
-                'destination_id' => 2,
-                'short_description' => 'Climb Mount Kilimanjaro via the scenic Machame Route.',
-                'price' => 3990,
-                'duration_days' => 8,
-                'duration_nights' => 7,
-                'is_published' => true,
-                'is_featured' => true,
-            ],
-        ];
+        $categories = \App\Models\Category::all();
+        $destinations = \App\Models\Destination::all();
 
-        foreach ($tours as $tour) {
-            Tour::create($tour);
+        foreach ($categories as $cat) {
+            Tour::create([
+                'title' => $cat->name . ' Adventure',
+                'slug' => \Illuminate\Support\Str::slug($cat->name . ' Adventure'),
+                'category_id' => $cat->id,
+                'destination_id' => $destinations->random()->id ?? 1,
+                'short_description' => 'A perfect ' . strtolower($cat->name) . ' experience designed for you.',
+                'description' => 'Enjoy an unforgettable ' . strtolower($cat->name) . ' with Twina Safaris.',
+                'price' => rand(1500, 5000),
+                'duration_days' => rand(3, 10),
+                'is_published' => true,
+                'is_featured' => true,
+                'difficulty_level' => 'moderate',
+                'accommodation_type' => 'Luxury Lodge',
+                'departure_location' => 'Moshi',
+            ]);
         }
     }
 }

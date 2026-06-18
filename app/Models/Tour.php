@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HasSlug;
+use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tour extends Model
 {
-    use HasFactory, SoftDeletes, HasSlug;
+    use HasFactory, SoftDeletes, HasSlug, Translatable;
 
     protected $slugSource = 'title';
 
@@ -46,6 +47,7 @@ class Tour extends Model
             'faqs' => 'array',
             'highlights' => 'array',
             'what_to_bring' => 'array',
+            'good_to_know' => 'array',
             'languages_offered' => 'array',
             'seasonal_pricing' => 'array',
             'availability_dates' => 'array',
@@ -96,14 +98,7 @@ class Tour extends Model
 
     public function getTranslation($field)
     {
-        $locale = app()->getLocale();
-        if ($locale === 'en') {
-            return $this->{$field};
-        }
-
-        $translation = $this->translations->where('locale', $locale)->first();
-
-        return $translation ? $translation->{$field} : $this->{$field};
+        return $this->translate($field);
     }
 
     // Scopes
@@ -190,6 +185,11 @@ class Tour extends Model
         $this->increment('views_count');
     }
 
+    public function getNameAttribute()
+    {
+        return $this->title;
+    }
+
     public function getYouTubeEmbedUrlAttribute(): ?string
     {
         if (empty($this->video_url)) {
@@ -197,7 +197,7 @@ class Tour extends Model
         }
 
         $url = $this->video_url;
-        
+
         // Extract YouTube video ID
         $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
         if (preg_match($pattern, $url, $matches)) {

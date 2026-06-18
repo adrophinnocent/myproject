@@ -110,7 +110,7 @@ class TourController extends Controller
 
         $tours = $paginatedItems;
         $categories = Category::where('is_active', true)->get();
-        $destinations = Destination::where('is_active', true)->withCount(['tours'])->get();
+        $destinations = Destination::where('is_active', true)->get();
 
         if ($request->view === 'destinations') {
             return view('public.destinations.index', compact('destinations'));
@@ -119,7 +119,7 @@ class TourController extends Controller
         return view('public.tours.index', compact('tours', 'categories', 'destinations'));
     }
 
-    public function show($type, $slug)
+    public function show(string $type, string $slug)
     {
         $model = ($type === 'safari') ? \App\Models\Safari::class : Tour::class;
         $tour = $model::where('slug', $slug)->firstOrFail();

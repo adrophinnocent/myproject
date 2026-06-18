@@ -1,3 +1,99 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    [x-cloak] { display: none !important; }
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        @apply bg-safari-light text-safari-dark font-body antialiased;
+    }
+    ::selection {
+        @apply bg-gold-500/30 text-safari-dark;
+    }
+}
+
+@layer components {
+    .glass-nav {
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    }
+    .nav-scrolled {
+        background: rgba(10, 10, 10, 0.98);
+        backdrop-filter: blur(32px);
+        -webkit-backdrop-filter: blur(32px);
+        @apply border-b border-gold-500/20 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-500;
+    }
+    .btn-gold {
+        background: linear-gradient(135deg, #D4AF37, #fbbf24);
+        @apply text-safari-dark font-black transition-all duration-300 shadow-lg hover:shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)];
+    }
+    .btn-gold:hover {
+        @apply -translate-y-1 scale-[1.02];
+    }
+    .btn-outline-gold {
+        @apply border-2 border-gold-500 text-gold-500 backdrop-blur-md transition-all duration-300 font-black;
+    }
+    .btn-outline-gold:hover {
+        @apply bg-gold-500 text-safari-dark border-gold-500;
+    }
+
+    .stone-card {
+        @apply bg-white border border-safari-dark/5 rounded-[2rem] shadow-sm hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-2 transition-all duration-500;
+    }
+
+    .stone-section {
+        @apply bg-safari-light border-y border-safari-dark/5;
+    }
+
+    .dark-stone-section {
+        @apply bg-safari-dark text-gold-50;
+    }
+
+    .hero-gradient {
+        background: linear-gradient(to bottom, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.4) 50%, rgba(10,10,10,0.9) 100%);
+    }
+
+    .card-image {
+        @apply transition-all duration-700 group-hover:scale-110;
+    }
+
+    .section-padding {
+        @apply py-20 md:py-28;
+    }
+
+    .container-wide {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    @keyframes slide-left {
+        from { transform: translateX(-100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slide-right {
+        from { transform: translateX(100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-slide-left { animation: slide-left 1s ease-out forwards; }
+    .animate-slide-right { animation: slide-right 1s ease-out forwards; }
+    .animate-fade-in { animation: fade-in 1s ease-out forwards; }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #D4AF37, #fbbf24);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+}

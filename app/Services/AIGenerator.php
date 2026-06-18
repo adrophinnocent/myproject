@@ -17,33 +17,40 @@ class AIGenerator
 
     public function generateImageContent(string $imagePath, string $category): array
     {
+        // ... (existing code)
+    }
+
+    public function generateChatResponse(string $message, array $history = []): string
+    {
         try {
-            // First, let's create a system prompt based on category
-            $systemPrompt = $this->getSystemPrompt($category);
-            $userPrompt = $this->getUserPrompt($category);
+            $messages = [
+                ['role' => 'system', 'content' => 'You are the Twina Safaris AI Assistant. You help the admin manage a luxury Tanzanian tour company. You can write blogs, suggest email replies, and explain safari logistics. Keep responses professional, helpful, and luxury-focused.'],
+            ];
+
+            foreach ($history as $chat) {
+                $messages[] = ['role' => 'user', 'content' => $chat['user']];
+                $messages[] = ['role' => 'assistant', 'content' => $chat['ai']];
+            }
+
+            $messages[] = ['role' => 'user', 'content' => $message];
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json',
             ])->post($this->baseUrl . '/chat/completions', [
-                'model' => 'gpt-4-turbo',
-                'messages' => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ['role' => 'user', 'content' => $userPrompt]
-                ],
-                'max_tokens' => 500,
-                'temperature' => 0.7,
+                'model' => 'gpt-4o',
+                'messages' => $messages,
+                'max_tokens' => 1000,
             ]);
 
             if ($response->successful()) {
-                $content = $response->json()['choices'][0]['message']['content'];
-                return $this->parseGeneratedContent($content);
+                return $response->json()['choices'][0]['message']['content'];
             }
 
-            return $this->getFallbackContent($category);
+            return "I'm sorry, I'm having trouble connecting to my brain right now. Please check your OpenAI API key.";
         } catch (\Exception $e) {
-            Log::error('AI Generation failed: ' . $e->getMessage());
-            return $this->getFallbackContent($category);
+            Log::error('AI Chat failed: ' . $e->getMessage());
+            return "An error occurred while generating a response.";
         }
     }
 

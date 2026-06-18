@@ -135,8 +135,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::patch('/bookings/{booking}/update-status', [App\Http\Controllers\Admin\BookingController::class, 'updateStatus'])->name('admin.bookings.update-status');
     Route::post('/bookings/{booking}/update-status', [App\Http\Controllers\Admin\BookingController::class, 'updateStatus']);
     Route::get('/bookings/{booking}/download-itinerary', [App\Http\Controllers\Admin\BookingController::class, 'downloadItinerary'])->name('admin.bookings.download-itinerary');
+    Route::get('/bookings/{booking}/download-invoice', [App\Http\Controllers\Admin\BookingController::class, 'downloadInvoice'])->name('admin.bookings.download-invoice');
 
-    Route::resource('/gallery', App\Http\Controllers\Admin\GalleryController::class)->names([
+    Route::resource('/gallery', App\Http\Controllers\Admin\GalleryController::class)->parameters(['gallery' => 'album'])->names([
         'index' => 'admin.gallery.index',
         'create' => 'admin.gallery.create',
         'store' => 'admin.gallery.store',
@@ -145,6 +146,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'update' => 'admin.gallery.update',
         'destroy' => 'admin.gallery.destroy',
     ]);
+    Route::post('/gallery/{album}/add-image', [App\Http\Controllers\Admin\GalleryController::class, 'addImage'])->name('admin.gallery.add-image');
+    Route::delete('/gallery/images/{image}', [App\Http\Controllers\Admin\GalleryController::class, 'removeImage'])->name('admin.gallery.remove-image');
 
     Route::resource('/testimonials', App\Http\Controllers\Admin\TestimonialController::class)->names([
         'index' => 'admin.testimonials.index',
@@ -166,6 +169,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'destroy' => 'admin.trip-plans.destroy',
     ]);
 
+    Route::patch('/trip-plans/{tripPlan}/update-status', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'updateStatus'])->name('admin.trip-plans.update-status');
+
     Route::resource('/reviews', App\Http\Controllers\Admin\ReviewAdminController::class)->names([
         'index' => 'admin.reviews.index',
         'create' => 'admin.reviews.create',
@@ -184,6 +189,18 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'edit' => 'admin.faqs.edit',
         'update' => 'admin.faqs.update',
         'destroy' => 'admin.faqs.destroy',
+    ]);
+
+    Route::resource('/blog-categories', App\Http\Controllers\Admin\BlogCategoryController::class)->parameters([
+        'blog-categories' => 'blogCategory'
+    ])->names([
+        'index' => 'admin.blog-categories.index',
+        'create' => 'admin.blog-categories.create',
+        'store' => 'admin.blog-categories.store',
+        'show' => 'admin.blog-categories.show',
+        'edit' => 'admin.blog-categories.edit',
+        'update' => 'admin.blog-categories.update',
+        'destroy' => 'admin.blog-categories.destroy',
     ]);
 
     Route::resource('/blog', App\Http\Controllers\Admin\BlogController::class)->names([
@@ -237,4 +254,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     ]);
     Route::get('/ai-images/preview', [App\Http\Controllers\Admin\AiImageController::class, 'preview'])->name('admin.ai-images.preview');
     Route::post('/ai-images/confirm', [App\Http\Controllers\Admin\AiImageController::class, 'confirm'])->name('admin.ai-images.confirm');
+
+    // AI Chat Assistant
+    Route::get('/ai-assistant', [App\Http\Controllers\Admin\AiChatController::class, 'index'])->name('admin.ai-assistant.index');
+    Route::post('/ai-assistant/send', [App\Http\Controllers\Admin\AiChatController::class, 'sendMessage'])->name('admin.ai-assistant.send');
 });

@@ -73,4 +73,10 @@ class BookingController extends Controller
         $pdf = Pdf::loadView('emails.itinerary-pdf', compact('booking'));
         return $pdf->download('itinerary-' . $booking->booking_reference . '.pdf');
     }
+
+    public function downloadInvoice(Booking $booking)
+    {
+        $pdf = Pdf::loadView('emails.invoice-pdf', compact('booking'));
+        return $pdf->download('invoice-' . $booking->booking_reference . '.pdf');
+    }
 }

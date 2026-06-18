@@ -47,6 +47,8 @@ class SafariController extends Controller
 
         Safari::create($data);
 
+        \Illuminate\Support\Facades\Cache::forget('nav_categories_v7');
+
         return redirect()->route('admin.safaris.index')->with('success', 'Safari created successfully!');
     }
 
@@ -71,6 +73,8 @@ class SafariController extends Controller
         }
 
         $safari->update($data);
+
+        \Illuminate\Support\Facades\Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.safaris.index')->with('success', 'Safari updated successfully!');
     }

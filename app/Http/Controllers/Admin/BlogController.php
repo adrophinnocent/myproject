@@ -70,6 +70,7 @@ class BlogController extends Controller
             'excerpt' => 'nullable|string|max:500',
             'featured_image' => 'nullable|image|max:5120',
             'is_published' => 'nullable',
+            'translations' => 'nullable|array',
         ]);
 
         $blog->title = $request->title;
@@ -91,6 +92,20 @@ class BlogController extends Controller
         }
 
         $blog->save();
+
+        // Save Translations
+        if ($request->has('translations')) {
+            foreach ($request->translations as $locale => $fields) {
+                foreach ($fields as $field => $text) {
+                    if (!empty($text)) {
+                        $blog->translations()->updateOrCreate(
+                            ['locale' => $locale, 'field' => $field],
+                            ['text' => $text]
+                        );
+                    }
+                }
+            }
+        }
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog post updated successfully');
     }

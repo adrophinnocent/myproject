@@ -13,15 +13,15 @@ class HomeController extends Controller
     {
         $sliders = \App\Models\Slider::where('page', 'home')->active()->get();
 
-        $featuredTours = Tour::where('is_published', true)
-            ->where('is_featured', true)
+        $featuredTours = Tour::published()
+            ->featured()
             ->with(['category', 'destination'])
             ->latest()
             ->get()
             ->map(function($t) { $t->item_type = 'tour'; return $t; });
 
-        $featuredSafaris = \App\Models\Safari::where('is_published', true)
-            ->where('is_featured', true)
+        $featuredSafaris = \App\Models\Safari::published()
+            ->featured()
             ->with(['category', 'destination'])
             ->latest()
             ->get()
@@ -29,20 +29,18 @@ class HomeController extends Controller
 
         $featuredTours = $featuredTours->concat($featuredSafaris)->sortByDesc('created_at')->take(3);
 
-        $allPublishedTours = Tour::where('is_published', true)->count() + \App\Models\Safari::where('is_published', true)->count();
+        $allPublishedTours = Tour::published()->count() + \App\Models\Safari::published()->count();
 
-        $destinations = Destination::where('is_active', true)
-            ->withCount('tours')
-            ->get();
+        $destinations = Destination::active()->get();
 
-        $testimonials = Testimonial::where('is_published', true)
+        $testimonials = Testimonial::published()
             ->latest()
             ->take(6)
             ->get();
 
         $faqs = \App\Models\Faq::active()->take(10)->get();
 
-        $categories = \App\Models\Category::where('is_active', true)->get();
+        $categories = \App\Models\Category::active()->get();
 
         $latestPosts = BlogPost::published()
             ->with('category')

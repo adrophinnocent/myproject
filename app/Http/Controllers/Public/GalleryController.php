@@ -11,7 +11,7 @@ class GalleryController extends Controller
 {
     public function index()
     {
-        $albums = GalleryAlbum::where('is_published', true)
+        $albums = GalleryAlbum::published()
             ->with('images')
             ->latest()
             ->paginate(12);
@@ -19,13 +19,9 @@ class GalleryController extends Controller
         return view('public.gallery.index', compact('albums'));
     }
 
-    public function show($slug)
+    public function show(GalleryAlbum $album)
     {
-        $album = GalleryAlbum::where('slug', $slug)
-            ->where('is_published', true)
-            ->with('images')
-            ->firstOrFail();
-
+        $album->load('images');
         return view('public.gallery.show', compact('album'));
     }
 }

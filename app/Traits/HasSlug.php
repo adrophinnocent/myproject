@@ -2,8 +2,16 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @mixin Model
+ * @method static \Illuminate\Database\Eloquent\Builder creating(callable $callback)
+ * @method static \Illuminate\Database\Eloquent\Builder updating(callable $callback)
+ * @method static \Illuminate\Database\Eloquent\Builder where(string $column, mixed $operator = null, mixed $value = null)
+ */
 trait HasSlug
 {
     /**
@@ -11,11 +19,11 @@ trait HasSlug
      */
     protected static function bootHasSlug(): void
     {
-        static::creating(function ($model) {
+        static::creating(function (Model $model) {
             $model->generateSlug();
         });
 
-        static::updating(function ($model) {
+        static::updating(function (Model $model) {
             $model->generateSlug();
         });
     }
@@ -28,16 +36,19 @@ trait HasSlug
         $sourceField = $this->getSlugSourceField();
         $slugField = $this->getSlugField();
 
-        // If slug is provided manually, use it but ensure uniqueness
-        if ($this->isDirty($slugField) && !empty($this->$slugField)) {
+        // If slug is provided manually and is not empty, use it but ensure uniqueness
+        if ($this->isDirty($slugField) && !empty(trim($this->$slugField))) {
             $this->$slugField = $this->makeSlugUnique(Str::slug($this->$slugField));
             return;
         }
 
-        // If source field is dirty or slug is empty, generate new slug
-        if ($this->isDirty($sourceField) || empty($this->$slugField)) {
-            $slug = Str::slug($this->$sourceField);
-            $this->$slugField = $this->makeSlugUnique($slug);
+        // If we have a source field value, generate a slug from it
+        if (!empty($this->$sourceField)) {
+            // Generate a new slug if source changed or slug is empty
+            if ($this->isDirty($sourceField) || empty($this->$slugField) || !$this->exists) {
+                $slug = Str::slug($this->$sourceField);
+                $this->$slugField = $this->makeSlugUnique($slug);
+            }
         }
     }
 
@@ -49,6 +60,11 @@ trait HasSlug
         $originalSlug = $slug;
         $count = 1;
         $slugField = $this->getSlugField();
+
+        // If slug is empty, create a generic one
+        if (empty($originalSlug)) {
+            $originalSlug = 'item';
+        }
 
         while ($this->slugExists($slug)) {
             $slug = $originalSlug . '-' . $count;
@@ -64,6 +80,7 @@ trait HasSlug
     protected function slugExists(string $slug): bool
     {
         $slugField = $this->getSlugField();
+        /** @var \Illuminate\Database\Eloquent\Builder $query */
         $query = static::where($slugField, $slug);
 
         if ($this->getKey()) {

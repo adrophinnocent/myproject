@@ -1,7 +1,7 @@
 @php
     $siteName = \App\Models\Setting::get('site_name', 'Twina Safaris');
-    $siteEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
-    $sitePhone = \App\Models\Setting::get('site_phone', '+255 754 000 000');
+    $siteEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
+    $sitePhone = \App\Models\Setting::get('site_phone', '+255 795 482 197');
     $logo = \App\Models\Setting::get('logo');
 @endphp
 <footer class="bg-[#0a0703] pt-10 pb-6 border-t border-white/5 relative overflow-hidden">

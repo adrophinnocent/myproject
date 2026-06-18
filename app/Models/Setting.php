@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
@@ -13,14 +14,17 @@ class Setting extends Model
 
     public static function get($key, $default = null)
     {
-        $setting = self::where('key', $key)->first();
-
-        return $setting ? $setting->value : $default;
+        return Cache::remember('setting_' . $key, 3600, function() use ($key, $default) {
+            $setting = self::where('key', $key)->first();
+            return $setting ? $setting->value : $default;
+        });
     }
 
     public static function set($key, $value)
     {
         self::updateOrCreate(['key' => $key], ['value' => $value]);
+        Cache::forget('setting_' . $key);
+        Cache::forget('all_settings');
     }
 
     public static function getEmbedUrl($key, $default = null)

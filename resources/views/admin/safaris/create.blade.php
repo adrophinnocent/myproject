@@ -28,7 +28,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Safari Title</label>
-                <input type="text" name="title" value="{{ old('title') }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                <input type="text" name="title" value="{{ old('title') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
@@ -41,11 +41,11 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Price (USD)</label>
-                <input type="number" name="price" value="{{ old('price') }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                <input type="number" name="price" value="{{ old('price') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Duration (Days)</label>
-                <input type="number" name="duration_days" value="{{ old('duration_days') }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                <input type="number" name="duration_days" value="{{ old('duration_days') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2">
             </div>
         </div>
 

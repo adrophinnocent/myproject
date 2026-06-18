@@ -53,6 +53,9 @@ Route::get('/tours/{type}/{slug}', [App\Http\Controllers\Public\TourController::
 // Tour Inquiries
 Route::post('/tours/{tour:id}/inquiry', [App\Http\Controllers\Public\InquiryController::class, 'store'])->name('tours.inquiry');
 
+// Public AI Assistant
+Route::post('/ai-assistant/chat', [App\Http\Controllers\Public\AiChatController::class, 'sendMessage'])->name('ai-assistant.chat');
+
 Route::get('/about', function () {
     return view('public.about');
 })->name('about');

@@ -23,4 +23,20 @@ class PdfService
 
         return storage_path('app/public/' . $path);
     }
+
+    public function generateInvoice($booking)
+    {
+        $fileName = 'invoice-' . $booking->booking_reference . '.pdf';
+        $path = 'temp/' . $fileName;
+
+        $pdf = Pdf::loadView('emails.invoice-pdf', compact('booking'));
+
+        if (!Storage::disk('public')->exists('temp')) {
+            Storage::disk('public')->makeDirectory('temp');
+        }
+
+        Storage::disk('public')->put($path, $pdf->output());
+
+        return storage_path('app/public/' . $path);
+    }
 }

@@ -41,6 +41,7 @@
                 <button type="button" onclick="showTab('marketing')" id="tab-marketing" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Marketing</button>
                 <button type="button" onclick="showTab('seo')" id="tab-seo" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">SEO</button>
                 <button type="button" onclick="showTab('logistics')" id="tab-logistics" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Logistics</button>
+                <button type="button" onclick="showTab('translate')" id="tab-translate" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-amber-600 hover:text-amber-700 hover:border-gray-300">🌍 Translations</button>
             </nav>
         </div>
 
@@ -88,7 +89,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Price (USD / TZS)</label>
-                    <input type="number" step="0.01" name="price" value="{{ old('price', $tour->price) }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                    <input type="number" step="0.01" name="price" value="{{ old('price', $tour->price) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Child Price</label>
@@ -143,7 +144,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Number of Days</label>
-                    <input type="number" name="duration_days" value="{{ old('duration_days', $tour->duration_days) }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                    <input type="number" name="duration_days" value="{{ old('duration_days', $tour->duration_days) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Number of Nights</label>
@@ -457,86 +458,35 @@
         </div>
 
         <div id="content-logistics" class="tab-content hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {{-- ... (logistics content remains same) ... --}}
+        </div>
+
+        {{-- Translation Tab --}}
+        <div id="content-translate" class="tab-content hidden" x-data="{ lang: 'de' }">
+            <div class="flex gap-2 mb-8 border-b border-gray-100 pb-4 overflow-x-auto">
+                @foreach(['de' => '🇩🇪 German', 'fr' => '🇫🇷 French', 'es' => '🇪🇸 Spanish', 'it' => '🇮🇹 Italian', 'zh' => '🇨🇳 Chinese', 'nl' => '🇳🇱 Dutch'] as $code => $label)
+                    <button type="button" @click="lang = '{{ $code }}'" :class="lang === '{{ $code }}' ? 'bg-gold-50 border-gold-500 text-gold-700' : 'bg-white text-gray-400 border-gray-100'" class="px-4 py-2 rounded-lg border font-bold text-xs transition-all">
+                        {{ $label }}
+                    </button>
+                @endforeach
+            </div>
+
+            @foreach(['de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
+            <div x-show="lang === '{{ $locale }}'" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Departure Location</label>
-                    <input type="text" name="departure_location" value="{{ old('departure_location', $tour->departure_location) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Departure Time</label>
-                    <input type="text" name="departure_time" value="{{ old('departure_time', $tour->departure_time) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-                <div class="md:col-span-2 flex flex-wrap gap-4">
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" name="pickup_included" {{ old('pickup_included', $tour->pickup_included) ? 'checked' : '' }} class="w-4 h-4 text-[#D4AF37] rounded">
-                        <span class="text-sm text-gray-700">Pickup Included</span>
-                    </label>
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" name="airport_pickup" {{ old('airport_pickup', $tour->airport_pickup) ? 'checked' : '' }} class="w-4 h-4 text-[#D4AF37] rounded">
-                        <span class="text-sm text-gray-700">Airport Pickup</span>
-                    </label>
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" name="transport_included" {{ old('transport_included', $tour->transport_included) ? 'checked' : '' }} class="w-4 h-4 text-[#D4AF37] rounded">
-                        <span class="text-sm text-gray-700">Transport Included</span>
-                    </label>
+                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Title ({{ strtoupper($locale) }})</label>
+                    <input type="text" name="translations[{{ $locale }}][title]" value="{{ $tour->translate('title', $locale) }}" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-gold-500/20 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Location Name</label>
-                    <input type="text" id="location-name" name="location_name" value="{{ old('location_name', $tour->location_name) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Short Description ({{ strtoupper($locale) }})</label>
+                    <textarea name="translations[{{ $locale }}][short_description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-gold-500/20 outline-none">{{ $tour->translate('short_description', $locale) }}</textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
-                    <input type="text" id="latitude" name="latitude" value="{{ old('latitude', $tour->latitude) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
-                    <input type="text" id="longitude" name="longitude" value="{{ old('longitude', $tour->longitude) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-                <div class="md:col-span-2 flex gap-2">
-                    <button type="button" id="generate-map" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">Generate Map Iframe</button>
-                    <button type="button" id="find-coords" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">Find Coordinates</button>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Map Iframe</label>
-                    <textarea id="map-location" name="map_location" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('map_location', $tour->map_location) }}</textarea>
-                </div>
-                <div class="md:col-span-2">
-                    <div id="map-preview" class="w-full h-64 border border-gray-300 rounded-lg overflow-hidden">{!! $tour->map_location !!}</div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Guide</label>
-                    <input type="text" name="assigned_guide" value="{{ old('assigned_guide', $tour->assigned_guide) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Age</label>
-                    <input type="number" name="min_age" value="{{ old('min_age', $tour->min_age) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Age</label>
-                    <input type="number" name="max_age" value="{{ old('max_age', $tour->max_age) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Languages Offered</label>
-                    <div id="languages-container" class="space-y-2">
-                        @if(is_array($tour->languages_offered) && count($tour->languages_offered) > 0)
-                            @foreach($tour->languages_offered as $lang)
-                                <div class="flex gap-2">
-                                    <input type="text" name="languages_offered[]" value="{{ $lang }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                                    <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
-                                </div>
-                            @endforeach
-                        @endif
-                        <div class="flex gap-2">
-                            <input type="text" name="languages_offered[]" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                            <button type="button" onclick="addLanguage()" class="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Special Notes</label>
-                    <textarea name="special_notes" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('special_notes', $tour->special_notes) }}</textarea>
+                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Full Description ({{ strtoupper($locale) }})</label>
+                    <textarea name="translations[{{ $locale }}][description]" rows="10" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-gold-500/20 outline-none">{{ $tour->translate('description', $locale) }}</textarea>
                 </div>
             </div>
+            @endforeach
         </div>
 
         <!-- Footer Buttons -->

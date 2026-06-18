@@ -40,6 +40,7 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right text-sm font-medium">
+                    <a href="{{ route('tours.show', ['type' => 'safari', 'slug' => $safari->slug]) }}" target="_blank" class="text-blue-600 hover:text-blue-800 mr-3">View on Site</a>
                     <a href="{{ route('admin.safaris.edit', $safari) }}" class="text-[#D4AF37] hover:text-[#b8920d] mr-3">Edit</a>
                     <form method="POST" action="{{ route('admin.safaris.destroy', $safari) }}" class="inline-block" onsubmit="return confirm('Are you sure?')">
                         @csrf

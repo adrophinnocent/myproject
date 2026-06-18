@@ -195,16 +195,44 @@
                 </form>
             </div>
 
-            {{-- Summary Card --}}
+            {{-- Financial & PDF Documents Card --}}
             <div class="bg-safari-dark rounded-[2.5rem] shadow-2xl p-10 text-white relative overflow-hidden group">
                 <div class="relative z-10">
                     <h3 class="font-black uppercase tracking-tighter text-lg mb-8 flex items-center gap-2">
                         <span class="w-2 h-6 bg-gold-500 rounded-full"></span>
-                        Financial Summary
+                        Order Documents
                     </h3>
 
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-center text-sm border-b border-white/5 pb-4">
+                    <div class="space-y-4">
+                        <a href="{{ route('admin.bookings.download-invoice', $booking) }}" class="w-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-between p-4 rounded-2xl transition-all group/btn">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gold-500/20 rounded-xl flex items-center justify-center text-gold-500 group-hover/btn:bg-gold-500 group-hover/btn:text-safari-dark transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-black uppercase tracking-widest text-white">Download Invoice</span>
+                                    <span class="text-[10px] text-white/40">Official PDF for traveler</span>
+                                </div>
+                            </div>
+                            <svg class="w-4 h-4 text-white/20 group-hover/btn:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                        </a>
+
+                        <a href="{{ route('admin.bookings.download-itinerary', $booking) }}" class="w-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-between p-4 rounded-2xl transition-all group/btn">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center text-blue-400 group-hover/btn:bg-blue-500 group-hover/btn:text-white transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-black uppercase tracking-widest text-white">Tour Itinerary</span>
+                                    <span class="text-[10px] text-white/40">Daily program PDF</span>
+                                </div>
+                            </div>
+                            <svg class="w-4 h-4 text-white/20 group-hover/btn:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                        </a>
+                    </div>
+
+                    <div class="mt-10 pt-10 border-t border-white/5 space-y-6">
+                        <div class="flex justify-between items-center text-sm">
                             <span class="text-white/40 font-bold uppercase tracking-widest text-[10px]">Payment Method</span>
                             <span class="font-black text-gold-400 capitalize">{{ $booking->payment_method ?: 'Not set' }}</span>
                         </div>
@@ -212,21 +240,6 @@
                             <span class="text-white/40 font-bold uppercase tracking-widest text-[10px]">Total Order Value</span>
                             <div class="text-4xl font-black text-white tracking-tighter">${{ number_format($booking->total_price, 2) }}</div>
                         </div>
-                    </div>
-
-                    <div class="mt-10 pt-10 border-t border-white/5 space-y-3">
-                        @if($booking->confirmed_at)
-                        <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-green-400">
-                            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                            Confirmed on {{ $booking->confirmed_at->format('M d, Y') }}
-                        </div>
-                        @endif
-                        @if($booking->cancelled_at)
-                        <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-red-400">
-                            <span class="w-2 h-2 rounded-full bg-red-400"></span>
-                            Cancelled on {{ $booking->cancelled_at->format('M d, Y') }}
-                        </div>
-                        @endif
                     </div>
                 </div>
 

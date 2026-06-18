@@ -253,42 +253,64 @@
 </section>
 
 {{-- ========== FEATURED TOURS ========== --}}
-<section class="py-24 bg-white">
+<section class="py-24 bg-white" x-data="{
+    scrollBy(distance) {
+        const slider = document.getElementById('tours-slider');
+        if (slider) {
+            slider.scrollBy({ left: distance, behavior: 'smooth' });
+        }
+    }
+}">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
-            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Handpicked Experiences</span>
-            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
-            <div class="section-divider"></div>
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+            <div>
+                <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Handpicked Experiences</span>
+                <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="flex gap-3">
+                <button @click="scrollBy(-380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button @click="scrollBy(380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @if(isset($featuredTours))
+        @if(isset($featuredTours))
+        <div class="relative group">
+            <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($featuredTours as $tour)
-                <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all">
-                    <div class="relative h-56">
-                        <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
-                            <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? '' }}</span>
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                    <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all">
+                        <div class="relative h-56">
+                            <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover" loading="lazy">
                         </div>
-                        <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                            <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ $tour->title }}</a>
-                        </h3>
-                        <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
-                        <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
-                            <div class="flex gap-2">
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                        <div class="p-6">
+                            <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
+                                <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? '' }}</span>
+                            </div>
+                            <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
+                                <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ $tour->title }}</a>
+                            </h3>
+                            <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
+                                <div class="flex gap-2">
+                                    <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                    <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 @endforeach
-            @endif
+            </div>
         </div>
-        <div class="text-center mt-16">
+        @endif
+        
+        <div class="text-center mt-12">
             <a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">
                 View All Tours
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -298,115 +320,174 @@
 </section>
 
 {{-- ========== POPULAR DESTINATIONS ========== --}}
-<section class="py-24 bg-white border-t border-gray-50">
+<section class="py-16 md:py-24 bg-white border-t border-gray-50">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
+        <div class="text-center mb-12">
             <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Explore East Africa</span>
-            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Our Destinations</h2>
+            <h2 class="font-display text-3xl md:text-5xl text-gray-900 mt-3 mb-4">Our Destinations</h2>
             <div class="section-divider"></div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @if(isset($destinations))
+        @if(isset($destinations))
+        <div class="relative group">
+            {{-- Left Arrow --}}
+            <button onclick="document.getElementById('dest-slider').scrollBy({left: -360, behavior: 'smooth'})"
+                    class="absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex w-12 h-12 rounded-full bg-white shadow-xl border border-gray-100 items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            
+            {{-- Slider Container --}}
+            <div id="dest-slider"
+                 class="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($destinations as $destination)
                 <a href="{{ route('tours.index', ['destination' => $destination->id]) }}"
-                   class="relative group rounded-2xl overflow-hidden h-72 block shadow-sm border border-gray-100">
-                    <img src="{{ $destination->featured_image_url }}" alt="{{ $destination->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                   class="snap-start shrink-0 w-[280px] md:w-[320px] lg:w-[340px] relative group rounded-2xl overflow-hidden h-56 block shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300">
+                    <img src="{{ $destination->featured_image_url }}" 
+                         alt="{{ $destination->name }}" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                         loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
                     <div class="absolute inset-0 flex flex-col justify-end p-6">
-                        <h3 class="font-display text-2xl text-white font-bold">{{ $destination->name }}</h3>
-                        <p class="text-gold-400 text-sm">{{ $destination->country }}</p>
+                        <h3 class="font-display text-xl md:text-2xl text-white font-bold leading-tight">{{ $destination->name }}</h3>
+                        <p class="text-gold-400 text-sm md:text-base font-medium mt-1">{{ $destination->country }}</p>
                     </div>
                 </a>
                 @endforeach
-            @endif
+            </div>
+            
+            {{-- Right Arrow --}}
+            <button onclick="document.getElementById('dest-slider').scrollBy({left: 360, behavior: 'smooth'})"
+                    class="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex w-12 h-12 rounded-full bg-white shadow-xl border border-gray-100 items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
         </div>
+        @endif
     </div>
 </section>
 
-{{-- ========== TESTIMONIALS SECTION (COMPACT SLIDER) ========== --}}
+{{-- ========== TESTIMONIALS SECTION (HORIZONTAL CAROUSEL) ========== --}}
 <section class="py-16 md:py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100" x-data="{
-    active: 0,
-    total: 3,
-    loop() {
-        setInterval(() => { this.active = (this.active + 1) % this.total }, 6000)
+    scrollLeft: 0,
+    scrollBy(distance) {
+        const slider = document.getElementById('testimonials-slider');
+        if (slider) {
+            slider.scrollBy({ left: distance, behavior: 'smooth' });
+        }
     }
-}" x-init="loop()">
-    <div class="max-w-7xl mx-auto px-4 mb-10 md:mb-16 text-center">
-        <span class="text-gold-600 text-[10px] md:text-sm font-black uppercase tracking-[0.3em] mb-2 block">Guest Stories</span>
-        <h2 class="font-display text-3xl md:text-6xl font-black text-safari-dark">What Travelers Say</h2>
-        <div class="w-12 h-1 bg-gold-500 mx-auto mt-4 rounded-full"></div>
-    </div>
-
-    <div class="max-w-4xl mx-auto px-4 relative">
-        <!-- Main Slider Container -->
-        <div class="relative min-h-[350px] md:min-h-[380px]">
-            {{-- Testimonial 1 --}}
-            <div x-show="active === 0"
-                 x-transition:enter="transition ease-out duration-700"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-300"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95"
-                 class="absolute inset-0 flex flex-col items-center text-center">
-                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gold-500 flex items-center justify-center text-xl font-black text-white shadow-lg mb-6 border-4 border-white">MJ</div>
-                <div class="flex text-gold-500 mb-4 gap-0.5">
-                    @for($i=0; $i<5; $i++) <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
-                </div>
-                <p class="text-gray-700 text-base md:text-xl font-light leading-relaxed italic max-w-2xl mb-6 px-2">
-                    "Perfect honeymoon! Safari followed by Zanzibar beach time. The lodges were incredible and every detail was handled with care."
-                </p>
-                <h4 class="font-black text-safari-dark text-sm md:text-base uppercase tracking-tight">Marco & Julia</h4>
-                <p class="text-[10px] text-gold-600 font-bold uppercase tracking-widest mt-1">Honeymoon Safari</p>
+}">
+    <div class="max-w-7xl mx-auto px-4 mb-10 md:mb-16">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+                <span class="text-gold-600 text-[10px] md:text-sm font-black uppercase tracking-[0.3em] mb-2 block">Guest Stories</span>
+                <h2 class="font-display text-3xl md:text-5xl font-black text-safari-dark">What Travelers Say</h2>
             </div>
-
-            {{-- Testimonial 2 --}}
-            <div x-show="active === 1"
-                 x-transition:enter="transition ease-out duration-700"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-300"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95"
-                 class="absolute inset-0 flex flex-col items-center text-center" x-cloak>
-                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-600 flex items-center justify-center text-xl font-black text-white shadow-lg mb-6 border-4 border-white">KF</div>
-                <div class="flex text-gold-500 mb-4 gap-0.5">
-                    @for($i=0; $i<5; $i++) <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
-                </div>
-                <p class="text-gray-700 text-base md:text-xl font-light leading-relaxed italic max-w-2xl mb-6 px-2">
-                    "Family-friendly, professional, and so much fun! Our kids loved every minute, especially the wildlife sightings in the Serengeti."
-                </p>
-                <h4 class="font-black text-safari-dark text-sm md:text-base uppercase tracking-tight">Kim & Family</h4>
-                <p class="text-[10px] text-gold-600 font-bold uppercase tracking-widest mt-1">Family Adventure</p>
-            </div>
-
-            {{-- Testimonial 3 --}}
-            <div x-show="active === 2"
-                 x-transition:enter="transition ease-out duration-700"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-300"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95"
-                 class="absolute inset-0 flex flex-col items-center text-center" x-cloak>
-                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-600 flex items-center justify-center text-xl font-black text-white shadow-lg mb-6 border-4 border-white">SM</div>
-                <div class="flex text-gold-500 mb-4 gap-0.5">
-                    @for($i=0; $i<5; $i++) <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
-                </div>
-                <p class="text-gray-700 text-base md:text-xl font-light leading-relaxed italic max-w-2xl mb-6 px-2">
-                    "Absolutely life-changing experience! Our guide was so knowledgeable and passionate. We will definitely be back with Twina Safaris!"
-                </p>
-                <h4 class="font-black text-safari-dark text-sm md:text-base uppercase tracking-tight">Sarah Mitchell</h4>
-                <p class="text-[10px] text-gold-600 font-bold uppercase tracking-widest mt-1">Cultural Explorer</p>
+            <div class="flex gap-3">
+                <button @click="scrollBy(-380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button @click="scrollBy(380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
             </div>
         </div>
+        <div class="w-12 h-1 bg-gold-500 mt-4 rounded-full"></div>
+    </div>
 
-        <!-- Slider Navigation -->
-        <div class="flex justify-center gap-2 mt-4">
-            <template x-for="i in total" :key="i">
-                <button @click="active = i-1" :class="active === i-1 ? 'bg-gold-500 w-6' : 'bg-gray-300'" class="h-1.5 rounded-full transition-all duration-300 focus:outline-none"></button>
-            </template>
+    <div class="relative">
+        <!-- Slider Container -->
+        <div id="testimonials-slider"
+             class="flex gap-5 overflow-x-auto pb-8 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth"
+             style="scroll-behavior: smooth;">
+            
+            @if(isset($testimonials) && $testimonials->count() > 0)
+                @foreach($testimonials as $testimonial)
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13px)] xl:w-[calc(25%-15px)]">
+                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                        <!-- Rating -->
+                        <div class="flex text-gold-500 mb-4 gap-0.5">
+                            @for($i=0; $i<5; $i++) 
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            @endfor
+                        </div>
+
+                        <!-- Quote -->
+                        <p class="text-gray-700 text-base leading-relaxed mb-6 flex-grow">
+                            "{{ $testimonial->content ?? $testimonial->testimonial ?? 'Excellent experience with Twina Safaris!' }}"
+                        </p>
+
+                        <!-- Author -->
+                        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-white font-black text-lg shadow-md">
+                                {{ strtoupper(substr(($testimonial->name ?? $testimonial->author ?? 'Guest'), 0, 2)) }}
+                            </div>
+                            <div>
+                                <h4 class="font-black text-safari-dark text-sm">
+                                    {{ $testimonial->name ?? $testimonial->author ?? 'Guest' }}
+                                </h4>
+                                <p class="text-gold-600 text-xs font-medium">
+                                    {{ $testimonial->title ?? $testimonial->trip_type ?? 'Safari Traveler' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @else
+                <!-- Hardcoded testimonials if no database ones -->
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13px)] xl:w-[calc(25%-15px)]">
+                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                        <div class="flex text-gold-500 mb-4 gap-0.5">
+                            @for($i=0; $i<5; $i++) <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
+                        </div>
+                        <p class="text-gray-700 text-base leading-relaxed mb-6 flex-grow">
+                            "Perfect honeymoon! Safari followed by Zanzibar beach time. The lodges were incredible and every detail was handled with care."
+                        </p>
+                        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-white font-black text-lg shadow-md">MJ</div>
+                            <div>
+                                <h4 class="font-black text-safari-dark text-sm">Marco & Julia</h4>
+                                <p class="text-gold-600 text-xs font-medium">Honeymoon Safari</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13px)] xl:w-[calc(25%-15px)]">
+                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                        <div class="flex text-gold-500 mb-4 gap-0.5">
+                            @for($i=0; $i<5; $i++) <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
+                        </div>
+                        <p class="text-gray-700 text-base leading-relaxed mb-6 flex-grow">
+                            "Family-friendly, professional, and so much fun! Our kids loved every minute, especially the wildlife sightings in the Serengeti."
+                        </p>
+                        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow-md">KF</div>
+                            <div>
+                                <h4 class="font-black text-safari-dark text-sm">Kim & Family</h4>
+                                <p class="text-gold-600 text-xs font-medium">Family Adventure</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13px)] xl:w-[calc(25%-15px)]">
+                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                        <div class="flex text-gold-500 mb-4 gap-0.5">
+                            @for($i=0; $i<5; $i++) <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
+                        </div>
+                        <p class="text-gray-700 text-base leading-relaxed mb-6 flex-grow">
+                            "Absolutely life-changing experience! Our guide was so knowledgeable and passionate. We will definitely be back with Twina Safaris!"
+                        </p>
+                        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-black text-lg shadow-md">SM</div>
+                            <div>
+                                <h4 class="font-black text-safari-dark text-sm">Sarah Mitchell</h4>
+                                <p class="text-gold-600 text-xs font-medium">Cultural Explorer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </section>
@@ -434,6 +515,12 @@
                 </div>
             </div>
             @endforeach
+        </div>
+        <div class="text-center mt-16">
+            <a href="{{ route('blog.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">
+                View All Blog
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
         </div>
     </div>
 </section>

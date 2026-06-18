@@ -44,6 +44,7 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right text-sm font-medium">
+                    <a href="{{ route('tours.show', ['type' => 'tour', 'slug' => $tour->slug]) }}" target="_blank" class="text-blue-600 hover:text-blue-800 mr-3">View on Site</a>
                     <form method="POST" action="{{ route('admin.tours.toggle-publish', $tour) }}" class="inline-block mr-3">
                         @csrf
                         <button type="submit" class="{{ $tour->is_published ? 'text-yellow-600 hover:text-yellow-800' : 'text-green-600 hover:text-green-800' }}">
@@ -61,7 +62,7 @@
             @endforeach
         </tbody>
     </table>
-    
+
     <div class="px-6 py-4 border-t border-gray-200">
         {{ $tours->links() }}
     </div>
