@@ -398,6 +398,7 @@
         <div class="text-center mb-12">
             <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Explore East Africa</span>
             <h2 class="font-display text-3xl md:text-5xl text-gray-900 mt-3 mb-4">Our Destinations</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto text-lg">Explore the most breathtaking safari destinations in Tanzania, from endless plains to iconic wildlife parks.</p>
             <div class="section-divider"></div>
         </div>
 
