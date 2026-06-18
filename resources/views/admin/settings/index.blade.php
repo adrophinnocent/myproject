@@ -155,6 +155,15 @@
             <p class="text-xs text-gray-500 mt-1">High-resolution landscape image. This will appear above the footer on the Home page.</p>
         </div>
 
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Interactive Safari Map Background</label>
+            @if(\App\Models\Setting::get('map_background'))
+                <img src="{{ asset('storage/' . \App\Models\Setting::get('map_background')) }}" class="h-20 mb-4 rounded shadow-sm">
+            @endif
+            <input type="file" name="map_background" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
+            <p class="text-xs text-gray-500 mt-1">High-resolution landscape image of Africa with wildlife (Big 5). Recommended size: 1920x1080 pixels.</p>
+        </div>
+
         <h3 class="text-lg font-semibold text-gray-900 mb-6 mt-8">Social Media</h3>
 
         <div class="mb-6">

@@ -44,9 +44,10 @@ class SettingController extends Controller
             'blog_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'contact_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'home_footer_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'map_background' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
         ]);
 
-        $fileKeys = ['logo', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner'];
+        $fileKeys = ['logo', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner', 'map_background'];
 
         foreach ($validated as $key => $value) {
             if (in_array($key, $fileKeys) && $request->hasFile($key)) {
