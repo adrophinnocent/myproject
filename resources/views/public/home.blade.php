@@ -263,9 +263,10 @@
 }">
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
-            <div>
+            <div class="max-w-2xl">
                 <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Handpicked Experiences</span>
                 <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
+                <p class="text-gray-600 text-lg mb-4">Explore our most popular and highly recommended safari packages, carefully designed to suit every type of traveler. Whether you are seeking adventure, luxury, or a relaxing escape into nature, our tours are crafted to deliver unforgettable experiences across Tanzania’s most iconic destinations.</p>
                 <div class="section-divider"></div>
             </div>
             <div class="flex gap-3">
