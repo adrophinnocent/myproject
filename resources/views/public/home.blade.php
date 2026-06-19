@@ -262,21 +262,11 @@
     }
 }">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
-            <div class="max-w-2xl">
-                <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Handpicked Experiences</span>
-                <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
-                <p class="text-gray-600 text-lg mb-4">Explore our most popular and highly recommended safari packages, carefully designed to suit every type of traveler. Whether you are seeking adventure, luxury, or a relaxing escape into nature, our tours are crafted to deliver unforgettable experiences across Tanzania’s most iconic destinations.</p>
-                <div class="section-divider"></div>
-            </div>
-            <div class="flex gap-3">
-                <button @click="scrollBy(-380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                </button>
-                <button @click="scrollBy(380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                </button>
-            </div>
+        <div class="text-center mb-16">
+            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Handpicked Experiences</span>
+            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
+            <p class="text-gray-600 text-lg mb-4 max-w-2xl mx-auto">Explore our most popular and highly recommended safari packages, carefully designed to suit every type of traveler. Whether you are seeking adventure, luxury, or a relaxing escape into nature, our tours are crafted to deliver unforgettable experiences across Tanzania’s most iconic destinations.</p>
+            <div class="section-divider"></div>
         </div>
 
         <div class="relative group">
@@ -404,13 +394,7 @@
         </div>
 
         @if(isset($destinations))
-        <div class="relative group">
-            {{-- Left Arrow --}}
-            <button onclick="document.getElementById('dest-slider').scrollBy({left: -360, behavior: 'smooth'})"
-                    class="absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex w-12 h-12 rounded-full bg-white shadow-xl border border-gray-100 items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            
+        <div>
             {{-- Slider Container --}}
             <div id="dest-slider"
                  class="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
@@ -429,12 +413,6 @@
                 </a>
                 @endforeach
             </div>
-            
-            {{-- Right Arrow --}}
-            <button onclick="document.getElementById('dest-slider').scrollBy({left: 360, behavior: 'smooth'})"
-                    class="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex w-12 h-12 rounded-full bg-white shadow-xl border border-gray-100 items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </button>
         </div>
         @endif
     </div>
@@ -602,22 +580,10 @@
         }
     }
 }">
-    <div class="max-w-7xl mx-auto px-4 mb-10 md:mb-16">
-        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-                <span class="text-gold-600 text-[10px] md:text-sm font-black uppercase tracking-[0.3em] mb-2 block">Guest Stories</span>
-                <h2 class="font-display text-3xl md:text-5xl font-black text-safari-dark">What Travelers Say</h2>
-            </div>
-            <div class="flex gap-3">
-                <button @click="scrollBy(-380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                </button>
-                <button @click="scrollBy(380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-        </div>
-        <div class="w-12 h-1 bg-gold-500 mt-4 rounded-full"></div>
+    <div class="max-w-7xl mx-auto px-4 mb-10 md:mb-16 text-center">
+        <span class="text-gold-600 text-[10px] md:text-sm font-black uppercase tracking-[0.3em] mb-2 block">Guest Stories</span>
+        <h2 class="font-display text-3xl md:text-5xl font-black text-safari-dark">What Travelers Say</h2>
+        <div class="w-12 h-1 bg-gold-500 mt-4 rounded-full mx-auto"></div>
     </div>
 
     <div class="relative">
