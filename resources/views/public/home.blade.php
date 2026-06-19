@@ -454,8 +454,8 @@
         @php
             $mapBg = \App\Models\Setting::get('map_background');
         @endphp
-        @if($mapBg && Storage::exists($mapBg))
-            <img src="{{ Storage::url($mapBg) }}" alt="Africa Big 5" class="w-full h-full object-cover">
+        @if($mapBg)
+            <img src="{{ asset('storage/' . $mapBg) }}" alt="Africa Big 5" class="w-full h-full object-cover">
         @else
             <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1920&q=80" alt="Africa Big 5" class="w-full h-full object-cover">
         @endif
