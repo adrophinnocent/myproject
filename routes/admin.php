@@ -13,9 +13,9 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 // Admin Login Routes (Path alias for convenience)
 Route::get('/admin/login', function() {
     return redirect()->route('login');
-})->name('admin.login');
+});
 
-Route::post('/admin/login', [AuthenticatedSessionController::class, 'store']);
+Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])->name('admin.login');
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\AnalyticsController::class, 'dashboard'])->name('admin.dashboard');

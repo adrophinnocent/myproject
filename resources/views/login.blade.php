@@ -194,10 +194,6 @@
 
             <!-- Footer Links -->
             <div class="mt-12 flex flex-col items-center gap-5">
-                <a href="{{ route('emergency-login') }}" class="w-full py-3.5 bg-gray-200/50 rounded-2xl text-sm font-bold text-gray-600 hover:text-brand-600 transition-all text-center clay-input">
-                    Quick auto-login for testing
-                </a>
-
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-brand-600 transition-colors">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                     Back to website
