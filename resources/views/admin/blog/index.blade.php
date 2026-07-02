@@ -5,6 +5,20 @@
 
 @section('content')
 <div class="space-y-8">
+    {{-- Summary Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="neo-card p-6 border-l-4 border-amber-500">
+            <div class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Total Stories</div>
+            <div class="text-3xl font-black text-gray-800">{{ $posts->count() }}</div>
+        </div>
+        @foreach($categories->take(3) as $cat)
+        <div class="neo-card p-6">
+            <div class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">{{ $cat->name }}</div>
+            <div class="text-3xl font-black text-amber-600">{{ $cat->posts_count }}</div>
+        </div>
+        @endforeach
+    </div>
+
     {{-- Header CTA --}}
     <div class="flex items-center justify-between">
         <div>

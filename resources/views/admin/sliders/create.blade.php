@@ -27,8 +27,27 @@
         </div>
 
         <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Slider Image (Recommended: 1920x1080px)</label>
-            <input type="file" name="image" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#D4AF37]/10 file:text-[#8b7355] hover:file:bg-[#D4AF37]/20">
+            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Slider Image</label>
+            <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2rem] p-8 bg-gray-50/50" id="slider-image-container">
+                <img id="slider-preview" src="" class="hidden w-full h-48 object-cover rounded-2xl mb-4 shadow-xl">
+                <div id="slider-placeholder" class="text-center py-5">
+                    <div class="text-3xl mb-1">🖼️</div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">No Image Selected</p>
+                </div>
+
+                <input type="hidden" name="image" id="slider_image_path">
+
+                <div class="flex gap-3">
+                    <button type="button"
+                            @click="$dispatch('open-media-picker', {targetId: 'slider_image_path', previewId: 'slider-preview'})"
+                            class="bg-safari-dark hover:bg-black text-white px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">
+                        Pick from Library
+                    </button>
+                    <input type="file" name="image_upload" class="hidden" id="slider_upload">
+                    <button type="button" onclick="document.getElementById('slider_upload').click()" class="bg-white border border-gray-200 text-gray-500 px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest">Upload File</button>
+                </div>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-3 italic">Recommended: 1920x1080px. High-quality WebP images perform best.</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">

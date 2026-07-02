@@ -17,7 +17,7 @@ class AnalyticsController extends Controller
     public function dashboard()
     {
         $kpis = $this->getKPIs();
-        $recentBooks = Booking::with(['tour'])->latest()->take(8)->get();
+        $recentBooks = Booking::with(['tour', 'safari'])->latest()->take(8)->get();
         $topTours = $this->getTopTours();
         $tourStats = $this->getTourPerformance();
         $revenueData = $this->getRevenueData();
@@ -26,10 +26,15 @@ class AnalyticsController extends Controller
         $revenuePerTour = $this->getRevenuePerTour();
         $bookingStats = $this->getBookingStats();
 
+        // Add Marketing Summary
+        $marketingLeads = \App\Models\Lead::whereNotNull('campaign_id')->count();
+        $marketingVisits = \App\Models\CampaignStat::where('type', 'visit')->count();
+        $topCampaigns = \App\Models\Campaign::withCount(['leads', 'stats'])->orderByDesc('leads_count')->take(3)->get();
+
         return view('admin.dashboard', compact(
             'kpis', 'recentBooks', 'topTours', 'tourStats',
             'revenueData', 'bookingTrend', 'customerGrowth',
-            'revenuePerTour', 'bookingStats'
+            'revenuePerTour', 'bookingStats', 'marketingLeads', 'marketingVisits', 'topCampaigns'
         ));
     }
 

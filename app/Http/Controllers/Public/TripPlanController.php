@@ -46,7 +46,23 @@ class TripPlanController extends Controller
         $validated['group_size'] = ($validated['adults'] ?? 1) + ($validated['children'] ?? 0);
         $validated['status'] = 'new';
 
-        TripPlan::create($validated);
+        $plan = TripPlan::create($validated);
+
+        // Notify Admin
+        try {
+            $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminNewTripPlanMail($plan));
+
+            \App\Models\AdminNotification::create([
+                'type' => 'trip_plan',
+                'title' => 'New Trip Plan Request',
+                'message' => 'New request from ' . $plan->name,
+                'link' => route('admin.trip-plans.show', $plan),
+                'is_read' => false
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Trip plan notification failed: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Thank you! We\'ll send you a personalized itinerary within 24 hours.');
     }

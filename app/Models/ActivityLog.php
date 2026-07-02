@@ -16,7 +16,7 @@ class ActivityLog extends Model
     public static function log(string $action, string $description, $model = null): void
     {
         static::create([
-            'admin_user_id' => auth('admin')->id(),
+            'admin_user_id' => auth()->id(),
             'action' => $action,
             'model_type' => $model ? get_class($model) : null,
             'model_id' => $model?->id,

@@ -46,7 +46,7 @@ class NewsletterController extends Controller
             'type' => 'newsletter',
             'title' => 'New Newsletter Subscriber',
             'message' => $request->name . ' (' . $request->email . ') just subscribed.',
-            'link' => null,
+            'link' => route('admin.email-campaigns.index'),
             'is_read' => false
         ]);
 

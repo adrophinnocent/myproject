@@ -1,7 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'About Us - Twina Safaris')
-@section('meta_description', 'Discover Twina Safaris: Our story, mission, and why we are Tanzania\'s most trusted safari operator since 2009.')
+@section('meta_description', 'Discover Twina Safaris: Our story, mission, and why we are Tanzania\'s most trusted safari operator.')
 
 @section('content')
 {{-- 1. HERO BANNER --}}
@@ -13,7 +13,7 @@
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4">
         <span class="inline-block text-gold-400 text-xs font-black uppercase tracking-[0.5em] mb-6 animate-pulse bg-black/30 backdrop-blur-sm px-6 py-2 rounded-full border border-gold-500/20">
-            Est. 2009 · Tanzania
+            Tanzania
         </span>
         <h1 class="font-display text-5xl md:text-8xl text-white font-bold leading-tight drop-shadow-2xl">
             Our Passion
@@ -49,10 +49,9 @@
                 </div>
             </div>
             <div class="relative">
-                @php $embedUrl = \App\Models\Setting::getEmbedUrl('featured_video_url'); @endphp
-                @if($embedUrl)
-                    <div class="aspect-video w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white bg-safari-dark">
-                        <iframe src="{{ $embedUrl }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                @if($featuredImage = \App\Models\Setting::get('featured_image'))
+                    <div class="w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
+                        <img src="{{ asset('storage/' . $featuredImage) }}" class="w-full h-auto object-cover" alt="About Twina Safaris">
                     </div>
                 @else
                     <div class="grid grid-cols-2 gap-4">
@@ -66,6 +65,48 @@
                         </div>
                     </div>
                 @endif
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- MEET THE FOUNDER --}}
+<section class="py-24 bg-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="flex flex-col md:flex-row items-center gap-12 lg:gap-24">
+            <div class="w-full md:w-1/3 lg:w-1/4">
+                <div class="relative group">
+                    <div class="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl group-hover:bg-gold-500/20 transition-all"></div>
+                    <div class="relative aspect-square rounded-full overflow-hidden shadow-2xl border-4 border-white ring-8 ring-gold-50">
+                        <img src="{{ asset('images/founder.jpg') }}"
+                             onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop'"
+                             class="w-full h-full object-cover"
+                             alt="Founder of Twina Safaris">
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full md:w-2/3 lg:w-3/4 space-y-8 text-center md:text-left">
+                <div>
+                    <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Meet the Founder</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark mb-2">Twina Safaris Founder</h2>
+                    <p class="text-gold-600 text-lg font-bold tracking-wide">Founder & Safari Guide – Twina Safaris</p>
+                </div>
+
+                <div class="max-w-2xl">
+                    <p class="text-gray-700 text-xl leading-relaxed font-light italic border-l-4 border-gold-500 pl-8 md:pl-10">
+                        "Passionate about Tanzanian wildlife, safari experiences, and creating unforgettable journeys for international and local travelers."
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4">
+                    <a href="https://wa.me/255795482197" class="px-8 py-4 bg-safari-dark text-white text-xs font-black uppercase tracking-[0.2em] rounded-full shadow-xl hover:bg-black transition-all">
+                        Chat on WhatsApp
+                    </a>
+                    <a href="mailto:info@twinasafaris.com" class="px-8 py-4 border-2 border-gold-500 text-gold-600 text-xs font-black uppercase tracking-[0.2em] rounded-full hover:bg-gold-500 hover:text-white transition-all">
+                        Send an Email
+                    </a>
+                </div>
             </div>
         </div>
     </div>

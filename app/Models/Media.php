@@ -26,4 +26,15 @@ class Media extends Model
 
         return $bytes.' B';
     }
+
+    public function render($class = '', $id = '')
+    {
+        return sprintf(
+            '<img src="%s" alt="%s" class="%s" id="%s" loading="lazy" decoding="async">',
+            $this->url,
+            e($this->alt),
+            $class,
+            $id
+        );
+    }
 }

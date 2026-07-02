@@ -75,7 +75,7 @@ function aiChat() {
     return {
         userInput: '',
         messages: [
-            { role: 'assistant', content: "Jambo! I'm your Twina Safaris Business Partner. How can I help you scale your safari operations today? I can draft blog posts, handle complex customer replies, or even explain park regulations." }
+            { role: 'assistant', content: "Jambo! I'm your Twina Safaris partner. How can I help you today?" }
         ],
         loading: false,
         suggestions: [

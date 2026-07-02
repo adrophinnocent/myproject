@@ -5,24 +5,43 @@
 
 @section('content')
 {{-- Page Header --}}
-<div class="relative h-[40vh] min-h-80 flex items-center">
+<div class="relative h-[60vh] min-h-[450px] flex items-center justify-center overflow-hidden bg-safari-dark">
     <div class="absolute inset-0">
         @if($banner = \App\Models\Setting::get('blog_banner'))
-            <img src="{{ asset('storage/' . $banner) }}" class="w-full h-full object-cover" alt="Blog">
+            <img src="{{ asset('storage/' . $banner) }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
         @else
-            <img src="{{ asset('images/blog-banner.jpg') }}" class="w-full h-full object-cover" alt="Blog">
+            <img src="{{ asset('images/blog-banner.jpg') }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
         @endif
-        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-transparent"></div>
     </div>
-    <div class="absolute inset-0 flex items-center">
-        <div class="max-w-7xl mx-auto px-4 w-full text-center">
-            <h1 class="font-display text-4xl md:text-6xl text-white font-bold mb-4">Twina Safaris Blog</h1>
-            <p class="text-white/80 max-w-2xl mx-auto">Insights, stories, and tips for your next African adventure.</p>
+    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+        <span class="inline-block text-gold-400 text-xs md:text-sm font-black uppercase tracking-[0.5em] mb-6">Safari Journal & Stories</span>
+        <h1 class="font-display text-5xl md:text-7xl lg:text-8xl text-white font-bold mb-8 leading-tight drop-shadow-2xl">
+            The Spirit <span class="italic text-gold-500 font-serif">of Africa</span>
+        </h1>
+        <p class="text-white/90 text-lg md:text-xl max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
+            Dive into a world of adventure where the wild meets luxury. Our journal brings you closer to the heart of Tanzania, sharing the secrets of the Serengeti, the spirit of the Maasai, and the magic of Zanzibar’s turquoise shores.
+        </p>
+    </div>
+    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent"></div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 pt-16">
+    <div class="text-center mb-16">
+        <div class="max-w-4xl mx-auto space-y-6">
+            <h2 class="font-display text-3xl md:text-4xl font-black text-safari-dark uppercase tracking-tight">Voices of the Wild</h2>
+            <p class="text-gray-600 text-lg leading-relaxed font-light">
+                Discover inspiring safari stories, unforgettable travel experiences, breathtaking wildlife encounters, and hidden gems from across Tanzania and East Africa. Stay updated with expert travel tips, real guest adventures, and destination highlights that bring the spirit of Africa to life.
+            </p>
+            <p class="text-gray-700 text-lg font-medium italic border-l-4 border-gold-500 pl-8 inline-block text-left">
+                From the vast plains of the <strong>Serengeti to the peaks of Mount Kilimanjaro and the beaches of Zanzibar</strong>, our blog shares real moments, practical guides, and stories that spark your next journey.
+            </p>
         </div>
+        <div class="w-24 h-1 bg-gold-500 mx-auto mt-12 rounded-full"></div>
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 py-16">
+<div class="max-w-7xl mx-auto px-4 pb-24">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {{-- Posts Grid --}}
         <div class="lg:col-span-2 space-y-12">
@@ -34,8 +53,6 @@
                 <div class="flex flex-col justify-center">
                     <div class="flex items-center gap-3 text-gold-600 text-xs font-bold uppercase tracking-widest mb-3">
                         <span>{{ $post->category->name ?? 'Travel' }}</span>
-                        <span class="text-gray-300">•</span>
-                        <span class="text-gray-500">{{ $post->published_at->format('M d, Y') }}</span>
                     </div>
                     <h2 class="font-display text-2xl font-bold text-gray-900 mb-4 hover:text-gold-600 transition-colors">
                         <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
@@ -69,7 +86,6 @@
                     @foreach($categories as $cat)
                     <a href="{{ route('blog.index', ['category' => $cat->slug]) }}" class="flex items-center justify-between text-gray-700 hover:text-gold-600 font-medium group">
                         <span>{{ $cat->name }}</span>
-                        <span class="bg-white px-2 py-0.5 rounded-lg text-xs border border-gray-200 group-hover:border-gold-200 transition-colors">{{ $cat->posts_count }}</span>
                     </a>
                     @endforeach
                 </div>

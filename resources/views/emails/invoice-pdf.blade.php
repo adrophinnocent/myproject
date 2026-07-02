@@ -4,120 +4,158 @@
     <meta charset="UTF-8">
     <title>Invoice - {{ $booking->booking_reference }}</title>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1a1209; margin: 0; padding: 40px; line-height: 1.5; background: #fff; }
-        .header { border-bottom: 3px solid #D4AF37; padding-bottom: 20px; margin-bottom: 30px; }
-        .header-table { width: 100%; }
-        .logo { font-size: 24px; font-weight: bold; color: #0a0703; text-transform: uppercase; letter-spacing: 2px; }
-        .invoice-title { font-size: 32px; font-weight: 900; color: #D4AF37; text-align: right; text-transform: uppercase; }
+        @page { margin: 0; }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #1a1209;
+            margin: 0;
+            padding: 0;
+            background-color: #fdfbf7;
+            line-height: 1.4;
+        }
 
-        .info-table { width: 100%; margin-bottom: 40px; }
-        .info-td { width: 50%; vertical-align: top; }
-        .label { color: #888; font-size: 10px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
-        .value { font-weight: bold; font-size: 14px; }
+        .container { padding: 40px; position: relative; min-height: 100vh; }
 
+        .header { margin-bottom: 30px; }
+        .logo-text { font-size: 24px; font-weight: 900; color: #1a1209; text-transform: uppercase; }
+        .logo-sub { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-top: -5px; }
+
+        /* Invoice Section */
+        .invoice-title-block { margin-top: 40px; margin-bottom: 30px; }
+        .main-title { font-size: 60px; font-weight: 900; color: #D4AF37; margin: 0; text-transform: uppercase; letter-spacing: -2px; }
+        .meta-info { font-size: 12px; font-weight: bold; color: #0a0703; margin-top: 10px; }
+
+        /* Items Table */
         .items-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-        .items-table th { background: #0a0703; color: #fff; text-align: left; padding: 12px 15px; font-size: 11px; text-transform: uppercase; }
-        .items-table td { padding: 15px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .items-table thead th { background-color: #0a0703; color: #D4AF37; text-align: left; padding: 12px 15px; font-size: 11px; text-transform: uppercase; font-weight: 900; }
+        .items-table tbody td { padding: 15px; border-bottom: 1px solid #e5e5e5; font-size: 12px; }
 
-        .totals-table { width: 40%; margin-left: 60%; }
-        .totals-row td { padding: 10px 0; }
-        .total-label { text-align: right; color: #888; padding-right: 20px; font-size: 12px; }
-        .total-value { text-align: right; font-weight: bold; font-size: 14px; }
-        .grand-total { background: #fdfbf0; border-top: 2px solid #D4AF37; }
-        .grand-total .total-label { color: #0a0703; font-weight: 900; }
-        .grand-total .total-value { color: #D4AF37; font-size: 20px; }
+        .item-name { font-weight: bold; color: #1a1209; }
 
-        .payment-info { margin-top: 60px; padding: 20px; background: #f9f7f4; border-radius: 15px; border: 1px solid #e1ede8; }
-        .payment-title { font-weight: bold; font-size: 12px; margin-bottom: 10px; color: #8f6e0a; }
-        .payment-text { font-size: 11px; color: #666; }
+        /* Summary Grid */
+        .summary-wrapper { width: 100%; display: table; margin-top: 30px; }
+        .summary-left { display: table-cell; width: 55%; vertical-align: top; }
+        .summary-right { display: table-cell; width: 45%; vertical-align: top; }
 
-        .footer { margin-top: 60px; text-align: center; color: #ccc; font-size: 10px; border-top: 1px solid #eee; padding-top: 20px; }
+        .invoice-to-title { font-size: 22px; font-weight: 900; color: #0a0703; margin-bottom: 15px; border-bottom: 2px solid #D4AF37; display: inline-block; }
+        .client-info { font-size: 12px; line-height: 1.6; color: #444; }
+
+        .totals-table { width: 100%; border-collapse: collapse; }
+        .totals-table td { padding: 8px 15px; font-size: 13px; }
+        .total-label { color: #666; font-weight: bold; text-align: left; }
+        .total-value { text-align: right; font-weight: bold; color: #1a1209; }
+        .grand-total-row td { padding-top: 15px; }
+        .grand-total-label { font-size: 18px; font-weight: 900; color: #0a0703; text-transform: uppercase; }
+        .grand-total-value { font-size: 22px; font-weight: 900; color: #D4AF37; text-align: right; }
+
+        /* New Premium Black Footer */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0a0703;
+            padding: 40px 0;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .footer-brand { font-size: 16px; font-weight: 900; color: #D4AF37; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+        .footer-contact { font-size: 10px; color: #94a3b8; font-weight: bold; }
+        .bullet { color: #D4AF37; padding: 0 8px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <table class="header-table">
-            <tr>
-                <td class="logo">Twina Safaris</td>
-                <td class="invoice-title">Invoice</td>
-            </tr>
-        </table>
-    </div>
-
-    <table class="info-table">
-        <tr>
-            <td class="info-td">
-                <div class="label">Billed To:</div>
-                <div class="value">{{ $booking->first_name }} {{ $booking->last_name }}</div>
-                <div class="payment-text">{{ $booking->email }}</div>
-                <div class="payment-text">{{ $booking->phone }}</div>
-                <div class="payment-text">{{ $booking->nationality }}</div>
-            </td>
-            <td class="info-td" style="text-align: right;">
-                <div class="label">Invoice Details:</div>
-                <div class="value">REF: {{ $booking->booking_reference }}</div>
-                <div class="payment-text">Date: {{ date('F j, Y') }}</div>
-                <div class="payment-text">Travel Date: {{ \Carbon\Carbon::parse($booking->travel_date)->format('M d, Y') }}</div>
-                <div class="payment-text">Status: <span style="color: {{ $booking->status == 'confirmed' ? '#22c55e' : '#f59e0b' }}">{{ strtoupper($booking->status) }}</span></div>
-            </td>
-        </tr>
-    </table>
-
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th style="text-align: center; width: 100px;">Guests</th>
-                <th style="text-align: right; width: 120px;">Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <div style="font-weight: bold;">{{ $booking->tour->title }}</div>
-                    <div style="font-size: 11px; color: #888; margin-top: 5px;">
-                        Duration: {{ $booking->tour->duration_text }}<br>
-                        Location: {{ $booking->tour->destination->name ?? 'Tanzania' }}
-                    </div>
-                </td>
-                <td style="text-align: center;">
-                    {{ $booking->number_of_adults }} Adults<br>
-                    @if($booking->number_of_children > 0)
-                        {{ $booking->number_of_children }} Children
-                    @endif
-                </td>
-                <td style="text-align: right; font-weight: bold;">{{ $booking->formatted_price }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <table class="totals-table">
-        <tr class="totals-row">
-            <td class="total-label">Subtotal</td>
-            <td class="total-value">{{ $booking->formatted_price }}</td>
-        </tr>
-        <tr class="totals-row">
-            <td class="total-label">Tax (VAT 0%)</td>
-            <td class="total-value">$0.00</td>
-        </tr>
-        <tr class="totals-row grand-total">
-            <td class="total-label">Total Amount</td>
-            <td class="total-value">{{ $booking->formatted_price }}</td>
-        </tr>
-    </table>
-
-    <div class="payment-info">
-        <div class="payment-title">Payment Instructions</div>
-        <div class="payment-text">
-            Please complete your payment to secure your booking. You can pay via:<br>
-            - <strong>Bank Transfer:</strong> Bank Name: [YOUR BANK], Account Name: Twina Safaris, SWIFT: [CODE]<br>
-            - <strong>PayPal:</strong> info@twinasafaris.com<br>
-            - <strong>WhatsApp:</strong> Contact us at +255 795 482 197 for more options.
+    <div class="container">
+        <div class="header">
+            @php
+                $logo = \App\Models\Setting::get('logo');
+                $logoPath = $logo ? public_path('storage/' . $logo) : null;
+            @endphp
+            @if($logoPath && file_exists($logoPath))
+                <img src="{{ 'data:image/' . pathinfo($logoPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($logoPath)) }}" style="height: 40px;">
+            @else
+                <div class="logo-text">TWINA SAFARIS</div>
+                <div class="logo-sub">EXPLORE THE WILD</div>
+            @endif
         </div>
-    </div>
 
-    <div class="footer">
-        © {{ date('Y') }} Twina Safaris Tanzania. Moshi, Tanzania. | +255 795 482 197 | info@twinasafaris.com
+        <div class="invoice-title-block">
+            <h1 class="main-title">INVOICE</h1>
+            <div class="meta-info">
+                Invoice No: TS-{{ $booking->booking_reference }}<br>
+                Invoice Date: {{ date('d M Y') }}
+            </div>
+        </div>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Description</th>
+                    <th style="width: 20%;">Price</th>
+                    <th style="width: 10%; text-align: center;">Qty.</th>
+                    <th style="width: 20%; text-align: right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span class="item-name">{{ $booking->bookable_item->title }}</span><br>
+                        <small style="color: #666;">Standard Safari Package</small>
+                    </td>
+                    <td>{{ $booking->formatted_price }}</td>
+                    <td style="text-align: center;">1</td>
+                    <td style="text-align: right; font-weight: bold;">{{ $booking->formatted_price }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="item-name">Park Fees & Logistics</span><br>
+                        <small style="color: #666;">Conservation and entries</small>
+                    </td>
+                    <td>Included</td>
+                    <td style="text-align: center;">{{ $booking->number_of_adults + $booking->number_of_children }}</td>
+                    <td style="text-align: right; font-weight: bold;">$0.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="summary-wrapper">
+            <div class="summary-left">
+                <div class="invoice-to-title">Invoice to:</div>
+                <div class="client-info">
+                    NAME: {{ $booking->first_name }} {{ $booking->last_name }}<br>
+                    EMAIL: {{ $booking->email }}<br>
+                    PHONE: {{ $booking->phone }}<br>
+                    COUNTRY: {{ $booking->nationality }}
+                </div>
+            </div>
+            <div class="summary-right">
+                <table class="totals-table">
+                    <tr>
+                        <td class="total-label">Subtotal</td>
+                        <td class="total-value">{{ $booking->formatted_price }}</td>
+                    </tr>
+                    <tr>
+                        <td class="total-label">Tax Rate (0%)</td>
+                        <td class="total-value">$0.00</td>
+                    </tr>
+                    <tr class="grand-total-row">
+                        <td class="grand-total-label">TOTAL</td>
+                        <td class="grand-total-value">{{ $booking->formatted_price }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-brand">TWINA SAFARIS TANZANIA</div>
+            <div class="footer-contact">
+                {{ \App\Models\Setting::get('address', 'Moshi, Kilimanjaro') }}
+                <span class="bullet">•</span>
+                www.twinasafaris.com
+                <span class="bullet">•</span>
+                {{ \App\Models\Setting::get('site_phone', '+255 795 482 197') }}
+            </div>
+        </div>
     </div>
 </body>
 </html>

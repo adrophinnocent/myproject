@@ -12,6 +12,7 @@ class Booking extends Model
     protected $fillable = [
         'booking_reference',
         'tour_id',
+        'safari_id',
         'first_name',
         'last_name',
         'email',
@@ -60,7 +61,17 @@ class Booking extends Model
 
     public function tour()
     {
-        return $this->belongsTo(Tour::class);
+        return $this->belongsTo(Tour::class)->withTrashed();
+    }
+
+    public function safari()
+    {
+        return $this->belongsTo(Safari::class)->withTrashed();
+    }
+
+    public function getBookableItemAttribute()
+    {
+        return $this->tour ?? $this->safari;
     }
 
     public function getFullNameAttribute(): string

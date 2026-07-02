@@ -83,7 +83,7 @@
             </div>
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Full Description</label>
-                <textarea name="description" rows="6" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('description') }}</textarea>
+                <textarea name="description" rows="10" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('description') }}</textarea>
             </div>
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Highlights</label>
@@ -178,11 +178,33 @@
             </div>
         </div>
         <div id="content-itinerary" class="tab-content hidden">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Itinerary Builder</h3>
-                <button type="button" id="add-itinerary-day" class="bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-semibold px-4 py-2 rounded-lg text-sm transition-colors">+ Add Day</button>
+            <div x-data="{ mode: 'builder' }">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex bg-gray-100 p-1 rounded-xl">
+                        <button type="button" @click="mode = 'builder'" :class="mode === 'builder' ? 'bg-white shadow-sm text-amber-600' : 'text-gray-500'" class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all">Manual Builder</button>
+                        <button type="button" @click="mode = 'code'" :class="mode === 'code' ? 'bg-white shadow-sm text-amber-600' : 'text-gray-500'" class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all">Magic Code Mode (ChatGPT)</button>
+                    </div>
+                    <button x-show="mode === 'builder'" type="button" id="add-itinerary-day" class="bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-semibold px-4 py-2 rounded-lg text-sm transition-colors">+ Add Day</button>
+                </div>
+
+                {{-- Manual Builder UI --}}
+                <div x-show="mode === 'builder'" id="itinerary-container" class="space-y-4 mb-6"></div>
+
+                {{-- Magic Code Mode UI --}}
+                <div x-show="mode === 'code'" x-cloak class="space-y-4">
+                    <div class="bg-indigo-50 border border-indigo-200 p-6 rounded-2xl text-xs text-indigo-800">
+                        <p class="font-black mb-3 uppercase tracking-widest flex items-center gap-2">
+                            <span class="text-lg">🚀</span> Super Magic Mode (All-in-One)
+                        </p>
+                        <p class="mb-4 leading-relaxed">Unaweza kubandika kodi moja inayojumuisha <strong>Itinerary</strong>, <strong>Inclusions</strong>, <strong>Exclusions</strong>, na <strong>FAQs</strong> kwa pamoja. ChatGPT atakupa kila kitu kwa mpigo mmoja!</p>
+                        <div class="bg-white/50 p-3 rounded-lg font-mono text-[10px]">
+                            { "itinerary": [...], "inclusions": [...], "exclusions": [...], "faqs": [...] }
+                        </div>
+                    </div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Raw JSON Package Data</label>
+                    <textarea name="itinerary_raw" rows="20" class="w-full font-mono text-xs bg-gray-900 text-green-400 p-6 rounded-2xl focus:outline-none border-none shadow-2xl" placeholder="Paste the full JSON object from ChatGPT here..."></textarea>
+                </div>
             </div>
-            <div id="itinerary-container" class="space-y-4 mb-6"></div>
         </div>
         <div id="content-inclusions" class="tab-content hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -237,8 +259,27 @@
         <div id="content-media" class="tab-content hidden">
             <div class="mb-8 p-6 border border-gray-100 rounded-2xl bg-gray-50">
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Main Featured Image</h3>
-                <input type="file" name="featured_image" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
-                <p class="text-xs text-gray-500 mt-2 italic">Recommended size: 1920x1080px for best quality. This image appears at the top of the tour page.</p>
+
+                <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl p-8 bg-white" id="featured-image-container">
+                    <img id="featured-preview" src="" class="hidden w-full max-w-md h-64 object-cover rounded-xl mb-4 shadow-md">
+                    <div id="featured-placeholder" class="text-center py-10">
+                        <div class="text-4xl mb-2">📸</div>
+                        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">No Image Selected</p>
+                    </div>
+
+                    <input type="hidden" name="featured_image" id="featured_image_path">
+
+                    <div class="flex gap-3">
+                        <button type="button"
+                                onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'featured_image_path', previewId: 'featured-preview'}}))"
+                                class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            Choose from Library
+                        </button>
+                        <p class="text-[10px] text-gray-400 self-center">OR</p>
+                        <input type="file" name="featured_image_upload" class="text-xs file:bg-gray-100 file:border-none file:px-4 file:py-2 file:rounded-lg file:font-black file:uppercase">
+                    </div>
+                </div>
+                <p class="text-[10px] text-gray-400 mt-4 italic">Tip: Use the Library to pick images that are already optimized for WebP and SEO.</p>
             </div>
 
             <div class="mb-8 p-6 border border-gray-100 rounded-2xl bg-gray-50">
@@ -429,9 +470,16 @@ const slugInput = document.getElementById('tour-slug');
 
 if (titleInput && slugInput) {
     titleInput.addEventListener('input', function() {
-        const currentSlug = slugInput.value;
-        if (!currentSlug || currentSlug === slugify(titleInput.defaultValue || '')) {
+        if (slugInput.dataset.manual !== 'true') {
             slugInput.value = slugify(this.value);
+        }
+    });
+
+    slugInput.addEventListener('input', function() {
+        slugInput.dataset.manual = 'true';
+        if (this.value === '') {
+            slugInput.dataset.manual = 'false';
+            slugInput.value = slugify(titleInput.value);
         }
     });
 }
@@ -471,6 +519,22 @@ document.getElementById('add-itinerary-day').addEventListener('click', function(
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Meals</label>
                     <input type="text" name="itinerary[${dayCount}][meals]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Distance (e.g. 12 km)</label>
+                    <input type="text" name="itinerary[${dayCount}][distance]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hiking Time (e.g. 5-6 hours)</label>
+                    <input type="text" name="itinerary[${dayCount}][hiking_time]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Habitat (e.g. Rainforest)</label>
+                    <input type="text" name="itinerary[${dayCount}][habitat]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Elevation (e.g. 1800m to 3100m)</label>
+                    <input type="text" name="itinerary[${dayCount}][elevation]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Activities</label>

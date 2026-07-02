@@ -14,7 +14,8 @@ class BlogController extends Controller
     public function index()
     {
         $posts = BlogPost::with('category')->latest()->get();
-        return view('admin.blog.index', compact('posts'));
+        $categories = BlogCategory::withCount('posts')->orderBy('name')->get();
+        return view('admin.blog.index', compact('posts', 'categories'));
     }
 
     public function create()

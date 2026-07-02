@@ -35,7 +35,7 @@
 
                             <div class="relative z-10">
                                 <span class="text-gold-400 text-xs font-bold uppercase tracking-[0.2em] mb-2 block">Reservation Details</span>
-                                <h2 class="text-2xl font-display font-bold mb-6">{{ $booking->tour->title }}</h2>
+                                <h2 class="text-2xl font-display font-bold mb-6">{{ $booking->bookable_item->title }}</h2>
 
                                 <div class="grid grid-cols-2 gap-8">
                                     <div>

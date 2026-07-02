@@ -81,6 +81,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'destroy' => 'admin.sliders.destroy',
     ]);
 
+    // Media Manager
+    Route::get('/media', [App\Http\Controllers\Admin\MediaController::class, 'index'])->name('admin.media.index');
+    Route::post('/media/upload', [App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('admin.media.upload');
+    Route::delete('/media/{media}', [App\Http\Controllers\Admin\MediaController::class, 'destroy'])->name('admin.media.destroy');
+    Route::post('/media/bulk-delete', [App\Http\Controllers\Admin\MediaController::class, 'bulkDelete'])->name('admin.media.bulk-delete');
+    Route::patch('/media/{media}', [App\Http\Controllers\Admin\MediaController::class, 'update'])->name('admin.media.update');
+
     Route::resource('/tours', App\Http\Controllers\Admin\TourController::class)->names([
         'index' => 'admin.tours.index',
         'create' => 'admin.tours.create',
@@ -171,6 +178,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::patch('/trip-plans/{tripPlan}/update-status', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'updateStatus'])->name('admin.trip-plans.update-status');
 
+    Route::match(['get', 'patch'], '/reviews/{review}/approve', [App\Http\Controllers\Admin\ReviewAdminController::class, 'approve'])->name('admin.reviews.approve');
     Route::resource('/reviews', App\Http\Controllers\Admin\ReviewAdminController::class)->names([
         'index' => 'admin.reviews.index',
         'create' => 'admin.reviews.create',
@@ -258,4 +266,28 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // AI Chat Assistant
     Route::get('/ai-assistant', [App\Http\Controllers\Admin\AiChatController::class, 'index'])->name('admin.ai-assistant.index');
     Route::post('/ai-assistant/send', [App\Http\Controllers\Admin\AiChatController::class, 'sendMessage'])->name('admin.ai-assistant.send');
+
+    // AI Knowledge Base (Nondo)
+    Route::resource('/ai-knowledge', App\Http\Controllers\Admin\AiKnowledgeController::class)->names([
+        'index' => 'admin.ai-knowledge.index',
+        'create' => 'admin.ai-knowledge.create',
+        'store' => 'admin.ai-knowledge.store',
+        'show' => 'admin.ai-knowledge.show',
+        'edit' => 'admin.ai-knowledge.edit',
+        'update' => 'admin.ai-knowledge.update',
+        'destroy' => 'admin.ai-knowledge.destroy',
+    ]);
+
+    // Advertisement Campaigns
+    Route::get('/campaigns/tour-data/{tour}', [App\Http\Controllers\Admin\CampaignController::class, 'getTourData'])->name('admin.campaigns.tour-data');
+    Route::get('/campaigns/{campaign}/analytics', [App\Http\Controllers\Admin\CampaignController::class, 'analytics'])->name('admin.campaigns.analytics');
+    Route::resource('/campaigns', App\Http\Controllers\Admin\CampaignController::class)->names([
+        'index' => 'admin.campaigns.index',
+        'create' => 'admin.campaigns.create',
+        'store' => 'admin.campaigns.store',
+        'show' => 'admin.campaigns.show',
+        'edit' => 'admin.campaigns.edit',
+        'update' => 'admin.campaigns.update',
+        'destroy' => 'admin.campaigns.destroy',
+    ]);
 });

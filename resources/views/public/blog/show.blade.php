@@ -16,8 +16,6 @@
                         {{ $post->category->name ?? 'Safari Journal' }}
                     </a>
                     <span class="text-white/30">•</span>
-                    <span class="text-white/80">{{ $post->published_at->format('M d, Y') }}</span>
-                    <span class="text-white/30">•</span>
                     <span class="text-white/80">{{ $post->reading_time }}</span>
                 </div>
                 <h1 class="font-display text-4xl md:text-6xl text-white font-bold leading-tight drop-shadow-lg">{{ $post->title }}</h1>
@@ -88,7 +86,6 @@
                             </div>
                             <div>
                                 <h4 class="font-bold text-gray-900 text-sm leading-snug group-hover:text-gold-600 transition-colors line-clamp-2">{{ $rel->title }}</h4>
-                                <p class="text-gray-400 text-[10px] uppercase font-bold mt-2 tracking-wider">{{ $rel->published_at->format('M d, Y') }}</p>
                             </div>
                         </a>
                         @endforeach

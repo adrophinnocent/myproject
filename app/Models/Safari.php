@@ -25,7 +25,7 @@ class Safari extends Model
         'video_url', 'meta_keywords', 'is_published', 'is_featured', 'is_bestseller', 'is_new',
         'availability_notes', 'min_age', 'max_age', 'languages_offered', 'safari_type',
         'seasonal_pricing', 'availability_dates', 'booking_deadline_days', 'sort_order', 'views_count',
-        'location_name', 'latitude', 'longitude'
+        'location_name', 'latitude', 'longitude', 'pickup_locations', 'meeting_point'
     ];
 
     protected $casts = [
@@ -42,6 +42,7 @@ class Safari extends Model
         'is_featured' => 'boolean',
         'is_bestseller' => 'boolean',
         'is_new' => 'boolean',
+        'pickup_locations' => 'array',
     ];
 
     public function category(): BelongsTo
@@ -61,12 +62,13 @@ class Safari extends Model
 
     public function getAverageRatingAttribute(): float
     {
-        return round($this->reviews()->avg('rating') ?? 5.0, 1);
+        $avg = $this->attributes['reviews_avg_rating'] ?? $this->reviews()->avg('rating');
+        return round($avg ?? 5.0, 1);
     }
 
     public function getReviewCountAttribute(): int
     {
-        return $this->reviews()->count();
+        return (int) ($this->attributes['reviews_count'] ?? $this->reviews()->count());
     }
 
     public function getFeaturedImageUrlAttribute(): string
@@ -113,5 +115,23 @@ class Safari extends Model
     public function getTranslation(string $field): mixed
     {
         return $this->{$field};
+    }
+
+    public function getYouTubeEmbedUrlAttribute(): ?string
+    {
+        if (empty($this->video_url)) {
+            return null;
+        }
+
+        $url = $this->video_url;
+
+        // More robust YouTube ID extraction (handles watch, embed, shorts, youtu.be, etc.)
+        $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i';
+
+        if (preg_match($pattern, $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1] . '?rel=0&showinfo=0&modestbranding=1';
+        }
+
+        return null;
     }
 }

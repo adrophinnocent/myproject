@@ -31,7 +31,7 @@
 
 @section('content')
 <div class="relative h-[70vh] min-h-[500px]">
-    <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover">
+    <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->getTranslation('title') }} Adventure in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover">
     <div class="hero-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
     <div class="absolute inset-0 flex items-end">
         <div class="max-w-7xl mx-auto px-4 pb-16 w-full">
@@ -42,6 +42,10 @@
                 @if($tour->destination)
                 <span class="px-4 py-1.5 bg-white/20 text-white text-xs font-bold rounded-full backdrop-blur-md border border-white/30">{{ $tour->destination->name }}</span>
                 @endif
+                <div class="px-4 py-1.5 bg-gold-500/10 text-gold-400 text-[10px] font-mono rounded-full backdrop-blur-md border border-gold-500/20 uppercase tracking-widest flex items-center gap-2">
+                    <span class="opacity-50">Package:</span>
+                    <span class="font-bold">{{ $tour->slug }}</span>
+                </div>
             </div>
             <h1 class="font-display text-5xl md:text-7xl text-white font-bold max-w-4xl leading-tight drop-shadow-2xl">{{ $tour->getTranslation('title') }}</h1>
             <div class="flex items-center gap-6 mt-6 text-white/90">
@@ -90,8 +94,8 @@
                     <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 text-2xl mb-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
-                    <div class="font-bold text-gray-900 text-base">{{ $tour->departure_location ?: 'Moshi' }}</div>
-                    <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Departure</div>
+                    <div class="font-bold text-gray-900 text-base">{{ $tour->meeting_point ?: ($tour->departure_location ?: 'JRO Airport') }}</div>
+                    <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Arrival Point</div>
                 </div>
             </div>
 
@@ -129,28 +133,51 @@
             </div>
             @endif
 
-            @if($tour->youtube_embed_url)
+            @if($tour->video_url)
             <div class="mb-10">
                 <h2 class="font-display text-2xl font-semibold text-gray-900 mb-4">Tour Video</h2>
-                <div class="aspect-video bg-gray-100 rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+                <div class="aspect-video bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 shadow-xl relative group">
                     <iframe
+                        id="tour-video-iframe"
                         width="100%"
                         height="100%"
                         src="{{ $tour->youtube_embed_url }}"
-                        title="{{ $tour->title }} - Tour Video"
+                        title="Tour Video"
                         frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen
-                        loading="lazy">
+                        allowfullscreen>
                     </iframe>
+
+                    {{-- Backup Button if YouTube blocks local playback --}}
+                    <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a href="{{ $tour->video_url }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow-lg">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l6.393 4-6.393 4z"/></svg>
+                            Open on YouTube
+                        </a>
+                    </div>
                 </div>
             </div>
             @endif
 
             @if(!empty($tour->itinerary) && is_array($tour->itinerary) && count($tour->itinerary) > 0)
+            {{-- Route Summary (Image Style) --}}
+            <div class="mb-12 bg-gray-200/50 rounded-3xl p-8 md:p-12 border border-gray-200">
+                <h2 class="font-display text-3xl font-black text-[#e64a19] mb-8 uppercase tracking-tight">Route summary</h2>
+                <div class="space-y-4">
+                    @foreach($tour->itinerary as $index => $day)
+                    <div class="flex items-start gap-4">
+                        <span class="text-[#e64a19] font-black text-xl leading-none">→</span>
+                        <p class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
+                            <span class="text-gray-900">Day {{ is_numeric($index) ? $index : $loop->iteration }}:</span>
+                            {{ $day['title'] ?? '' }}
+                        </p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
             <div class="mb-10">
-                <h2 class="font-display text-2xl font-semibold text-gray-900 mb-6">Day-by-Day Itinerary</h2>
+                <h2 class="font-display text-2xl font-semibold text-gray-900 mb-6">Detailed Daily Itinerary</h2>
                 <div class="space-y-4">
                     @foreach($tour->itinerary as $index => $day)
                     <div class="relative pl-8">
@@ -163,23 +190,47 @@
                             @if(!empty($day['description']))
                             <p class="text-gray-500 text-sm leading-relaxed mb-3">{{ $day['description'] ?? '' }}</p>
                             @endif
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                            <div class="flex flex-wrap items-center gap-x-8 gap-y-3 mt-4">
                                 @if(!empty($day['accommodation']))
-                                <div class="flex items-center gap-2 text-gray-600">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                    <span class="font-medium">Accommodation:</span> {{ $day['accommodation'] }}
+                                <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
+                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Stay:</span> {{ $day['accommodation'] }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['meals']))
-                                <div class="flex items-center gap-2 text-gray-600">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                    <span class="font-medium">Meals:</span> {{ $day['meals'] }}
+                                <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
+                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Meals:</span> {{ $day['meals'] }}</span>
+                                </div>
+                                @endif
+                                @if(!empty($day['distance']))
+                                <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
+                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Distance:</span> {{ $day['distance'] }}</span>
+                                </div>
+                                @endif
+                                @if(!empty($day['hiking_time']))
+                                <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
+                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Time:</span> {{ $day['hiking_time'] }}</span>
+                                </div>
+                                @endif
+                                @if(!empty($day['habitat']))
+                                <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
+                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"/></svg>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Habitat:</span> {{ $day['habitat'] }}</span>
+                                </div>
+                                @endif
+                                @if(!empty($day['elevation']))
+                                <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
+                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Elevation:</span> {{ $day['elevation'] }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['activities']))
-                                <div class="flex items-center gap-2 text-gray-600">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                                    <span class="font-medium">Activities:</span> {{ $day['activities'] }}
+                                <div class="flex items-start gap-2 text-gray-600 w-full mt-1">
+                                    <svg class="w-4 h-4 text-gold-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Activities:</span> {{ is_array($day['activities']) ? implode(', ', $day['activities']) : $day['activities'] }}</span>
                                 </div>
                                 @endif
                             </div>
@@ -269,19 +320,40 @@
             </div>
             @endif
 
-            <!-- Location Map -->
-            <div class="mb-10">
-                <h2 class="font-display text-2xl font-semibold text-gray-900 mb-6">Location</h2>
-                <div class="bg-gray-100 rounded-2xl overflow-hidden h-80 border border-gray-200">
-                    <iframe
-                        width="100%"
-                        height="100%"
-                        frameborder="0" style="border:0"
-                        src="https://maps.google.com/maps?q={{ urlencode($tour->destination->name ?? $tour->title) }}+Tanzania&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                        allowfullscreen loading="lazy">
-                    </iframe>
+            {{-- Multi-Location Pickup Map Section --}}
+            <div class="mb-16 bg-gray-50 rounded-[2.5rem] p-8 md:p-12 border border-gray-100 shadow-sm" x-data="{
+                activePoint: 0,
+                points: {{ json_encode($tour->pickup_locations ?? [['name' => $tour->meeting_point ?? 'Arrival Point', 'lat' => $tour->latitude ?? '-3.4294', 'lng' => $tour->longitude ?? '37.0745']]) }},
+                get currentMapUrl() {
+                    let p = this.points[this.activePoint];
+                    return `https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(p.lng)-0.005}%2C${parseFloat(p.lat)-0.005}%2C${parseFloat(p.lng)+0.005}%2C${parseFloat(p.lat)+0.005}&layer=mapnik&marker=${p.lat}%2C${p.lng}`;
+                }
+            }">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                    <div>
+                        <h2 class="font-display text-3xl font-black text-safari-dark uppercase tracking-tight">Meeting Points</h2>
+                        <p class="text-gray-500 text-sm mt-2 font-medium">We offer flexible arrival options. Explore our meeting points below; you can confirm your choice during booking.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="(p, index) in points" :key="index">
+                            <button @click="activePoint = index"
+                                    :class="activePoint === index ? 'bg-safari-dark text-white shadow-lg scale-105' : 'bg-white text-gray-400 border-gray-200 hover:text-gold-600'"
+                                    class="px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border outline-none flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full" :class="activePoint === index ? 'bg-gold-500' : 'bg-gray-200'"></span>
+                                <span x-text="p.name"></span>
+                            </button>
+                        </template>
+                    </div>
                 </div>
-                <p class="mt-3 text-xs text-gray-400">Note: Map shows the general area of the tour destination.</p>
+
+                <div class="bg-white p-2 rounded-[2rem] border border-gray-200 shadow-inner overflow-hidden h-[400px] relative">
+                    <iframe :src="currentMapUrl" class="w-full h-full rounded-[1.8rem]" frameborder="0"></iframe>
+                    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-safari-dark/90 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-2xl">
+                        <p class="text-[10px] font-black text-white uppercase tracking-[0.2em] whitespace-nowrap">
+                            Viewing Location: <span class="text-gold-400" x-text="points[activePoint].name"></span>
+                        </p>
+                    </div>
+                </div>
             </div>
 
             {{-- Reviews Section --}}

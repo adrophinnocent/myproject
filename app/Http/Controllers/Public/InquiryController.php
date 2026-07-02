@@ -35,7 +35,7 @@ class InquiryController extends Controller
             'type' => 'inquiry',
             'title' => 'Tour Inquiry: ' . $tour->title,
             'message' => 'New inquiry from ' . $validated['name'],
-            'link' => null, // Assuming no admin inquiry view yet
+            'link' => route('admin.inquiries.show', $inquiry),
             'is_read' => false
         ]);
 

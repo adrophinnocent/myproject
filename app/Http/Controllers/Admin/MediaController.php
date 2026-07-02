@@ -7,6 +7,7 @@ use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
 
 class MediaController extends Controller
 {
@@ -18,83 +19,94 @@ class MediaController extends Controller
             $query->where('type', $request->type);
         }
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->search.'%')
+                  ->orWhere('alt', 'like', '%'.$request->search.'%');
+            });
         }
 
         $media = $query->paginate(24);
+
+        if ($request->wantsJson()) {
+            return response()->json($media);
+        }
+
+        if ($request->ajax()) {
+            return view('admin.media.partials.list', compact('media'));
+        }
 
         return view('admin.media.index', compact('media'));
     }
 
     public function upload(Request $request)
     {
-        $request->validate([
-            'files' => 'required|array',
-            'files.*' => 'file|mimes:jpg,jpeg,png,gif,webp,svg,mp4,pdf|max:20480',
-        ]);
+        try {
+            if (!$request->hasFile('file')) {
+                return response()->json(['success' => false, 'message' => 'No file provided.'], 422);
+            }
 
-        $uploaded = [];
+            $request->validate([
+                'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,svg,mp4,pdf|max:20480',
+                'alt' => 'nullable|string|max:255',
+            ]);
 
-        foreach ($request->file('files') as $file) {
+            $file = $request->file('file');
             $mime = $file->getMimeType();
             $type = Str::startsWith($mime, 'image/') ? 'image'
-                       : (Str::startsWith($mime, 'video/') ? 'video' : 'document');
+                   : (Str::startsWith($mime, 'video/') ? 'video' : 'document');
+
             $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $ext = $file->getClientOriginalExtension();
+            $extension = $file->getClientOriginalExtension();
             $folder = 'media/'.date('Y/m');
 
-            if ($type === 'image' && !in_array($ext, ['webp', 'svg', 'gif'])) {
-                // Convert to WebP
+            if ($type === 'image' && $extension !== 'svg') {
                 $filename = Str::slug($name).'-'.uniqid().'.webp';
-                $path = $folder . '/' . $filename;
+                $path = $folder.'/'.$filename;
 
-                $image = match($ext) {
-                    'jpg', 'jpeg' => imagecreatefromjpeg($file->getRealPath()),
-                    'png' => imagecreatefrompng($file->getRealPath()),
-                    default => null,
-                };
+                // Optimization using Intervention Image v3
+                $image = Image::read($file);
 
-                if ($image) {
-                    if (!Storage::disk('public')->exists($folder)) {
-                        Storage::disk('public')->makeDirectory($folder);
-                    }
-
-                    $fullPath = Storage::disk('public')->path($path);
-                    imagewebp($image, $fullPath, 80);
-                    imagedestroy($image);
-
-                    $mime = 'image/webp';
-                    $size = filesize($fullPath);
-                } else {
-                    $filename = Str::slug($name).'-'.uniqid().'.'.$ext;
-                    $path = $file->storeAs($folder, $filename, 'public');
-                    $size = $file->getSize();
+                // Resize if too large
+                if ($image->width() > 2000) {
+                    $image->scale(width: 2000);
                 }
+
+                $encoded = $image->toWebp(80);
+                Storage::disk('public')->put($path, (string) $encoded);
+
+                $mime = 'image/webp';
             } else {
-                $filename = Str::slug($name).'-'.uniqid().'.'.$ext;
+                $filename = Str::slug($name).'-'.uniqid().'.'.$extension;
                 $path = $file->storeAs($folder, $filename, 'public');
-                $size = $file->getSize();
+            }
+
+            if (!$path) {
+                throw new \Exception("Failed to store file on disk.");
             }
 
             $media = Media::create([
                 'name' => $name,
                 'filename' => $filename,
                 'path' => $path,
-                'thumb' => null,
                 'type' => $type,
                 'mime_type' => $mime,
-                'size' => $size,
+                'size' => Storage::disk('public')->size($path),
                 'url' => Storage::disk('public')->url($path),
+                'alt' => $request->alt ?? $name,
             ]);
 
-            $uploaded[] = $media;
+            return response()->json([
+                'success' => true,
+                'media' => $media,
+                'message' => 'File uploaded and optimized successfully.',
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Media Upload Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'files' => $uploaded,
-            'message' => count($uploaded).' file(s) uploaded successfully.',
-        ]);
     }
 
     public function destroy(Media $media)
@@ -111,22 +123,25 @@ class MediaController extends Controller
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids', []);
-
         Media::whereIn('id', $ids)->get()->each(function ($m) {
             Storage::disk('public')->delete($m->path);
-            if ($m->thumb) {
-                Storage::disk('public')->delete($m->thumb);
-            }
             $m->delete();
         });
 
-        return response()->json(['success' => true, 'message' => count($ids).' file(s) deleted.']);
+        return response()->json(['success' => true, 'message' => 'Files deleted.']);
     }
 
     public function update(Request $request, Media $media)
     {
-        $request->validate(['name' => 'required|string|max:255']);
-        $media->update(['name' => $request->name, 'alt' => $request->alt]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'alt' => 'required|string|max:255'
+        ]);
+
+        $media->update([
+            'name' => $request->name,
+            'alt' => $request->alt
+        ]);
 
         return response()->json(['success' => true, 'media' => $media]);
     }

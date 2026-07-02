@@ -25,7 +25,8 @@ class SliderController extends Controller
         $request->validate([
             'title' => 'nullable|string|max:255',
             'subtitle' => 'nullable|string|max:255',
-            'image' => 'required|image|max:10240',
+            'image' => 'nullable|string', // library path
+            'image_upload' => 'nullable|image|max:10240', // direct file
             'page' => 'required|string|in:home,contact',
             'cta_text' => 'nullable|string|max:255',
             'cta_url' => 'nullable|string|max:255',
@@ -42,8 +43,14 @@ class SliderController extends Controller
         $slider->order = $request->order ?? 0;
         $slider->active = $request->has('active');
 
-        if ($request->hasFile('image')) {
-            $slider->image = $request->file('image')->store('sliders', 'public');
+        if ($request->hasFile('image_upload')) {
+            $slider->image = $request->file('image_upload')->store('sliders', 'public');
+        } elseif ($request->filled('image')) {
+            $slider->image = $request->image;
+        }
+
+        if (empty($slider->image)) {
+            return back()->withErrors(['image' => 'An image is required. Pick from library or upload.']);
         }
 
         $slider->save();
@@ -61,7 +68,8 @@ class SliderController extends Controller
         $request->validate([
             'title' => 'nullable|string|max:255',
             'subtitle' => 'nullable|string|max:255',
-            'image' => 'nullable|image|max:10240',
+            'image' => 'nullable|string',
+            'image_upload' => 'nullable|image|max:10240',
             'page' => 'required|string|in:home,contact',
             'cta_text' => 'nullable|string|max:255',
             'cta_url' => 'nullable|string|max:255',
@@ -77,11 +85,13 @@ class SliderController extends Controller
         $slider->order = $request->order ?? 0;
         $slider->active = $request->has('active');
 
-        if ($request->hasFile('image')) {
-            if ($slider->image) {
-                Storage::disk('public')->delete($slider->image);
+        if ($request->hasFile('image_upload')) {
+            if ($slider->image && !str_contains($slider->image, 'media/')) {
+                 Storage::disk('public')->delete($slider->image);
             }
-            $slider->image = $request->file('image')->store('sliders', 'public');
+            $slider->image = $request->file('image_upload')->store('sliders', 'public');
+        } elseif ($request->filled('image')) {
+            $slider->image = $request->image;
         }
 
         $slider->save();

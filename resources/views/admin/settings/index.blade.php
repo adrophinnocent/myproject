@@ -49,9 +49,12 @@
         </div>
 
         <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Featured Video URL (YouTube/Vimeo)</label>
-            <input type="url" name="featured_video_url" value="{{ \App\Models\Setting::get('featured_video_url') }}" placeholder="https://www.youtube.com/watch?v=..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-            <p class="text-xs text-gray-500 mt-1">This video will be embedded on the Home and About pages.</p>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Featured Image (About Us Section)</label>
+            @if(\App\Models\Setting::get('featured_image'))
+                <img src="{{ asset('storage/' . \App\Models\Setting::get('featured_image')) }}" alt="Featured Image" class="h-32 mb-4 rounded-xl shadow-md">
+            @endif
+            <input type="file" name="featured_image" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+            <p class="text-xs text-gray-500 mt-1">This image will replace the video embed in the "Our Story" section on the Home and About pages.</p>
         </div>
 
         <div class="mb-6">
@@ -162,6 +165,24 @@
             @endif
             <input type="file" name="map_background" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
             <p class="text-xs text-gray-500 mt-1">High-resolution landscape image of Africa with wildlife (Big 5). Recommended size: 1920x1080 pixels.</p>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Mount Kilimanjaro Section Background</label>
+            @if(\App\Models\Setting::get('kilimanjaro_home_bg'))
+                <img src="{{ asset('storage/' . \App\Models\Setting::get('kilimanjaro_home_bg')) }}" class="h-20 mb-4 rounded shadow-sm">
+            @endif
+            <input type="file" name="kilimanjaro_home_bg" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
+            <p class="text-xs text-gray-500 mt-1">Landscape photo of Kilimanjaro. This will appear as a darkened background behind the "Conquer Mt. Kilimanjaro" text.</p>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Safari Highlights Section Image</label>
+            @if(\App\Models\Setting::get('safari_highlights_img'))
+                <img src="{{ asset('storage/' . \App\Models\Setting::get('safari_highlights_img')) }}" class="h-32 mb-4 rounded shadow-sm">
+            @endif
+            <input type="file" name="safari_highlights_img" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
+            <p class="text-xs text-gray-500 mt-1">Image for the "Unrivaled Adventures / Iconic Safari Journeys" section.</p>
         </div>
 
         <h3 class="text-lg font-semibold text-gray-900 mb-6 mt-8">Social Media</h3>

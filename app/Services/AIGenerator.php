@@ -20,16 +20,77 @@ class AIGenerator
         // ... (existing code)
     }
 
-    public function generateChatResponse(string $message, array $history = []): string
+    public function generateSeoMetadata(string $title, string $description): array
+    {
+        try {
+            $prompt = "You are a luxury travel SEO expert. Generate SEO metadata for a safari tour in Tanzania.\n\n" .
+                "Tour Title: {$title}\n" .
+                "Tour Description: {$description}\n\n" .
+                "Generate:\n" .
+                "1. Meta Title (max 60 chars, compelling, includes keywords)\n" .
+                "2. Meta Description (max 160 chars, inviting, summary of experience)\n" .
+                "3. Meta Keywords (5-8 comma-separated terms)\n\n" .
+                "Format your response EXACTLY as follows:\n" .
+                "TITLE: [your title]\n" .
+                "DESCRIPTION: [your description]\n" .
+                "KEYWORDS: [comma separated keywords]";
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->post($this->baseUrl . '/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are a professional SEO expert for luxury tourism.'],
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+                'max_tokens' => 300,
+            ]);
+
+            if ($response->successful()) {
+                $content = $response->json()['choices'][0]['message']['content'];
+                return $this->parseSeoContent($content);
+            }
+
+            return [];
+        } catch (\Exception $e) {
+            Log::error('AI SEO generation failed: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    protected function parseSeoContent(string $content): array
+    {
+        $lines = explode("\n", trim($content));
+        $data = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (str_starts_with($line, 'TITLE:')) {
+                $data['meta_title'] = trim(str_replace('TITLE:', '', $line));
+            } elseif (str_starts_with($line, 'DESCRIPTION:')) {
+                $data['meta_description'] = trim(str_replace('DESCRIPTION:', '', $line));
+            } elseif (str_starts_with($line, 'KEYWORDS:')) {
+                $data['meta_keywords'] = trim(str_replace('KEYWORDS:', '', $line));
+            }
+        }
+
+        return $data;
+    }
+
+    public function generateChatResponse(string $message, array $history = [], string $systemPrompt = null): string
     {
         try {
             $messages = [
-                ['role' => 'system', 'content' => 'You are the Twina Safaris AI Assistant. You help the admin manage a luxury Tanzanian tour company. You can write blogs, suggest email replies, and explain safari logistics. Keep responses professional, helpful, and luxury-focused.'],
+                ['role' => 'system', 'content' => $systemPrompt ?? 'You are the Twina Safaris AI Assistant. You help international travelers plan their dream safari in Tanzania. You are expert in Serengeti, Kilimanjaro, Zanzibar, and Ngorongoro. Keep responses professional, luxury-focused, and inviting.'],
             ];
 
             foreach ($history as $chat) {
-                $messages[] = ['role' => 'user', 'content' => $chat['user']];
-                $messages[] = ['role' => 'assistant', 'content' => $chat['ai']];
+                if (isset($chat['role']) && isset($chat['content'])) {
+                    $messages[] = ['role' => $chat['role'], 'content' => $chat['content']];
+                } elseif (isset($chat['from']) && isset($chat['text'])) {
+                    $messages[] = ['role' => ($chat['from'] === 'user' ? 'user' : 'assistant'), 'content' => $chat['text']];
+                }
             }
 
             $messages[] = ['role' => 'user', 'content' => $message];
@@ -38,7 +99,7 @@ class AIGenerator
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json',
             ])->post($this->baseUrl . '/chat/completions', [
-                'model' => 'gpt-4o',
+                'model' => 'gpt-4o-mini', // Using mini for faster/cheaper responses
                 'messages' => $messages,
                 'max_tokens' => 1000,
             ]);
@@ -47,10 +108,11 @@ class AIGenerator
                 return $response->json()['choices'][0]['message']['content'];
             }
 
-            return "I'm sorry, I'm having trouble connecting to my brain right now. Please check your OpenAI API key.";
+            Log::error('AI Chat API Error: ' . $response->body());
+            return "Jambo! Karibu Twina Safaris. For the fastest response regarding our tours, prices, and bookings, please chat with our expert guides directly on WhatsApp!";
         } catch (\Exception $e) {
             Log::error('AI Chat failed: ' . $e->getMessage());
-            return "An error occurred while generating a response.";
+            return "Jambo! Karibu Twina Safaris. Our AI guide is resting, but our expert team is ready to help you on WhatsApp right now!";
         }
     }
 

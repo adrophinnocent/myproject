@@ -21,13 +21,27 @@ class BookingController extends Controller
         $this->pdfService = $pdfService;
     }
 
-    public function create(Tour $tour)
+    public function create($slug)
     {
+        $tour = Tour::withTrashed()->where('slug', $slug)->first()
+                ?? \App\Models\Safari::withTrashed()->where('slug', $slug)->firstOrFail();
+
+        if ($tour->trashed()) {
+            return redirect()->route('tours.index')->with('error', 'This tour package is no longer available.');
+        }
+
         return view('public.booking.create', compact('tour'));
     }
 
-    public function store(Request $request, Tour $tour)
+    public function store(Request $request, $slug)
     {
+        $tour = Tour::withTrashed()->where('slug', $slug)->first()
+                ?? \App\Models\Safari::withTrashed()->where('slug', $slug)->firstOrFail();
+
+        if ($tour->trashed()) {
+            return redirect()->route('tours.index')->with('error', 'This tour package is no longer available.');
+        }
+
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -43,7 +57,13 @@ class BookingController extends Controller
         ]);
 
         $booking = new Booking($validated);
-        $booking->tour_id = $tour->id;
+
+        if ($tour instanceof Tour) {
+            $booking->tour_id = $tour->id;
+        } else {
+            $booking->safari_id = $tour->id;
+        }
+
         $booking->status = 'pending';
         $booking->payment_status = 'unpaid';
 
@@ -77,7 +97,7 @@ class BookingController extends Controller
 
     public function success($reference)
     {
-        $booking = Booking::where('booking_reference', $reference)->with('tour')->firstOrFail();
+        $booking = Booking::where('booking_reference', $reference)->with(['tour', 'safari'])->firstOrFail();
         return view('public.booking.success', compact('booking'));
     }
 }

@@ -3,7 +3,7 @@
 @section('title', 'Plan My Trip - ' . config('app.name'))
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-12">
+<div class="max-w-4xl mx-auto px-4 pt-32 pb-12">
     <div class="text-center mb-12">
         <h1 class="font-display text-4xl md:text-5xl font-bold text-gray-900 mb-4">Plan Your Dream Safari</h1>
         <p class="text-gray-600 text-lg max-w-2xl mx-auto">Let us create a personalized itinerary just for you. Fill out the form below and our safari experts will get back to you within 24 hours.</p>
@@ -38,39 +38,33 @@
                 <label class="block text-sm font-semibold text-gray-800 mb-2">Nationality *</label>
                 <select name="nationality" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none appearance-none bg-white">
                     <option value="">Select your country...</option>
-                    <optgroup label="Popular for Tanzania Tourism">
-                        <option value="United States" {{ old('nationality') == 'United States' ? 'selected' : '' }}>🇺🇸 United States</option>
-                        <option value="United Kingdom" {{ old('nationality') == 'United UK' ? 'selected' : '' }}>🇬🇧 United Kingdom</option>
-                        <option value="Germany" {{ old('nationality') == 'Germany' ? 'selected' : '' }}>🇩🇪 Germany</option>
-                        <option value="France" {{ old('nationality') == 'France' ? 'selected' : '' }}>🇫🇷 France</option>
-                        <option value="Italy" {{ old('nationality') == 'Italy' ? 'selected' : '' }}>🇮🇹 Italy</option>
-                        <option value="Netherlands" {{ old('nationality') == 'Netherlands' ? 'selected' : '' }}>🇳🇱 Netherlands</option>
-                        <option value="Canada" {{ old('nationality') == 'Canada' ? 'selected' : '' }}>🇨🇦 Canada</option>
-                        <option value="Australia" {{ old('nationality') == 'Australia' ? 'selected' : '' }}>🇦🇺 Australia</option>
-                        <option value="Spain" {{ old('nationality') == 'Spain' ? 'selected' : '' }}>🇪🇸 Spain</option>
-                        <option value="Switzerland" {{ old('nationality') == 'Switzerland' ? 'selected' : '' }}>🇨🇭 Switzerland</option>
-                        <option value="China" {{ old('nationality') == 'China' ? 'selected' : '' }}>🇨🇳 China</option>
-                        <option value="Israel" {{ old('nationality') == 'Israel' ? 'selected' : '' }}>🇮🇱 Israel</option>
-                    </optgroup>
-                    <optgroup label="East Africa">
-                        <option value="Tanzania" {{ old('nationality') == 'Tanzania' ? 'selected' : '' }}>🇹🇿 Tanzania</option>
-                        <option value="Kenya" {{ old('nationality') == 'Kenya' ? 'selected' : '' }}>🇰🇪 Kenya</option>
-                        <option value="Uganda" {{ old('nationality') == 'Uganda' ? 'selected' : '' }}>🇺🇬 Uganda</option>
-                        <option value="Rwanda" {{ old('nationality') == 'Rwanda' ? 'selected' : '' }}>🇷🇼 Rwanda</option>
-                    </optgroup>
-                    <optgroup label="Other Nations">
-                        <option value="South Africa">🇿🇦 South Africa</option>
-                        <option value="India">🇮🇳 India</option>
-                        <option value="United Arab Emirates">🇦🇪 UAE</option>
-                        <option value="Sweden">🇸🇪 Sweden</option>
-                        <option value="Norway">🇳🇴 Norway</option>
-                        <option value="Denmark">🇩🇰 Denmark</option>
-                        <option value="Belgium">🇧🇪 Belgium</option>
-                        <option value="Poland">🇵🇱 Poland</option>
-                        <option value="Russia">🇷🇺 Russia</option>
-                        <option value="Brazil">🇧🇷 Brazil</option>
-                        <option value="Other">Other...</option>
-                    </optgroup>
+                    <option value="United States" {{ old('nationality') == 'United States' ? 'selected' : '' }}>🇺🇸 United States</option>
+                    <option value="United Kingdom" {{ old('nationality') == 'United UK' ? 'selected' : '' }}>🇬🇧 United Kingdom</option>
+                    <option value="Germany" {{ old('nationality') == 'Germany' ? 'selected' : '' }}>🇩🇪 Germany</option>
+                    <option value="France" {{ old('nationality') == 'France' ? 'selected' : '' }}>🇫🇷 France</option>
+                    <option value="Italy" {{ old('nationality') == 'Italy' ? 'selected' : '' }}>🇮🇹 Italy</option>
+                    <option value="Netherlands" {{ old('nationality') == 'Netherlands' ? 'selected' : '' }}>🇳🇱 Netherlands</option>
+                    <option value="Canada" {{ old('nationality') == 'Canada' ? 'selected' : '' }}>🇨🇦 Canada</option>
+                    <option value="Australia" {{ old('nationality') == 'Australia' ? 'selected' : '' }}>🇦🇺 Australia</option>
+                    <option value="Spain" {{ old('nationality') == 'Spain' ? 'selected' : '' }}>🇪🇸 Spain</option>
+                    <option value="Switzerland" {{ old('nationality') == 'Switzerland' ? 'selected' : '' }}>🇨🇭 Switzerland</option>
+                    <option value="China" {{ old('nationality') == 'China' ? 'selected' : '' }}>🇨🇳 China</option>
+                    <option value="Israel" {{ old('nationality') == 'Israel' ? 'selected' : '' }}>🇮🇱 Israel</option>
+                    <option value="Tanzania" {{ old('nationality') == 'Tanzania' ? 'selected' : '' }}>🇹🇿 Tanzania</option>
+                    <option value="Kenya" {{ old('nationality') == 'Kenya' ? 'selected' : '' }}>🇰🇪 Kenya</option>
+                    <option value="Uganda" {{ old('nationality') == 'Uganda' ? 'selected' : '' }}>🇺🇬 Uganda</option>
+                    <option value="Rwanda" {{ old('nationality') == 'Rwanda' ? 'selected' : '' }}>🇷🇼 Rwanda</option>
+                    <option value="South Africa">🇿🇦 South Africa</option>
+                    <option value="India">🇮🇳 India</option>
+                    <option value="United Arab Emirates">🇦🇪 UAE</option>
+                    <option value="Sweden">🇸🇪 Sweden</option>
+                    <option value="Norway">🇳🇴 Norway</option>
+                    <option value="Denmark">🇩🇰 Denmark</option>
+                    <option value="Belgium">🇧🇪 Belgium</option>
+                    <option value="Poland">🇵🇱 Poland</option>
+                    <option value="Russia">🇷🇺 Russia</option>
+                    <option value="Brazil">🇧🇷 Brazil</option>
+                    <option value="Other">Other...</option>
                 </select>
                 @error('nationality')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
             </div>
@@ -182,46 +176,63 @@
         </button>
     </form>
 
-    {{-- ========== INSPIRING TOURS SECTION ========== --}}
-    @if(isset($inspiringTours) && $inspiringTours->count() > 0)
-        <div class="mt-24">
-            <div class="text-center mb-12">
-                <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Need Inspiration?</span>
-                <h2 class="font-display text-3xl md:text-4xl font-bold text-gray-900 mt-2">Popular Starting Points</h2>
-                <div class="section-divider mx-auto"></div>
-                <p class="text-gray-600 mt-4">These popular itineraries can be fully customized to your preferences.</p>
+    {{-- ========== EXPLORE TANZANIA WONDERS SECTION ========== --}}
+    <div class="mt-32 pt-20 border-t border-gray-100">
+        <div class="bg-safari-dark rounded-[3rem] p-12 md:p-20 relative overflow-hidden text-center shadow-2xl">
+            {{-- Background Elements --}}
+            <div class="absolute inset-0 opacity-10">
+                <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover" alt="Tanzania Background">
             </div>
+            <div class="absolute inset-0 bg-gradient-to-br from-amber-900/40 via-transparent to-slate-900/40"></div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="relative z-10 max-w-3xl mx-auto">
+                <span class="inline-block text-gold-400 text-sm font-black uppercase tracking-[0.3em] mb-6">After having planned your trip</span>
+                <h2 class="font-display text-4xl md:text-6xl text-white font-bold mb-8 leading-tight">
+                    Explore <span class="italic text-gold-500">Tanzania's Wonders</span>
+                </h2>
+                <p class="text-gray-300 text-lg md:text-xl leading-relaxed mb-12 font-light">
+                    From the vast plains of the Serengeti and the iconic Ngorongoro Crater to the majestic peaks of Mount Kilimanjaro and Zanzibar's pristine white-sand beaches. Your adventure of a lifetime is just one click away.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <a href="{{ route('tours.index') }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105 min-w-[220px]">
+                        View Tours
+                    </a>
+                    <a href="{{ route('tours.index') }}" class="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-safari-dark px-12 py-5 rounded-full text-lg font-black transition-all min-w-[220px]">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {{-- Show some featured packages if available --}}
+        @if(isset($inspiringTours) && $inspiringTours->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
                 @foreach($inspiringTours as $tour)
-                    <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all group">
-                        <div class="relative h-48 overflow-hidden">
-                            <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                            <div class="absolute top-3 left-3">
-                                <span class="px-3 py-1 bg-safari-dark/70 backdrop-blur-sm text-white text-[10px] font-bold rounded-full uppercase tracking-tighter">
-                                    {{ $tour->duration_text }}
-                                </span>
-                            </div>
+                    <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         </div>
-                        <div class="p-6">
-                            <h3 class="font-display text-lg font-bold text-gray-900 mb-2 leading-tight">
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}" class="hover:text-gold-600 transition-colors">{{ $tour->title }}</a>
+                        <div class="p-8">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="px-3 py-1 bg-gold-50 text-gold-600 text-[10px] font-black uppercase tracking-widest rounded-full">{{ $tour->duration_text }}</span>
+                                <span class="text-gray-400 text-xs font-bold">{{ $tour->destination->name ?? 'Tanzania' }}</span>
+                            </div>
+                            <h3 class="font-display text-xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
+                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}">{{ $tour->title }}</a>
                             </h3>
-                            <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
-                                <span class="text-gold-600 font-bold">{{ $tour->formatted_price }}</span>
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}" class="text-safari-dark text-xs font-bold uppercase tracking-widest hover:text-gold-600 transition-colors flex items-center gap-1">
-                                    View <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-50">
+                                <div class="text-2xl font-display font-black text-safari-dark">{{ $tour->formatted_price }}</div>
+                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}" class="w-12 h-12 rounded-full bg-safari-dark flex items-center justify-center text-white hover:bg-gold-500 transition-all shadow-lg">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                                 </a>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
-
-            <div class="text-center mt-12">
-                <p class="text-gray-500 text-sm italic">Not finding what you're looking for? That's why we're here to help you customize!</p>
-            </div>
-        </div>
-    @endif
+        @endif
+    </div>
 </div>
 @endsection

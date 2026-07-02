@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Enforce HTTPS in production
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
+        // Prevent N+1 queries during development
+        \Illuminate\Database\Eloquent\Model::preventLazyLoading(! app()->isProduction());
     }
 }

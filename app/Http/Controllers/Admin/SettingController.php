@@ -25,7 +25,7 @@ class SettingController extends Controller
             'hero_title' => 'nullable|string',
             'hero_subtitle' => 'nullable|string',
             'hero_description' => 'nullable|string',
-            'featured_video_url' => 'nullable|url',
+            'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'season_good_text' => 'nullable|string',
             'season_moderate_text' => 'nullable|string',
             'season_low_text' => 'nullable|string',
@@ -45,9 +45,11 @@ class SettingController extends Controller
             'contact_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'home_footer_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'map_background' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
+            'kilimanjaro_home_bg' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'safari_highlights_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $fileKeys = ['logo', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner', 'map_background'];
+        $fileKeys = ['logo', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner', 'map_background', 'featured_image', 'kilimanjaro_home_bg', 'safari_highlights_img'];
 
         foreach ($validated as $key => $value) {
             if (in_array($key, $fileKeys) && $request->hasFile($key)) {

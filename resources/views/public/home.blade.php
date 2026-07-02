@@ -28,8 +28,9 @@
 </style>
 
 {{-- ========== VIDEO HERO SECTION ========== --}}
-<section class="relative h-[100vh] flex items-center justify-center overflow-hidden bg-safari-dark">
-    <div class="absolute inset-0 z-0">
+<section class="relative min-h-screen lg:h-screen flex flex-col overflow-hidden bg-safari-dark">
+    {{-- Background Video/Image --}}
+    <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-black/40 z-10"></div>
         @if(\App\Models\Setting::get('hero_video'))
             <video autoplay muted loop playsinline class="w-full h-full object-cover">
@@ -91,84 +92,87 @@
         </div>
     </div>
 
-    <div class="relative z-20 text-center px-4 max-w-6xl mx-auto">
-        <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
-            {{ \App\Models\Setting::get('hero_eyebrow', 'Tanzania\'s #1 Boutique Safari Operator') }}
-        </span>
-        <h1 class="font-display text-5xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
-            {{ \App\Models\Setting::get('hero_title', 'Explore Tanzania') }} <br>
-            <span class="italic text-gold-500">{{ \App\Models\Setting::get('hero_subtitle', 'Beyond Expectations') }}</span>
-        </h1>
-        <p class="text-gray-100 text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
-            {{ \App\Models\Setting::get('hero_description', 'Unforgettable luxury safaris designed specifically for you.') }}
-        </p>
+    <!-- Main Content Container -->
+    <div class="relative z-20 flex-grow flex items-center justify-center py-24 lg:py-0">
+        <div class="w-full max-w-6xl mx-auto px-4 text-center">
+            <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
+                {{ \App\Models\Setting::get('hero_eyebrow', 'Tanzania\'s #1 Boutique Safari Operator') }}
+            </span>
+            <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
+                {{ \App\Models\Setting::get('hero_title', 'Explore Tanzania') }} <br>
+                <span class="italic text-gold-500">{{ \App\Models\Setting::get('hero_subtitle', 'Beyond Expectations') }}</span>
+            </h1>
+            <p class="text-gray-100 text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
+                {{ \App\Models\Setting::get('hero_description', 'Unforgettable luxury safaris designed specifically for you.') }}
+            </p>
 
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
-            <a href="{{ route('tours.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-bold flex items-center gap-3 group min-w-[240px] justify-center shadow-2xl transition-all hover:scale-105">
-                Plan Your Safari
-                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </a>
-            <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro']) }}" class="btn-outline-gold px-12 py-5 rounded-full text-base font-bold border-white text-white hover:bg-white hover:text-safari-dark transition-all min-w-[240px] justify-center backdrop-blur-md hover:scale-105">
-                Climb Kilimanjaro
-            </a>
-        </div>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mb-16">
+                <a href="{{ route('tours.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-bold flex items-center gap-3 group min-w-[240px] justify-center shadow-2xl transition-all hover:scale-105">
+                    Plan Your Safari
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+                <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="btn-outline-gold px-12 py-5 rounded-full text-base font-bold border-white text-white hover:bg-white hover:text-safari-dark transition-all min-w-[240px] justify-center backdrop-blur-md hover:scale-105">
+                    Climb Kilimanjaro
+                </a>
+            </div>
 
-        {{-- SEARCH BAR IN FRAME LINE - ALLOCATED BELOW BUTTONS --}}
-        <div class="max-w-5xl mx-auto">
-            <div class="bg-black/30 backdrop-blur-3xl rounded-2xl md:rounded-full p-1 md:p-1.5 border-2 border-white/20 shadow-[0_0_50px_-12px_rgba(212,175,55,0.3)]">
-                <form action="{{ route('tours.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-1">
-                    <div class="relative">
-                        <select name="destination" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
-                            <option value="" class="text-gray-900">Where to?</option>
-                            @foreach(\App\Models\Destination::where('is_active', true)->get() as $dest)
-                            <option value="{{ $dest->id }}" class="text-gray-900">{{ $dest->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            {{-- SEARCH BAR --}}
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-black/30 backdrop-blur-3xl rounded-3xl md:rounded-full p-2 md:p-1.5 border-2 border-white/20 shadow-[0_0_50px_-12px_rgba(212,175,55,0.3)]">
+                    <form action="{{ route('tours.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-1">
+                        <div class="relative">
+                            <select name="destination" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
+                                <option value="" class="text-gray-900">Where to?</option>
+                                @foreach(\App\Models\Destination::where('is_active', true)->get() as $dest)
+                                <option value="{{ $dest->id }}" class="text-gray-900">{{ $dest->name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
                         </div>
-                    </div>
-                    <div class="relative">
-                        <select name="category" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
-                            <option value="" class="text-gray-900">Adventure Type</option>
-                            @foreach(\App\Models\Category::where('is_active', true)->get() as $cat)
-                            <option value="{{ $cat->id }}" class="text-gray-900">{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <div class="relative">
+                            <select name="category" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
+                                <option value="" class="text-gray-900">Adventure Type</option>
+                                @foreach(\App\Models\Category::where('is_active', true)->get() as $cat)
+                                <option value="{{ $cat->id }}" class="text-gray-900">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
                         </div>
-                    </div>
-                    <div class="relative">
-                        <select name="duration" class="w-full bg-white/10 md:bg-transparent border-0 rounded-xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
-                            <option value="" class="text-gray-900">How long?</option>
-                            <option value="1-3" class="text-gray-900">1-3 Days</option>
-                            <option value="4-7" class="text-gray-900">4-7 Days</option>
-                            <option value="8-14" class="text-gray-900">8-14 Days</option>
-                            <option value="15+" class="text-gray-900">15+ Days</option>
-                        </select>
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <div class="relative">
+                            <select name="duration" class="w-full bg-white/10 md:bg-transparent border-0 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
+                                <option value="" class="text-gray-900">How long?</option>
+                                <option value="1-3" class="text-gray-900">1-3 Days</option>
+                                <option value="4-7" class="text-gray-900">4-7 Days</option>
+                                <option value="8-14" class="text-gray-900">8-14 Days</option>
+                                <option value="15+" class="text-gray-900">15+ Days</option>
+                            </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit" class="w-full bg-gold-500 hover:bg-gold-600 text-safari-dark py-4 rounded-xl md:rounded-full font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        Search
-                    </button>
-                </form>
+                        <button type="submit" class="w-full bg-gold-500 hover:bg-gold-600 text-safari-dark py-4 rounded-2xl md:rounded-full font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            Search
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
     {{-- Bottom Trust Strip --}}
-    <div class="absolute bottom-0 left-0 right-0 z-20 bg-black/20 backdrop-blur-md border-t border-white/10 py-3 md:py-4">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="relative z-30 bg-black/40 backdrop-blur-xl border-t border-white/10 py-8 lg:py-5">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4">
             <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
                 <div class="text-gold-400">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 </div>
                 <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest">Best Rated</div>
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Best Rated</div>
                     <div class="text-gray-400 text-[10px] font-bold">TripAdvisor 2024</div>
                 </div>
             </div>
@@ -177,7 +181,7 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest">Safe & Secure</div>
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Safe & Secure</div>
                     <div class="text-gray-400 text-[10px] font-bold">Certified Operator</div>
                 </div>
             </div>
@@ -186,7 +190,7 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest">Affordable</div>
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Affordable</div>
                     <div class="text-gray-400 text-[10px] font-bold">Direct Pricing</div>
                 </div>
             </div>
@@ -195,7 +199,7 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 </div>
                 <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest">24/7 Support</div>
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">24/7 Support</div>
                     <div class="text-gray-400 text-[10px] font-bold">Expert Assistance</div>
                 </div>
             </div>
@@ -203,50 +207,211 @@
     </div>
 </section>
 
-{{-- ========== OUR STORY SECTION ========== --}}
-<section class="py-24 bg-[#fcfaf7] relative overflow-hidden">
+{{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR ========== --}}
+@if($heroTour)
+<section class="py-24 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div class="space-y-8">
-                <div>
-                    <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark mb-6 leading-tight">
-                        Discover the True Spirit <br><span class="italic text-gold-600">of Africa</span>
-                    </h2>
-                    <div class="w-20 h-1.5 bg-gold-500 rounded-full mb-8"></div>
-                </div>
-                <div class="space-y-6 text-gray-700 text-lg leading-relaxed font-light">
-                    <p>
-                        Twina Safaris was founded with a simple mission: to share the breathtaking beauty, wildlife, and culture of Tanzania with travelers from around the world. What started as a passion for adventure and nature has grown into a trusted safari company dedicated to creating unforgettable travel experiences.
-                    </p>
-                    <p>
-                        From the endless plains of the Serengeti to the majestic peak of Mount Kilimanjaro and the pristine beaches of Zanzibar, we believe every journey should be more than just a trip—it should be a life-changing experience.
-                    </p>
-                    <div class="pt-4">
-                        <a href="{{ route('about') }}" class="inline-flex items-center gap-2 text-safari-dark font-black uppercase tracking-widest text-xs hover:text-gold-600 transition-all border-b-2 border-gold-500 pb-1">
-                            Read Our Full Story
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                        </a>
+        <div class="flex flex-col lg:flex-row gap-16 items-center">
+            {{-- Visual Side: Moving Image Slider --}}
+            <div class="w-full lg:w-1/2 relative" x-data="{
+                activeSlide: 0,
+                slides: [
+                    '{{ asset('images/kilimanjaro/kili-1.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-2.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-3.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-4.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-5.jpg') }}'
+                ],
+                init() {
+                    setInterval(() => {
+                        this.activeSlide = (this.activeSlide + 1) % this.slides.length;
+                    }, 5000);
+                }
+            }">
+                <div class="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl h-[450px] md:h-[700px]">
+                    <template x-for="(slide, index) in slides" :key="index">
+                        <div x-show="activeSlide === index"
+                             x-transition:enter="transition ease-out duration-1000"
+                             x-transition:enter-start="opacity-0 scale-110"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-1000"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="absolute inset-0 w-full h-full">
+                            <img :src="slide" class="w-full h-full object-cover" alt="{{ $heroTour->title }}">
+                        </div>
+                    </template>
+
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+                    <div class="absolute bottom-10 left-10 right-10">
+                        <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl">
+                            <p class="text-white text-lg font-bold mb-2">🏔️ {{ $heroTour->title }}</p>
+                            <p class="text-gold-400 text-sm font-black uppercase tracking-widest">The Ultimate Experience</p>
+                        </div>
                     </div>
+                </div>
+                {{-- Decorative badge --}}
+                <div class="absolute -top-6 -right-6 w-32 h-32 bg-gold-500 rounded-full flex flex-col items-center justify-center shadow-2xl z-20 transform rotate-12">
+                    <span class="text-safari-dark text-[10px] font-black uppercase">From</span>
+                    <span class="text-safari-dark text-xl font-black">${{ number_format($heroTour->price) }}</span>
+                    <span class="text-safari-dark text-[8px] font-bold uppercase">Per Person</span>
                 </div>
             </div>
-            <div class="relative">
-                @php $embedUrl = \App\Models\Setting::getEmbedUrl('featured_video_url'); @endphp
-                @if($embedUrl)
-                    <div class="aspect-video w-full rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white bg-safari-dark">
-                        <iframe src="{{ $embedUrl }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                @else
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-4">
-                            <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="Safari">
-                            <img src="https://images.unsplash.com/photo-1489493585363-d69421e0fe36?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-48 w-full object-cover" alt="Culture">
+
+            {{-- Info Side --}}
+            <div class="lg:w-1/2 space-y-8">
+                <div>
+                    <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Signature Expedition</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-tight text-center md:text-left">
+                        {{ $heroTour->title }}
+                    </h2>
+                    <div class="w-20 h-1.5 bg-[#e64a19] rounded-full mt-6 mx-auto md:mx-0"></div>
+                </div>
+
+                <div class="flex justify-center md:justify-start">
+                    <a href="{{ route('booking.create', $heroTour->slug) }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl hover:scale-105 transition-all text-center uppercase tracking-widest">
+                        BOOK THIS TOUR
+                    </a>
+                </div>
+
+                <p class="text-gray-600 text-lg leading-relaxed font-light">
+                    {{ $heroTour->short_description }}
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
+                    @php
+                        $inclusions = is_array($heroTour->inclusions) ? $heroTour->inclusions : [
+                            'Professional Guides & Porters', 'Airport Transfers Included',
+                            'Hotel Stay Before/After', 'All Park Fees & Permits',
+                            'Quality Camping Gear', 'Fresh Meals & Safe Water',
+                            'Emergency Oxygen & Safety', 'Summit Certificate'
+                        ];
+                    @endphp
+                    @foreach($inclusions as $inc)
+                    <div class="flex items-start gap-3 group">
+                        <div class="w-6 h-6 shrink-0 rounded-full bg-gold-500/10 flex items-center justify-center mt-0.5 group-hover:bg-gold-500 transition-colors duration-300">
+                            <svg class="w-3 h-3 text-gold-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
                         </div>
-                        <div class="space-y-4 pt-12">
-                            <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-48 w-full object-cover" alt="Wildlife">
-                            <img src="https://images.unsplash.com/photo-1589979482810-708080c9e7cc?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="Beach">
-                        </div>
+                        <span class="text-gray-700 text-sm font-black uppercase tracking-tight leading-tight">{{ $inc }}</span>
                     </div>
-                @endif
+                    @endforeach
+                </div>
+
+                <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100" x-data="{ openItinerary: false }">
+                    <div class="flex items-center justify-between mb-10">
+                        <h2 class="font-display text-3xl font-black text-[#e64a19] uppercase tracking-tight">Route summary</h2>
+                        <button @click="openItinerary = !openItinerary" class="text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 transition-colors flex items-center gap-1.5">
+                            <span x-text="openItinerary ? 'Hide Details' : 'View Day-by-Day'"></span>
+                            <svg class="w-3 h-3 transition-transform duration-300" :class="openItinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        @if($heroTour->itinerary && is_array($heroTour->itinerary))
+                            @foreach($heroTour->itinerary as $index => $day)
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-start gap-4">
+                                    <span class="text-[#e64a19] font-black text-2xl leading-none">→</span>
+                                    <h5 class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
+                                        <span class="text-gray-400">Day {{ is_numeric($index) ? $index : $loop->iteration }}:</span> {{ $day['title'] ?? '' }}
+                                    </h5>
+                                </div>
+                                <div x-show="openItinerary" x-collapse>
+                                    <div class="pl-9 space-y-4">
+                                        <p class="text-gray-600 text-sm md:text-base leading-relaxed font-medium">
+                                            {{ $day['description'] ?? '' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                            <div class="flex items-start gap-4">
+                                <span class="text-[#e64a19] font-black text-2xl">→</span>
+                                <p class="text-gray-800 font-bold text-lg leading-tight">
+                                    <span class="text-gray-900">Itinerary for {{ $heroTour->duration_text }}:</span>
+                                    {{ $heroTour->short_description }}
+                                </p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="pt-6 flex flex-col sm:flex-row gap-4">
+                    <a href="{{ route('tours.index') }}" class="flex-1 px-10 py-5 rounded-full border-2 border-safari-dark text-safari-dark text-sm font-black uppercase tracking-widest hover:bg-safari-dark hover:text-white transition-all text-center">
+                        EXPLORE ALL TOURS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
+<section class="py-24 bg-safari-dark relative overflow-hidden">
+    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+        @php $kiliBg = \App\Models\Setting::get('kilimanjaro_home_bg'); @endphp
+        <img src="{{ $kiliBg ? asset('storage/' . $kiliBg) : 'https://images.unsplash.com/photo-1508002366005-75a695ee2d17?q=80&w=2000&auto=format&fit=crop' }}"
+             class="w-full h-full object-cover" alt="Kilimanjaro Background">
+        <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        {{-- Full Width Header --}}
+        <div class="text-center mb-16">
+            <span class="inline-block text-gold-400 text-sm font-black uppercase tracking-[0.4em] mb-4">The Roof of Africa</span>
+            <h2 class="font-display text-4xl md:text-7xl font-black text-white leading-tight mb-8">
+                Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span>
+            </h2>
+            <p class="text-gray-300 text-lg max-w-4xl mx-auto font-light leading-relaxed">
+                Standing at <span class="text-white font-bold">5,895 meters</span> above sea level, Mount Kilimanjaro is not just Africa's highest peak, but the tallest free-standing mountain on Earth. Embark on a legendary journey through five distinct climate zones—from lush tropical rainforests to the near-arctic summit. Our expert-led treks provide the safety, equipment, and deep local knowledge required to successfully conquer the <span class="text-gold-400 font-bold">'Roof of Africa'</span> and witness a sunrise unlike any other.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-6 mt-10">
+                <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+                    <span class="text-gold-400 font-black text-xl">5,895m</span>
+                    <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Peak<br>Elevation</span>
+                </div>
+                <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+                    <span class="text-gold-400 font-black text-xl">98%</span>
+                    <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Success<br>Rate</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Route Summary Style List --}}
+        <div class="max-w-4xl mx-auto mt-16 bg-white/5 border border-white/5 rounded-[3rem] p-8 md:p-16 backdrop-blur-md">
+            <h3 class="font-display text-2xl font-black text-[#e64a19] mb-10 uppercase tracking-widest text-center">Route Options</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                @php
+                    $routes = [
+                        ['n' => 'Machame', 'a' => 'Whiskey Route'],
+                        ['n' => 'Marangu', 'a' => 'Coca-Cola Route'],
+                        ['n' => 'Lemosho', 'a' => 'The Scenic Route'],
+                        ['n' => 'Rongai', 'a' => 'Northern Route'],
+                        ['n' => 'Northern Circuit', 'a' => 'Grand Traverse'],
+                        ['n' => 'Umbwe', 'a' => 'Extreme Route'],
+                        ['n' => 'Shira', 'a' => 'Plateau Route'],
+                    ];
+                @endphp
+
+                @foreach($routes as $r)
+                <div class="flex items-center gap-5 group cursor-default">
+                    <span class="text-[#e64a19] font-black text-2xl leading-none transform transition-transform group-hover:translate-x-2">→</span>
+                    <div class="flex flex-col">
+                        <span class="text-white font-bold text-xl leading-tight">{{ $r['n'] }}</span>
+                        <span class="text-gold-500/60 text-[10px] font-black uppercase tracking-widest mt-1">{{ $r['a'] }}</span>
+                    </div>
+                </div>
+                @endforeach
+
+                <div class="flex items-center pt-6 md:pt-0">
+                    <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="btn-gold px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl flex items-center gap-3 transition-all hover:scale-105 active:scale-95">
+                        Explore All Packages
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -271,20 +436,20 @@
 
         <div class="relative group">
             <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
-                @if(isset($featuredTours) && $featuredTours->count() > 0)
-                    @foreach($featuredTours as $tour)
+                @forelse($featuredTours as $tour)
                     <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
                             <div class="relative h-56">
-                                <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->title }}" class="w-full h-full object-cover" loading="lazy">
+                                <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->getTranslation('title') }} in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover" loading="lazy">
                             </div>
                             <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
                                 <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
                                     <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span>
                                 </div>
-                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
+                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
                                     <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ $tour->title }}</a>
                                 </h3>
+                                <div class="text-[10px] font-mono text-gray-400 mb-4 tracking-tighter">{{ $tour->slug }}</div>
                                 <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                                     <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
@@ -296,11 +461,8 @@
                             </div>
                         </div>
                     </div>
-                    @endforeach
-                @endif
-                
-                <!-- Fallback tours if no database tours -->
-                @if(!isset($featuredTours) || $featuredTours->count() < 3)
+                @empty
+                    <!-- Fallback tours if no database tours -->
                     <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
                             <div class="relative h-56">
@@ -311,14 +473,14 @@
                                     <span>7 Days / 6 Nights</span> • <span>Serengeti</span>
                                 </div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                                    <a href="#" class="hover:text-gold-600">Classic Serengeti Safari</a>
+                                    <a href="{{ route('tours.index') }}" class="hover:text-gold-600">Classic Serengeti Safari</a>
                                 </h3>
                                 <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Experience the Great Migration and witness incredible wildlife in their natural habitat.</p>
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                                     <div class="text-2xl font-display font-bold text-gold-600">$1,299</div>
                                     <div class="flex gap-2">
-                                        <a href="#" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                        <a href="#" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                        <a href="{{ route('tours.index') }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="{{ route('tours.index') }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -334,14 +496,14 @@
                                     <span>8 Days / 7 Nights</span> • <span>Kilimanjaro</span>
                                 </div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                                    <a href="#" class="hover:text-gold-600">Mount Kilimanjaro Climb</a>
+                                    <a href="{{ route('tours.index') }}" class="hover:text-gold-600">Mount Kilimanjaro Climb</a>
                                 </h3>
                                 <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Summit the highest peak in Africa with our expert guides and professional support team.</p>
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                                     <div class="text-2xl font-display font-bold text-gold-600">$1,899</div>
                                     <div class="flex gap-2">
-                                        <a href="#" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                        <a href="#" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                        <a href="{{ route('tours.index') }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="{{ route('tours.index') }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -357,23 +519,23 @@
                                     <span>5 Days / 4 Nights</span> • <span>Zanzibar</span>
                                 </div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                                    <a href="#" class="hover:text-gold-600">Zanzibar Beach Holiday</a>
+                                    <a href="{{ route('tours.index') }}" class="hover:text-gold-600">Zanzibar Beach Holiday</a>
                                 </h3>
                                 <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Relax on pristine white sand beaches and experience the rich culture of Zanzibar Island.</p>
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                                     <div class="text-2xl font-display font-bold text-gold-600">$899</div>
                                     <div class="flex gap-2">
-                                        <a href="#" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                        <a href="#" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
+                                        <a href="{{ route('tours.index') }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="{{ route('tours.index') }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                @endif
+                @endforelse
             </div>
         </div>
-        
+
         <div class="text-center mt-12">
             <a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">
                 View All Tours
@@ -401,9 +563,9 @@
                 @foreach($destinations as $destination)
                 <a href="{{ route('tours.index', ['destination' => $destination->id]) }}"
                    class="snap-start shrink-0 w-[280px] md:w-[320px] lg:w-[340px] relative group rounded-2xl overflow-hidden h-56 block shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300">
-                    <img src="{{ $destination->featured_image_url }}" 
-                         alt="{{ $destination->name }}" 
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    <img src="{{ $destination->featured_image_url }}"
+                         alt="{{ $destination->name }}"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                          loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
                     <div class="absolute inset-0 flex flex-col justify-end p-6">
@@ -418,157 +580,81 @@
     </div>
 </section>
 
-{{-- ========== INTERACTIVE SAFARI MAP ========== --}}
-<section class="py-20 md:py-28 relative overflow-hidden" x-data="{ selectedDestination: 'kilimanjaro', destinations: [
-    { name: 'Serengeti', id: 'serengeti', description: 'Witness the Great Migration', tours: ['Classic Serengeti Safari', 'Serengeti Migration Safari'] },
-    { name: 'Zanzibar', id: 'zanzibar', description: 'Pristine beaches & culture', tours: ['Zanzibar Beach Holiday', 'Stone Town Tour'] },
-    { name: 'Kilimanjaro', id: 'kilimanjaro', description: 'Climb Africa’s highest peak', tours: ['Mount Kilimanjaro Climb', 'Kilimanjaro Day Hike'] },
-    { name: 'Ngorongoro', id: 'ngorongoro', description: 'The Garden of Eden', tours: ['Ngorongoro Crater Day Trip', 'Ngorongoro Camping Safari'] },
-    { name: 'Lake Manyara', id: 'lake-manyara', description: 'Tree-climbing lions', tours: ['Lake Manyara Safari', 'Manyara & Tarangire Tour'] },
-    { name: 'Tarangire', id: 'tarangire', description: 'Massive elephant herds', tours: ['Tarangire Safari', 'Tarangire & Serengeti Combo'] }
-] }">
-    <!-- Background Image -->
-    <div class="absolute inset-0">
-        @php
-            $mapBg = \App\Models\Setting::get('map_background');
-        @endphp
-        @if($mapBg)
-            <img src="{{ asset('storage/' . $mapBg) }}" alt="Africa Big 5" class="w-full h-full object-cover">
-        @else
-            <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1920&q=80" alt="Africa Big 5" class="w-full h-full object-cover">
-        @endif
-        <div class="absolute inset-0 bg-gradient-to-r from-safari-dark/90 via-safari-dark/70 to-safari-dark/80"></div>
-    </div>
-    
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="text-center mb-16">
-            <span class="text-gold-400 text-sm font-semibold uppercase tracking-widest">Explore Tanzania</span>
-            <h2 class="font-display text-4xl md:text-5xl text-white mt-3 mb-4">Interactive Safari Map</h2>
-            <p class="text-gray-300 max-w-2xl mx-auto">Click on a destination below to discover amazing tours!</p>
-        </div>
-        
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <!-- Interactive Map -->
-            <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
-                <div class="relative">
-                    <!-- SVG Map of Tanzania -->
-                    <svg viewBox="0 0 400 400" class="w-full h-auto">
-                        <!-- Country outline -->
-                        <path d="M50 50 L350 60 L380 150 L370 300 L280 380 L100 360 L30 280 L40 100 Z" fill="rgba(255,255,255,0.1)" stroke="#D4AF37" stroke-width="3" class="drop-shadow-xl" />
-                        
-                        <!-- Clickable destination markers -->
-                        <g class="cursor-pointer" @click="selectedDestination = 'serengeti'" :class="{ 'opacity-100 scale-125': selectedDestination === 'serengeti', 'opacity-70 hover:opacity-100': selectedDestination !== 'serengeti' }">
-                            <circle cx="150" cy="180" r="18" fill="#D4AF37" stroke="#fff" stroke-width="3" />
-                            <circle cx="150" cy="180" r="9" fill="#fff" />
-                            <text x="150" y="218" text-anchor="middle" class="text-xs font-bold fill-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5)">Serengeti</text>
-                        </g>
-                        
-                        <g class="cursor-pointer" @click="selectedDestination = 'ngorongoro'" :class="{ 'opacity-100 scale-125': selectedDestination === 'ngorongoro', 'opacity-70 hover:opacity-100': selectedDestination !== 'ngorongoro' }">
-                            <circle cx="200" cy="160" r="18" fill="#D4AF37" stroke="#fff" stroke-width="3" />
-                            <circle cx="200" cy="160" r="9" fill="#fff" />
-                            <text x="200" y="142" text-anchor="middle" class="text-xs font-bold fill-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5)">Ngorongoro</text>
-                        </g>
-                        
-                        <g class="cursor-pointer" @click="selectedDestination = 'kilimanjaro'" :class="{ 'opacity-100 scale-125': selectedDestination === 'kilimanjaro', 'opacity-70 hover:opacity-100': selectedDestination !== 'kilimanjaro' }">
-                            <circle cx="300" cy="120" r="18" fill="#D4AF37" stroke="#fff" stroke-width="3" />
-                            <circle cx="300" cy="120" r="9" fill="#fff" />
-                            <text x="300" y="102" text-anchor="middle" class="text-xs font-bold fill-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5)">Kilimanjaro</text>
-                        </g>
-                        
-                        <g class="cursor-pointer" @click="selectedDestination = 'lake-manyara'" :class="{ 'opacity-100 scale-125': selectedDestination === 'lake-manyara', 'opacity-70 hover:opacity-100': selectedDestination !== 'lake-manyara' }">
-                            <circle cx="220" cy="220" r="18" fill="#D4AF37" stroke="#fff" stroke-width="3" />
-                            <circle cx="220" cy="220" r="9" fill="#fff" />
-                            <text x="220" y="252" text-anchor="middle" class="text-xs font-bold fill-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5)">Lake Manyara</text>
-                        </g>
-                        
-                        <g class="cursor-pointer" @click="selectedDestination = 'tarangire'" :class="{ 'opacity-100 scale-125': selectedDestination === 'tarangire', 'opacity-70 hover:opacity-100': selectedDestination !== 'tarangire' }">
-                            <circle cx="260" cy="200" r="18" fill="#D4AF37" stroke="#fff" stroke-width="3" />
-                            <circle cx="260" cy="200" r="9" fill="#fff" />
-                            <text x="260" y="232" text-anchor="middle" class="text-xs font-bold fill-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5)">Tarangire</text>
-                        </g>
-                        
-                        <g class="cursor-pointer" @click="selectedDestination = 'zanzibar'" :class="{ 'opacity-100 scale-125': selectedDestination === 'zanzibar', 'opacity-70 hover:opacity-100': selectedDestination !== 'zanzibar' }">
-                            <circle cx="350" cy="280" r="18" fill="#D4AF37" stroke="#fff" stroke-width="3" />
-                            <circle cx="350" cy="280" r="9" fill="#fff" />
-                            <text x="350" y="312" text-anchor="middle" class="text-xs font-bold fill-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5)">Zanzibar</text>
-                        </g>
-                    </svg>
+{{-- ========== POPULAR SAFARI HIGHLIGHTS SECTION ========== --}}
+<section class="py-24 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col lg:flex-row items-center gap-20">
+            {{-- Image Side --}}
+            <div class="lg:w-1/2 relative">
+                <div class="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl">
+                    @php $highlightsImg = \App\Models\Setting::get('safari_highlights_img'); @endphp
+                    <img src="{{ $highlightsImg ? asset('storage/' . $highlightsImg) : 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1000&q=80' }}"
+                         class="w-full h-[600px] object-cover" alt="Tanzania Safari Adventure">
                 </div>
-                <!-- Destination buttons for mobile -->
-                <div class="flex flex-wrap gap-3 mt-6 justify-center">
-                    <template x-for="dest in destinations" :key="dest.id">
-                        <button @click="selectedDestination = dest.id"
-                                :class="selectedDestination === dest.id 
-                                    ? 'bg-gold-500 text-white' 
-                                    : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur'"
-                                class="px-4 py-2 rounded-full text-sm font-semibold transition-all border border-white/30">
-                            <span x-text="dest.name"></span>
-                        </button>
-                    </template>
+                {{-- Decorative Elements --}}
+                <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl -z-0"></div>
+                <div class="absolute top-10 -left-10 p-8 bg-safari-dark rounded-3xl shadow-2xl z-20 hidden md:block">
+                    <div class="text-gold-400 text-4xl font-black mb-1">#1</div>
+                    <div class="text-white text-xs font-bold uppercase tracking-widest">Safari Destination</div>
                 </div>
             </div>
-            
-            <!-- Tours for selected destination -->
-            <div>
-                <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl h-full">
-                    <template x-for="dest in destinations" :key="dest.id">
-                        <div x-show="selectedDestination === dest.id" class="h-full flex flex-col">
-                            <h3 class="font-display text-3xl font-bold text-white mb-2" x-text="dest.name"></h3>
-                            <p class="text-gray-300 mb-6" x-text="dest.description"></p>
-                            <div class="space-y-4 flex-grow">
-                                <template x-for="(tour, index) in dest.tours" :key="index">
-                                    <div class="p-4 bg-white/10 backdrop-blur rounded-xl border border-white/20 hover:border-gold-400 hover:bg-white/20 hover:shadow-lg transition-all cursor-pointer">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <h4 class="font-semibold text-white" x-text="tour"></h4>
-                                                <p class="text-sm text-gray-300">From $1,099</p>
-                                            </div>
-                                            <a href="#" class="btn-gold px-4 py-2 rounded-full text-sm font-bold">View</a>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                            <div class="mt-6">
-                                <a href="#" class="text-gold-400 font-semibold flex items-center gap-2 hover:gap-3 transition-all">
-                                    View all tours in this destination
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-{{-- ========== FAQ SECTION ========== --}}
-@if(isset($faqs) && $faqs->count() > 0)
-<section class="py-16 md:py-24 bg-[#fcfaf7] border-t border-gray-100" x-data="{ openFaq: null }">
-    <div class="max-w-4xl mx-auto px-4">
-        <div class="text-center mb-12">
-            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Frequently Asked Questions</span>
-            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Everything You Need to Know</h2>
-            <div class="section-divider"></div>
-        </div>
-        <div class="space-y-4">
-            @foreach($faqs as $faq)
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <button type="button" @click="openFaq = openFaq === {{ $loop->index }} ? null : {{ $loop->index }}" class="w-full px-6 py-5 flex items-center justify-between text-left">
-                    <h3 class="font-display text-lg md:text-xl font-semibold text-gray-900">{{ $faq->question ?? $faq->title ?? 'Question' }}</h3>
-                    <svg class="w-6 h-6 text-gray-500 transition-transform duration-300" :class="{ 'rotate-180': openFaq === {{ $loop->index }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div class="px-6 overflow-hidden transition-all duration-300" :class="openFaq === {{ $loop->index }} ? 'max-h-96 pb-5' : 'max-h-0'">
-                    <p class="text-gray-700 leading-relaxed">{{ $faq->answer ?? $faq->content ?? 'Answer goes here.' }}</p>
+            {{-- Content Side --}}
+            <div class="lg:w-1/2 space-y-10">
+                <div>
+                    <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Unrivaled Adventures</span>
+                    <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark leading-tight">
+                        Tanzania's Iconic <br> <span class="italic text-gold-600">Safari Journeys</span>
+                    </h2>
+                    <div class="w-20 h-1.5 bg-gold-500 rounded-full mt-6"></div>
+                </div>
+
+                <p class="text-gray-600 text-lg leading-relaxed font-light">
+                    Venture into the heart of the wild. Our signature safaris offer unprecedented access to the Serengeti plains, the Ngorongoro Crater, and the hidden wilderness of the south, designed to deliver the ultimate African experience.
+                </p>
+
+                <div class="space-y-8">
+                    <div class="flex gap-6 group">
+                        <div class="w-14 h-14 shrink-0 bg-gold-50 rounded-2xl flex items-center justify-center text-gold-600 group-hover:bg-gold-500 group-hover:text-white transition-all duration-500 shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-gray-900 font-black text-sm uppercase tracking-wider mb-2">The Great Migration</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed">Witness the world's most spectacular wildlife movement across the vast Serengeti ecosystem.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-6 group">
+                        <div class="w-14 h-14 shrink-0 bg-gold-50 rounded-2xl flex items-center justify-center text-gold-600 group-hover:bg-gold-500 group-hover:text-white transition-all duration-500 shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-gray-900 font-black text-sm uppercase tracking-wider mb-2">Big Five Tracking</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed">Embark on private game drives to find lions, leopards, elephants, buffaloes, and the rare rhino.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-6 group">
+                        <div class="w-14 h-14 shrink-0 bg-gold-50 rounded-2xl flex items-center justify-center text-gold-600 group-hover:bg-gold-500 group-hover:text-white transition-all duration-500 shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-gray-900 font-black text-sm uppercase tracking-wider mb-2">Handpicked Luxury Camps</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed">Stay in the most exclusive lodges and tented camps that blend comfort with the raw beauty of the bush.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <a href="{{ route('tours.index', ['tour_type' => 'safari-tours']) }}" class="btn-gold px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest shadow-xl inline-flex items-center gap-3">
+                        Explore Safari Tours
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
                 </div>
             </div>
-            @endforeach
         </div>
     </div>
 </section>
-@endif
 
 {{-- ========== TESTIMONIALS SECTION (HORIZONTAL CAROUSEL) ========== --}}
 <section class="py-16 md:py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100" x-data="{
@@ -591,21 +677,21 @@
         <div id="testimonials-slider"
              class="flex gap-5 overflow-x-auto pb-8 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth"
              style="scroll-behavior: smooth;">
-            
+
             @if(isset($testimonials) && $testimonials->count() > 0)
                 @foreach($testimonials as $testimonial)
                 <div class="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13px)] xl:w-[calc(25%-15px)]">
                     <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                         <!-- Rating -->
                         <div class="flex text-gold-500 mb-4 gap-0.5">
-                            @for($i=0; $i<5; $i++) 
+                            @for($i=0; $i<5; $i++)
                                 <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                             @endfor
                         </div>
 
                         <!-- Quote -->
                         <p class="text-gray-700 text-base leading-relaxed mb-6 flex-grow">
-                            "{{ $testimonial->content ?? $testimonial->testimonial ?? 'Excellent experience with Twina Safaris!' }}"
+                            \"{{ $testimonial->content ?? $testimonial->testimonial ?? 'Excellent experience with Twina Safaris!' }}\"
                         </p>
 
                         <!-- Author -->
@@ -696,15 +782,19 @@
     }
 }">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
-            <div>
-                <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Safari Journal</span>
-                <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Latest From The Blog</h2>
-                <div class="section-divider"></div>
-            </div>
-            <div class="flex gap-3">
+        <div class="text-center mb-16">
+            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Safari Journal</span>
+            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Latest From The Blog</h2>
+            <p class="text-gray-600 text-lg mb-8 max-w-4xl mx-auto leading-relaxed font-light">
+                Discover inspiring safari stories, unforgettable travel experiences, breathtaking wildlife encounters, and hidden gems from across Tanzania and East Africa. Stay updated with expert travel tips, real guest adventures, and destination highlights that bring the spirit of Africa to life.
+                <br><br>
+                From the vast plains of the <strong>Serengeti to the peaks of Mount Kilimanjaro and the beaches of Zanzibar</strong>, our blog shares real moments, practical guides, and stories that spark your next journey.
+            </p>
+            <div class="section-divider mx-auto mb-8"></div>
+
+            <div class="flex justify-center gap-3">
                 <button @click="scrollBy(-380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7 7 7-7"/></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <button @click="scrollBy(380)" class="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gold-500 hover:text-white hover:border-gold-500 transition-all duration-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -719,11 +809,17 @@
                         <div class="relative h-64 overflow-hidden">
                             <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500">
                         </div>
-                        <div class="p-8 flex-grow">
+                        <div class="p-8 flex-grow flex flex-col">
                             <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
                                 <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
                             </h3>
-                            <p class="text-gray-600 text-sm line-clamp-3 leading-relaxed">{{ $post->excerpt }}</p>
+                            <p class="text-gray-600 text-sm line-clamp-3 leading-relaxed mb-6">{{ $post->excerpt }}</p>
+
+                            <div class="mt-auto">
+                                <a href="{{ route('blog.show', $post->slug) }}" class="text-gold-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">
+                                    Read Story <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -88,8 +88,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/{{ '@' }}alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://unpkg.com/alpinejs{{ '@' }}3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <script>
     tailwind.config = {
@@ -130,33 +130,62 @@
     </main>
 
     <!-- Floating WhatsApp & AI Chat -->
-    <div x-data="{ isChatOpen: false, isAiOpen: false, messages: [] }" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
-        <!-- AI Chat Button -->
-        <button @click="isAiOpen = !isAiOpen; isChatOpen = false"
-                class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xl flex items-center justify-center hover:scale-110 transition-all">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z"></path>
-            </svg>
-        </button>
+    <div x-data="{
+        isChatOpen: false,
+        isAiOpen: false,
+        messages: [],
+        userInput: '',
+        isLoading: false,
+        async sendMessage() {
+            if (!this.userInput.trim() || this.isLoading) return;
 
-        <!-- WhatsApp Button -->
-        <a href="https://wa.me/255795482197?text=Hello%20Twina%20Safaris%2C%20I%27m%20interested%20in%20your%20tours!"
-           target="_blank"
-           class="w-14 h-14 rounded-full bg-green-500 text-white shadow-xl flex items-center justify-center hover:scale-110 hover:bg-green-600 transition-all">
-            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.134.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.488-.491-.671-.5-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-1.73 7.223c-.317.092-2.2-.548-4.239-2.486-2.038-1.937-3.398-4.317-3.738-4.995-.34-.679-.712-1.692-.212-3.103.499-1.411 1.37-1.655 1.873-1.678.463-.023.995.173 1.276 1.281.282 1.108.958 3.818 1.04 4.103.082.285.169.499.028.763-.14.265-.544.822-1.04 1.322-.497.498-.974.798-1.361 1.002-.386.203-.76.406-.26.791.5.385 1.114.625 1.688.849 1.228.474 2.25.723 2.787.866.55.143 1.055.122 1.452.073.398-.049 1.258-.258 1.764-1.123.505-.864.505-1.602.354-1.751-.151-.149-.56-.231-1.178-.466z"/>
-            </svg>
-        </a>
+            const message = this.userInput;
+            this.messages.push({ text: message, from: 'user' });
+            this.userInput = '';
+            this.isLoading = true;
 
+            // Scroll to bottom
+            this.$nextTick(() => {
+                const el = document.getElementById('ai-chat-messages');
+                el.scrollTop = el.scrollHeight;
+            });
+
+            try {
+                const response = await fetch('{{ route('ai-assistant.chat') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: this.messages.slice(0, -1)
+                    })
+                });
+
+                const data = await response.json();
+                this.messages.push({ text: data.response, from: 'bot' });
+            } catch (error) {
+                this.messages.push({ text: 'Jambo! I had a connection issue. Please try again.', from: 'bot' });
+            } finally {
+                this.isLoading = false;
+                this.$nextTick(() => {
+                    const el = document.getElementById('ai-chat-messages');
+                    el.scrollTop = el.scrollHeight;
+                });
+            }
+        }
+    }" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
         <!-- AI Chat Widget -->
         <div x-show="isAiOpen"
+             x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-90 translate-y-4"
              x-transition:enter-end="opacity-100 scale-100 translate-y-0"
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="opacity-0 scale-90 translate-y-4"
-             class="w-80 bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+             class="w-80 bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 mb-2">
             <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -167,7 +196,7 @@
                         </div>
                         <div>
                             <h3 class="font-semibold">Twina AI Assistant</h3>
-                            <p class="text-xs text-white/80">Ask anything about our tours!</p>
+                            <p class="text-xs text-white/80">Expert Safari Guide</p>
                         </div>
                     </div>
                     <button @click="isAiOpen = false" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
@@ -177,42 +206,39 @@
                     </button>
                 </div>
             </div>
-            <div class="h-72 overflow-y-auto p-4 space-y-3 bg-gray-50" id="ai-chat-messages">
-                <div class="bg-white p-3 rounded-xl rounded-tl-none shadow-sm">
-                    <p class="text-sm text-gray-700">Hi there! 👋 I'm Twina AI Assistant. Ask me about our safari tours, destinations, or trip planning! 😊</p>
+            <div class="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50" id="ai-chat-messages">
+                <div class="bg-white p-3 rounded-xl rounded-tl-none shadow-sm max-w-[85%] border border-gray-100">
+                    <p class="text-sm text-gray-700 font-medium">Jambo! I'm your Twina Safaris guide. How can I help you today?</p>
                 </div>
                 <template x-for="(msg, index) in messages" :key="index">
-                    <div :class="msg.from === 'user' ? 'ml-auto' : 'mr-auto'">
-                        <div :class="msg.from === 'user' 
-                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-3 rounded-xl rounded-tr-none shadow-sm max-w-[85%]'
-                            : 'bg-white text-gray-700 p-3 rounded-xl rounded-tl-none shadow-sm max-w-[85%]'">
-                            <p class="text-sm" x-text="msg.text"></p>
+                    <div :class="msg.from === 'user' ? 'ml-auto text-right' : 'mr-auto text-left'">
+                        <div :class="msg.from === 'user'
+                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-3 rounded-xl rounded-tr-none shadow-sm inline-block text-left max-w-[90%]'
+                            : 'bg-white text-gray-700 p-3 rounded-xl rounded-tl-none shadow-sm inline-block text-left max-w-[90%] border border-gray-100'">
+                            <p class="text-sm leading-relaxed" x-text="msg.text"></p>
                         </div>
                     </div>
                 </template>
+                <div x-show="isLoading" class="mr-auto text-left" x-cloak>
+                    <div class="bg-white text-gray-700 p-3 rounded-xl rounded-tl-none shadow-sm inline-block border border-gray-100">
+                        <div class="flex gap-1">
+                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="p-4 border-t border-gray-100 bg-white">
-                <form @submit.prevent="
-                    const message = $event.target.querySelector('input').value;
-                    if (!message.trim()) return;
-                    messages.push({ text: message, from: 'user' });
-                    $event.target.querySelector('input').value = '';
-                    setTimeout(() => {
-                        const replies = [
-                            'Great question! We offer amazing tours in Serengeti, Zanzibar, and Kilimanjaro. Which one interests you?',
-                            'I\'d love to help plan your safari! When are you looking to travel?',
-                            'Our tours include accommodation, transport, and expert guides. Let me know if you need more details!',
-                            'The best time to visit the Serengeti is from June to October for wildlife viewing!',
-                            'Zanzibar is perfect for beach holidays, with pristine white sand beaches!',
-                        ];
-                        const randomReply = replies[Math.floor(Math.random() * replies.length)];
-                        messages.push({ text: randomReply, from: 'bot' });
-                    }, 500);
-                " class="flex gap-2">
+            <div class="p-4 border-t border-gray-100 bg-white shadow-[0_-5px_15px_rgba(0,0,0,0.02)]">
+                <form @submit.prevent="sendMessage()" class="flex gap-2">
                     <input type="text"
-                           placeholder="Type your message..."
-                           class="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <button type="submit" class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-center justify-center hover:scale-105 transition-all">
+                           x-model="userInput"
+                           :disabled="isLoading"
+                           placeholder="Ask about safaris, prices..."
+                           class="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-50 transition-all">
+                    <button type="submit"
+                            :disabled="isLoading || !userInput.trim()"
+                            class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-center justify-center hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 shadow-md">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
@@ -220,6 +246,25 @@
                 </form>
             </div>
         </div>
+
+        <!-- AI Chat Button -->
+        <button @click="isAiOpen = !isAiOpen; isChatOpen = false"
+                class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xl flex items-center justify-center hover:scale-110 transition-all ring-4 ring-white/50">
+            <svg x-show="!isAiOpen" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z"></path>
+            </svg>
+            <svg x-show="isAiOpen" x-cloak class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <!-- WhatsApp Button -->
+        <a href="https://wa.me/255795482197?text=Hello%20Twina%20Safaris%2C%20I%27m%20interested%20in%20your%20tours!"
+           target="_blank"
+           class="w-14 h-14 rounded-full bg-[#25D366] text-white shadow-xl flex items-center justify-center hover:scale-110 hover:bg-[#20ba56] transition-all ring-4 ring-white/50 group">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
     </div>
 
     <!-- Footer -->

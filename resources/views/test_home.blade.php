@@ -28,7 +28,7 @@
     <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
         <div class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 border border-yellow-500/30 rounded-full text-yellow-300 text-sm mb-8 backdrop-blur-sm">
             <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-            Award-winning Tanzania Safari Company Since 2009
+            Award-winning Tanzania Safari Company
         </div>
 
         <h1 class="font-display text-5xl md:text-7xl lg:text-8xl text-white font-bold leading-tight mb-6">

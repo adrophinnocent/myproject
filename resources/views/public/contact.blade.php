@@ -109,8 +109,8 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-900 text-sm uppercase tracking-widest mb-1">Our Office</h4>
-                        <p class="text-gray-600 font-medium">Moshi, Tanzania</p>
-                        <p class="text-gray-400 text-xs mt-1">Moshi, Kilimanjaro</p>
+                        <p class="text-gray-600 font-medium">Moshi, Kilimanjaro</p>
+                        <p class="text-gray-400 text-xs mt-1">Tanzania</p>
                     </div>
                 </div>
 

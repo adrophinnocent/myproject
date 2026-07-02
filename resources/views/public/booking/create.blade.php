@@ -52,7 +52,11 @@
                         <p class="text-white/60">Complete the details below to secure your Tanzanian adventure.</p>
                     </div>
 
-                    <form action="{{ route('booking.store', $tour->slug) }}" method="POST" class="p-8">
+                    <form action="{{ route('booking.store', $tour->slug) }}" method="POST" class="p-8" x-data="{
+                        adults: {{ old('number_of_adults', 1) }},
+                        children: {{ old('number_of_children', 0) }},
+                        get totalGuests() { return parseInt(this.adults || 0) + parseInt(this.children || 0) }
+                    }">
                         @csrf
 
                         <div class="mb-10">
@@ -141,23 +145,78 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Travel Date *</label>
-                                    <input type="date" name="travel_date" required min=\"{{ date('Y-m-d', strtotime('+1 day')) }}\" value=\"{{ old('travel_date') }}\" class=\"w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all\">
+                                    <input type="date" name="travel_date" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" value="{{ old('travel_date') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">No. of Adults *</label>
-                                    <input type="number" name="number_of_adults" required min="1" value="{{ old('number_of_adults', 1) }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
+                                    <input type="number" name="number_of_adults" required min="1" x-model="adults" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">No. of Children</label>
-                                    <input type="number" name="number_of_children" min="0" value="{{ old('number_of_children', 0) }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
-                                </div>
-                                <div class="md:col-span-3">
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Special Requests / Requirements</label>
-                                    <textarea name="special_requests" rows="4" placeholder="Dietary requirements, physical limitations, or special occasions..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">{{ old('special_requests') }}</textarea>
+                                    <input type="number" name="number_of_children" min="0" x-model="children" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                             </div>
                         </div>
 
+                        <div class="mb-10">
+                            <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm">3</span>
+                                Pickup Location
+                            </h3>
+                            <div class="space-y-8" x-data="{
+                                selectedPoint: null,
+                                points: {{ json_encode($tour->pickup_locations ?? []) }},
+                                mapUrl: 'https://maps.google.com/maps?q={{ urlencode($tour->meeting_point ?? 'Kilimanjaro') }}&t=&z=13&ie=UTF8&iwloc=&output=embed',
+                                updateMap(point) {
+                                    this.selectedPoint = point.name;
+                                    this.mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(point.lng)-0.005}%2C${parseFloat(point.lat)-0.005}%2C${parseFloat(point.lng)+0.005}%2C${parseFloat(point.lat)+0.005}&layer=mapnik&marker=${point.lat}%2C${point.lng}`;
+                                }
+                            }">
+                                {{-- Selection Grid --}}
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    @if(is_array($tour->pickup_locations) && count($tour->pickup_locations) > 0)
+                                        @foreach($tour->pickup_locations as $pl)
+                                        <label class="relative flex flex-col p-6 bg-white border-2 border-gray-100 rounded-[2rem] cursor-pointer hover:border-gold-500 transition-all has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/20 group shadow-sm">
+                                            <input type="radio" name="accommodation_preference" value="{{ $pl['name'] }}"
+                                                   @change="updateMap({ name: '{{ $pl['name'] }}', lat: '{{ $pl['lat'] }}', lng: '{{ $pl['lng'] }}' })"
+                                                   class="absolute top-4 right-4 w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500" required>
+                                            <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform mb-4">📍</div>
+                                            <span class="block font-black text-gray-900 text-xs uppercase tracking-widest leading-tight">{{ $pl['name'] }}</span>
+                                        </label>
+                                        @endforeach
+                                    @else
+                                        {{-- Default Fallbacks if none configured --}}
+                                        <label class="relative flex items-center gap-4 p-5 bg-white border-2 border-gray-100 rounded-2xl cursor-pointer hover:border-gold-500 transition-all has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/20 group shadow-sm">
+                                            <input type="radio" name="accommodation_preference" value="Airport Pickup" class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500" checked required>
+                                            <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-2xl">✈️</div>
+                                            <div>
+                                                <span class="block font-black text-gray-900 text-sm uppercase tracking-tight">Airport Pickup</span>
+                                            </div>
+                                        </label>
+                                        <label class="relative flex items-center gap-4 p-5 bg-white border-2 border-gray-100 rounded-2xl cursor-pointer hover:border-gold-500 transition-all has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/20 group shadow-sm">
+                                            <input type="radio" name="accommodation_preference" value="Hotel Pickup" class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500" required>
+                                            <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-2xl">🏨</div>
+                                            <div>
+                                                <span class="block font-black text-gray-900 text-sm uppercase tracking-tight">Hotel Pickup</span>
+                                            </div>
+                                        </label>
+                                    @endif
+                                </div>
+
+                                {{-- Live Map Preview --}}
+                                <div class="bg-white p-2 rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden h-80 relative">
+                                    <iframe :src="mapUrl" class="w-full h-full rounded-[2rem]" frameborder="0"></iframe>
+                                    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-safari-dark/90 backdrop-blur-md px-6 py-2 rounded-full text-[10px] font-black text-white uppercase tracking-[0.2em] border border-white/10" x-show="selectedPoint">
+                                        Selected: <span class="text-gold-400" x-text="selectedPoint"></span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Special Requests / Flight Details</label>
+                                    <textarea name="special_requests" rows="4" placeholder="e.g. Flight number, Arrival time, or Hotel name..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">{{ old('special_requests') }}</textarea>
+                                </div>
+                            </div>
+                        </div>
                         <div class="mb-10">
                             <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
                                 <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm">3</span>
@@ -235,7 +294,7 @@
                         <div class="py-6">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-lg font-bold text-gray-900">Estimated Total</span>
-                                <span class="text-2xl font-display font-bold text-gold-600" id="estimated-total">{{ $tour->formatted_price }}</span>
+                                <span class="text-2xl font-display font-bold text-gold-600" id="estimated-total" x-text="'$' + (totalGuests * {{ $tour->price }}).toLocaleString()">{{ $tour->formatted_price }}</span>
                             </div>
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic">* Final price may vary based on group size and seasonal factors.</p>
                         </div>
@@ -252,8 +311,8 @@
 
                     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 text-center">
                         <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-4">Need help booking?</p>
-                        <a href="tel:{{ \App\Models\Setting::get('site_phone', '+255754000000') }}" class="text-lg font-bold text-gray-900 hover:text-gold-600 transition-colors flex items-center justify-center gap-2">
-                            {{ \App\Models\Setting::get('site_phone', '+255 754 000 000') }}
+                        <a href="tel:{{ \App\Models\Setting::get('site_phone', '+255795482197') }}" class="text-lg font-bold text-gray-900 hover:text-gold-600 transition-colors flex items-center justify-center gap-2">
+                            +255 795 482 197
                         </a>
                     </div>
                 </div>

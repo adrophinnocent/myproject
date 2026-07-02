@@ -35,7 +35,7 @@ class Tour extends Model
         'languages_offered', 'tour_type',
         'seasonal_pricing', 'availability_dates',
         'booking_deadline_days', 'deposit_percent', 'currency',
-        'location_name', 'latitude', 'longitude',
+        'location_name', 'latitude', 'longitude', 'pickup_locations',
     ];
 
     protected function casts(): array
@@ -57,6 +57,7 @@ class Tour extends Model
             'is_new' => 'boolean',
             'price' => 'decimal:2',
             'child_price' => 'decimal:2',
+            'pickup_locations' => 'array',
         ];
     }
 
@@ -149,20 +150,13 @@ class Tour extends Model
 
     public function getAverageRatingAttribute(): float
     {
-        try {
-            return round($this->reviews()->avg('rating') ?? 5.0, 1);
-        } catch (\Exception $e) {
-            return 5.0;
-        }
+        $avg = $this->attributes['reviews_avg_rating'] ?? $this->reviews()->avg('rating');
+        return round($avg ?? 5.0, 1);
     }
 
     public function getReviewCountAttribute(): int
     {
-        try {
-            return $this->reviews()->count();
-        } catch (\Exception $e) {
-            return 0;
-        }
+        return (int) ($this->attributes['reviews_count'] ?? $this->reviews()->count());
     }
 
     public function getCurrentPriceAttribute(): float
@@ -197,16 +191,10 @@ class Tour extends Model
         }
 
         $url = $this->video_url;
+        $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i';
 
-        // Extract YouTube video ID
-        $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
         if (preg_match($pattern, $url, $matches)) {
             return 'https://www.youtube.com/embed/' . $matches[1];
-        }
-
-        // If it's already an embed URL, return it
-        if (str_contains($url, 'youtube.com/embed/')) {
-            return $url;
         }
 
         return null;

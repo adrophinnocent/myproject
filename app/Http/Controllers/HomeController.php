@@ -27,7 +27,36 @@ class HomeController extends Controller
             ->get()
             ->map(function($s) { $s->item_type = 'safari'; return $s; });
 
-        $featuredTours = $featuredTours->concat($featuredSafaris)->sortByDesc('created_at')->take(6);
+        $featuredItems = $featuredTours->concat($featuredSafaris)->sortByDesc('created_at');
+
+        // If we have fewer than 3 featured items, fill with regular published items
+        if ($featuredItems->count() < 3) {
+            $needed = 3 - $featuredItems->count();
+
+            $extraTours = Tour::published()
+                ->whereNotIn('id', $featuredItems->where('item_type', 'tour')->pluck('id'))
+                ->with(['category', 'destination'])
+                ->latest()
+                ->take($needed)
+                ->get()
+                ->map(function($t) { $t->item_type = 'tour'; return $t; });
+
+            $featuredItems = $featuredItems->concat($extraTours);
+
+            if ($featuredItems->count() < 3) {
+                $needed = 3 - $featuredItems->count();
+                $extraSafaris = \App\Models\Safari::published()
+                    ->whereNotIn('id', $featuredItems->where('item_type', 'safari')->pluck('id'))
+                    ->with(['category', 'destination'])
+                    ->latest()
+                    ->take($needed)
+                    ->get()
+                    ->map(function($s) { $s->item_type = 'safari'; return $s; });
+                $featuredItems = $featuredItems->concat($extraSafaris);
+            }
+        }
+
+        $featuredTours = $featuredItems->take(6);
 
         $allPublishedTours = Tour::published()->count() + \App\Models\Safari::published()->count();
 
@@ -48,6 +77,15 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('public.home', compact('sliders', 'featuredTours', 'allPublishedTours', 'destinations', 'testimonials', 'faqs', 'latestPosts', 'categories'));
+        // Find a specific "Hero Tour" (ONLY Kilimanjaro Trekking Category)
+        $heroTour = Tour::where('slug', '8-day-machame-route')->first()
+                    ?? Tour::featured()->published()->whereHas('category', function($q) {
+                           $q->where('slug', 'kilimanjaro-trekking');
+                       })->first()
+                    ?? Tour::published()->whereHas('category', function($q) {
+                           $q->where('slug', 'kilimanjaro-trekking');
+                       })->first();
+
+        return view('public.home', compact('sliders', 'featuredTours', 'allPublishedTours', 'destinations', 'testimonials', 'faqs', 'latestPosts', 'categories', 'heroTour'));
     }
 }

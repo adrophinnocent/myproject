@@ -13,7 +13,11 @@ class SafariController extends Controller
 {
     public function index()
     {
-        $safaris = Safari::with(['category', 'destination'])->latest()->paginate(10);
+        $safaris = Safari::with(['category', 'destination'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(10);
         return view('admin.safaris.index', compact('safaris'));
     }
 

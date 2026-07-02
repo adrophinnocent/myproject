@@ -17,6 +17,7 @@
             <tr>
                 <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
                 <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Slug</th>
+                <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Posts Count</th>
                 <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
         </thead>
@@ -28,6 +29,9 @@
                 </td>
                 <td class="px-6 py-4">
                     <span class="text-sm text-gray-600">{{ $category->slug }}</span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 text-xs font-bold bg-amber-100 text-amber-800 rounded-full">{{ $category->posts_count }}</span>
                 </td>
                 <td class="px-6 py-4 text-right text-sm font-medium">
                     <a href="{{ route('admin.blog-categories.edit', $category) }}" class="text-[#D4AF37] hover:text-[#b8920d] mr-3">Edit</a>
@@ -41,7 +45,7 @@
             @endforeach
         </tbody>
     </table>
-    
+
     <div class="px-6 py-4 border-t border-gray-200">
         {{ $categories->links() }}
     </div>

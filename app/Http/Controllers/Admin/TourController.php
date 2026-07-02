@@ -14,9 +14,14 @@ class TourController extends Controller
 {
     public function index()
     {
-        $tours = Tour::with(['category', 'destination'])->latest()->paginate(10);
+        $tours = Tour::with(['category', 'destination'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(10);
+        $categories = Category::withCount('tours')->orderBy('name')->get();
 
-        return view('admin.tours.index', compact('tours'));
+        return view('admin.tours.index', compact('tours', 'categories'));
     }
 
     public function togglePublish(Tour $tour)
@@ -81,7 +86,8 @@ class TourController extends Controller
             'faqs' => 'nullable|array',
             'what_to_bring' => 'nullable|array',
             'good_to_know' => 'nullable|array',
-            'featured_image' => 'nullable|image|max:10240',
+            'featured_image' => 'nullable|string',
+            'featured_image_upload' => 'nullable|image|max:10240',
             'video_url' => 'nullable|string',
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -96,9 +102,33 @@ class TourController extends Controller
             'availability_notes' => 'nullable|string',
             'gallery_images.*' => 'nullable|image|max:10240',
             'translations' => 'nullable|array',
+            'itinerary_raw' => 'nullable|string',
+            'pickup_locations' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'gallery_images', 'translations']);
+        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw']);
+
+        // Handle Magic Code Itinerary & Package Data
+        if ($request->filled('itinerary_raw')) {
+            $decoded = json_decode($request->itinerary_raw, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: ' . json_last_error_msg()]);
+            }
+
+            // If it's a full package object with keys
+            if (isset($decoded['itinerary'])) {
+                $data['itinerary'] = $decoded['itinerary'];
+                if (isset($decoded['inclusions'])) $data['inclusions'] = $decoded['inclusions'];
+                if (isset($decoded['exclusions'])) $data['exclusions'] = $decoded['exclusions'];
+                if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
+                if (isset($decoded['what_to_bring'])) $data['what_to_bring'] = $decoded['what_to_bring'];
+                if (isset($decoded['good_to_know'])) $data['good_to_know'] = $decoded['good_to_know'];
+            } else {
+                // Fallback to just itinerary if it's a simple array
+                $data['itinerary'] = $decoded;
+            }
+        }
+
         $data['is_published'] = $request->has('is_published') ? 1 : 0;
         $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
         $data['is_bestseller'] = $request->has('is_bestseller') ? 1 : 0;
@@ -108,8 +138,10 @@ class TourController extends Controller
         $data['airport_pickup'] = $request->has('airport_pickup') ? 1 : 0;
         $data['transport_included'] = $request->has('transport_included') ? 1 : 0;
 
-        if ($request->hasFile('featured_image')) {
-            $data['featured_image'] = $request->file('featured_image')->store('tours', 'public');
+        if ($request->hasFile('featured_image_upload')) {
+            $data['featured_image'] = $request->file('featured_image_upload')->store('tours', 'public');
+        } elseif ($request->filled('featured_image')) {
+            $data['featured_image'] = $request->featured_image;
         }
 
         $tour = Tour::create($data);
@@ -198,7 +230,8 @@ class TourController extends Controller
             'faqs' => 'nullable|array',
             'what_to_bring' => 'nullable|array',
             'good_to_know' => 'nullable|array',
-            'featured_image' => 'nullable|image|max:10240',
+            'featured_image' => 'nullable|string',
+            'featured_image_upload' => 'nullable|image|max:10240',
             'video_url' => 'nullable|string',
             'meta_title' => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -213,9 +246,33 @@ class TourController extends Controller
             'availability_notes' => 'nullable|string',
             'gallery_images.*' => 'nullable|image|max:10240',
             'translations' => 'nullable|array',
+            'itinerary_raw' => 'nullable|string',
+            'pickup_locations' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'gallery_images', 'translations']);
+        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw']);
+
+        // Handle Magic Code Itinerary & Package Data
+        if ($request->filled('itinerary_raw')) {
+            $decoded = json_decode($request->itinerary_raw, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: ' . json_last_error_msg()]);
+            }
+
+            // If it's a full package object with keys
+            if (isset($decoded['itinerary'])) {
+                $data['itinerary'] = $decoded['itinerary'];
+                if (isset($decoded['inclusions'])) $data['inclusions'] = $decoded['inclusions'];
+                if (isset($decoded['exclusions'])) $data['exclusions'] = $decoded['exclusions'];
+                if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
+                if (isset($decoded['what_to_bring'])) $data['what_to_bring'] = $decoded['what_to_bring'];
+                if (isset($decoded['good_to_know'])) $data['good_to_know'] = $decoded['good_to_know'];
+            } else {
+                // Fallback to just itinerary if it's a simple array
+                $data['itinerary'] = $decoded;
+            }
+        }
+
         $data['is_published'] = $request->has('is_published') ? 1 : 0;
         $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
         $data['is_bestseller'] = $request->has('is_bestseller') ? 1 : 0;
@@ -225,11 +282,13 @@ class TourController extends Controller
         $data['airport_pickup'] = $request->has('airport_pickup') ? 1 : 0;
         $data['transport_included'] = $request->has('transport_included') ? 1 : 0;
 
-        if ($request->hasFile('featured_image')) {
-            if ($tour->featured_image) {
+        if ($request->hasFile('featured_image_upload')) {
+            if ($tour->featured_image && !str_contains($tour->featured_image, 'media/')) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($tour->featured_image);
             }
-            $data['featured_image'] = $request->file('featured_image')->store('tours', 'public');
+            $data['featured_image'] = $request->file('featured_image_upload')->store('tours', 'public');
+        } elseif ($request->filled('featured_image')) {
+            $data['featured_image'] = $request->featured_image;
         }
 
         $tour->update($data);

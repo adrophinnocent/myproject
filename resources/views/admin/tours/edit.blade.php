@@ -64,7 +64,7 @@
             </div>
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Full Description</label>
-                <textarea name="description" rows="6" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('description', $tour->description) }}</textarea>
+                <textarea name="description" rows="10" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('description', $tour->description) }}</textarea>
             </div>
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Highlights</label>
@@ -72,7 +72,7 @@
                     @if(is_array($tour->highlights) && count($tour->highlights) > 0)
                         @foreach($tour->highlights as $highlight)
                             <div class="flex gap-2">
-                                <input type="text" name="highlights[]" value="{{ $highlight }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                <input type="text" name="highlights[]" value="{{ is_array($highlight) ? implode(', ', $highlight) : $highlight }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                 <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
                             </div>
                         @endforeach
@@ -196,43 +196,78 @@
         </div>
 
         <div id="content-itinerary" class="tab-content hidden">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Itinerary Builder</h3>
-                <button type="button" id="add-itinerary-day" class="bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-semibold px-4 py-2 rounded-lg text-sm transition-colors">+ Add Day</button>
-            </div>
-            <div id="itinerary-container" class="space-y-4 mb-6">
-                @if(is_array($tour->itinerary) && count($tour->itinerary) > 0)
-                    @foreach($tour->itinerary as $dayNum => $day)
-                        <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                            <div class="flex items-center justify-between mb-4">
-                                <h4 class="font-medium text-gray-800">Day {{ $dayNum + 1 }}</h4>
-                                <button type="button" class="remove-day text-red-600 hover:text-red-800 text-sm font-medium">Remove</button>
+            <div x-data="{ mode: 'builder' }">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex bg-gray-100 p-1 rounded-xl">
+                        <button type="button" @click="mode = 'builder'" :class="mode === 'builder' ? 'bg-white shadow-sm text-amber-600' : 'text-gray-500'" class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all">Manual Builder</button>
+                        <button type="button" @click="mode = 'code'" :class="mode === 'code' ? 'bg-white shadow-sm text-amber-600' : 'text-gray-500'" class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all">Magic Code Mode (ChatGPT)</button>
+                    </div>
+                    <button x-show="mode === 'builder'" type="button" id="add-itinerary-day" class="bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-semibold px-4 py-2 rounded-lg text-sm transition-colors">+ Add Day</button>
+                </div>
+
+                {{-- Manual Builder UI --}}
+                <div x-show="mode === 'builder'" id="itinerary-container" class="space-y-4 mb-6">
+                    @if(is_array($tour->itinerary) && count($tour->itinerary) > 0)
+                        @foreach($tour->itinerary as $dayNum => $day)
+                            <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-medium text-gray-800">Day {{ $dayNum }}</h4>
+                                    <button type="button" class="remove-day text-red-600 hover:text-red-800 text-sm font-medium">Remove</button>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Day Title</label>
+                                        <input type="text" name="itinerary[{{ $dayNum }}][title]" value="{{ $day['title'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                        <textarea name="itinerary[{{ $dayNum }}][description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ $day['description'] ?? '' }}</textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Accommodation</label>
+                                        <input type="text" name="itinerary[{{ $dayNum }}][accommodation]" value="{{ $day['accommodation'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Meals</label>
+                                        <input type="text" name="itinerary[{{ $dayNum }}][meals]" value="{{ $day['meals'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Distance</label>
+                                        <input type="text" name="itinerary[{{ $dayNum }}][distance]" value="{{ $day['distance'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Hiking Time</label>
+                                        <input type="text" name="itinerary[{{ $dayNum }}][hiking_time]" value="{{ $day['hiking_time'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Habitat</label>
+                                        <input type="text" name="itinerary[{{ $dayNum }}][habitat]" value="{{ $day['habitat'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Elevation</label>
+                                        <input type="text" name="itinerary[{{ $dayNum }}][elevation]" value="{{ $day['elevation'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Activities</label>
+                                        <textarea name="itinerary[{{ $dayNum }}][activities]" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ is_array($day['activities'] ?? '') ? implode(', ', $day['activities']) : ($day['activities'] ?? '') }}</textarea>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Day Title</label>
-                                    <input type="text" name="itinerary[{{ $dayNum }}][title]" value="{{ $day['title'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                    <textarea name="itinerary[{{ $dayNum }}][description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ $day['description'] ?? '' }}</textarea>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Accommodation</label>
-                                    <input type="text" name="itinerary[{{ $dayNum }}][accommodation]" value="{{ $day['accommodation'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Meals</label>
-                                    <input type="text" name="itinerary[{{ $dayNum }}][meals]" value="{{ $day['meals'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Activities</label>
-                                    <textarea name="itinerary[{{ $dayNum }}][activities]" rows="2" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ $day['activities'] ?? '' }}</textarea>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
+                        @endforeach
+                    @endif
+                </div>
+
+                {{-- Magic Code Mode UI --}}
+                <div x-show="mode === 'code'" x-cloak class="space-y-4">
+                    <div class="bg-indigo-50 border border-indigo-200 p-6 rounded-2xl text-xs text-indigo-800">
+                        <p class="font-black mb-3 uppercase tracking-widest flex items-center gap-2">
+                            <span class="text-lg">🚀</span> Super Magic Mode (All-in-One)
+                        </p>
+                        <p class="mb-4 leading-relaxed">Unaweza kubandika kodi moja inayojumuisha <strong>Itinerary</strong>, <strong>Inclusions</strong>, <strong>Exclusions</strong>, na <strong>FAQs</strong> kwa pamoja. ChatGPT atakupa kila kitu kwa mpigo mmoja!</p>
+                    </div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Raw JSON Package Data</label>
+                    <textarea name="itinerary_raw" rows="20" class="w-full font-mono text-xs bg-gray-900 text-green-400 p-6 rounded-2xl focus:outline-none border-none shadow-2xl" placeholder="Paste the full JSON object here...">{{ json_encode(['itinerary' => $tour->itinerary, 'inclusions' => $tour->inclusions, 'exclusions' => $tour->exclusions, 'faqs' => $tour->faqs], JSON_PRETTY_PRINT) }}</textarea>
+                </div>
             </div>
         </div>
         <div id="content-inclusions" class="tab-content hidden">
@@ -243,7 +278,7 @@
                         @if(is_array($tour->inclusions) && count($tour->inclusions) > 0)
                             @foreach($tour->inclusions as $inclusion)
                                 <div class="flex gap-2">
-                                    <input type="text" name="inclusions[]" value="{{ $inclusion }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    <input type="text" name="inclusions[]" value="{{ is_array($inclusion) ? implode(', ', $inclusion) : $inclusion }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
                                 </div>
                             @endforeach
@@ -260,7 +295,7 @@
                         @if(is_array($tour->exclusions) && count($tour->exclusions) > 0)
                             @foreach($tour->exclusions as $exclusion)
                                 <div class="flex gap-2">
-                                    <input type="text" name="exclusions[]" value="{{ $exclusion }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    <input type="text" name="exclusions[]" value="{{ is_array($exclusion) ? implode(', ', $exclusion) : $exclusion }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
                                 </div>
                             @endforeach
@@ -277,7 +312,7 @@
                         @if(is_array($tour->what_to_bring) && count($tour->what_to_bring) > 0)
                             @foreach($tour->what_to_bring as $item)
                                 <div class="flex gap-2">
-                                    <input type="text" name="what_to_bring[]" value="{{ $item }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    <input type="text" name="what_to_bring[]" value="{{ is_array($item) ? implode(', ', $item) : $item }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
                                 </div>
                             @endforeach
@@ -294,7 +329,7 @@
                         @if(is_array($tour->good_to_know) && count($tour->good_to_know) > 0)
                             @foreach($tour->good_to_know as $item)
                                 <div class="flex gap-2">
-                                    <input type="text" name="good_to_know[]" value="{{ $item }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    <input type="text" name="good_to_know[]" value="{{ is_array($item) ? implode(', ', $item) : $item }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
                                 </div>
                             @endforeach
@@ -340,13 +375,35 @@
         <div id="content-media" class="tab-content hidden">
             <div class="mb-8 p-6 border border-gray-100 rounded-2xl bg-gray-50">
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Main Featured Image</h3>
-                @if($tour->featured_image)
-                    <div class="mb-4">
-                        <img src="{{ asset('storage/' . $tour->featured_image) }}" alt="Featured" class="h-48 w-72 object-cover rounded-xl shadow-md border-4 border-white">
+
+                <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl p-8 bg-white" id="featured-image-container">
+                    @if($tour->featured_image)
+                        <img id="featured-preview" src="{{ asset('storage/' . $tour->featured_image) }}" class="w-full max-w-md h-64 object-cover rounded-xl mb-4 shadow-md">
+                        <div id="featured-placeholder" class="hidden text-center py-10">
+                            <div class="text-4xl mb-2">📸</div>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">No Image Selected</p>
+                        </div>
+                    @else
+                        <img id="featured-preview" src="" class="hidden w-full max-w-md h-64 object-cover rounded-xl mb-4 shadow-md">
+                        <div id="featured-placeholder" class="text-center py-10">
+                            <div class="text-4xl mb-2">📸</div>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">No Image Selected</p>
+                        </div>
+                    @endif
+
+                    <input type="hidden" name="featured_image" id="featured_image_path" value="{{ $tour->featured_image }}">
+
+                    <div class="flex gap-3">
+                        <button type="button"
+                                onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'featured_image_path', previewId: 'featured-preview'}}))"
+                                class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            Change from Library
+                        </button>
+                        <p class="text-[10px] text-gray-400 self-center">OR</p>
+                        <input type="file" name="featured_image_upload" class="text-xs file:bg-gray-100 file:border-none file:px-4 file:py-2 file:rounded-lg file:font-black file:uppercase">
                     </div>
-                @endif
-                <input type="file" name="featured_image" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
-                <p class="text-xs text-gray-500 mt-2 italic">Recommended size: 1920x1080px for best quality.</p>
+                </div>
+                <p class="text-[10px] text-gray-400 mt-4 italic">Recommended size: 1920x1080px. Picking from Library ensures WebP optimization.</p>
             </div>
 
             <div class="mb-8 p-6 border border-gray-100 rounded-2xl bg-gray-50">
@@ -458,7 +515,137 @@
         </div>
 
         <div id="content-logistics" class="tab-content hidden">
-            {{-- ... (logistics content remains same) ... --}}
+            <div class="mb-8 bg-amber-50 p-6 rounded-2xl border border-amber-100">
+                <h4 class="text-xs font-black text-amber-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Quick Select Arrival Point
+                </h4>
+                <div class="flex flex-wrap gap-3">
+                    @php
+                        $commonPoints = [
+                            ['name' => 'Kilimanjaro Intl Airport (JRO)', 'lat' => '-3.4294', 'lng' => '37.0745'],
+                            ['name' => 'Arusha Airport (ARK)', 'lat' => '-3.3675', 'lng' => '36.6333'],
+                            ['name' => 'Moshi Town Center', 'lat' => '-3.3444', 'lng' => '37.3444'],
+                            ['name' => 'Arusha City Center', 'lat' => '-3.3731', 'lng' => '36.6853'],
+                        ];
+                    @endphp
+                    @foreach($commonPoints as $cp)
+                        <button type="button"
+                                onclick="setPickup('{{ $cp['name'] }}', '{{ $cp['lat'] }}', '{{ $cp['lng'] }}')"
+                                class="px-4 py-2 bg-white border border-amber-200 rounded-xl text-[10px] font-bold text-amber-700 hover:bg-amber-500 hover:text-white transition-all shadow-sm">
+                            + {{ $cp['name'] }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="mb-10 bg-indigo-50 p-8 rounded-[2rem] border border-indigo-100">
+                <h4 class="text-xs font-black text-indigo-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Multiple Pickup Points (Show on Booking Page)
+                </h4>
+                <div id="pickup-locations-container" class="space-y-4">
+                    @if(is_array($tour->pickup_locations) && count($tour->pickup_locations) > 0)
+                        @foreach($tour->pickup_locations as $index => $pl)
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-2xl border border-indigo-100 shadow-sm">
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-1">Point Name</label>
+                                <input type="text" name="pickup_locations[{{ $index }}][name]" value="{{ $pl['name'] ?? '' }}" class="w-full border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-1">Latitude</label>
+                                <input type="text" name="pickup_locations[{{ $index }}][lat]" value="{{ $pl['lat'] ?? '' }}" class="w-full border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold">
+                            </div>
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-1">Longitude</label>
+                                <div class="flex gap-2">
+                                    <input type="text" name="pickup_locations[{{ $index }}][lng]" value="{{ $pl['lng'] ?? '' }}" class="w-full border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold">
+                                    <button type="button" onclick="this.closest('.grid').remove()" class="text-red-500 hover:text-red-700 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    @endif
+                </div>
+                <button type="button" onclick="addPickupPoint()" class="mt-6 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-200">
+                    + Add More Location
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 pt-10 border-t border-gray-100">
+                <div class="md:col-span-2 flex flex-wrap gap-4">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="pickup_included" {{ old('pickup_included', $tour->pickup_included) ? 'checked' : '' }} class="w-4 h-4 text-[#D4AF37] rounded">
+                        <span class="text-sm text-gray-700">Pickup Included</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="airport_pickup" {{ old('airport_pickup', $tour->airport_pickup) ? 'checked' : '' }} class="w-4 h-4 text-[#D4AF37] rounded">
+                        <span class="text-sm text-gray-700">Airport Pickup</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="transport_included" {{ old('transport_included', $tour->transport_included) ? 'checked' : '' }} class="w-4 h-4 text-[#D4AF37] rounded">
+                        <span class="text-sm text-gray-700">Transport Included</span>
+                    </label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location Name</label>
+                    <input type="text" id="location-name" name="location_name" value="{{ old('location_name', $tour->location_name) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                    <input type="text" id="latitude" name="latitude" value="{{ old('latitude', $tour->latitude) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                    <input type="text" id="longitude" name="longitude" value="{{ old('longitude', $tour->longitude) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div class="md:col-span-2 flex gap-2">
+                    <button type="button" id="generate-map" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">Generate Map Iframe</button>
+                    <button type="button" id="find-coords" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">Find Coordinates</button>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Map Iframe</label>
+                    <textarea id="map-location" name="map_location" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('map_location', $tour->map_location) }}</textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <div id="map-preview" class="w-full h-64 border border-gray-300 rounded-lg overflow-hidden"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Guide</label>
+                    <input type="text" name="assigned_guide" value="{{ old('assigned_guide', $tour->assigned_guide) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Age</label>
+                    <input type="number" name="min_age" value="{{ old('min_age', $tour->min_age) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Age</label>
+                    <input type="number" name="max_age" value="{{ old('max_age', $tour->max_age) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Languages Offered</label>
+                    <div id="languages-container" class="space-y-2">
+                        @if(is_array($tour->languages_offered) && count($tour->languages_offered) > 0)
+                            @foreach($tour->languages_offered as $lang)
+                                <div class="flex gap-2">
+                                    <input type="text" name="languages_offered[]" value="{{ is_array($lang) ? implode(', ', $lang) : $lang }}" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                    <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
+                                </div>
+                            @endforeach
+                        @endif
+                        <div class="flex gap-2">
+                            <input type="text" name="languages_offered[]" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                            <button type="button" onclick="addLanguage()" class="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Special Notes</label>
+                    <textarea name="special_notes" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ old('special_notes', $tour->special_notes) }}</textarea>
+                </div>
+            </div>
         </div>
 
         {{-- Translation Tab --}}
@@ -517,15 +704,63 @@ function slugify(text) {
         .replace(/-+$/, '');
 }
 
+let plCount = {{ is_array($tour->pickup_locations) ? count($tour->pickup_locations) : 0 }};
+function addPickupPoint() {
+    plCount++;
+    const html = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-2xl border border-indigo-100 shadow-sm animate-fade-in">
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-1">Point Name</label>
+                <input type="text" name="pickup_locations[${plCount}][name]" class="w-full border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold">
+            </div>
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-1">Latitude</label>
+                <input type="text" name="pickup_locations[${plCount}][lat]" class="w-full border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold">
+            </div>
+            <div class="relative">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-1">Longitude</label>
+                <div class="flex gap-2">
+                    <input type="text" name="pickup_locations[${plCount}][lng]" class="w-full border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold">
+                    <button type="button" onclick="this.closest('.grid').remove()" class="text-red-500 hover:text-red-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('pickup-locations-container').insertAdjacentHTML('beforeend', html);
+}
+
+function setPickup(name, lat, lng) {
+    document.getElementById('location-name').value = name;
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lng;
+
+    // Generate the map iframe immediately
+    const iframe = `<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.01}%2C${parseFloat(lat)-0.01}%2C${parseFloat(lng)+0.01}%2C${parseFloat(lat)+0.01}&layer=mapnik&marker=${lat}%2C${lng}" width="100%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style="border: 1px solid black;"></iframe>`;
+    document.getElementById('map-location').value = iframe;
+    document.getElementById('map-preview').innerHTML = iframe;
+}
+
 const titleInput = document.getElementById('tour-title');
 const slugInput = document.getElementById('tour-slug');
 
 if (titleInput && slugInput) {
+    // For edit page, we only auto-update if the slug matches the original title's slug
+    const originalAutoSlug = slugify(titleInput.defaultValue || '');
+
     titleInput.addEventListener('input', function() {
+        if (slugInput.dataset.manual === 'true') return;
+
         const currentSlug = slugInput.value;
-        if (!currentSlug || currentSlug === slugify(titleInput.defaultValue || '')) {
+        if (!currentSlug || currentSlug === originalAutoSlug || currentSlug === slugify(this.dataset.prevTitle || titleInput.defaultValue)) {
             slugInput.value = slugify(this.value);
+            this.dataset.prevTitle = this.value;
         }
+    });
+
+    slugInput.addEventListener('input', function() {
+        slugInput.dataset.manual = 'true';
     });
 }
 
@@ -564,6 +799,22 @@ document.getElementById('add-itinerary-day').addEventListener('click', function(
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Meals</label>
                     <input type="text" name="itinerary[${dayCount}][meals]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Distance (e.g. 12 km)</label>
+                    <input type="text" name="itinerary[${dayCount}][distance]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hiking Time (e.g. 5-6 hours)</label>
+                    <input type="text" name="itinerary[${dayCount}][hiking_time]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Habitat (e.g. Rainforest)</label>
+                    <input type="text" name="itinerary[${dayCount}][habitat]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Elevation (e.g. 1800m to 3100m)</label>
+                    <input type="text" name="itinerary[${dayCount}][elevation]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Activities</label>

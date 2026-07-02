@@ -8,7 +8,7 @@
     <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
         <span class="text-gold-400 text-sm uppercase tracking-widest font-semibold">Explore Africa</span>
         <h1 class="font-display text-4xl md:text-6xl text-white font-bold mt-3">Safari Tour Packages</h1>
-        <p class="text-gray-300 max-w-2xl mx-auto mt-4">{{ $tours->total() }} extraordinary experiences awaiting you across East Africa</p>
+        <p class="text-gray-300 max-w-2xl mx-auto mt-4">Extraordinary experiences awaiting you across East Africa</p>
     </div>
 </div>
 
@@ -32,10 +32,10 @@
                         <div class="space-y-2">
                             @foreach($categories as $cat)
                             <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="radio" name="category" value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'checked' : '' }}
+                                <input type="radio" name="category" value="{{ $cat->id }}"
+                                       {{ (request('category') == $cat->id || request('tour_type') == $cat->slug) ? 'checked' : '' }}
                                        onchange="this.form.submit()" class="text-gold-500 focus:ring-gold-500">
                                 <span class="text-sm text-gray-600 group-hover:text-gold-600 transition-colors">{{ $cat->name }}</span>
-                                <span class="ml-auto text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{{ $cat->tours()->count() }}</span>
                             </label>
                             @endforeach
                         </div>
@@ -46,8 +46,8 @@
                                 class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gold-500">
                             <option value="">All Destinations</option>
                             @foreach($destinations as $dest)
-                            <option value="{{ $dest->id }}" {{ request('destination') == $dest->id ? 'selected' : '' }}>
-                                {{ $dest->name }} ({{ $dest->tours()->count() }})
+                            <option value="{{ $dest->id }}" {{ (request('destination') == $dest->id || request('tour_type') == $dest->slug) ? 'selected' : '' }}>
+                                {{ $dest->name }}
                             </option>
                             @endforeach
                         </select>
@@ -88,8 +88,7 @@
         </aside>
 
         <div class="flex-1">
-            <div class="flex items-center justify-between mb-8">
-                <p class="text-gray-500 text-sm">Showing <strong>{{ $tours->count() }}</strong> of <strong>{{ $tours->total() }}</strong> tours</p>
+            <div class="mb-8">
             </div>
 
             @forelse($tours as $tour)
@@ -106,9 +105,10 @@
                         </div>
                         @if($tour->is_featured)<span class="text-gold-500 text-sm">⭐ Featured</span>@endif
                     </div>
-                    <h3 class="font-display text-xl font-semibold text-gray-900 mb-2">
+                    <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
                         <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600 transition-colors">{{ $tour->getTranslation('title') }}</a>
                     </h3>
+                    <div class="text-[10px] font-mono text-gray-400 mb-3 tracking-tighter">{{ $tour->slug }}.html</div>
                     <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">{{ $tour->getTranslation('short_description') }}</p>
                     <div class="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
                         <span class="flex items-center gap-1.5">{{ $tour->duration_text }}</span>

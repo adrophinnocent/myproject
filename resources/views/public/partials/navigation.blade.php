@@ -6,12 +6,12 @@
 
      // Categories with custom descriptions for the Mega Menu
      $categoriesWithMeta = [
-        'safari' => ['desc' => __('Big Five & Migration')],
-        'kilimanjaro' => ['desc' => __('Roof of Africa')],
-        'zanzibar' => ['desc' => __('Island paradise')],
+        'safari-tours' => ['desc' => __('Explore Africa')],
+        'kilimanjaro-trekking' => ['desc' => __('Explore Africa')],
+        'zanzibar-holidays' => ['desc' => __('Explore Africa')],
         'luxury-safaris' => ['desc' => __('Ultra-premium escapes')],
         'family-safaris' => ['desc' => __('Memories for all ages')],
-        'honeymoon' => ['desc' => __('Romantic adventures')],
+        'honeymoon-safaris' => ['desc' => __('Explore Africa')],
         'day-trips' => ['desc' => __('Short but thrilling')],
         'group-tours' => ['desc' => __('Shared adventures')],
      ];
@@ -54,7 +54,6 @@
                     @endforeach
                 </div>
             </div>
-            <a href="{{ route('tours.index') }}" class="btn-gold px-4 py-1.5 rounded-full font-semibold">{{ __('Book Now') }}</a>
         </div>
     </div>
 </div>
@@ -76,7 +75,7 @@
                 @endif
                 <div class="hidden sm:block">
                     <span class="font-display text-white text-lg font-semibold leading-tight block">{{ $siteName }}</span>
-                    <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">Est. 2009 · Tanzania</span>
+                    <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">Tanzania</span>
                 </div>
             </a>
 

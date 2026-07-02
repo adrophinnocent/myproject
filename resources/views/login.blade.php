@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'Twinasafaris') }} - Admin Login</title>
+    <title>Twinasafaris - Admin Login</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,8 +28,7 @@
                         700: '#0f5a2e',
                         800: '#0a3d1f',
                         900: '#052010',
-                    },
-                    safari: { dark:'#052010', mid:'#0a3d1f', light:'#1a9b50' },
+                    }
                 },
                 fontFamily: {
                     display: ['"Outfit"','system-ui','sans-serif'],
@@ -41,150 +40,168 @@
     </script>
 
     <style>
-        body { font-family: 'Outfit', sans-serif; }
-        .font-display { font-family: 'Outfit', sans-serif; }
-
-        .btn-brand {
-            background: #1a9b50;
-            color: white; font-weight:600;
-            transition: all 0.3s;
-        }
-        .btn-brand:hover {
-            background: #147a3e;
-            transform: translateY(-2px);
-            box-shadow:0 8px 25px rgba(26,155,80,0.3);
+        :root {
+            --clay-bg: #ffffff;
+            --clay-shadow-out: 20px 20px 60px #d1d9e6, -20px -20px 60px #ffffff;
+            --clay-shadow-in: inset 6px 6px 12px rgba(0,0,0,0.05), inset -6px -6px 12px rgba(255,255,255,0.8);
+            --clay-shadow-in-dark: inset 6px 6px 12px rgba(0,0,0,0.2), inset -6px -6px 12px rgba(255,255,255,0.1);
         }
 
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f0f4f8;
+            background-image: radial-gradient(at 0% 0%, rgba(26, 155, 80, 0.05) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(26, 155, 80, 0.05) 0px, transparent 50%);
+        }
+
+        .clay-container {
+            background: var(--clay-bg);
+            border-radius: 50px;
+            box-shadow: var(--clay-shadow-out);
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .clay-container::after {
+            content: '';
+            position: absolute;
+            top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border-radius: 40px;
+            pointer-events: none;
+            box-shadow: var(--clay-shadow-in);
+        }
+
+        .clay-input {
+            background: #f8fafc;
+            border: none;
+            box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .clay-input:focus {
+            box-shadow: inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff;
+            background: #ffffff;
+        }
+
+        .clay-button {
+            box-shadow: 8px 8px 20px rgba(26, 155, 80, 0.2), inset 4px 4px 8px rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .clay-button:hover {
+            transform: scale(0.98);
+            box-shadow: 4px 4px 10px rgba(26, 155, 80, 0.2);
+        }
+
+        .clay-side-dark {
+            box-shadow: var(--clay-shadow-in-dark);
+            position: relative;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
         }
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-safari-dark via-brand-900/10 to-safari-dark overflow-hidden">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <!-- Animated Background -->
-    <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute top-20 left-20 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl animate-float"></div>
-        <div class="absolute bottom-20 right-20 w-96 h-96 bg-brand-900/20 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
-    </div>
+    <div class="w-full max-w-5xl flex flex-col md:flex-row clay-container overflow-hidden">
 
-    <div class="relative min-h-screen flex items-center justify-center px-4 py-12">
-        <div class="w-full max-w-4xl flex bg-white/10 rounded-3xl shadow-2xl overflow-hidden border border-white/10">
-
-            <!-- Left Side - Decorative -->
-            <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-brand-600 to-brand-900 p-12 flex-col justify-center items-center text-white">
-                <div class="text-center">
-                    <div class="w-32 h-32 mx-auto mb-8 bg-white/10 rounded-3xl flex items-center justify-center shadow-lg border border-white/20">
-                        <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9-9c1.657 0 3 1.343 3 3s-1.343 3-3 3m0-6H7m10 0v6m0 6H7m10 0v-6M3 12a9 9 0 019-9m-9 9a9 9 0 009 9m-9-9c1.657 0-3 1.343-3 3s1.343 3 3 3m0-6h10"></path></svg>
-                    </div>
-                    <h1 class="font-display text-4xl font-bold mb-4">{{ \App\Models\Setting::get('site_name', 'Twinasafaris') }}</h1>
-                    <p class="text-brand-100 text-lg mb-6">Admin Dashboard</p>
-                    <p class="text-sm text-brand-200/80">Welcome back! Manage your safari business with ease.</p>
+        <!-- Left Side - Decorative -->
+        <div class="hidden md:flex md:w-5/12 bg-gradient-to-br from-brand-600 to-brand-900 p-12 flex-col justify-center items-center text-white clay-side-dark z-10">
+            <div class="text-center animate-float">
+                <div class="w-28 h-28 mx-auto mb-8 bg-white/10 rounded-[35px] flex items-center justify-center shadow-2xl border border-white/20 backdrop-blur-md">
+                    <span class="text-5xl">🦁</span>
                 </div>
+                <h1 class="text-4xl font-extrabold mb-4 tracking-tight">Twinasafaris</h1>
+                <p class="text-brand-100 text-lg font-medium mb-2 uppercase tracking-widest">Admin Dashboard</p>
+                <div class="w-12 h-1.5 bg-brand-400 mx-auto mb-6 rounded-full"></div>
+                <p class="text-sm text-brand-200/80 leading-relaxed max-w-[250px]">Welcome back! Manage your safari business with ease.</p>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="w-full md:w-7/12 p-8 md:p-16 z-10">
+            <div class="mb-10 md:hidden text-center">
+                <div class="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <span class="text-3xl">🦁</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 leading-tight">Twinasafaris Admin</h1>
             </div>
 
-            <!-- Right Side - Login Form -->
-            <div class="w-full md:w-1/2 p-8 md:p-12">
-                <div class="mb-8 md:hidden">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center overflow-hidden shadow-lg">
-                            @if(\App\Models\Setting::get('logo'))
-                                <img src="{{ asset('storage/' . \App\Models\Setting::get('logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'Twinasafaris') }}" class="w-10 h-10 object-contain">
-                            @else
-                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9-9c1.657 0 3 1.343 3 3s-1.343 3-3 3m0-6H7m10 0v6m0 6H7m10 0v-6M3 12a9 9 0 019-9m-9 9a9 9 0 009 9m-9-9c1.657 0-3 1.343-3 3s1.343 3 3 3m0-6h10"></path></svg>
-                            @endif
+            <div class="mb-10">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back</h2>
+                <p class="text-gray-500 font-medium">Please sign in to access your admin panel</p>
+            </div>
+
+            <form method="POST" action="{{ route('admin.login') }}" class="space-y-7">
+                @csrf
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-3 ml-2">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 0 9 9 0 009 0zm-4.5 7.5a2.5 2.5 0 005 0v-1.5" />
+                            </svg>
                         </div>
-                        <div>
-                            <h1 class="font-display text-xl font-bold text-gray-900">{{ \App\Models\Setting::get('site_name', 'Twinasafaris') }}</h1>
-                            <p class="text-sm text-gray-500">Admin Dashboard</p>
-                        </div>
+                        <input type="email" name="email" value="bellainnos@gmail.com" required
+                            class="w-full pl-14 pr-6 py-4.5 rounded-[22px] clay-input focus:outline-none transition-all text-gray-800 font-medium"
+                            placeholder="bellainnos@gmail.com" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
                     </div>
                 </div>
 
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-                <p class="text-gray-600 mb-8">Please sign in to access your admin panel</p>
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-3 ml-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <input type="password" name="password" value="password123" required
+                            class="w-full pl-14 pr-6 py-4.5 rounded-[22px] clay-input focus:outline-none transition-all text-gray-800 font-medium"
+                            placeholder="••••••••" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
+                    </div>
+                </div>
 
-                <form method="POST" action="{{ route('admin.login') }}" class="space-y-6">
-                    @csrf
-
-                    <!-- Email -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <!-- Remember Me -->
+                <div class="flex items-center px-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 0 9 9 0 009 0zm-4.5 7.5a2.5 2.5 0 005 0v-1.5" />
-                                </svg>
+                            <input type="checkbox" id="remember" name="remember" class="w-5 h-5 opacity-0 absolute cursor-pointer">
+                            <div class="w-5 h-5 bg-white rounded-md clay-input flex items-center justify-center border-none transition-all group-hover:scale-110">
+                                <div class="w-2.5 h-2.5 bg-brand-500 rounded-sm opacity-0 check-mark"></div>
                             </div>
-                            <input type="email" name="email" value="bellainnos@gmail.com" required
-                                class="w-full pl-12 pr-4 py-3.5 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all text-sm"
-                                placeholder="admin@example.com">
                         </div>
-                    </div>
-
-                    <!-- Password -->
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-sm font-medium text-gray-700">Password</label>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                            </div>
-                            <input type="password" name="password" value="password123" required
-                                class="w-full pl-12 pr-4 py-3.5 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all text-sm"
-                                placeholder="••••••••">
-                        </div>
-                    </div>
-
-                    <!-- Remember & Forgot -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="remember" name="remember" class="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500">
-                            <label for="remember" class="text-sm text-gray-600 cursor-pointer">Remember me</label>
-                        </div>
-                    </div>
-
-                    <!-- Login Button -->
-                    <button type="submit" class="w-full btn-brand py-3.5 rounded-xl text-base font-semibold flex items-center justify-center gap-2">
-                        <span>Sign In</span>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </button>
-                </form>
-
-                <!-- Quick Login -->
-                <div class="mt-8 pt-6 border-t border-gray-100">
-                    <a href="{{ route('emergency-login') }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Quick auto-login for testing
-                    </a>
+                        <span class="text-sm text-gray-600 font-bold group-hover:text-brand-600 transition-colors">Remember me</span>
+                    </label>
+                    <style>input:checked + div .check-mark { opacity: 1 !important; }</style>
                 </div>
 
-                <!-- Footer -->
-                <div class="mt-10 pt-6 border-t border-gray-100 text-center">
-                    <a href="{{ route('home') }}" class="text-sm text-gray-500 hover:text-brand-600 transition-colors inline-flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to website
-                    </a>
-                </div>
+                <!-- Login Button -->
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-500 to-brand-600 py-4.5 rounded-[22px] text-white font-extrabold text-lg uppercase tracking-wider clay-button flex items-center justify-center gap-3" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
+                    <span>Sign In</span>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Footer Links -->
+            <div class="mt-12 flex flex-col items-center gap-5">
+                <a href="{{ route('emergency-login') }}" class="w-full py-3.5 bg-gray-200/50 rounded-2xl text-sm font-bold text-gray-600 hover:text-brand-600 transition-all text-center clay-input">
+                    Quick auto-login for testing
+                </a>
+
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-brand-600 transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Back to website
+                </a>
             </div>
         </div>
     </div>

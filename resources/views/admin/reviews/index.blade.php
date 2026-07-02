@@ -37,7 +37,13 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right text-sm font-medium">
-                    <a href="{{ route('admin.reviews.approve', $review) }}" class="text-[#D4AF37] hover:text-[#b8920d] mr-3">{{ $review->is_approved ? 'Unapprove' : 'Approve' }}</a>
+                    <form method="POST" action="{{ route('admin.reviews.approve', $review) }}" class="inline-block mr-3">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="text-[#D4AF37] hover:text-[#b8920d]">
+                            {{ $review->is_approved ? 'Unapprove' : 'Approve' }}
+                        </button>
+                    </form>
                     <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}" class="inline-block" onsubmit="return confirm('Are you sure?')">
                         @csrf
                         @method('DELETE')
@@ -48,7 +54,7 @@
             @endforeach
         </tbody>
     </table>
-    
+
     <div class="px-6 py-4 border-t border-gray-200">
         {{ $reviews->links() }}
     </div>

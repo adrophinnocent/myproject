@@ -9,10 +9,10 @@ Track the current progress of the project features.
 *   Multi-Image Gallery for Tours.
 *   Automated PDF Itinerary Generation.
 *   Multi-Language (FR, DE, ES) Infrastructure.
+*   SEO Metadata Optimization for all packages.
 
 ## 🟡 In Progress
 *   SMTP Real Email Configuration.
-*   SEO Metadata Optimization for all packages.
 
 ## 🔴 Future Scaling
 *   PayPal/Stripe Automated Checkout.
