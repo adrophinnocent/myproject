@@ -36,6 +36,7 @@ class SettingController extends Controller
             'instagram_url' => 'nullable|url',
             'twitter_url' => 'nullable|url',
             'youtube_url' => 'nullable|url',
+            'google_maps_url' => 'nullable|url',
             'current_season' => 'required|in:peak,shoulder,low',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
             'favicon' => 'nullable|image|mimes:jpg,jpeg,png,ico|max:1024',

@@ -216,6 +216,12 @@
             <input type="url" name="youtube_url" value="{{ \App\Models\Setting::get('youtube_url') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
         </div>
 
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Google Maps Business Link</label>
+            <input type="url" name="google_maps_url" value="{{ \App\Models\Setting::get('google_maps_url') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" placeholder="https://maps.app.goo.gl/...">
+            <p class="text-xs text-gray-500 mt-1">This link allows customers to leave reviews and find your office location.</p>
+        </div>
+
         <div class="flex justify-end">
             <button type="submit" class="bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-semibold px-6 py-2 rounded-lg transition-colors">Save Changes</button>
         </div>
