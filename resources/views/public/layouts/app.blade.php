@@ -90,6 +90,9 @@
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     @endif
 
+    {{-- Custom Header Scripts --}}
+    {!! \App\Models\Setting::get('header_scripts') !!}
+
     {{-- Fonts & CSS --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -302,6 +305,9 @@
         if (typeof fbq !== 'undefined') fbq('track', 'Contact', { 'method': 'whatsapp' });
     }
     </script>
+
+    {{-- Custom Footer Scripts --}}
+    {!! \App\Models\Setting::get('footer_scripts') !!}
 
     @yield('scripts')
 </body>
