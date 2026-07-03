@@ -112,7 +112,7 @@
                         @if($highlight)
                         <li class="flex items-center gap-3 text-gray-600">
                             <svg class="w-5 h-5 text-gold-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span>{{ $highlight }}</span>
+                            <span>{{ is_array($highlight) ? implode(', ', $highlight) : $highlight }}</span>
                         </li>
                         @endif
                     @endforeach
@@ -249,7 +249,7 @@
                         @foreach($tour->inclusions as $item)
                         <li class="flex items-start gap-3 text-gray-600 text-sm">
                             <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            {{ $item }}
+                            {{ is_array($item) ? implode(', ', $item) : $item }}
                         </li>
                         @endforeach
                     </ul>
@@ -262,7 +262,7 @@
                         @foreach($tour->exclusions as $item)
                         <li class="flex items-start gap-3 text-gray-600 text-sm">
                             <svg class="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            {{ $item }}
+                            {{ is_array($item) ? implode(', ', $item) : $item }}
                         </li>
                         @endforeach
                     </ul>
@@ -278,7 +278,7 @@
                         @if($item)
                         <li class="flex items-center gap-3 text-gray-600">
                             <span class="w-2 h-2 bg-gold-500 rounded-full flex-shrink-0"></span>
-                            <span>{{ $item }}</span>
+                            <span>{{ is_array($item) ? implode(', ', $item) : $item }}</span>
                         </li>
                         @endif
                     @endforeach
@@ -294,7 +294,7 @@
                         @if($item)
                         <li class="flex items-start gap-3 text-gray-600">
                             <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span>{{ $item }}</span>
+                            <span>{{ is_array($item) ? implode(', ', $item) : $item }}</span>
                         </li>
                         @endif
                     @endforeach

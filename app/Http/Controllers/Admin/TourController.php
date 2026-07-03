@@ -118,6 +118,7 @@ class TourController extends Controller
             // If it's a full package object with keys
             if (isset($decoded['itinerary'])) {
                 $data['itinerary'] = $decoded['itinerary'];
+                if (isset($decoded['highlights'])) $data['highlights'] = $decoded['highlights'];
                 if (isset($decoded['inclusions'])) $data['inclusions'] = $decoded['inclusions'];
                 if (isset($decoded['exclusions'])) $data['exclusions'] = $decoded['exclusions'];
                 if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
@@ -262,6 +263,7 @@ class TourController extends Controller
             // If it's a full package object with keys
             if (isset($decoded['itinerary'])) {
                 $data['itinerary'] = $decoded['itinerary'];
+                if (isset($decoded['highlights'])) $data['highlights'] = $decoded['highlights'];
                 if (isset($decoded['inclusions'])) $data['inclusions'] = $decoded['inclusions'];
                 if (isset($decoded['exclusions'])) $data['exclusions'] = $decoded['exclusions'];
                 if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
