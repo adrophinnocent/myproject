@@ -462,75 +462,10 @@
                         </div>
                     </div>
                 @empty
-                    <!-- Fallback tours if no database tours -->
-                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
-                            <div class="relative h-56">
-                                <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80" alt="Serengeti Safari" class="w-full h-full object-cover" loading="lazy">
-                            </div>
-                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
-                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
-                                    <span>7 Days / 6 Nights</span> • <span>Serengeti</span>
-                                </div>
-                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                                    <a href="{{ route('tours.index') }}" class="hover:text-gold-600">Classic Serengeti Safari</a>
-                                </h3>
-                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Experience the Great Migration and witness incredible wildlife in their natural habitat.</p>
-                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-                                    <div class="text-2xl font-display font-bold text-gold-600">$1,299</div>
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('tours.index') }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                        <a href="{{ route('tours.index') }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
-                            <div class="relative h-56">
-                                <img src="https://images.unsplash.com/photo-1508002366005-75a695ee2d17?w=800&q=80" alt="Kilimanjaro" class="w-full h-full object-cover" loading="lazy">
-                            </div>
-                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
-                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
-                                    <span>8 Days / 7 Nights</span> • <span>Kilimanjaro</span>
-                                </div>
-                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                                    <a href="{{ route('tours.index') }}" class="hover:text-gold-600">Mount Kilimanjaro Climb</a>
-                                </h3>
-                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Summit the highest peak in Africa with our expert guides and professional support team.</p>
-                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-                                    <div class="text-2xl font-display font-bold text-gold-600">$1,899</div>
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('tours.index') }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                        <a href="{{ route('tours.index') }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
-                            <div class="relative h-56">
-                                <img src="https://images.unsplash.com/photo-1506929562872-bb412f17e967?w=800&q=80" alt="Zanzibar" class="w-full h-full object-cover" loading="lazy">
-                            </div>
-                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
-                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
-                                    <span>5 Days / 4 Nights</span> • <span>Zanzibar</span>
-                                </div>
-                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-3">
-                                    <a href="{{ route('tours.index') }}" class="hover:text-gold-600">Zanzibar Beach Holiday</a>
-                                </h3>
-                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">Relax on pristine white sand beaches and experience the rich culture of Zanzibar Island.</p>
-                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-                                    <div class="text-2xl font-display font-bold text-gold-600">$899</div>
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('tours.index') }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                        <a href="{{ route('tours.index') }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="w-full text-center py-10 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                        <div class="text-4xl mb-4">🌍</div>
+                        <h3 class="text-lg font-bold text-gray-500 uppercase tracking-widest">Exciting Tours Coming Soon</h3>
+                        <p class="text-gray-400 text-sm">We are preparing amazing safari experiences for you. Stay tuned!</p>
                     </div>
                 @endforelse
             </div>
