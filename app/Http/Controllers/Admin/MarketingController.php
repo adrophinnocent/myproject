@@ -18,6 +18,7 @@ class MarketingController extends Controller
     {
         $validated = $request->validate([
             'seo_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
             'google_analytics_id' => 'nullable|string|max:50',
             'facebook_pixel_id' => 'nullable|string|max:50',

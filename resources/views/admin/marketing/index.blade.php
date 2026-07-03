@@ -25,6 +25,11 @@
                             <p class="text-[10px] text-gray-400 mt-1">Appears in Google search results. Keep under 60 characters.</p>
                         </div>
                         <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Global Meta Description</label>
+                            <textarea name="meta_description" rows="3" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-amber-500/20" placeholder="Describe your business for Google search results...">{{ \App\Models\Setting::get('meta_description') }}</textarea>
+                            <p class="text-[10px] text-gray-400 mt-1">Provide a brief summary of your site (150-160 characters) for search engines.</p>
+                        </div>
+                        <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Meta Keywords</label>
                             <textarea name="meta_keywords" rows="2" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-amber-500/20" placeholder="safari, tanzania, serengeti, zanzibar, kilimanjaro">{{ \App\Models\Setting::get('meta_keywords') }}</textarea>
                         </div>
