@@ -38,6 +38,7 @@ class SettingController extends Controller
             'youtube_url' => 'nullable|url',
             'current_season' => 'required|in:peak,shoulder,low',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
+            'favicon' => 'nullable|image|mimes:jpg,jpeg,png,ico|max:1024',
             'footer_logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
             'hero_video' => 'nullable|mimes:mp4,mov,ogg,qt|max:20480',
             'gallery_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
@@ -49,11 +50,11 @@ class SettingController extends Controller
             'safari_highlights_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $fileKeys = ['logo', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner', 'map_background', 'featured_image', 'kilimanjaro_home_bg', 'safari_highlights_img'];
+        $fileKeys = ['logo', 'favicon', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner', 'map_background', 'featured_image', 'kilimanjaro_home_bg', 'safari_highlights_img'];
 
         foreach ($validated as $key => $value) {
             if (in_array($key, $fileKeys) && $request->hasFile($key)) {
-                $folder = ($key === 'hero_video') ? 'videos' : ($key === 'footer_logo' || $key === 'logo' ? 'logos' : 'banners');
+                $folder = ($key === 'hero_video') ? 'videos' : ($key === 'footer_logo' || $key === 'logo' || $key === 'favicon' ? 'logos' : 'banners');
                 $path = $request->file($key)->store($folder, 'public');
                 Setting::set($key, $path);
             } elseif (!in_array($key, $fileKeys)) {

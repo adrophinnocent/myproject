@@ -20,6 +20,15 @@
         </div>
 
         <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Favicon (Browser Icon)</label>
+            @if(\App\Models\Setting::get('favicon'))
+                <img src="{{ asset('storage/' . \App\Models\Setting::get('favicon')) }}" alt="Favicon" class="w-8 h-8 mb-4">
+            @endif
+            <input type="file" name="favicon" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+            <p class="text-xs text-gray-500 mt-1">Best size: 32x32 pixels. This icon appears on the browser tab.</p>
+        </div>
+
+        <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Footer Logo</label>
             @if(\App\Models\Setting::get('footer_logo'))
                 <img src="{{ asset('storage/' . \App\Models\Setting::get('footer_logo')) }}" alt="Footer Logo" class="h-16 mb-4 bg-[#0a0703] p-2 rounded">

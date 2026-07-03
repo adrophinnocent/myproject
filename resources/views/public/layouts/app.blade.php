@@ -12,6 +12,13 @@
     <meta name="robots"      content="index, follow">
     <link   rel="canonical"  href="{{ url()->current() }}">
 
+    {{-- Favicon --}}
+    @if(\App\Models\Setting::get('favicon'))
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . \App\Models\Setting::get('favicon')) }}">
+    @else
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    @endif
+
     {{-- Open Graph / Facebook --}}
     <meta property="og:type"        content="website">
     <meta property="og:url"         content="{{ url()->current() }}">
