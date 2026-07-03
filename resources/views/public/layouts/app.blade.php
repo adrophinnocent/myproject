@@ -10,6 +10,7 @@
     <meta name="description" content="@yield('meta_description', \App\Models\Setting::get('meta_description', 'Explore Africa\'s finest safari experiences with Twina Safaris.'))">
     <meta name="keywords"    content="@yield('meta_keywords', \App\Models\Setting::get('meta_keywords', 'safari, Tanzania, Africa, tours, Serengeti, Kilimanjaro, Zanzibar'))">
     <meta name="robots"      content="index, follow">
+    <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
     <link   rel="canonical"  href="{{ url()->current() }}">
 
     {{-- Favicon --}}
