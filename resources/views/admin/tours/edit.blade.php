@@ -217,35 +217,35 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="md:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Day Title</label>
-                                        <input type="text" name="itinerary[{{ $dayNum }}][title]" value="{{ $day['title'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                        <input type="text" name="itinerary[{{ $dayNum }}][title]" value="{{ is_array($day['title'] ?? ($day['day_title'] ?? '')) ? implode(', ', $day['title'] ?? ($day['day_title'] ?? '')) : ($day['title'] ?? ($day['day_title'] ?? '')) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     </div>
                                     <div class="md:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                        <textarea name="itinerary[{{ $dayNum }}][description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ $day['description'] ?? '' }}</textarea>
+                                        <textarea name="itinerary[{{ $dayNum }}][description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ is_array($day['description'] ?? '') ? implode("\n", $day['description']) : ($day['description'] ?? '') }}</textarea>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Accommodation</label>
-                                        <input type="text" name="itinerary[{{ $dayNum }}][accommodation]" value="{{ $day['accommodation'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                        <input type="text" name="itinerary[{{ $dayNum }}][accommodation]" value="{{ is_array($day['accommodation'] ?? '') ? implode(', ', $day['accommodation']) : ($day['accommodation'] ?? '') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Meals</label>
-                                        <input type="text" name="itinerary[{{ $dayNum }}][meals]" value="{{ $day['meals'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                        <input type="text" name="itinerary[{{ $dayNum }}][meals]" value="{{ is_array($day['meals'] ?? '') ? implode(', ', $day['meals']) : ($day['meals'] ?? '') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Distance</label>
-                                        <input type="text" name="itinerary[{{ $dayNum }}][distance]" value="{{ $day['distance'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                        <input type="text" name="itinerary[{{ $dayNum }}][distance]" value="{{ is_array($day['distance'] ?? '') ? implode(', ', $day['distance']) : ($day['distance'] ?? '') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Hiking Time</label>
-                                        <input type="text" name="itinerary[{{ $dayNum }}][hiking_time]" value="{{ $day['hiking_time'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                        <input type="text" name="itinerary[{{ $dayNum }}][hiking_time]" value="{{ is_array($day['hiking_time'] ?? '') ? implode(', ', $day['hiking_time']) : ($day['hiking_time'] ?? '') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Habitat</label>
-                                        <input type="text" name="itinerary[{{ $dayNum }}][habitat]" value="{{ $day['habitat'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                        <input type="text" name="itinerary[{{ $dayNum }}][habitat]" value="{{ is_array($day['habitat'] ?? '') ? implode(', ', $day['habitat']) : ($day['habitat'] ?? '') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Elevation</label>
-                                        <input type="text" name="itinerary[{{ $dayNum }}][elevation]" value="{{ $day['elevation'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                                        <input type="text" name="itinerary[{{ $dayNum }}][elevation]" value="{{ is_array($day['elevation'] ?? '') ? implode(', ', $day['elevation']) : ($day['elevation'] ?? '') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                                     </div>
                                     <div class="md:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Activities</label>

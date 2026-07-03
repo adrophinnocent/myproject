@@ -22,7 +22,7 @@ class Tour extends Model
         'group_size_min', 'group_size_max',
         'difficulty_level', 'accommodation_type',
         'departure_location', 'departure_time', 'meeting_point',
-        'pickup_included', 'airport_pickup', 'transport_included',
+        'pickup_included', 'airport_pickup', 'transport_included', 'transport_type',
         'map_location', 'assigned_guide', 'special_notes',
         'itinerary', 'inclusions', 'exclusions', 'faqs',
         'what_to_bring', 'good_to_know',
