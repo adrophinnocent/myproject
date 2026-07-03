@@ -194,37 +194,37 @@
                                 @if(!empty($day['accommodation']))
                                 <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
                                     <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                    <span class="text-sm"><span class="font-bold text-gray-900">Stay:</span> {{ $day['accommodation'] }}</span>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Stay:</span> {{ is_array($day['accommodation'] ?? '') ? implode(', ', $day['accommodation']) : ($day['accommodation'] ?? '') }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['meals']))
                                 <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
                                     <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                    <span class="text-sm"><span class="font-bold text-gray-900">Meals:</span> {{ $day['meals'] }}</span>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Meals:</span> {{ is_array($day['meals'] ?? '') ? implode(', ', $day['meals']) : ($day['meals'] ?? '') }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['distance']))
                                 <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
                                     <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                                    <span class="text-sm"><span class="font-bold text-gray-900">Distance:</span> {{ $day['distance'] }}</span>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Distance:</span> {{ is_array($day['distance'] ?? '') ? implode(', ', $day['distance']) : ($day['distance'] ?? '') }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['hiking_time']))
                                 <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
                                     <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                    <span class="text-sm"><span class="font-bold text-gray-900">Time:</span> {{ $day['hiking_time'] }}</span>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Time:</span> {{ is_array($day['hiking_time'] ?? '') ? implode(', ', $day['hiking_time']) : ($day['hiking_time'] ?? '') }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['habitat']))
                                 <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
                                     <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"/></svg>
-                                    <span class="text-sm"><span class="font-bold text-gray-900">Habitat:</span> {{ $day['habitat'] }}</span>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Habitat:</span> {{ is_array($day['habitat'] ?? '') ? implode(', ', $day['habitat']) : ($day['habitat'] ?? '') }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['elevation']))
                                 <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap min-w-fit">
                                     <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                                    <span class="text-sm"><span class="font-bold text-gray-900">Elevation:</span> {{ $day['elevation'] }}</span>
+                                    <span class="text-sm"><span class="font-bold text-gray-900">Elevation:</span> {{ is_array($day['elevation'] ?? '') ? implode(', ', $day['elevation']) : ($day['elevation'] ?? '') }}</span>
                                 </div>
                                 @endif
                                 @if(!empty($day['activities']))
