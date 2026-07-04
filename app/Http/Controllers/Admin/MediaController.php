@@ -7,7 +7,6 @@ use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Laravel\Facades\Image;
 
 class MediaController extends Controller
 {
@@ -63,18 +62,35 @@ class MediaController extends Controller
                 $filename = Str::slug($name).'-'.uniqid().'.webp';
                 $path = $folder.'/'.$filename;
 
-                // Optimization using Intervention Image v3
-                $image = Image::read($file);
+                // Optimization using native PHP functions
+                $source = imagecreatefromstring(file_get_contents($file->getRealPath()));
+                if ($source) {
+                    $width = imagesx($source);
+                    $height = imagesy($source);
 
-                // Resize if too large
-                if ($image->width() > 2000) {
-                    $image->scale(width: 2000);
+                    // Optional: Scale down if very large
+                    if ($width > 2000) {
+                        $newWidth = 2000;
+                        $newHeight = ($height / $width) * $newWidth;
+                        $scaled = imagecreatetruecolor($newWidth, $newHeight);
+                        imagealphablending($scaled, false);
+                        imagesavealpha($scaled, true);
+                        imagecopyresampled($scaled, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                        imagedestroy($source);
+                        $source = $scaled;
+                    }
+
+                    ob_start();
+                    imagewebp($source, null, 80); // 80% quality
+                    $content = ob_get_clean();
+                    Storage::disk('public')->put($path, $content);
+                    imagedestroy($source);
+                    $mime = 'image/webp';
+                } else {
+                    // Fallback to regular upload if image processing fails
+                    $filename = Str::slug($name).'-'.uniqid().'.'.$extension;
+                    $path = $file->storeAs($folder, $filename, 'public');
                 }
-
-                $encoded = $image->toWebp(80);
-                Storage::disk('public')->put($path, (string) $encoded);
-
-                $mime = 'image/webp';
             } else {
                 $filename = Str::slug($name).'-'.uniqid().'.'.$extension;
                 $path = $file->storeAs($folder, $filename, 'public');
