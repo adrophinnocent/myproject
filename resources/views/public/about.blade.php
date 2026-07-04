@@ -6,8 +6,7 @@
 @section('content')
 {{-- 1. HERO BANNER --}}
 <div class="relative h-[70vh] min-h-[500px] flex items-center bg-safari-dark overflow-hidden text-center">
-    <img src="{{ asset('images/about-banner.jpg') }}"
-         onerror="this.src='https://images.unsplash.com/photo-1591825729269-caeb344f6df2?q=80&w=2070&auto=format&fit=crop'"
+    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('about_banner') }}"
          alt="Twina Safaris About Us"
          class="absolute inset-0 w-full h-full object-cover">
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent"></div>

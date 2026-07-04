@@ -4,7 +4,10 @@
 
 @section('content')
 <div class="relative pt-32 pb-16 bg-safari-dark">
-    <div class="absolute inset-0 bg-gradient-to-br from-slate-800 via-amber-900/20 to-slate-800"></div>
+    <div class="absolute inset-0 z-0">
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('safari_highlights') }}" class="w-full h-full object-cover opacity-20" alt="Safari Packages">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-800 via-amber-900/20 to-slate-800 opacity-60"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
         <span class="text-gold-400 text-sm uppercase tracking-widest font-semibold">Explore Africa</span>
         <h1 class="font-display text-4xl md:text-6xl text-white font-bold mt-3">Safari Tour Packages</h1>
