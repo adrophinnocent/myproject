@@ -24,20 +24,24 @@ class AssetHelper
     public static function getBannerUrl($name, $default = null)
     {
         try {
-            $extensions = ['webp', 'jpg', 'jpeg', 'png'];
+            $extensions = ['webp', 'jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
 
-            // Check in kilimanjaro folder first if the name starts with 'kili'
-            if (str_starts_with($name, 'kili')) {
-                foreach ($extensions as $ext) {
-                    $path = 'images/kilimanjaro/' . $name . '.' . $ext;
-                    if (file_exists(public_path($path))) {
-                        return asset($path);
-                    }
+            // Check in kilimanjaro folder first
+            foreach ($extensions as $ext) {
+                $path = 'images/kilimanjaro/' . $name . '.' . $ext;
+                if (file_exists(public_path($path))) {
+                    return asset($path);
                 }
             }
 
-            $basePath = 'images/banners/';
+            // Check in banners folder
             foreach ($extensions as $ext) {
+                $path = 'images/banners/' . $name . '.' . $ext;
+                if (file_exists(public_path($path))) {
+                    return asset($path);
+                }
+            }
+        } catch (\Throwable $e) {
                 $path = $basePath . $name . '.' . $ext;
                 if (file_exists(public_path($path))) {
                     return asset($path);
