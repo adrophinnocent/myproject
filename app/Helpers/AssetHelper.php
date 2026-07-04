@@ -26,7 +26,7 @@ class AssetHelper
         try {
             $extensions = ['webp', 'jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
 
-            // Check in kilimanjaro folder first
+            // Check in kilimanjaro folder
             foreach ($extensions as $ext) {
                 $path = 'images/kilimanjaro/' . $name . '.' . $ext;
                 if (file_exists(public_path($path))) {
@@ -37,12 +37,6 @@ class AssetHelper
             // Check in banners folder
             foreach ($extensions as $ext) {
                 $path = 'images/banners/' . $name . '.' . $ext;
-                if (file_exists(public_path($path))) {
-                    return asset($path);
-                }
-            }
-        } catch (\Throwable $e) {
-                $path = $basePath . $name . '.' . $ext;
                 if (file_exists(public_path($path))) {
                     return asset($path);
                 }
