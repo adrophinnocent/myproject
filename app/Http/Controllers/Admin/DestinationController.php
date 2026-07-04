@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class DestinationController extends Controller
 {
@@ -41,10 +43,27 @@ class DestinationController extends Controller
         $destination->is_featured = $request->has('is_featured');
 
         if ($request->hasFile('featured_image')) {
-            $destination->featured_image = $request->file('featured_image')->store('destinations', 'public');
+            $image = $request->file('featured_image');
+            $filename = time() . '.webp';
+            $imageContent = file_get_contents($image->getRealPath());
+            $img = @imagecreatefromstring($imageContent);
+            if ($img) {
+                ob_start();
+                imagewebp($img, null, 75);
+                $content = ob_get_clean();
+                Storage::disk('public')->put('destinations/' . $filename, $content);
+                $destination->featured_image = 'destinations/' . $filename;
+                imagedestroy($img);
+            } else {
+                // Fallback if compression fails
+                $destination->featured_image = $request->file('featured_image')->store('destinations', 'public');
+            }
+        } elseif ($request->filled('featured_image_path')) {
+            $destination->featured_image = $request->featured_image_path;
         }
 
         $destination->save();
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.destinations.index')->with('success', 'Destination created successfully!');
     }
@@ -75,12 +94,29 @@ class DestinationController extends Controller
 
         if ($request->hasFile('featured_image')) {
             if ($destination->featured_image) {
-                \Storage::disk('public')->delete($destination->featured_image);
+                Storage::disk('public')->delete($destination->featured_image);
             }
-            $destination->featured_image = $request->file('featured_image')->store('destinations', 'public');
+
+            $image = $request->file('featured_image');
+            $filename = time() . '.webp';
+            $imageContent = file_get_contents($image->getRealPath());
+            $img = @imagecreatefromstring($imageContent);
+            if ($img) {
+                ob_start();
+                imagewebp($img, null, 75);
+                $content = ob_get_clean();
+                Storage::disk('public')->put('destinations/' . $filename, $content);
+                $destination->featured_image = 'destinations/' . $filename;
+                imagedestroy($img);
+            } else {
+                $destination->featured_image = $request->file('featured_image')->store('destinations', 'public');
+            }
+        } elseif ($request->filled('featured_image_path')) {
+            $destination->featured_image = $request->featured_image_path;
         }
 
         $destination->save();
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.destinations.index')->with('success', 'Destination updated successfully!');
     }

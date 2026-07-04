@@ -73,7 +73,9 @@ class Safari extends Model
 
     public function getFeaturedImageUrlAttribute(): string
     {
-        return $this->featured_image ? asset('storage/' . $this->featured_image) : asset('images/tour-placeholder.jpg');
+        return $this->featured_image
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image)
+            : asset('images/tour-placeholder.jpg');
     }
 
     public function getFormattedPriceAttribute(): string

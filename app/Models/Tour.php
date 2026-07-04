@@ -132,7 +132,7 @@ class Tour extends Model
     public function getFeaturedImageUrlAttribute(): string
     {
         if ($this->featured_image) {
-            return asset('storage/'.$this->featured_image);
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
         }
 
         return 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80';

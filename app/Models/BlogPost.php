@@ -56,7 +56,7 @@ class BlogPost extends Model
     public function getFeaturedImageUrlAttribute()
     {
         return $this->featured_image
-            ? asset('storage/'.$this->featured_image)
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image)
             : asset('images/blog-placeholder.jpg');
     }
 
