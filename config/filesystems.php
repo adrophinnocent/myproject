@@ -40,8 +40,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => public_path('../media_uploads'),
-            'url' => env('APP_URL', 'https://twinasafaris.com').'/media_uploads',
+            'root' => base_path('../../twina_assets'),
+            'url' => env('APP_URL', 'https://twinasafaris.com').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
