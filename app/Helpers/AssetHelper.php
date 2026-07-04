@@ -46,9 +46,12 @@ class AssetHelper
     public static function getLogoUrl($type = 'logo')
     {
         try {
-            $localPath = "images/logos/{$type}.webp";
-            if (file_exists(public_path($localPath))) {
-                return asset($localPath);
+            $extensions = ['webp', 'png', 'jpg', 'jpeg'];
+            foreach ($extensions as $ext) {
+                $localPath = "images/logos/{$type}.{$ext}";
+                if (File::exists(public_path($localPath))) {
+                    return asset($localPath);
+                }
             }
 
             $settingValue = \App\Models\Setting::get($type);
@@ -56,7 +59,7 @@ class AssetHelper
                 return asset('storage/' . $settingValue);
             }
         } catch (\Throwable $e) {
-            Log::error("AssetHelper Logo Error: " . $e->getMessage());
+            Log::error("AssetHelper Logo Error: " . $type . " - " . $e->getMessage());
         }
 
         return asset("images/logo.png");
