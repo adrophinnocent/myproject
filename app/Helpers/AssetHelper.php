@@ -25,8 +25,18 @@ class AssetHelper
     {
         try {
             $extensions = ['webp', 'jpg', 'jpeg', 'png'];
-            $basePath = 'images/banners/';
 
+            // Check in kilimanjaro folder first if the name starts with 'kili'
+            if (str_starts_with($name, 'kili')) {
+                foreach ($extensions as $ext) {
+                    $path = 'images/kilimanjaro/' . $name . '.' . $ext;
+                    if (file_exists(public_path($path))) {
+                        return asset($path);
+                    }
+                }
+            }
+
+            $basePath = 'images/banners/';
             foreach ($extensions as $ext) {
                 $path = $basePath . $name . '.' . $ext;
                 if (file_exists(public_path($path))) {
