@@ -216,10 +216,11 @@
             <div class="w-full lg:w-1/2 relative" x-data="{
                 activeSlide: 0,
                 slides: [
-                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_1') }}',
-                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_2') }}',
-                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_3') }}',
-                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_4') }}'
+                    '{{ asset('images/kilimanjaro/kili-1.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-2.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-3.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-4.jpg') }}',
+                    '{{ asset('images/kilimanjaro/kili-5.jpg') }}'
                 ],
                 init() {
                     setInterval(() => {

@@ -27,17 +27,23 @@ class CompressBanners extends Command
      */
     public function handle()
     {
-        $directory = public_path('images/banners');
+        $directories = [
+            public_path('images/banners'),
+            public_path('images/kilimanjaro'),
+            public_path('images/logos'),
+        ];
 
-        if (!File::isDirectory($directory)) {
-            $this->error("Directory $directory does not exist.");
-            return;
-        }
-
-        $files = File::files($directory);
         $count = 0;
+        foreach ($directories as $directory) {
+            if (!File::isDirectory($directory)) {
+                $this->warn("Directory $directory does not exist. Skipping.");
+                continue;
+            }
 
-        foreach ($files as $file) {
+            $this->info("Scanning: $directory");
+            $files = File::files($directory);
+
+            foreach ($files as $file) {
             $extension = strtolower($file->getExtension());
 
             if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
