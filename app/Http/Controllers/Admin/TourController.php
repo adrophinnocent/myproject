@@ -150,6 +150,8 @@ class TourController extends Controller
             $data['featured_image'] = 'tours/' . $filename;
             imagedestroy($img);
         } elseif ($request->filled('featured_image')) {
+            $data['featured_image'] = $request->featured_image;
+        }
 
         $tour = Tour::create($data);
 
