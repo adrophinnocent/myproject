@@ -55,7 +55,7 @@
                         <h5 class="font-black text-gray-900 uppercase tracking-widest text-xs">Peak Travel Season</h5>
                     </div>
                     <p class="text-gray-600 text-sm leading-relaxed font-light">
-                        {{ \App\Models\Setting::get('season_good_text', 'June to October: The absolute best time for wildlife viewing.') }}
+                        {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('season_good_text'), 'June to October: The absolute best time for wildlife viewing.') }}
                     </p>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                         <h5 class="font-black text-gray-900 uppercase tracking-widest text-xs">Shoulder Season</h5>
                     </div>
                     <p class="text-gray-600 text-sm leading-relaxed font-light">
-                        {{ \App\Models\Setting::get('season_moderate_text', 'Jan-Feb & Nov-Dec.') }}
+                        {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('season_moderate_text'), 'Jan-Feb & Nov-Dec.') }}
                     </p>
                 </div>
             </div>
@@ -85,7 +85,7 @@
                         <h5 class="font-black text-gray-900 uppercase tracking-widest text-xs">Rainy Season</h5>
                     </div>
                     <p class="text-gray-600 text-sm leading-relaxed font-light">
-                        {{ \App\Models\Setting::get('season_low_text', 'March to May: Long rains.') }}
+                        {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('season_low_text'), 'March to May: Long rains.') }}
                     </p>
                 </div>
             </div>
@@ -96,14 +96,14 @@
     <div class="relative z-20 flex-grow flex items-center justify-center py-24 lg:py-0">
         <div class="w-full max-w-6xl mx-auto px-4 text-center">
             <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
-                {{ \App\Models\Setting::get('hero_eyebrow', 'Tanzania\'s #1 Boutique Safari Operator') }}
+                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_eyebrow'), 'Tanzania\'s #1 Boutique Safari Operator') }}
             </span>
             <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
-                {{ \App\Models\Setting::get('hero_title', 'Explore Tanzania') }} <br>
-                <span class="italic text-gold-500">{{ \App\Models\Setting::get('hero_subtitle', 'Beyond Expectations') }}</span>
+                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_title'), 'Explore Tanzania') }} <br>
+                <span class="italic text-gold-500">{{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_subtitle'), 'Beyond Expectations') }}</span>
             </h1>
             <p class="text-gray-100 text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
-                {{ \App\Models\Setting::get('hero_description', 'Unforgettable luxury safaris designed specifically for you.') }}
+                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_description'), 'Unforgettable luxury safaris designed specifically for you.') }}
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mb-16">
@@ -262,7 +262,7 @@
                 <div>
                     <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Signature Expedition</span>
                     <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-tight text-center md:text-left">
-                        {{ $heroTour->title }}
+                        {{ \App\Helpers\AssetHelper::asString($heroTour->title) }}
                     </h2>
                     <div class="w-20 h-1.5 bg-[#e64a19] rounded-full mt-6 mx-auto md:mx-0"></div>
                 </div>
@@ -445,7 +445,7 @@
                                     <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span>
                                 </div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
-                                    <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ $tour->title }}</a>
+                                    <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a>
                                 </h3>
                                 <div class="text-[10px] font-mono text-gray-400 mb-4 tracking-tighter">{{ $tour->slug }}</div>
                                 <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>

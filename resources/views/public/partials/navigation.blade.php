@@ -66,9 +66,9 @@
         <div class="flex items-center justify-between py-3">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <img src="{{ \App\Helpers\AssetHelper::getLogoUrl() }}" alt="{{ $siteName }}" class="h-12 w-auto object-contain">
+                <img src="{{ \App\Helpers\AssetHelper::getLogoUrl() }}" alt="{{ \App\Helpers\AssetHelper::asString($siteName) }}" class="h-12 w-auto object-contain">
                 <div class="hidden sm:block">
-                    <span class="font-display text-white text-lg font-semibold leading-tight block">{{ $siteName }}</span>
+                    <span class="font-display text-white text-lg font-semibold leading-tight block">{{ \App\Helpers\AssetHelper::asString($siteName) }}</span>
                     <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">Tanzania</span>
                 </div>
             </a>

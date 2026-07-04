@@ -19,9 +19,9 @@
             {{-- Column 1: Brand & About --}}
             <div class="space-y-6">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                    <img src="{{ \App\Helpers\AssetHelper::getLogoUrl('footer_logo') ?: \App\Helpers\AssetHelper::getLogoUrl() }}" alt="{{ $siteName }}" class="h-12 w-auto object-contain">
+                    <img src="{{ \App\Helpers\AssetHelper::getLogoUrl('footer_logo') ?: \App\Helpers\AssetHelper::getLogoUrl() }}" alt="{{ \App\Helpers\AssetHelper::asString($siteName) }}" class="h-12 w-auto object-contain">
                     <div class="flex flex-col">
-                        <span class="font-display text-2xl font-bold text-white leading-tight">{{ $siteName }}</span>
+                        <span class="font-display text-2xl font-bold text-white leading-tight">{{ \App\Helpers\AssetHelper::asString($siteName) }}</span>
                         <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">Est. 2009 · Tanzania</span>
                     </div>
                 </a>
