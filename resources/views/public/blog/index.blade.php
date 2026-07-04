@@ -7,11 +7,7 @@
 {{-- Page Header --}}
 <div class="relative h-[60vh] min-h-[450px] flex items-center justify-center overflow-hidden bg-safari-dark">
     <div class="absolute inset-0">
-        @if($banner = \App\Models\Setting::get('blog_banner'))
-            <img src="{{ asset('storage/' . $banner) }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
-        @else
-            <img src="{{ asset('images/blog-banner.jpg') }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
-        @endif
+        <img src="{{ asset('images/banners/blog_banner.webp') }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
         <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-transparent"></div>
     </div>
     <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">

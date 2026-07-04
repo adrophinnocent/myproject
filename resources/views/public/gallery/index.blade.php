@@ -6,11 +6,7 @@
 {{-- Enhanced Immersive Header --}}
 <div class="relative min-h-[60vh] flex items-center justify-center bg-safari-dark overflow-hidden pt-20">
     <div class="absolute inset-0 z-0">
-        @if($banner = \App\Models\Setting::get('gallery_banner'))
-            <img src="{{ asset('storage/' . $banner) }}" alt="Gallery" class="w-full h-full object-cover opacity-40 scale-110 animate-pulse-slow">
-        @else
-            <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover opacity-40" alt="Safari Background">
-        @endif
+        <img src="{{ asset('images/banners/gallery_banner.webp') }}" class="w-full h-full object-cover opacity-40" alt="Safari Background">
         <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-safari-light"></div>
     </div>
 

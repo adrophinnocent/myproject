@@ -4,15 +4,8 @@
 
 @section('content')
 <div class="relative h-[40vh] min-h-80 flex items-center bg-safari-dark">
-    @if($s_banner = \App\Models\Setting::get('contact_banner'))
-        <img src="{{ asset('storage/' . $s_banner) }}" alt="Contact Us" class="absolute inset-0 w-full h-full object-cover">
-        <div class="absolute inset-0 bg-black/40"></div>
-    @elseif(isset($banner) && $banner->image)
-        <img src="{{ $banner->image_url }}" alt="{{ $banner->title ?? 'Contact Us' }}" class="absolute inset-0 w-full h-full object-cover">
-        <div class="absolute inset-0 bg-black/40"></div>
-    @else
-        <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-emerald-800 via-amber-900/20 to-slate-900"></div>
-    @endif
+    <img src="{{ asset('images/banners/contact_banner.webp') }}" alt="Contact Us" class="absolute inset-0 w-full h-full object-cover opacity-60">
+    <div class="absolute inset-0 bg-black/40"></div>
     <div class="absolute inset-0 flex items-end">
         <div class="max-w-7xl mx-auto px-4 pb-12 w-full text-center md:text-left">
             <h1 class="font-display text-4xl md:text-6xl text-white font-bold leading-tight">{{ $banner->title ?? 'Contact Us' }}</h1>
