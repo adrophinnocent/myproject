@@ -29,6 +29,9 @@ class HomeController extends Controller
 
         $featuredItems = $featuredTours->concat($featuredSafaris)->sortByDesc('created_at');
 
+        // Ensure we always have a collection, even if empty
+        if (!$featuredItems) $featuredItems = collect();
+
         // If we have fewer than 3 featured items, fill with regular published items
         if ($featuredItems->count() < 3) {
             $needed = 3 - $featuredItems->count();
