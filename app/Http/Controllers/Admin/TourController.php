@@ -124,6 +124,8 @@ class TourController extends Controller
                 if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
                 if (isset($decoded['what_to_bring'])) $data['what_to_bring'] = $decoded['what_to_bring'];
                 if (isset($decoded['good_to_know'])) $data['good_to_know'] = $decoded['good_to_know'];
+                if (isset($decoded['price'])) $data['price'] = $decoded['price'];
+                if (isset($decoded['duration_days'])) $data['duration_days'] = $decoded['duration_days'];
             } else {
                 // Fallback to just itinerary if it's a simple array
                 $data['itinerary'] = $decoded;
@@ -277,6 +279,8 @@ class TourController extends Controller
                 if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
                 if (isset($decoded['what_to_bring'])) $data['what_to_bring'] = $decoded['what_to_bring'];
                 if (isset($decoded['good_to_know'])) $data['good_to_know'] = $decoded['good_to_know'];
+                if (isset($decoded['price'])) $data['price'] = $decoded['price'];
+                if (isset($decoded['duration_days'])) $data['duration_days'] = $decoded['duration_days'];
             } else {
                 // Fallback to just itinerary if it's a simple array
                 $data['itinerary'] = $decoded;
