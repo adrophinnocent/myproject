@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
-Sitemap: https://savannatrails.com/sitemap.xml
+Sitemap: https://twinasafaris.com/sitemap.xml
