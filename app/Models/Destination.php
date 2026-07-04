@@ -44,9 +44,11 @@ class Destination extends Model
 
     public function getFeaturedImageUrlAttribute(): ?string
     {
-        return $this->featured_image
-            ? asset('storage/'.$this->featured_image)
-            : null;
+        if ($this->featured_image) {
+            return asset('storage/' . $this->featured_image);
+        }
+
+        return 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&q=80';
     }
 
     public function scopeActive(Builder $query): Builder
