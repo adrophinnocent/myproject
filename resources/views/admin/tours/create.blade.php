@@ -202,7 +202,52 @@
                         </div>
                     </div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Raw JSON Package Data</label>
-                    <textarea name="itinerary_raw" rows="20" class="w-full font-mono text-xs bg-gray-900 text-green-400 p-6 rounded-2xl focus:outline-none border-none shadow-2xl" placeholder="Paste the full JSON object from ChatGPT here..."></textarea>
+                    <textarea name="itinerary_raw" rows="20" class="w-full font-mono text-xs bg-gray-900 text-green-400 p-6 rounded-2xl focus:outline-none border-none shadow-2xl" placeholder="Paste the full JSON object from ChatGPT here...">{
+  "itinerary": [
+    {
+      "title": "Day 1: Arrival & Briefing",
+      "description": "Pickup from the airport and transfer to your hotel for briefing...",
+      "accommodation": "Luxury Safari Lodge",
+      "meals": "Lunch, Dinner",
+      "distance": "10km",
+      "hiking_time": "3-4 hours",
+      "habitat": "Rainforest",
+      "elevation": "1800m to 2500m",
+      "activities": ["Airport Pickup", "Briefing", "City Tour"]
+    }
+  ],
+  "highlights": [
+    "Witness the Great Migration",
+    "Stay in luxury tented camps",
+    "Expert-led game drives"
+  ],
+  "inclusions": [
+    "Professional English-speaking guide",
+    "4x4 Safari Land Cruiser",
+    "All Park fees and VAT",
+    "Bottled drinking water"
+  ],
+  "exclusions": [
+    "International Flights",
+    "Tips for guides and porters",
+    "Personal insurance"
+  ],
+  "faqs": [
+    {
+      "question": "What is the best time to visit?",
+      "answer": "June to October is the peak season for wildlife viewing."
+    }
+  ],
+  "what_to_bring": [
+    "Sunscreen",
+    "Binoculars",
+    "Comfortable hiking boots"
+  ],
+  "good_to_know": [
+    "Yellow Fever vaccination is required",
+    "Tipping is customary in Tanzania"
+  ]
+}</textarea>
                 </div>
             </div>
         </div>
