@@ -6,7 +6,7 @@
 {{-- Enhanced Immersive Header --}}
 <div class="relative min-h-[60vh] flex items-center justify-center bg-safari-dark overflow-hidden pt-20">
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('images/banners/gallery_banner.webp') }}" class="w-full h-full object-cover opacity-40" alt="Safari Background">
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('gallery_banner') }}" class="w-full h-full object-cover opacity-40" alt="Safari Background">
         <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-safari-light"></div>
     </div>
 

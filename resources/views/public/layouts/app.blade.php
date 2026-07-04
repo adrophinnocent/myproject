@@ -14,11 +14,7 @@
     <link   rel="canonical"  href="{{ url()->current() }}">
 
     {{-- Favicon --}}
-    @if(\App\Models\Setting::get('favicon'))
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . \App\Models\Setting::get('favicon')) }}">
-    @else
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    @endif
+    <link rel="icon" type="image/x-icon" href="{{ \App\Helpers\AssetHelper::getFaviconUrl() }}">
 
     {{-- Open Graph / Facebook --}}
     <meta property="og:type"        content="website">

@@ -37,7 +37,7 @@
                 <source src="{{ asset('storage/' . \App\Models\Setting::get('hero_video')) }}" type="video/mp4">
             </video>
         @else
-            <img src="{{ asset('images/banners/hero_fallback.webp') }}" class="w-full h-full object-cover" alt="Tanzania Safari">
+            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}" class="w-full h-full object-cover" alt="Tanzania Safari">
         @endif
     </div>
 
@@ -216,10 +216,10 @@
             <div class="w-full lg:w-1/2 relative" x-data="{
                 activeSlide: 0,
                 slides: [
-                    '{{ asset('images/banners/kilimanjaro_1.webp') }}',
-                    '{{ asset('images/banners/kilimanjaro_2.webp') }}',
-                    '{{ asset('images/banners/kilimanjaro_3.webp') }}',
-                    '{{ asset('images/banners/kilimanjaro_4.webp') }}'
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_1') }}',
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_2') }}',
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_3') }}',
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_4') }}'
                 ],
                 init() {
                     setInterval(() => {
@@ -350,7 +350,7 @@
 {{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        <img src="{{ asset('images/banners/kilimanjaro_bg.webp') }}"
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}"
              class="w-full h-full object-cover" alt="Kilimanjaro Background">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
     </div>
@@ -520,7 +520,7 @@
             {{-- Image Side --}}
             <div class="lg:w-1/2 relative">
                 <div class="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl">
-                    <img src="{{ asset('images/banners/safari_highlights.webp') }}"
+                    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('safari_highlights') }}"
                          class="w-full h-[600px] object-cover" alt="Tanzania Safari Adventure">
                 </div>
                 {{-- Decorative Elements --}}
@@ -770,7 +770,7 @@
 
 {{-- ========== HOME FOOTER BANNER (JOINED WITH FOOTER) ========== --}}
 <section class="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden bg-safari-dark">
-    <img src="{{ asset('images/banners/home_footer_banner.webp') }}"
+    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}"
          class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa">
 
     {{-- Gradient that blends into the dark footer --}}

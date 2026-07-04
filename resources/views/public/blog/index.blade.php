@@ -7,7 +7,7 @@
 {{-- Page Header --}}
 <div class="relative h-[60vh] min-h-[450px] flex items-center justify-center overflow-hidden bg-safari-dark">
     <div class="absolute inset-0">
-        <img src="{{ asset('images/banners/blog_banner.webp') }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('blog_banner') }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
         <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-transparent"></div>
     </div>
     <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">

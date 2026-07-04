@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="relative h-[40vh] min-h-80 flex items-center bg-safari-dark">
-    <img src="{{ asset('images/banners/contact_banner.webp') }}" alt="Contact Us" class="absolute inset-0 w-full h-full object-cover opacity-60">
+    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('contact_banner') }}" alt="Contact Us" class="absolute inset-0 w-full h-full object-cover opacity-60">
     <div class="absolute inset-0 bg-black/40"></div>
     <div class="absolute inset-0 flex items-end">
         <div class="max-w-7xl mx-auto px-4 pb-12 w-full text-center md:text-left">
