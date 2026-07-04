@@ -108,7 +108,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'destroy' => 'admin.safaris.destroy',
     ]);
     Route::post('/tours/{tour}/toggle-publish', [App\Http\Controllers\Admin\TourController::class, 'togglePublish'])->name('admin.tours.toggle-publish');
-    Route::delete('/tours/images/{image}', [App\Http\Controllers\Admin\TourController::class, 'deleteImage'])->name('admin.tours.delete-image');
+    Route::match(['get', 'delete'], '/tours/images/{image}', [App\Http\Controllers\Admin\TourController::class, 'deleteImage'])->name('admin.tours.delete-image');
 
     Route::resource('/categories', App\Http\Controllers\Admin\CategoryController::class)->names([
         'index' => 'admin.categories.index',
