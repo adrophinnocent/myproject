@@ -25,7 +25,7 @@ class SettingController extends Controller
             'hero_title' => 'nullable|string',
             'hero_subtitle' => 'nullable|string',
             'hero_description' => 'nullable|string',
-            'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'featured_image_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'season_good_text' => 'nullable|string',
             'season_moderate_text' => 'nullable|string',
             'season_low_text' => 'nullable|string',
@@ -38,42 +38,45 @@ class SettingController extends Controller
             'youtube_url' => 'nullable|url',
             'google_maps_url' => 'nullable|url',
             'current_season' => 'required|in:peak,shoulder,low',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
-            'favicon' => 'nullable|image|mimes:jpg,jpeg,png,ico|max:1024',
-            'footer_logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
-            'hero_video' => 'nullable|mimes:mp4,mov,ogg,qt|max:20480',
-            'gallery_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'blog_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'contact_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'home_footer_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'map_background' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
-            'kilimanjaro_home_bg' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'safari_highlights_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'logo_upload' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
+            'favicon_upload' => 'nullable|image|mimes:jpg,jpeg,png,ico|max:1024',
+            'footer_logo_upload' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
+            'hero_video_upload' => 'nullable|mimes:mp4,mov,ogg,qt|max:20480',
+            'gallery_banner_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'blog_banner_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'contact_banner_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'home_footer_banner_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'map_background_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
+            'kilimanjaro_home_bg_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'safari_highlights_img_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $fileKeys = ['logo', 'favicon', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner', 'map_background', 'featured_image', 'kilimanjaro_home_bg', 'safari_highlights_img'];
 
-        foreach ($validated as $key => $value) {
-            if (in_array($key, $fileKeys) && $request->hasFile($key)) {
-                $file = $request->file($key);
-                $folder = ($key === 'hero_video') ? 'videos' : ($key === 'footer_logo' || $key === 'logo' || $key === 'favicon' ? 'logos' : 'banners');
+        foreach ($request->all() as $key => $value) {
+            if (in_array($key, $fileKeys)) {
+                $uploadKey = $key . '_upload';
+                if ($request->hasFile($uploadKey)) {
+                    $file = $request->file($uploadKey);
+                    $folder = ($key === 'hero_video') ? 'videos' : ($key === 'footer_logo' || $key === 'logo' || $key === 'favicon' ? 'logos' : 'banners');
 
-                // If it's an image, convert to WebP and compress
-                if (str_contains($file->getMimeType(), 'image') && $key !== 'favicon') {
-                    $filename = $key . '_' . time() . '.webp';
-                    $img = imagecreatefromstring(file_get_contents($file->getRealPath()));
-                    ob_start();
-                    imagewebp($img, null, 80); // 80% quality
-                    $content = ob_get_clean();
-                    Storage::disk('public')->put($folder . '/' . $filename, $content);
-                    Setting::set($key, $folder . '/' . $filename);
-                    imagedestroy($img);
-                } else {
-                    // Regular upload for videos or icons
-                    $path = $file->store($folder, 'public');
-                    Setting::set($key, $path);
+                    if (str_contains($file->getMimeType(), 'image') && $key !== 'favicon') {
+                        $filename = $key . '_' . time() . '.webp';
+                        $img = imagecreatefromstring(file_get_contents($file->getRealPath()));
+                        ob_start();
+                        imagewebp($img, null, 80);
+                        $content = ob_get_clean();
+                        Storage::disk('public')->put($folder . '/' . $filename, $content);
+                        Setting::set($key, $folder . '/' . $filename);
+                        imagedestroy($img);
+                    } else {
+                        Setting::set($key, $file->store($folder, 'public'));
+                    }
+                } elseif ($request->filled($key)) {
+                    // Selected from library or existing value
+                    Setting::set($key, $request->input($key));
                 }
-            } elseif (!in_array($key, $fileKeys)) {
+            } elseif ($key !== '_token' && $key !== '_method' && !str_ends_with($key, '_upload')) {
                 Setting::set($key, $value);
             }
         }
