@@ -37,7 +37,7 @@
                 <source src="{{ asset('storage/' . \App\Models\Setting::get('hero_video')) }}" type="video/mp4">
             </video>
         @else
-            <img src="{{ asset('images/hero-fallback.jpg') }}" class="w-full h-full object-cover" alt="Tanzania Safari">
+            <img src="{{ asset('images/banners/hero_fallback.webp') }}" class="w-full h-full object-cover" alt="Tanzania Safari">
         @endif
     </div>
 
@@ -216,11 +216,10 @@
             <div class="w-full lg:w-1/2 relative" x-data="{
                 activeSlide: 0,
                 slides: [
-                    '{{ asset('images/kilimanjaro/kili-1.jpg') }}',
-                    '{{ asset('images/kilimanjaro/kili-2.jpg') }}',
-                    '{{ asset('images/kilimanjaro/kili-3.jpg') }}',
-                    '{{ asset('images/kilimanjaro/kili-4.jpg') }}',
-                    '{{ asset('images/kilimanjaro/kili-5.jpg') }}'
+                    '{{ asset('images/banners/kilimanjaro_1.webp') }}',
+                    '{{ asset('images/banners/kilimanjaro_2.webp') }}',
+                    '{{ asset('images/banners/kilimanjaro_3.webp') }}',
+                    '{{ asset('images/banners/kilimanjaro_4.webp') }}'
                 ],
                 init() {
                     setInterval(() => {
@@ -351,8 +350,7 @@
 {{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        @php $kiliBg = \App\Models\Setting::get('kilimanjaro_home_bg'); @endphp
-        <img src="{{ $kiliBg ? asset('storage/' . $kiliBg) : 'https://images.unsplash.com/photo-1508002366005-75a695ee2d17?q=80&w=2000&auto=format&fit=crop' }}"
+        <img src="{{ asset('images/banners/kilimanjaro_bg.webp') }}"
              class="w-full h-full object-cover" alt="Kilimanjaro Background">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
     </div>
@@ -522,8 +520,7 @@
             {{-- Image Side --}}
             <div class="lg:w-1/2 relative">
                 <div class="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl">
-                    @php $highlightsImg = \App\Models\Setting::get('safari_highlights_img'); @endphp
-                    <img src="{{ $highlightsImg ? asset('storage/' . $highlightsImg) : 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1000&q=80' }}"
+                    <img src="{{ asset('images/banners/safari_highlights.webp') }}"
                          class="w-full h-[600px] object-cover" alt="Tanzania Safari Adventure">
                 </div>
                 {{-- Decorative Elements --}}
@@ -773,8 +770,7 @@
 
 {{-- ========== HOME FOOTER BANNER (JOINED WITH FOOTER) ========== --}}
 <section class="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden bg-safari-dark">
-    @php $footerBanner = \App\Models\Setting::get('home_footer_banner'); @endphp
-    <img src="{{ $footerBanner ? asset('storage/' . $footerBanner) : 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2000&auto=format&fit=crop' }}"
+    <img src="{{ asset('images/banners/home_footer_banner.webp') }}"
          class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa">
 
     {{-- Gradient that blends into the dark footer --}}
