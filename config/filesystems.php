@@ -40,8 +40,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'root' => public_path('../media_uploads'),
+            'url' => env('APP_URL', 'https://twinasafaris.com').'/media_uploads',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
