@@ -140,10 +140,16 @@ class TourController extends Controller
         $data['transport_included'] = $request->has('transport_included') ? 1 : 0;
 
         if ($request->hasFile('featured_image_upload')) {
-            $data['featured_image'] = $request->file('featured_image_upload')->store('tours', 'public');
+            $image = $request->file('featured_image_upload');
+            $filename = time() . '.webp';
+            $img = imagecreatefromstring(file_get_contents($image->getRealPath()));
+            ob_start();
+            imagewebp($img, null, 75); // 75% quality compression
+            $content = ob_get_clean();
+            Storage::disk('public')->put('tours/' . $filename, $content);
+            $data['featured_image'] = 'tours/' . $filename;
+            imagedestroy($img);
         } elseif ($request->filled('featured_image')) {
-            $data['featured_image'] = $request->featured_image;
-        }
 
         $tour = Tour::create($data);
 
