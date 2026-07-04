@@ -55,9 +55,24 @@ class SettingController extends Controller
 
         foreach ($validated as $key => $value) {
             if (in_array($key, $fileKeys) && $request->hasFile($key)) {
+                $file = $request->file($key);
                 $folder = ($key === 'hero_video') ? 'videos' : ($key === 'footer_logo' || $key === 'logo' || $key === 'favicon' ? 'logos' : 'banners');
-                $path = $request->file($key)->store($folder, 'public');
-                Setting::set($key, $path);
+
+                // If it's an image, convert to WebP and compress
+                if (str_contains($file->getMimeType(), 'image') && $key !== 'favicon') {
+                    $filename = $key . '_' . time() . '.webp';
+                    $img = imagecreatefromstring(file_get_contents($file->getRealPath()));
+                    ob_start();
+                    imagewebp($img, null, 80); // 80% quality
+                    $content = ob_get_clean();
+                    Storage::disk('public')->put($folder . '/' . $filename, $content);
+                    Setting::set($key, $folder . '/' . $filename);
+                    imagedestroy($img);
+                } else {
+                    // Regular upload for videos or icons
+                    $path = $file->store($folder, 'public');
+                    Setting::set($key, $path);
+                }
             } elseif (!in_array($key, $fileKeys)) {
                 Setting::set($key, $value);
             }
