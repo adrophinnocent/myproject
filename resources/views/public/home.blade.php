@@ -292,7 +292,7 @@
                         <div class="w-6 h-6 shrink-0 rounded-full bg-gold-500/10 flex items-center justify-center mt-0.5 group-hover:bg-gold-500 transition-colors duration-300">
                             <svg class="w-3 h-3 text-gold-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
                         </div>
-                        <span class="text-gray-700 text-sm font-black uppercase tracking-tight leading-tight">{{ $inc }}</span>
+                        <span class="text-gray-700 text-sm font-black uppercase tracking-tight leading-tight">{{ is_array($inc) ? implode(', ', $inc) : $inc }}</span>
                     </div>
                     @endforeach
                 </div>
@@ -313,13 +313,13 @@
                                 <div class="flex items-start gap-4">
                                     <span class="text-[#e64a19] font-black text-2xl leading-none">→</span>
                                     <h5 class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
-                                        <span class="text-gray-400">Day {{ is_numeric($index) ? $index : $loop->iteration }}:</span> {{ $day['title'] ?? '' }}
+                                        <span class="text-gray-400">Day {{ is_numeric($index) ? $index : $loop->iteration }}:</span> {{ is_array($day['title'] ?? '') ? implode(', ', $day['title']) : ($day['title'] ?? '') }}
                                     </h5>
                                 </div>
                                 <div x-show="openItinerary" x-collapse>
                                     <div class="pl-9 space-y-4">
                                         <p class="text-gray-600 text-sm md:text-base leading-relaxed font-medium">
-                                            {{ $day['description'] ?? '' }}
+                                            {{ is_array($day['description'] ?? '') ? implode("\n", $day['description']) : ($day['description'] ?? '') }}
                                         </p>
                                     </div>
                                 </div>
