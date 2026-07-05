@@ -178,6 +178,23 @@
         <h3 class="text-lg font-semibold text-gray-900 mb-6 mt-8">Page Banners</h3>
 
         <div class="mb-6 p-4 border border-gray-100 rounded-xl bg-gray-50">
+            <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">About Us Page Banner</label>
+            <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl p-6 bg-white mb-4">
+                @if(\App\Models\Setting::get('about_banner'))
+                    <img id="about-banner-preview" src="{{ asset('storage/' . \App\Models\Setting::get('about_banner')) }}" alt="About Banner" class="h-24 mb-4 rounded shadow-sm object-cover">
+                @else
+                    <img id="about-banner-preview" src="" class="hidden h-24 mb-4 rounded shadow-sm object-cover">
+                    <div id="about-placeholder" class="text-2xl mb-2">🏔️</div>
+                @endif
+                <input type="hidden" name="about_banner" id="about_banner_path" value="{{ \App\Models\Setting::get('about_banner') }}">
+                <div class="flex gap-3">
+                    <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'about_banner_path', previewId: 'about-banner-preview'}}))" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all">Choose Library</button>
+                    <input type="file" name="about_banner_upload" class="text-[10px] file:bg-gray-100 file:border-none file:px-3 file:py-1.5 file:rounded-md file:font-black file:uppercase">
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6 p-4 border border-gray-100 rounded-xl bg-gray-50">
             <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Gallery Page Banner</label>
             <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl p-6 bg-white mb-4">
                 @if(\App\Models\Setting::get('gallery_banner'))
@@ -263,18 +280,18 @@
         </div>
 
         <div class="mb-6 p-4 border border-gray-100 rounded-xl bg-gray-50">
-            <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Safari Highlights Section Image</label>
+            <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Safari Highlights & All Tours Header Image</label>
             <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl p-6 bg-white mb-4">
-                @if(\App\Models\Setting::get('safari_highlights_img'))
-                    <img id="highlights-img-preview" src="{{ asset('storage/' . \App\Models\Setting::get('safari_highlights_img')) }}" alt="Highlights" class="h-32 mb-4 rounded shadow-sm object-cover">
+                @if(\App\Models\Setting::get('safari_highlights'))
+                    <img id="highlights-img-preview" src="{{ asset('storage/' . \App\Models\Setting::get('safari_highlights')) }}" alt="Highlights" class="h-32 mb-4 rounded shadow-sm object-cover">
                 @else
                     <img id="highlights-img-preview" src="" class="hidden h-32 mb-4 rounded shadow-sm object-cover">
                     <div id="highlights-img-placeholder" class="text-2xl mb-2">🖼️</div>
                 @endif
-                <input type="hidden" name="safari_highlights_img" id="safari_highlights_img_path" value="{{ \App\Models\Setting::get('safari_highlights_img') }}">
+                <input type="hidden" name="safari_highlights" id="safari_highlights_path" value="{{ \App\Models\Setting::get('safari_highlights') }}">
                 <div class="flex gap-3">
-                    <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'safari_highlights_img_path', previewId: 'highlights-img-preview'}}))" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all">Choose Library</button>
-                    <input type="file" name="safari_highlights_img_upload" class="text-[10px] file:bg-gray-100 file:border-none file:px-3 file:py-1.5 file:rounded-md file:font-black file:uppercase">
+                    <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'safari_highlights_path', previewId: 'highlights-img-preview'}}))" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all">Choose Library</button>
+                    <input type="file" name="safari_highlights_upload" class="text-[10px] file:bg-gray-100 file:border-none file:px-3 file:py-1.5 file:rounded-md file:font-black file:uppercase">
                 </div>
             </div>
         </div>

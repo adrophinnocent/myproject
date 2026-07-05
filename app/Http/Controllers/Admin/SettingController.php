@@ -50,7 +50,7 @@ class SettingController extends Controller
             'safari_highlights_img_upload' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $fileKeys = ['logo', 'favicon', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'home_footer_banner', 'map_background', 'featured_image', 'kilimanjaro_home_bg', 'safari_highlights_img'];
+        $fileKeys = ['logo', 'favicon', 'footer_logo', 'hero_video', 'gallery_banner', 'blog_banner', 'contact_banner', 'about_banner', 'home_footer_banner', 'map_background', 'featured_image', 'kilimanjaro_home_bg', 'safari_highlights'];
 
         foreach ($request->all() as $key => $value) {
             if (in_array($key, $fileKeys)) {
