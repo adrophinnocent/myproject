@@ -23,16 +23,15 @@
 <div class="hidden lg:block bg-[#0a0703] border-b border-gold-500/10 text-xs py-2">
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
         <div class="flex items-center gap-6 text-gray-400">
-            <a href="tel:{{ $phone }}" class="flex items-center gap-1.5 hover:text-gold-400 transition-colors">📞 {{ $phone }}</a>
-            <a href="mailto:{{ $email }}" class="flex items-center gap-1.5 hover:text-gold-400 transition-colors">✉️ {{ $email }}</a>
+            <a href="tel:{{ $phone }}" class="flex items-center gap-1.5 hover:text-gold-400 transition-colors">{{ $phone }}</a>
             <span class="text-gray-600">|</span>
-            <span class="text-gray-500">⭐ 4.9/5 · TripAdvisor Certificate of Excellence</span>
+            <span class="text-gray-500">4.9/5 · TripAdvisor Certificate of Excellence</span>
         </div>
         <div class="flex items-center gap-4">
             <!-- Currency Switcher -->
             <div class="relative" x-data="{open: false}">
                 <button x-on:click="open = !open" x-on:click.outside="open = false" class="flex items-center gap-1.5 text-gray-400 hover:text-gold-400 transition-colors">
-                    💰 {{ session('currency', 'USD') }}
+                    {{ session('currency', 'USD') }}
                     <svg class="w-3 h-3 transition-transform" x-bind:class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute right-0 top-full mt-2 w-32 bg-[#0a0703] border border-gold-500/20 rounded-xl shadow-2xl z-50 overflow-hidden" x-cloak>
