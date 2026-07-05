@@ -59,16 +59,26 @@
             <div x-show="!isLoading" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6" id="picker-media-grid">
                 {{-- Dynamic Content --}}
                 <template x-for="item in mediaItems" :key="item.id">
-                    <div @click="selectItem(item)" class="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl hover:border-amber-500 cursor-pointer transition-all duration-300 relative aspect-square">
-                        <template x-if="item.type === 'image'">
-                            <img :src="item.url" class="w-full h-full object-cover">
-                        </template>
-                        <template x-if="item.type !== 'image'">
-                            <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
-                                <span class="text-xs font-black uppercase tracking-tighter" x-text="item.type"></span>
-                            </div>
-                        </template>
-                        <div class="absolute inset-0 bg-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl hover:border-amber-500 cursor-pointer transition-all duration-300 relative aspect-square">
+                        <div @click="selectItem(item)" class="w-full h-full">
+                            <template x-if="item.type === 'image'">
+                                <img :src="item.url" class="w-full h-full object-cover">
+                            </template>
+                            <template x-if="item.type !== 'image'">
+                                <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
+                                    <span class="text-xs font-black uppercase tracking-tighter" x-text="item.type"></span>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Hover Actions (Delete) --}}
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                            <button @click.stop="deleteMedia(item.id)" class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+
+                        <div class="absolute inset-0 bg-amber-500/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                 </template>
             </div>
@@ -207,6 +217,29 @@ function mediaPicker() {
             }
 
             this.closePicker();
+        },
+
+        async deleteMedia(id) {
+            if (!confirm('Delete this file permanently?')) return;
+
+            try {
+                const response = await fetch(`/admin/media/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    await this.fetchMedia();
+                } else {
+                    alert('Failed to delete file');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error during deletion');
+            }
         }
     }
 }
