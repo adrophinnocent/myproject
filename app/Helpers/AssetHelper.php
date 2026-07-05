@@ -25,6 +25,12 @@ class AssetHelper
     public static function getBannerUrl($name, $default = null)
     {
         try {
+            // Check Admin Settings First
+            $settingValue = \App\Models\Setting::get($name);
+            if ($settingValue && is_string($settingValue)) {
+                return asset('storage/' . $settingValue);
+            }
+
             $extensions = ['webp', 'jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'WEBP'];
 
             // 1. Check in kilimanjaro folder
