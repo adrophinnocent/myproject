@@ -28,7 +28,7 @@
 </style>
 
 {{-- ========== VIDEO HERO SECTION ========== --}}
-<section class="relative min-h-screen flex flex-col overflow-hidden bg-safari-dark">
+<section class="relative min-h-screen lg:h-screen flex flex-col overflow-hidden bg-safari-dark">
     {{-- Background Video/Image --}}
     <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-black/40 z-10"></div>
@@ -56,7 +56,28 @@
                             <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="{{ $slide->title }}" loading="eager">
                         @endif
 
-                        {{-- Overlay Content removed to maintain unified Search Bar look --}}
+                        {{-- Overlay Content for each slide --}}
+                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-20">
+                            <div class="max-w-5xl">
+                                @if($slide->subtitle)
+                                    <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
+                                        {{ $slide->subtitle }}
+                                    </span>
+                                @endif
+                                @if($slide->title)
+                                    <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
+                                        {{ $slide->title }}
+                                    </h1>
+                                @endif
+                                @if($slide->cta_text)
+                                    <div class="mt-10">
+                                        <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105 pointer-events-auto">
+                                            {{ $slide->cta_text }}
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 @endforeach
             </div>
@@ -131,14 +152,16 @@
         </div>
     </div>
 
-    <!-- Main Content Container (Hero Text + Search Bar) -->
+    @if(!$sliders || $sliders->count() === 0)
+    <!-- Main Content Container -->
     <div class="relative z-20 flex-grow flex items-center justify-center py-24 lg:py-0">
         <div class="w-full max-w-6xl mx-auto px-4 text-center">
             <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
                 {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_eyebrow'), 'Tanzania\'s #1 Boutique Safari Operator') }}
             </span>
-            <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-10 drop-shadow-2xl pt-10 md:pt-0">
-                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_title'), 'Explore Tanzania') }}
+            <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
+                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_title'), 'Explore Tanzania') }} <br>
+                <span class="italic text-gold-500">{{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_subtitle'), 'Beyond Expectations') }}</span>
             </h1>
             <p class="text-gray-100 text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
                 {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_description'), 'Unforgettable luxury safaris designed specifically for you.') }}
@@ -199,52 +222,55 @@
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
 
-            {{-- Trust Strip (Moved near Search Bar) --}}
-            <div class="mt-10 max-w-4xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-4">
-                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
-                    <div class="text-gold-400">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">Best Rated</div>
-                        <div class="text-gray-400 text-[8px] font-bold">TripAdvisor 2024</div>
-                    </div>
+    {{-- Bottom Trust Strip --}}
+    <div class="relative z-30 bg-black/40 backdrop-blur-xl border-t border-white/10 py-8 lg:py-5">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4">
+            <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
+                <div class="text-gold-400">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 </div>
-                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
-                    <div class="text-gold-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">Safe & Secure</div>
-                        <div class="text-gray-400 text-[8px] font-bold">Certified Operator</div>
-                    </div>
+                <div class="text-left">
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Best Rated</div>
+                    <div class="text-gray-400 text-[10px] font-bold">TripAdvisor 2024</div>
                 </div>
-                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
-                    <div class="text-gold-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">Affordable</div>
-                        <div class="text-gray-400 text-[8px] font-bold">Direct Pricing</div>
-                    </div>
+            </div>
+            <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
+                <div class="text-gold-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
-                <div class="flex items-center justify-center gap-3">
-                    <div class="text-gold-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">24/7 Support</div>
-                        <div class="text-gray-400 text-[8px] font-bold">Expert Assistance</div>
-                    </div>
+                <div class="text-left">
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Safe & Secure</div>
+                    <div class="text-gray-400 text-[10px] font-bold">Certified Operator</div>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
+                <div class="text-gold-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="text-left">
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Affordable</div>
+                    <div class="text-gray-400 text-[10px] font-bold">Direct Pricing</div>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-3">
+                <div class="text-gold-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </div>
+                <div class="text-left">
+                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">24/7 Support</div>
+                    <div class="text-gray-400 text-[10px] font-bold">Expert Assistance</div>
                 </div>
             </div>
         </div>
     </div>
+    @endif
 </section>
 
-{{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR (KILIMANJARO ONLY) ========== --}}
-@if(isset($heroTour))
+{{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR ========== --}}
+@if($heroTour)
 <section class="py-24 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
@@ -387,7 +413,7 @@
 {{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_home_bg') }}"
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}"
              width="1920" height="1080"
              class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
@@ -476,20 +502,21 @@
                     <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
                             <div class="relative h-56">
-                                <img src="{{ $tour->featured_image_url }}" alt="{{ \App\Helpers\AssetHelper::asString($tour->title) }} in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover" loading="lazy">
+                                <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->getTranslation('title') }} in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover" loading="lazy">
                             </div>
                             <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
                                 <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
                                     <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span>
                                 </div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
-                                    <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a>
+                                    <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a>
                                 </h3>
+                                <div class="text-[10px] font-mono text-gray-400 mb-4 tracking-tighter">{{ $tour->slug }}</div>
                                 <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                                     <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
                                     <div class="flex gap-2">
-                                        <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
                                         <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
                                     </div>
                                 </div>
@@ -743,6 +770,7 @@
 </section>
 
 {{-- ========== LATEST BLOG SECTION (HORIZONTAL CAROUSEL) ========== --}}
+@if(isset($latestPosts) && $latestPosts->count() > 0)
 <section id="blog" class="py-24 bg-gray-50 border-t border-gray-100" x-data="{
     scrollBy(distance) {
         const slider = document.getElementById('blog-slider');
@@ -804,6 +832,7 @@
         </div>
     </div>
 </section>
+@endif
 
 {{-- ========== HOME FOOTER BANNER (JOINED WITH FOOTER) ========== --}}
 <section class="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden bg-safari-dark">
