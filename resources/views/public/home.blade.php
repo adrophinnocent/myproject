@@ -384,6 +384,7 @@
         </div>
     </div>
 </section>
+@endif
 
 {{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden">
