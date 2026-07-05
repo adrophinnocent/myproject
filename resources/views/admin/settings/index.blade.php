@@ -101,28 +101,6 @@
             </div>
         </div>
 
-        <div class="mb-6 p-4 border border-gray-100 rounded-xl bg-gray-50">
-            <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Hero Video (Background File)</label>
-            <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl p-6 bg-white mb-4">
-                @if(\App\Models\Setting::get('hero_video'))
-                    <div id="video-preview-container" class="mb-4">
-                        <video id="hero-video-preview" src="{{ asset('storage/' . \App\Models\Setting::get('hero_video')) }}" class="h-32 rounded-lg shadow-md" controls muted></video>
-                    </div>
-                @else
-                    <div id="video-preview-container" class="hidden mb-4">
-                        <video id="hero-video-preview" src="" class="h-32 rounded-lg shadow-md" controls muted></video>
-                    </div>
-                    <div id="video-placeholder" class="text-2xl mb-2">🎬</div>
-                @endif
-                <input type="hidden" name="hero_video" id="hero_video_path" value="{{ \App\Models\Setting::get('hero_video') }}">
-                <div class="flex gap-3">
-                    <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'hero_video_path', previewId: 'hero-video-preview', type: 'video'}}))" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all">Choose Library</button>
-                    <input type="file" name="hero_video_upload" class="text-[10px] file:bg-gray-100 file:border-none file:px-3 file:py-1.5 file:rounded-md file:font-black file:uppercase">
-                </div>
-            </div>
-            <p class="text-[10px] text-gray-500 mt-1">Recommended: MP4 format. If set, this replaces the home slider.</p>
-        </div>
-
         <h3 class="text-lg font-semibold text-gray-900 mb-6 mt-8">Season Indicator Content</h3>
 
         <div class="mb-6">
