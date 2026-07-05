@@ -28,7 +28,7 @@
 </style>
 
 {{-- ========== VIDEO HERO SECTION ========== --}}
-<section class="relative min-h-screen lg:h-screen flex flex-col overflow-hidden bg-safari-dark">
+<section class="relative min-h-screen flex flex-col overflow-hidden bg-safari-dark">
     {{-- Background Video/Image --}}
     <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-black/40 z-10"></div>
@@ -242,8 +242,6 @@
             </div>
         </div>
     </div>
-
-    <div class="hidden">
 </section>
 
 {{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR ========== --}}
@@ -386,7 +384,6 @@
         </div>
     </div>
 </section>
-@endif
 
 {{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden">
@@ -747,7 +744,6 @@
 </section>
 
 {{-- ========== LATEST BLOG SECTION (HORIZONTAL CAROUSEL) ========== --}}
-@if(isset($latestPosts) && $latestPosts->count() > 0)
 <section id="blog" class="py-24 bg-gray-50 border-t border-gray-100" x-data="{
     scrollBy(distance) {
         const slider = document.getElementById('blog-slider');
@@ -809,7 +805,6 @@
         </div>
     </div>
 </section>
-@endif
 
 {{-- ========== HOME FOOTER BANNER (JOINED WITH FOOTER) ========== --}}
 <section class="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden bg-safari-dark">
