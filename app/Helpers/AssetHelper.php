@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class AssetHelper
 {
+    // Clean and robust asset helper for Twinasafaris
     /**
      * Ensure we always return a string for Blade output.
      */
