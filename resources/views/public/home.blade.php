@@ -37,11 +37,15 @@
                 <source src="{{ asset('storage/' . \App\Models\Setting::get('hero_video')) }}" type="video/mp4">
             </video>
         @else
-            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}"
-                 width="1920" height="1080"
-                 class="w-full h-full object-cover"
-                 alt="Tanzania Safari"
-                 loading="eager">
+            <picture>
+                <source srcset="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}" type="image/webp">
+                <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}"
+                     width="1920" height="1080"
+                     class="w-full h-full object-cover"
+                     alt="Tanzania Safari"
+                     loading="eager"
+                     fetchpriority="high">
+            </picture>
         @endif
     </div>
 
