@@ -243,9 +243,8 @@
     </div>
 </section>
 
-{{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR ========== --}}
-@if($featuredTours->count() > 0)
-@php $heroTour = $featuredTours->first(); @endphp
+{{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR (KILIMANJARO ONLY) ========== --}}
+@if(isset($heroTour))
 <section class="py-24 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
