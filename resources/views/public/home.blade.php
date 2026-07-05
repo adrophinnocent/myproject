@@ -56,28 +56,7 @@
                             <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="{{ $slide->title }}" loading="eager">
                         @endif
 
-                        {{-- Overlay Content for each slide --}}
-                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-20">
-                            <div class="max-w-5xl">
-                                @if($slide->subtitle)
-                                    <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
-                                        {{ $slide->subtitle }}
-                                    </span>
-                                @endif
-                                @if($slide->title)
-                                    <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
-                                        {{ $slide->title }}
-                                    </h1>
-                                @endif
-                                @if($slide->cta_text)
-                                    <div class="mt-10">
-                                        <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105 pointer-events-auto">
-                                            {{ $slide->cta_text }}
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                        {{-- Overlay Content removed to maintain unified Search Bar look --}}
                     </div>
                 @endforeach
             </div>
@@ -152,8 +131,7 @@
         </div>
     </div>
 
-    @if(!$sliders || $sliders->count() === 0)
-    <!-- Main Content Container -->
+    <!-- Main Content Container (Hero Text + Search Bar) -->
     <div class="relative z-20 flex-grow flex items-center justify-center py-24 lg:py-0">
         <div class="w-full max-w-6xl mx-auto px-4 text-center">
             <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
@@ -222,51 +200,50 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
-    @endif
 
-    {{-- Bottom Trust Strip --}}
-    <div class="relative z-30 bg-black/40 backdrop-blur-xl border-t border-white/10 py-8 lg:py-5">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4">
-            <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
-                <div class="text-gold-400">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            {{-- Trust Strip (Moved near Search Bar) --}}
+            <div class="mt-10 max-w-4xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-4">
+                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
+                    <div class="text-gold-400">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">Best Rated</div>
+                        <div class="text-gray-400 text-[8px] font-bold">TripAdvisor 2024</div>
+                    </div>
                 </div>
-                <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Best Rated</div>
-                    <div class="text-gray-400 text-[10px] font-bold">TripAdvisor 2024</div>
+                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
+                    <div class="text-gold-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">Safe & Secure</div>
+                        <div class="text-gray-400 text-[8px] font-bold">Certified Operator</div>
+                    </div>
                 </div>
-            </div>
-            <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
-                <div class="text-gold-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
+                    <div class="text-gold-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">Affordable</div>
+                        <div class="text-gray-400 text-[8px] font-bold">Direct Pricing</div>
+                    </div>
                 </div>
-                <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Safe & Secure</div>
-                    <div class="text-gray-400 text-[10px] font-bold">Certified Operator</div>
-                </div>
-            </div>
-            <div class="flex items-center justify-center gap-3 lg:border-r border-white/10">
-                <div class="text-gold-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">Affordable</div>
-                    <div class="text-gray-400 text-[10px] font-bold">Direct Pricing</div>
-                </div>
-            </div>
-            <div class="flex items-center justify-center gap-3">
-                <div class="text-gold-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                </div>
-                <div class="text-left">
-                    <div class="text-white text-xs font-black uppercase tracking-widest leading-tight">24/7 Support</div>
-                    <div class="text-gray-400 text-[10px] font-bold">Expert Assistance</div>
+                <div class="flex items-center justify-center gap-3">
+                    <div class="text-gold-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-white text-[10px] font-black uppercase tracking-widest leading-tight">24/7 Support</div>
+                        <div class="text-gray-400 text-[8px] font-bold">Expert Assistance</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="hidden">
 </section>
 
 {{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR ========== --}}
