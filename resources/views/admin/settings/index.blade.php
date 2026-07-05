@@ -129,13 +129,8 @@
         </div>
 
         <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
-            <input type="text" name="hero_title" value="{{ \App\Models\Setting::get('hero_title', 'Explore Tanzania') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-        </div>
-
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle (Italic Text)</label>
-            <input type="text" name="hero_subtitle" value="{{ \App\Models\Setting::get('hero_subtitle', 'Beyond Expectations') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Main Heading</label>
+            <input type="text" name="hero_title" value="{{ \App\Models\Setting::get('hero_title', 'Explore Tanzania Beyond Expectations') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
         </div>
 
         <div class="mb-6">
