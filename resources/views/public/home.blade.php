@@ -157,14 +157,14 @@
     <div class="relative z-20 flex-grow flex items-center justify-center py-24 lg:py-0">
         <div class="w-full max-w-6xl mx-auto px-4 text-center">
             <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
-                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_eyebrow'), 'Tanzania\'s #1 Boutique Safari Operator') }}
+                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_eyebrow'), '') }}
             </span>
             <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
                 {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_title'), '') }} <br>
                 <span class="italic text-gold-500">{{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_subtitle'), '') }}</span>
             </h1>
             <p class="text-gray-100 text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
-                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_description'), 'Unforgettable luxury safaris designed specifically for you.') }}
+                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_description'), '') }}
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mb-16">
