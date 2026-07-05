@@ -14,7 +14,10 @@
     <link   rel="canonical"  href="{{ url()->current() }}">
 
     {{-- Favicon --}}
-    <link rel="icon" type="image/x-icon" href="{{ \App\Helpers\AssetHelper::getFaviconUrl() }}">
+    @php $favicon = \App\Helpers\AssetHelper::getFaviconUrl(); @endphp
+    <link rel="icon" type="image/x-icon" href="{{ $favicon }}">
+    <link rel="apple-touch-icon" href="{{ $favicon }}">
+    <link rel="shortcut icon" href="{{ $favicon }}">
 
     {{-- Open Graph / Facebook --}}
     <meta property="og:type"        content="website">

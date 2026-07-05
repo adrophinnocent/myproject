@@ -94,16 +94,18 @@ class AssetHelper
     public static function getFaviconUrl()
     {
         try {
-            $paths = ['images/logos/favicon.ico', 'favicon.ico', 'images/favicon.ico'];
-            foreach ($paths as $path) {
-                if (file_exists(public_path($path))) {
-                    return asset($path);
-                }
-            }
-
+            // 1. Prioritize Admin Setting
             $settingValue = \App\Models\Setting::get('favicon');
             if ($settingValue && is_string($settingValue)) {
                 return asset('storage/' . $settingValue);
+            }
+
+            // 2. Fallback to local files
+            $paths = ['favicon.ico', 'images/logos/favicon.ico', 'images/favicon.ico'];
+            foreach ($paths as $path) {
+                if (file_exists(public_path($path)) && filesize(public_path($path)) > 0) {
+                    return asset($path);
+                }
             }
         } catch (\Throwable $e) {
             Log::error("AssetHelper Favicon Error: " . $e->getMessage());
