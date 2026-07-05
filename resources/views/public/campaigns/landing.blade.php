@@ -161,7 +161,7 @@
                         </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <h3 class="font-display text-2xl font-black text-gray-900 mb-4 group-hover:text-gold-600 transition-colors leading-tight">
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}">{{ $tour->title }}</a>
+                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}">{{ $tour->title }}</a>
                             </h3>
                             <div class="flex items-center gap-4 text-gray-400 text-[10px] font-black uppercase tracking-widest mb-6">
                                 <span>{{ $tour->duration_text }}</span>
@@ -169,7 +169,7 @@
                                 <span>{{ $tour->destination->name ?? 'Tanzania' }}</span>
                             </div>
                             <div class="mt-auto">
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}" class="inline-flex items-center gap-2 text-safari-dark font-black uppercase tracking-widest text-[10px] hover:text-gold-600 transition-all border-b-2 border-gold-500 pb-1">
+                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="inline-flex items-center gap-2 text-safari-dark font-black uppercase tracking-widest text-[10px] hover:text-gold-600 transition-all border-b-2 border-gold-500 pb-1">
                                     View Full Itinerary
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                                 </a>

@@ -109,7 +109,7 @@
                         @if($tour->is_featured)<span class="text-gold-500 text-sm">⭐ Featured</span>@endif
                     </div>
                     <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
-                        <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600 transition-colors">{{ $tour->getTranslation('title') }}</a>
+                        <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="hover:text-gold-600 transition-colors">{{ $tour->getTranslation('title') }}</a>
                     </h3>
                     <div class="text-[10px] font-mono text-gray-400 mb-3 tracking-tighter">{{ $tour->slug }}.html</div>
                     <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">{{ $tour->getTranslation('short_description') }}</p>
@@ -124,8 +124,8 @@
                             <div class="text-xs text-gray-400">{{ $tour->price_note ?? 'per person' }}</div>
                         </div>
                         <div class="flex gap-3">
-                            <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="btn-outline-gold px-5 py-2.5 rounded-full text-sm font-semibold">View Details</a>
-                            <a href="{{ route('booking.create', $tour) }}" class="btn-gold px-5 py-2.5 rounded-full text-sm font-semibold">Book Now</a>
+                            <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="btn-outline-gold px-5 py-2.5 rounded-full text-sm font-semibold">View Details</a>
+                            <a href="{{ route('booking.create', $tour->slug ?? 'default') }}" class="btn-gold px-5 py-2.5 rounded-full text-sm font-semibold">Book Now</a>
                         </div>
                     </div>
                 </div>

@@ -220,11 +220,11 @@
                                 <span class="text-gray-400 text-xs font-bold">{{ $tour->destination->name ?? 'Tanzania' }}</span>
                             </div>
                             <h3 class="font-display text-xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}">{{ $tour->title }}</a>
+                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}">{{ $tour->title }}</a>
                             </h3>
                             <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-50">
                                 <div class="text-2xl font-display font-black text-safari-dark">{{ $tour->formatted_price }}</div>
-                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}" class="w-12 h-12 rounded-full bg-safari-dark flex items-center justify-center text-white hover:bg-gold-500 transition-all shadow-lg">
+                                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="w-12 h-12 rounded-full bg-safari-dark flex items-center justify-center text-white hover:bg-gold-500 transition-all shadow-lg">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                                 </a>
                             </div>

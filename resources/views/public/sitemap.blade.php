@@ -25,22 +25,26 @@
 
     {{-- Tours --}}
     @foreach ($tours as $tour)
+        @if($tour->slug)
         <url>
             <loc>{{ route('tours.show', ['type' => 'tour', 'slug' => $tour->slug]) }}</loc>
             <lastmod>{{ $tour->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.9</priority>
         </url>
+        @endif
     @endforeach
 
     {{-- Safaris --}}
     @foreach ($safaris as $safari)
+        @if($safari->slug)
         <url>
             <loc>{{ route('tours.show', ['type' => 'safari', 'slug' => $safari->slug]) }}</loc>
             <lastmod>{{ $safari->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.9</priority>
         </url>
+        @endif
     @endforeach
 
     {{-- Blogs --}}

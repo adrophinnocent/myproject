@@ -558,7 +558,7 @@
             <div class="tour-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
                 <div class="img-zoom h-44"><img src="{{ $related->featured_image_url }}" width="400" height="300" alt="{{ $related->title }}" class="w-full h-full object-cover" loading="lazy"></div>
                 <div class="p-4">
-                    <h4 class="font-semibold text-gray-800 text-sm mb-1 line-clamp-2"><a href="{{ route('tours.show', ['type' => $related->item_type ?? 'tour', 'slug' => $related->slug]) }}" class="hover:text-gold-600 transition-colors">{{ $related->title }}</a></h4>
+                    <h4 class="font-semibold text-gray-800 text-sm mb-1 line-clamp-2"><a href="{{ route('tours.show', ['type' => $related->item_type ?? 'tour', 'slug' => $related->slug ?? 'default']) }}" class="hover:text-gold-600 transition-colors">{{ $related->title }}</a></h4>
                     <div class="flex items-center justify-between mt-3">
                         <span class="text-gold-500 font-bold text-sm">{{ $related->formatted_price }}</span>
                         <span class="text-gray-400 text-xs">{{ $related->duration_text }}</span>
