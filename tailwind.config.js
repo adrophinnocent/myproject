@@ -14,22 +14,21 @@ export default {
         extend: {
             colors: {
                 gold: {
-                    50: '#fffbeb',
-                    100: '#fef3c7',
-                    200: '#fde68a',
-                    300: '#fcd34d',
-                    400: '#fbbf24',
+                    50: '#fdfbf0',
+                    100: '#faf3cc',
+                    200: '#f4e48a',
+                    300: '#eccf4a',
+                    400: '#e3b81a',
                     500: '#D4AF37',
                     600: '#b8920d',
                     700: '#8f6e0a',
                     800: '#704f0f',
-                    900: '#451a03'
+                    900: '#5a3f12'
                 },
                 safari: {
-                    dark: '#0a0a0a',
-                    mid: '#171717',
-                    stone: '#262626',
-                    light: '#fafaf5'
+                    dark: '#0a0703',
+                    mid: '#1a1209',
+                    light: '#8B6914'
                 },
                 brand: {
                     50: '#fffbeb',
@@ -45,9 +44,9 @@ export default {
                 }
             },
             fontFamily: {
-                display: ['"Outfit"', 'sans-serif'],
-                body: ['"Outfit"', 'sans-serif'],
-                sans: ['"Outfit"', ...defaultTheme.fontFamily.sans],
+                display: ['"Cormorant Garamond"', 'serif'],
+                body: ['"Inter"', 'sans-serif'],
+                sans: ['"Inter"', ...defaultTheme.fontFamily.sans],
             },
             animation: {
                 'fade-in': 'fadeIn 0.6s ease-out forwards',
