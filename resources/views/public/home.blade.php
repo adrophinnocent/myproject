@@ -502,7 +502,11 @@
                     <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
                             <div class="relative h-56">
-                                <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->getTranslation('title') }} in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover" loading="lazy">
+                                <img src="{{ $tour->featured_image_url }}"
+                                     width="400" height="224"
+                                     alt="{{ $tour->getTranslation('title') }} in {{ $tour->destination->name ?? 'Tanzania' }}"
+                                     class="w-full h-full object-cover"
+                                     loading="lazy">
                             </div>
                             <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
                                 <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
@@ -805,7 +809,10 @@
                 <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                     <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group h-full">
                         <div class="relative h-64 overflow-hidden">
-                            <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500">
+                            <img src="{{ $post->featured_image_url }}"
+                                 width="400" height="256"
+                                 alt="{{ $post->title }}"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500">
                         </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
