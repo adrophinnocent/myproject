@@ -387,7 +387,7 @@
 {{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}"
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_home_bg') }}"
              width="1920" height="1080"
              class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
