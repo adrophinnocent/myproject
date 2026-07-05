@@ -24,9 +24,9 @@ class AssetHelper
     public static function getBannerUrl($name, $default = null)
     {
         try {
-            $extensions = ['webp', 'jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
+            $extensions = ['webp', 'jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'WEBP'];
 
-            // Check in kilimanjaro folder
+            // 1. Check in kilimanjaro folder
             foreach ($extensions as $ext) {
                 $path = 'images/kilimanjaro/' . $name . '.' . $ext;
                 if (file_exists(public_path($path))) {
@@ -34,9 +34,17 @@ class AssetHelper
                 }
             }
 
-            // Check in banners folder
+            // 2. Check in banners folder
             foreach ($extensions as $ext) {
                 $path = 'images/banners/' . $name . '.' . $ext;
+                if (file_exists(public_path($path))) {
+                    return asset($path);
+                }
+            }
+
+            // 3. Check in root images folder
+            foreach ($extensions as $ext) {
+                $path = 'images/' . $name . '.' . $ext;
                 if (file_exists(public_path($path))) {
                     return asset($path);
                 }
@@ -49,15 +57,15 @@ class AssetHelper
     }
 
     /**
-     * Get Logo URL, checking local storage first then database settings.
+     * Get Logo URL.
      */
     public static function getLogoUrl($type = 'logo')
     {
         try {
-            $extensions = ['webp', 'png', 'jpg', 'jpeg'];
+            $extensions = ['webp', 'png', 'jpg', 'jpeg', 'svg', 'PNG', 'JPG'];
             foreach ($extensions as $ext) {
                 $localPath = "images/logos/{$type}.{$ext}";
-                if (File::exists(public_path($localPath))) {
+                if (file_exists(public_path($localPath))) {
                     return asset($localPath);
                 }
             }
@@ -67,7 +75,7 @@ class AssetHelper
                 return asset('storage/' . $settingValue);
             }
         } catch (\Throwable $e) {
-            Log::error("AssetHelper Logo Error: " . $type . " - " . $e->getMessage());
+            Log::error("AssetHelper Logo Error: " . $e->getMessage());
         }
 
         return asset("images/logo.png");
@@ -79,8 +87,11 @@ class AssetHelper
     public static function getFaviconUrl()
     {
         try {
-            if (file_exists(public_path('images/logos/favicon.ico'))) {
-                return asset('images/logos/favicon.ico');
+            $paths = ['images/logos/favicon.ico', 'favicon.ico', 'images/favicon.ico'];
+            foreach ($paths as $path) {
+                if (file_exists(public_path($path))) {
+                    return asset($path);
+                }
             }
 
             $settingValue = \App\Models\Setting::get('favicon');
