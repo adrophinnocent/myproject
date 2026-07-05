@@ -44,26 +44,27 @@ class CompressBanners extends Command
             $files = File::files($directory);
 
             foreach ($files as $file) {
-            $extension = strtolower($file->getExtension());
+                $extension = strtolower($file->getExtension());
 
-            if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
-                $this->info("Processing: " . $file->getFilename());
+                if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
+                    $this->info("Processing: " . $file->getFilename());
 
-                $source = imagecreatefromstring(file_get_contents($file->getPathname()));
-                if ($source) {
-                    $filename = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-                    $destination = $directory . '/' . $filename . '.webp';
+                    try {
+                        $source = @imagecreatefromstring(file_get_contents($file->getPathname()));
+                        if ($source) {
+                            $filename = pathinfo($file->getFilename(), PATHINFO_FILENAME);
+                            $destination = $directory . '/' . $filename . '.webp';
 
-                    // Save as WebP
-                    imagewebp($source, $destination, 80);
-                    imagedestroy($source);
+                            // Save as WebP
+                            imagewebp($source, $destination, 80);
+                            imagedestroy($source);
 
-                    $this->comment("Converted to WebP: $filename.webp");
-
-                    // Optional: Delete the original if you want
-                    // File::delete($file->getPathname());
-
-                    $count++;
+                            $this->comment("Converted to WebP: $filename.webp");
+                            $count++;
+                        }
+                    } catch (\Throwable $e) {
+                        $this->error("Failed to process " . $file->getFilename() . ": " . $e->getMessage());
+                    }
                 }
             }
         }
