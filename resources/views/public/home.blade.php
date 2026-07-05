@@ -160,8 +160,8 @@
                 {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_eyebrow'), 'Tanzania\'s #1 Boutique Safari Operator') }}
             </span>
             <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
-                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_title'), 'Explore Tanzania') }} <br>
-                <span class="italic text-gold-500">{{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_subtitle'), 'Beyond Expectations') }}</span>
+                {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_title'), '') }} <br>
+                <span class="italic text-gold-500">{{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_subtitle'), '') }}</span>
             </h1>
             <p class="text-gray-100 text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
                 {{ \App\Helpers\AssetHelper::asString(\App\Models\Setting::get('hero_description'), 'Unforgettable luxury safaris designed specifically for you.') }}

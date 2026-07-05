@@ -123,21 +123,6 @@
             <p class="text-[10px] text-gray-500 mt-1">Recommended: MP4 format. If set, this replaces the home slider.</p>
         </div>
 
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Eyebrow (Tagline)</label>
-            <input type="text" name="hero_eyebrow" value="{{ \App\Models\Setting::get('hero_eyebrow', 'Tanzania\'s #1 Boutique Safari Operator') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-        </div>
-
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Main Heading</label>
-            <input type="text" name="hero_title" value="{{ \App\Models\Setting::get('hero_title', 'Explore Tanzania Beyond Expectations') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-        </div>
-
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Hero Main Description</label>
-            <textarea name="hero_description" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ \App\Models\Setting::get('hero_description', 'Unforgettable luxury safaris, Kilimanjaro summits, and Zanzibar escapes designed specifically for you.') }}</textarea>
-        </div>
-
         <h3 class="text-lg font-semibold text-gray-900 mb-6 mt-8">Season Indicator Content</h3>
 
         <div class="mb-6">
