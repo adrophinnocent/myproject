@@ -224,6 +224,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     {{-- Bottom Trust Strip --}}
     <div class="relative z-30 bg-black/40 backdrop-blur-xl border-t border-white/10 py-8 lg:py-5">
@@ -269,7 +270,8 @@
 </section>
 
 {{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR ========== --}}
-@if($heroTour)
+@if($featuredTours->count() > 0)
+@php $heroTour = $featuredTours->first(); @endphp
 <section class="py-24 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
@@ -501,21 +503,20 @@
                     <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
                             <div class="relative h-56">
-                                <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->getTranslation('title') }} in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover" loading="lazy">
+                                <img src="{{ $tour->featured_image_url }}" alt="{{ \App\Helpers\AssetHelper::asString($tour->title) }} in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover" loading="lazy">
                             </div>
                             <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
                                 <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold">
                                     <span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span>
                                 </div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
-                                    <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a>
+                                    <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a>
                                 </h3>
-                                <div class="text-[10px] font-mono text-gray-400 mb-4 tracking-tighter">{{ $tour->slug }}</div>
                                 <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                                     <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
                                     <div class="flex gap-2">
-                                        <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
+                                        <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
                                         <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
                                     </div>
                                 </div>

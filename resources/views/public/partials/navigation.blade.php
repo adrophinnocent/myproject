@@ -66,7 +66,13 @@
         <div class="flex items-center justify-between py-3">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <img src="{{ \App\Helpers\AssetHelper::getLogoUrl() }}" alt="{{ \App\Helpers\AssetHelper::asString($siteName) }}" class="h-12 w-auto object-contain">
+                @if(\App\Models\Setting::get('logo'))
+                    <img src="{{ asset('storage/' . \App\Models\Setting::get('logo')) }}" alt="{{ \App\Helpers\AssetHelper::asString($siteName) }}" class="h-12 w-auto object-contain">
+                @else
+                    <div class="w-11 h-11 bg-gradient-to-br from-gold-400 to-gold-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-gold-500/40 transition-all">
+                        <svg class="w-7 h-7 text-safari-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9-9c1.657 0 3 1.343 3 3s-1.343 3-3 3m0-6H7m10 0v6m0 6H7m10 0v-6M3 12a9 9 0 019-9m-9 9a9 9 0 009 9m-9-9c1.657 0-3 1.343-3 3s1.343 3 3 3m0-6h10"></path></svg>
+                    </div>
+                @endif
                 <div class="hidden sm:block">
                     <span class="font-display text-white text-lg font-semibold leading-tight block">{{ \App\Helpers\AssetHelper::asString($siteName) }}</span>
                     <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">Tanzania</span>

@@ -125,7 +125,7 @@
                     </div>
 
                     <h3 class="font-display text-xl font-semibold text-gray-900 mb-3 leading-snug">
-                        <a href="{{ route('tours.show', $tour) }}" class="hover:text-yellow-600 transition-colors">{{ $tour->title }}</a>
+                        <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="hover:text-yellow-600 transition-colors">{{ $tour->title }}</a>
                     </h3>
                     <p class="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-2">{{ $tour->short_description }}</p>
 
