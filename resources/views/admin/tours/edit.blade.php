@@ -424,9 +424,38 @@
                     </div>
                 @endif
 
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Upload More Images</label>
-                <input type="file" name="gallery_images[]" multiple accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
-                <p class="text-xs text-gray-500 mt-2">You can select and upload multiple images at once.</p>
+                <div x-data="{ libraryImages: [] }" class="space-y-4">
+                    <div class="flex flex-wrap gap-3 mb-4" x-show="libraryImages.length > 0">
+                        <template x-for="(img, index) in libraryImages" :key="index">
+                            <div class="relative w-24 h-24">
+                                <img :src="'/storage/' + img" class="w-full h-full object-cover rounded-lg shadow-md border border-amber-500">
+                                <input type="hidden" name="gallery_library[]" :value="img">
+                                <button type="button" @click="libraryImages.splice(index, 1)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="button"
+                                @click="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'temp_gallery_path', previewId: 'temp_gallery_preview'}}))"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            Add from Library
+                        </button>
+                        {{-- Hidden elements for picker logic --}}
+                        <input type="hidden" id="temp_gallery_path" @change="libraryImages.push($el.value); $el.value = ''">
+                        <img id="temp_gallery_preview" src="" class="hidden">
+
+                        <div class="h-10 w-px bg-gray-200 mx-1"></div>
+
+                        <input type="file" name="gallery_images[]" id="gallery_upload_input" multiple accept="image/*" class="hidden" onchange="updateGalleryUploadCount(this)">
+                        <button type="button" onclick="document.getElementById('gallery_upload_input').click()" class="bg-white border border-gray-200 text-gray-500 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-50">
+                            Upload New Files <span id="gallery-upload-count" class="ml-1 text-amber-600"></span>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-[10px] text-gray-400 mt-4 italic">Tip: You can pick images from the library OR upload multiple new files. We recommend 4-5 high-quality images.</p>
             </div>
 
             <div class="mb-6 p-6 border border-gray-100 rounded-2xl bg-gray-50">
@@ -896,6 +925,12 @@ function addGoodToKnow() {
         <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
     `;
     container.appendChild(div);
+}
+
+function updateGalleryUploadCount(input) {
+    const count = input.files.length;
+    const label = document.getElementById('gallery-upload-count');
+    label.textContent = count > 0 ? `(${count} selected)` : '';
 }
 
 let faqCount = {{ is_array($tour->faqs) ? count($tour->faqs) : 0 }};

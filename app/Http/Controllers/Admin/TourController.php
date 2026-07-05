@@ -167,6 +167,17 @@ class TourController extends Controller
             }
         }
 
+        if ($request->has('gallery_library') && is_array($request->gallery_library)) {
+            foreach ($request->gallery_library as $path) {
+                if ($path) {
+                    $tour->images()->create([
+                        'image_path' => $path,
+                        'is_primary' => false,
+                    ]);
+                }
+            }
+        }
+
         // Save Translations
         if ($request->has('translations')) {
             foreach ($request->translations as $locale => $fields) {
@@ -324,6 +335,17 @@ class TourController extends Controller
                     'image_path' => $path,
                     'is_primary' => false,
                 ]);
+            }
+        }
+
+        if ($request->has('gallery_library') && is_array($request->gallery_library)) {
+            foreach ($request->gallery_library as $path) {
+                if ($path) {
+                    $tour->images()->create([
+                        'image_path' => $path,
+                        'is_primary' => false,
+                    ]);
+                }
             }
         }
 
