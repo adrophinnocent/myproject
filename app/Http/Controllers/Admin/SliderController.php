@@ -26,7 +26,7 @@ class SliderController extends Controller
             'title' => 'nullable|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'image' => 'nullable|string', // library path
-            'image_upload' => 'nullable|image|max:10240', // direct file
+            'image_upload' => 'nullable|file|mimes:jpg,jpeg,png,webp,mp4,mov,webm|max:51200', // direct file
             'page' => 'required|string|in:home,contact',
             'cta_text' => 'nullable|string|max:255',
             'cta_url' => 'nullable|string|max:255',
@@ -44,9 +44,16 @@ class SliderController extends Controller
         $slider->active = $request->has('active');
 
         if ($request->hasFile('image_upload')) {
-            $slider->image = $request->file('image_upload')->store('sliders', 'public');
+            $file = $request->file('image_upload');
+            $slider->mime_type = $file->getMimeType();
+            $slider->type = str_contains($slider->mime_type, 'video') ? 'video' : 'image';
+            $slider->image = $file->store('sliders', 'public');
         } elseif ($request->filled('image')) {
             $slider->image = $request->image;
+            // Crude check for type from library path
+            $ext = pathinfo($request->image, PATHINFO_EXTENSION);
+            $slider->type = in_array(strtolower($ext), ['mp4', 'mov', 'webm']) ? 'video' : 'image';
+            $slider->mime_type = $slider->type === 'video' ? 'video/mp4' : 'image/webp';
         }
 
         if (empty($slider->image)) {
@@ -69,7 +76,7 @@ class SliderController extends Controller
             'title' => 'nullable|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'image' => 'nullable|string',
-            'image_upload' => 'nullable|image|max:10240',
+            'image_upload' => 'nullable|file|mimes:jpg,jpeg,png,webp,mp4,mov,webm|max:51200',
             'page' => 'required|string|in:home,contact',
             'cta_text' => 'nullable|string|max:255',
             'cta_url' => 'nullable|string|max:255',
@@ -89,9 +96,14 @@ class SliderController extends Controller
             if ($slider->image && !str_contains($slider->image, 'media/')) {
                  Storage::disk('public')->delete($slider->image);
             }
-            $slider->image = $request->file('image_upload')->store('sliders', 'public');
+            $file = $request->file('image_upload');
+            $slider->mime_type = $file->getMimeType();
+            $slider->type = str_contains($slider->mime_type, 'video') ? 'video' : 'image';
+            $slider->image = $file->store('sliders', 'public');
         } elseif ($request->filled('image')) {
             $slider->image = $request->image;
+            $ext = pathinfo($request->image, PATHINFO_EXTENSION);
+            $slider->type = in_array(strtolower($ext), ['mp4', 'mov', 'webm']) ? 'video' : 'image';
         }
 
         $slider->save();

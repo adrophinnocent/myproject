@@ -27,27 +27,30 @@
         </div>
 
         <div class="mb-6">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Slider Image</label>
-            <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2rem] p-8 bg-gray-50/50" id="slider-image-container">
-                <img id="slider-preview" src="" class="hidden w-full h-48 object-cover rounded-2xl mb-4 shadow-xl">
+            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Slider Media (Image or Video)</label>
+            <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2rem] p-8 bg-gray-50/50" id="slider-media-container">
+                <div id="slider-preview-box" class="hidden w-full mb-4">
+                    <img id="slider-preview-img" src="" class="hidden w-full h-48 object-cover rounded-2xl shadow-xl">
+                    <video id="slider-preview-video" src="" class="hidden w-full h-48 object-cover rounded-2xl shadow-xl" controls muted></video>
+                </div>
                 <div id="slider-placeholder" class="text-center py-5">
-                    <div class="text-3xl mb-1">🖼️</div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">No Image Selected</p>
+                    <div class="text-3xl mb-1">🖼️ / 🎬</div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">No Media Selected</p>
                 </div>
 
                 <input type="hidden" name="image" id="slider_image_path">
 
                 <div class="flex gap-3">
                     <button type="button"
-                            @click="$dispatch('open-media-picker', {targetId: 'slider_image_path', previewId: 'slider-preview'})"
+                            onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'slider_image_path', previewId: 'slider-preview-img'}}))"
                             class="bg-safari-dark hover:bg-black text-white px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">
                         Pick from Library
                     </button>
-                    <input type="file" name="image_upload" class="hidden" id="slider_upload">
+                    <input type="file" name="image_upload" class="hidden" id="slider_upload" accept="image/*,video/*" onchange="previewSelectedFile(this)">
                     <button type="button" onclick="document.getElementById('slider_upload').click()" class="bg-white border border-gray-200 text-gray-500 px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest">Upload File</button>
                 </div>
             </div>
-            <p class="text-[10px] text-gray-400 mt-3 italic">Recommended: 1920x1080px. High-quality WebP images perform best.</p>
+            <p class="text-[10px] text-gray-400 mt-3 italic">Recommended: 1920x1080px WebP images or MP4 videos under 20MB.</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -82,4 +85,55 @@
         </div>
     </form>
 </div>
+
+<script>
+function previewSelectedFile(input) {
+    const file = input.files[0];
+    if (file) {
+        const previewBox = document.getElementById('slider-preview-box');
+        const previewImg = document.getElementById('slider-preview-img');
+        const previewVideo = document.getElementById('slider-preview-video');
+        const placeholder = document.getElementById('slider-placeholder');
+
+        previewBox.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+
+        if (file.type.startsWith('video/')) {
+            previewVideo.src = URL.createObjectURL(file);
+            previewVideo.classList.remove('hidden');
+            previewImg.classList.add('hidden');
+        } else {
+            previewImg.src = URL.createObjectURL(file);
+            previewImg.classList.remove('hidden');
+            previewVideo.classList.add('hidden');
+        }
+    }
+}
+
+// Custom listener for media picker
+window.addEventListener('change', (e) => {
+    if (e.target.id === 'slider_image_path') {
+        const path = e.target.value;
+        const previewImg = document.getElementById('slider-preview-img');
+        const previewVideo = document.getElementById('slider-preview-video');
+        const previewBox = document.getElementById('slider-preview-box');
+        const placeholder = document.getElementById('slider-placeholder');
+
+        const isVideo = path.match(/\.(mp4|webm|mov)$/i);
+
+        previewBox.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+
+        if (isVideo) {
+            previewVideo.src = '/storage/' + path;
+            previewVideo.classList.remove('hidden');
+            previewImg.classList.add('hidden');
+        } else {
+            previewImg.src = '/storage/' + path;
+            previewImg.classList.remove('hidden');
+            previewVideo.classList.add('hidden');
+        }
+    }
+});
+</script>
 @endsection

@@ -32,20 +32,72 @@
     {{-- Background Video/Image --}}
     <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-black/40 z-10"></div>
-        @if(\App\Models\Setting::get('hero_video'))
-            <video autoplay muted loop playsinline class="w-full h-full object-cover">
-                <source src="{{ asset('storage/' . \App\Models\Setting::get('hero_video')) }}" type="video/mp4">
-            </video>
+
+        @if($sliders && $sliders->count() > 0)
+            <div x-data="{
+                activeSlide: 0,
+                slidesCount: {{ $sliders->count() }},
+                next() { this.activeSlide = (this.activeSlide + 1) % this.slidesCount }
+            }" x-init="setInterval(() => next(), 8000)" class="w-full h-full relative">
+                @foreach($sliders as $index => $slide)
+                    <div x-show="activeSlide === {{ $index }}"
+                         x-transition:enter="transition ease-out duration-1000"
+                         x-transition:enter-start="opacity-0 scale-105"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-1000"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="absolute inset-0 w-full h-full">
+                        @if($slide->type === 'video')
+                            <video autoplay muted loop playsinline class="w-full h-full object-cover">
+                                <source src="{{ $slide->image_url }}" type="video/mp4">
+                            </video>
+                        @else
+                            <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="{{ $slide->title }}" loading="eager">
+                        @endif
+
+                        {{-- Overlay Content for each slide --}}
+                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-20">
+                            <div class="max-w-5xl">
+                                @if($slide->subtitle)
+                                    <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
+                                        {{ $slide->subtitle }}
+                                    </span>
+                                @endif
+                                @if($slide->title)
+                                    <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-bold leading-[0.85] mb-8 drop-shadow-2xl">
+                                        {{ $slide->title }}
+                                    </h1>
+                                @endif
+                                @if($slide->cta_text)
+                                    <div class="mt-10">
+                                        <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105 pointer-events-auto">
+                                            {{ $slide->cta_text }}
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         @else
-            <picture>
-                <source srcset="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}" type="image/webp">
-                <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}"
-                     width="1920" height="1080"
-                     class="w-full h-full object-cover"
-                     alt="Tanzania Safari"
-                     loading="eager"
-                     fetchpriority="high">
-            </picture>
+            {{-- Original Fallback if no sliders defined --}}
+            @if(\App\Models\Setting::get('hero_video'))
+                <video autoplay muted loop playsinline class="w-full h-full object-cover">
+                    <source src="{{ asset('storage/' . \App\Models\Setting::get('hero_video')) }}" type="video/mp4">
+                </video>
+            @else
+                <picture>
+                    <source srcset="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}" type="image/webp">
+                    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('hero_fallback') }}"
+                         width="1920" height="1080"
+                         class="w-full h-full object-cover"
+                         alt="Tanzania Safari"
+                         loading="eager"
+                         fetchpriority="high">
+                </picture>
+            @endif
         @endif
     </div>
 
@@ -100,6 +152,7 @@
         </div>
     </div>
 
+    @if(!$sliders || $sliders->count() === 0)
     <!-- Main Content Container -->
     <div class="relative z-20 flex-grow flex items-center justify-center py-24 lg:py-0">
         <div class="w-full max-w-6xl mx-auto px-4 text-center">

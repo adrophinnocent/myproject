@@ -28,15 +28,36 @@
         </div>
 
         <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Slider Image</label>
-            @if($slider->image)
-                <div class="mb-3 relative group">
-                    <img src="{{ $slider->image_url }}" class="w-full h-40 object-cover rounded-lg border border-gray-200 shadow-sm">
-                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg text-white text-xs">Current Image</div>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Slider Media (Image or Video)</label>
+            <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2rem] p-8 bg-gray-50/50" id="slider-media-container">
+                <div id="slider-preview-box" class="{{ $slider->image ? '' : 'hidden' }} w-full mb-4">
+                    @if($slider->type === 'video')
+                        <img id="slider-preview-img" src="" class="hidden w-full h-48 object-cover rounded-2xl shadow-xl">
+                        <video id="slider-preview-video" src="{{ $slider->image_url }}" class="w-full h-48 object-cover rounded-2xl shadow-xl" controls muted></video>
+                    @else
+                        <img id="slider-preview-img" src="{{ $slider->image_url }}" class="w-full h-48 object-cover rounded-2xl shadow-xl">
+                        <video id="slider-preview-video" src="" class="hidden w-full h-48 object-cover rounded-2xl shadow-xl" controls muted></video>
+                    @endif
                 </div>
-            @endif
-            <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#D4AF37]/10 file:text-[#8b7355] hover:file:bg-[#D4AF37]/20">
-            <p class="text-[10px] text-gray-400 mt-1">Leave empty to keep existing image</p>
+
+                <div id="slider-placeholder" class="{{ $slider->image ? 'hidden' : '' }} text-center py-5">
+                    <div class="text-3xl mb-1">🖼️ / 🎬</div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">No Media Selected</p>
+                </div>
+
+                <input type="hidden" name="image" id="slider_image_path" value="{{ $slider->image }}">
+
+                <div class="flex gap-3">
+                    <button type="button"
+                            onclick="window.dispatchEvent(new CustomEvent('open-media-picker', {detail: {targetId: 'slider_image_path', previewId: 'slider-preview-img'}}))"
+                            class="bg-safari-dark hover:bg-black text-white px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">
+                        Pick from Library
+                    </button>
+                    <input type="file" name="image_upload" class="hidden" id="slider_upload" accept="image/*,video/*" onchange="previewSelectedFile(this)">
+                    <button type="button" onclick="document.getElementById('slider_upload').click()" class="bg-white border border-gray-200 text-gray-500 px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest">Upload File</button>
+                </div>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-3 italic">Recommended: 1920x1080px WebP images or MP4 videos under 20MB.</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -71,4 +92,54 @@
         </div>
     </form>
 </div>
+
+<script>
+function previewSelectedFile(input) {
+    const file = input.files[0];
+    if (file) {
+        const previewBox = document.getElementById('slider-preview-box');
+        const previewImg = document.getElementById('slider-preview-img');
+        const previewVideo = document.getElementById('slider-preview-video');
+        const placeholder = document.getElementById('slider-placeholder');
+
+        previewBox.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+
+        if (file.type.startsWith('video/')) {
+            previewVideo.src = URL.createObjectURL(file);
+            previewVideo.classList.remove('hidden');
+            previewImg.classList.add('hidden');
+        } else {
+            previewImg.src = URL.createObjectURL(file);
+            previewImg.classList.remove('hidden');
+            previewVideo.classList.add('hidden');
+        }
+    }
+}
+
+window.addEventListener('change', (e) => {
+    if (e.target.id === 'slider_image_path') {
+        const path = e.target.value;
+        const previewImg = document.getElementById('slider-preview-img');
+        const previewVideo = document.getElementById('slider-preview-video');
+        const previewBox = document.getElementById('slider-preview-box');
+        const placeholder = document.getElementById('slider-placeholder');
+
+        const isVideo = path.match(/\.(mp4|webm|mov)$/i);
+
+        previewBox.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+
+        if (isVideo) {
+            previewVideo.src = '/storage/' + path;
+            previewVideo.classList.remove('hidden');
+            previewImg.classList.add('hidden');
+        } else {
+            previewImg.src = '/storage/' + path;
+            previewImg.classList.remove('hidden');
+            previewVideo.classList.add('hidden');
+        }
+    }
+});
+</script>
 @endsection
