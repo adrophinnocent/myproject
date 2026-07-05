@@ -148,15 +148,15 @@
         </div>
     </div>
 
-    <!-- Content Overlay: Search Bar & Trust Strip (Aligned to Bottom) -->
-    <div class="relative z-30 flex-grow flex flex-col items-center justify-end pb-12 md:pb-20">
-        <div class="w-full max-w-6xl mx-auto px-4 text-center">
+    <!-- Content Overlay: Search Bar & Trust Strip (Optimized for Mobile) -->
+    <div class="relative z-30 flex-grow flex flex-col items-center justify-end pb-8 md:pb-16 px-4">
+        <div class="w-full max-w-6xl mx-auto text-center">
 
             {{-- 1. SEARCH BAR --}}
-            <div class="max-w-5xl mx-auto mb-6">
-                <div class="bg-black/40 backdrop-blur-3xl rounded-3xl md:rounded-full p-2 md:p-1.5 border-2 border-white/20 shadow-[0_0_50px_-12px_rgba(212,175,55,0.4)]">
-                    <form action="{{ route('tours.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-1">
-                        <div class="relative">
+            <div class="max-w-5xl mx-auto mb-10">
+                <div class="bg-black/50 backdrop-blur-3xl rounded-[2rem] md:rounded-full p-3 md:p-1.5 border-2 border-white/20 shadow-[0_20px_50px_-12px_rgba(212,175,55,0.4)]">
+                    <form action="{{ route('tours.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 md:gap-0">
+                        <div class="relative flex-1">
                             <select name="destination" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
                                 <option value="" class="text-gray-900">Where to?</option>
                                 @foreach(\App\Models\Destination::where('is_active', true)->get() as $dest)
@@ -167,7 +167,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </div>
                         </div>
-                        <div class="relative">
+                        <div class="relative flex-1">
                             <select name="category" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
                                 <option value="" class="text-gray-900">Adventure Type</option>
                                 @foreach(\App\Models\Category::where('is_active', true)->get() as $cat)
@@ -178,7 +178,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </div>
                         </div>
-                        <div class="relative">
+                        <div class="relative flex-1">
                             <select name="duration" class="w-full bg-white/10 md:bg-transparent border-0 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
                                 <option value="" class="text-gray-900">How long?</option>
                                 <option value="1-3" class="text-gray-900">1-3 Days</option>
@@ -190,50 +190,52 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </div>
                         </div>
-                        <button type="submit" class="w-full bg-gold-500 hover:bg-gold-600 text-safari-dark py-4 rounded-2xl md:rounded-full font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            Search
-                        </button>
+                        <div class="md:w-48">
+                            <button type="submit" class="w-full h-full bg-gold-500 hover:bg-gold-600 text-safari-dark py-4 px-8 rounded-2xl md:rounded-full font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 group">
+                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                SEARCH
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
 
-            {{-- 2. TRUST STRIP --}}
-            <div class="max-w-5xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4">
-                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10 group">
+            {{-- 2. TRUST STRIP (Improved Spacing & Responsiveness) --}}
+            <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 px-2">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
                     <div class="text-gold-400 transition-transform group-hover:scale-110">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                     </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] md:text-xs font-black uppercase tracking-widest leading-tight">Best Rated</div>
-                        <div class="text-gray-400 text-[9px] md:text-[10px] font-bold">TripAdvisor 2024</div>
+                    <div class="text-center md:text-left">
+                        <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Best Rated</div>
+                        <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">TripAdvisor 2024</div>
                     </div>
                 </div>
-                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10 group">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
                     <div class="text-gold-400 transition-transform group-hover:scale-110">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] md:text-xs font-black uppercase tracking-widest leading-tight">Safe & Secure</div>
-                        <div class="text-gray-400 text-[9px] md:text-[10px] font-bold">Certified Operator</div>
+                    <div class="text-center md:text-left">
+                        <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight whitespace-nowrap">Safe & Secure</div>
+                        <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Certified Operator</div>
                     </div>
                 </div>
-                <div class="flex items-center justify-center gap-3 lg:border-r border-white/10 group">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
                     <div class="text-gold-400 transition-transform group-hover:scale-110">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] md:text-xs font-black uppercase tracking-widest leading-tight">Affordable</div>
-                        <div class="text-gray-400 text-[9px] md:text-[10px] font-bold">Direct Pricing</div>
+                    <div class="text-center md:text-left">
+                        <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Affordable</div>
+                        <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Direct Pricing</div>
                     </div>
                 </div>
-                <div class="flex items-center justify-center gap-3 group">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 group">
                     <div class="text-gold-400 transition-transform group-hover:scale-110">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </div>
-                    <div class="text-left">
-                        <div class="text-white text-[10px] md:text-xs font-black uppercase tracking-widest leading-tight">24/7 Support</div>
-                        <div class="text-gray-400 text-[9px] md:text-[10px] font-bold">Expert Assistance</div>
+                    <div class="text-center md:text-left">
+                        <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight whitespace-nowrap">24/7 Support</div>
+                        <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Expert Assistance</div>
                     </div>
                 </div>
             </div>
