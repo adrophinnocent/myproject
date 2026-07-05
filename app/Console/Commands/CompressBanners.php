@@ -20,7 +20,7 @@ class CompressBanners extends Command
      *
      * @var string
      */
-    protected $description = 'Compress and convert all banner images to WebP format';
+    protected $description = 'Compress and convert all banner, destination, and tour images to WebP format';
 
     /**
      * Execute the console command.
@@ -31,6 +31,10 @@ class CompressBanners extends Command
             public_path('images/banners'),
             public_path('images/kilimanjaro'),
             public_path('images/logos'),
+            // Persistent storage folders
+            base_path('../../twina_assets/destinations'),
+            base_path('../../twina_assets/tours'),
+            base_path('../../twina_assets/media'),
         ];
 
         $count = 0;
@@ -52,10 +56,25 @@ class CompressBanners extends Command
                     try {
                         $source = @imagecreatefromstring(file_get_contents($file->getPathname()));
                         if ($source) {
+                            $width = imagesx($source);
+                            $height = imagesy($source);
+
+                            // Resize if too large (Max 1920px width)
+                            if ($width > 1920) {
+                                $newWidth = 1920;
+                                $newHeight = ($height / $width) * $newWidth;
+                                $scaled = imagecreatetruecolor($newWidth, $newHeight);
+                                imagealphablending($scaled, false);
+                                imagesavealpha($scaled, true);
+                                imagecopyresampled($scaled, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                                imagedestroy($source);
+                                $source = $scaled;
+                            }
+
                             $filename = pathinfo($file->getFilename(), PATHINFO_FILENAME);
                             $destination = $directory . '/' . $filename . '.webp';
 
-                            // Save as WebP
+                            // Save as WebP with good quality
                             imagewebp($source, $destination, 80);
                             imagedestroy($source);
 

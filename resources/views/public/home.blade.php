@@ -242,7 +242,7 @@
                              x-transition:leave-start="opacity-100"
                              x-transition:leave-end="opacity-0"
                              class="absolute inset-0 w-full h-full">
-                            <img :src="slide" class="w-full h-full object-cover" alt="{{ $heroTour->title }}">
+                            <img :src="slide" width="800" height="700" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy">
                         </div>
                     </template>
 
@@ -356,7 +356,8 @@
 <section class="py-24 bg-safari-dark relative overflow-hidden">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}"
-             class="w-full h-full object-cover" alt="Kilimanjaro Background">
+             width="1920" height="1080"
+             class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
     </div>
 
@@ -502,6 +503,7 @@
                 <a href="{{ route('tours.index', ['destination' => $destination->id]) }}"
                    class="snap-start shrink-0 w-[280px] md:w-[320px] lg:w-[340px] relative group rounded-2xl overflow-hidden h-56 block shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300">
                     <img src="{{ $destination->featured_image_url }}"
+                         width="340" height="224"
                          alt="{{ $destination->name }}"
                          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                          loading="lazy">
@@ -526,7 +528,8 @@
             <div class="lg:w-1/2 relative">
                 <div class="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl">
                     <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('safari_highlights') }}"
-                         class="w-full h-[600px] object-cover" alt="Tanzania Safari Adventure">
+                         width="800" height="600"
+                         class="w-full h-[600px] object-cover" alt="Tanzania Safari Adventure" loading="lazy">
                 </div>
                 {{-- Decorative Elements --}}
                 <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl -z-0"></div>
@@ -776,7 +779,8 @@
 {{-- ========== HOME FOOTER BANNER (JOINED WITH FOOTER) ========== --}}
 <section class="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden bg-safari-dark">
     <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}"
-         class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa">
+         width="1920" height="800"
+         class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa" loading="lazy">
 
     {{-- Gradient that blends into the dark footer --}}
     <div class="absolute inset-0 bg-gradient-to-t from-safari-dark via-transparent to-transparent"></div>

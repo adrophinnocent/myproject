@@ -6,7 +6,9 @@
 {{-- Enhanced Immersive Header --}}
 <div class="relative min-h-[60vh] flex items-center justify-center bg-safari-dark overflow-hidden pt-20">
     <div class="absolute inset-0 z-0">
-        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('gallery_banner') }}" class="w-full h-full object-cover opacity-40" alt="Safari Background">
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('gallery_banner') }}"
+             width="1920" height="600"
+             class="w-full h-full object-cover opacity-40" alt="Safari Background" loading="eager">
         <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-safari-light"></div>
     </div>
 
@@ -33,7 +35,7 @@
                         @endphp
 
                         @if($coverImg)
-                            <img src="{{ $coverImg }}" alt="{{ $album->name }}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                            <img src="{{ $coverImg }}" width="500" height="400" alt="{{ $album->name }}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy">
                         @else
                             <div class="w-full h-full bg-gray-100 flex items-center justify-center">🦁</div>
                         @endif
@@ -83,7 +85,9 @@
 {{-- Call to Action --}}
 <section class="bg-safari-dark py-24 mt-12 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
-        <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover">
+        <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2000&auto=format&fit=crop"
+             width="1920" height="400"
+             class="w-full h-full object-cover" loading="lazy">
     </div>
     <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
         <h2 class="font-display text-4xl text-white font-bold mb-6">Want to be in the next frame?</h2>

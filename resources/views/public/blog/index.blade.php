@@ -7,7 +7,9 @@
 {{-- Page Header --}}
 <div class="relative h-[60vh] min-h-[450px] flex items-center justify-center overflow-hidden bg-safari-dark">
     <div class="absolute inset-0">
-        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('blog_banner') }}" class="w-full h-full object-cover opacity-60" alt="Blog Journal">
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('blog_banner') }}"
+             width="1920" height="600"
+             class="w-full h-full object-cover opacity-60" alt="Blog Journal" loading="eager">
         <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-transparent"></div>
     </div>
     <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
@@ -44,7 +46,7 @@
             @forelse($posts as $post)
             <article class="flex flex-col md:flex-row gap-8 group">
                 <a href="{{ route('blog.show', $post->slug) }}" class="w-full md:w-80 h-60 shrink-0 overflow-hidden rounded-2xl">
-                    <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ $post->featured_image_url }}" width="320" height="240" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                 </a>
                 <div class="flex flex-col justify-center">
                     <div class="flex items-center gap-3 text-gold-600 text-xs font-bold uppercase tracking-widest mb-3">

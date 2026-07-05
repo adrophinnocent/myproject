@@ -31,7 +31,7 @@
 
 @section('content')
 <div class="relative h-[70vh] min-h-[500px]">
-    <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->getTranslation('title') }} Adventure in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover">
+    <img src="{{ $tour->featured_image_url }}" width="1920" height="1080" alt="{{ $tour->getTranslation('title') }} Adventure in {{ $tour->destination->name ?? 'Tanzania' }}" class="w-full h-full object-cover" loading="eager">
     <div class="hero-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
     <div class="absolute inset-0 flex items-end">
         <div class="max-w-7xl mx-auto px-4 pb-16 w-full">
@@ -126,7 +126,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                     @foreach($tour->images as $image)
                     <div class="img-zoom rounded-xl overflow-hidden h-40">
-                        <img src="{{ $image->url }}" alt="{{ $image->alt_text ?? $tour->title }}" class="w-full h-full object-cover cursor-pointer" onclick="openLightbox('{{ $image->url }}')" loading="lazy">
+                        <img src="{{ $image->url }}" width="400" height="300" alt="{{ $image->alt_text ?? $tour->title }}" class="w-full h-full object-cover cursor-pointer" onclick="openLightbox('{{ $image->url }}')" loading="lazy">
                     </div>
                     @endforeach
                 </div>
@@ -556,7 +556,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($relatedTours as $related)
             <div class="tour-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                <div class="img-zoom h-44"><img src="{{ $related->featured_image_url }}" alt="{{ $related->title }}" class="w-full h-full object-cover" loading="lazy"></div>
+                <div class="img-zoom h-44"><img src="{{ $related->featured_image_url }}" width="400" height="300" alt="{{ $related->title }}" class="w-full h-full object-cover" loading="lazy"></div>
                 <div class="p-4">
                     <h4 class="font-semibold text-gray-800 text-sm mb-1 line-clamp-2"><a href="{{ route('tours.show', ['type' => $related->item_type ?? 'tour', 'slug' => $related->slug]) }}" class="hover:text-gold-600 transition-colors">{{ $related->title }}</a></h4>
                     <div class="flex items-center justify-between mt-3">
