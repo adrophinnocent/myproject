@@ -85,7 +85,7 @@
 {{-- Call to Action --}}
 <section class="bg-safari-dark py-24 mt-12 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
-        <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=2000&auto=format&fit=crop"
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('gallery_footer_bg') }}"
              width="1920" height="400"
              class="w-full h-full object-cover" loading="lazy">
     </div>

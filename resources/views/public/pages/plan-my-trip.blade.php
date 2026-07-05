@@ -181,7 +181,7 @@
         <div class="bg-safari-dark rounded-[3rem] p-12 md:p-20 relative overflow-hidden text-center shadow-2xl">
             {{-- Background Elements --}}
             <div class="absolute inset-0 opacity-10">
-                <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover" alt="Tanzania Background">
+                <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" class="w-full h-full object-cover" alt="Tanzania Background">
             </div>
             <div class="absolute inset-0 bg-gradient-to-br from-amber-900/40 via-transparent to-slate-900/40"></div>
 

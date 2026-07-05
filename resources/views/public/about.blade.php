@@ -55,12 +55,12 @@
                 @else
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-4">
-                            <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="Safari">
-                            <img src="https://images.unsplash.com/photo-1489493585363-d69421e0fe36?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="Culture">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-1') }}" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="Safari">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-2') }}" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="Culture">
                         </div>
                         <div class="space-y-4 pt-12">
-                            <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="Wildlife">
-                            <img src="https://images.unsplash.com/photo-1589979482810-708080c9e7cc?q=80&w=1000&auto=format&fit=crop" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="Beach">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-3') }}" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="Wildlife">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-4') }}" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="Beach">
                         </div>
                     </div>
                 @endif
@@ -78,7 +78,7 @@
                     <div class="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl group-hover:bg-gold-500/20 transition-all"></div>
                     <div class="relative aspect-square rounded-full overflow-hidden shadow-2xl border-4 border-white ring-8 ring-gold-50">
                         <img src="{{ asset('images/founder.jpg') }}"
-                             onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop'"
+                             onerror="this.src='{{ asset('images/logo.png') }}'"
                              class="w-full h-full object-cover"
                              alt="Founder of Twina Safaris">
                     </div>

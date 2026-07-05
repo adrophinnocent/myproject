@@ -60,7 +60,7 @@ class AssetHelper
             Log::error("AssetHelper Banner Error: " . $e->getMessage());
         }
 
-        return $default ?: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=2000&q=80';
+        return $default ?: asset('images/banners/hero_fallback.webp');
     }
 
     /**
