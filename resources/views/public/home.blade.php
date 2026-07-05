@@ -148,12 +148,12 @@
         </div>
     </div>
 
-    <!-- Content Overlay: Search Bar & Trust Strip -->
-    <div class="relative z-30 flex-grow flex flex-col items-center justify-center pt-24 pb-12 lg:pt-0">
+    <!-- Content Overlay: Search Bar & Trust Strip (Aligned to Bottom) -->
+    <div class="relative z-30 flex-grow flex flex-col items-center justify-end pb-12 md:pb-20">
         <div class="w-full max-w-6xl mx-auto px-4 text-center">
 
             {{-- 1. SEARCH BAR --}}
-            <div class="max-w-5xl mx-auto mb-12">
+            <div class="max-w-5xl mx-auto mb-6">
                 <div class="bg-black/40 backdrop-blur-3xl rounded-3xl md:rounded-full p-2 md:p-1.5 border-2 border-white/20 shadow-[0_0_50px_-12px_rgba(212,175,55,0.4)]">
                     <form action="{{ route('tours.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-1">
                         <div class="relative">
