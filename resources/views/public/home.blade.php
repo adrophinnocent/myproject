@@ -325,17 +325,14 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
-                <div class="text-gold-500 text-3xl mb-4 group-hover:scale-110 transition-transform">🌍</div>
                 <h3 class="text-white font-bold text-xl mb-3">The Route</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">Journey from equatorial heat to arctic cold, witnessing changing landscapes that feel like traveling from the equator to the North Pole in just a few days.</p>
             </div>
             <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
-                <div class="text-gold-500 text-3xl mb-4 group-hover:scale-110 transition-transform">🤝</div>
                 <h3 class="text-white font-bold text-xl mb-3">The Experience</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">Walk alongside expert local guides, bond with a team of fellow adventurers, and sleep beneath a canopy of stars untouched by city lights.</p>
             </div>
             <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
-                <div class="text-gold-500 text-3xl mb-4 group-hover:scale-110 transition-transform">🏔️</div>
                 <h3 class="text-white font-bold text-xl mb-3">The Summit</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">Test your grit during the final, challenging night-climb, and reach the top just as the African sun breaks over the horizon.</p>
             </div>
