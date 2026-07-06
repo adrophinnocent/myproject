@@ -27,7 +27,7 @@
     }
 </style>
 
-{{-- ========== HERO SECTION (UNIFIED & DYNAMIC) ========== --}}
+{{-- ========== 1. HERO SECTION ========== --}}
 <section class="relative h-screen bg-safari-dark overflow-hidden flex flex-col"
          x-data="{
             activeSlide: 0,
@@ -36,19 +36,14 @@
          }"
          x-init="if(slidesCount > 1) setInterval(() => next(), 8000)">
 
-    {{-- 1. BACKGROUND MEDIA LAYER --}}
     <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-black/40 z-10"></div>
-
         @if($sliders && $sliders->count() > 0)
             @foreach($sliders as $index => $slide)
                 <div x-show="activeSlide === {{ $index }}"
                      x-transition:enter="transition ease-out duration-1000"
                      x-transition:enter-start="opacity-0 scale-105"
                      x-transition:enter-end="opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-1000"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
                      class="absolute inset-0 w-full h-full">
                     @if($slide->type === 'video')
                         <video autoplay muted loop playsinline class="w-full h-full object-cover">
@@ -64,7 +59,6 @@
         @endif
     </div>
 
-    {{-- 2. INTERACTIVE CONTENT LAYER --}}
     <div class="relative z-20 flex-grow flex flex-col items-center justify-center text-center px-4 pt-20">
         <div class="w-full max-w-5xl">
             @if($sliders && $sliders->count() > 0)
@@ -74,7 +68,6 @@
                          x-transition:enter-start="opacity-0 translate-y-8"
                          x-transition:enter-end="opacity-100 translate-y-0"
                          class="space-y-10">
-
                         <div class="space-y-4">
                             @if($slide->subtitle)
                                 <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] animate-pulse">
@@ -87,14 +80,12 @@
                                 </h1>
                             @endif
                         </div>
-
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 relative z-50 pt-4 md:pt-0">
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 relative z-50 pt-4 md:pt-0">
                             @if($slide->cta_text)
                                 <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl transition-all hover:scale-105 active:scale-95 min-w-[220px]">
                                     {{ $slide->cta_text }}
                                 </a>
                             @endif
-
                             <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-gold-500 hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px]">
                                 Climb Kilimanjaro
                             </a>
@@ -105,7 +96,6 @@
         </div>
     </div>
 
-    {{-- 3. SEASON INDICATOR (Floating) --}}
     <div class="absolute top-24 right-6 md:top-32 md:right-10 z-40">
         <div class="flex flex-col gap-4 items-center">
             <div class="season-light relative group cursor-help" id="green-container" style="display:none;">
@@ -120,9 +110,7 @@
         </div>
     </div>
 
-    {{-- 4. BOTTOM OVERLAY: SEARCH BAR & TRUST STRIP --}}
     <div class="relative z-50 w-full max-w-6xl mx-auto text-center pb-12 md:pb-20 px-4 mt-auto">
-        {{-- Search Bar --}}
         <div class="max-w-5xl mx-auto mb-10">
             <div class="bg-black/50 backdrop-blur-3xl rounded-[2rem] md:rounded-full p-3 md:p-1.5 border-2 border-white/20 shadow-[0_20px_50px_-12px_rgba(212,175,55,0.4)]">
                 <form action="{{ route('tours.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 md:gap-0">
@@ -169,12 +157,10 @@
                 </form>
             </div>
         </div>
-
-        {{-- Trust Strip --}}
         <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 px-2">
             <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
                 <div class="text-gold-400 transition-transform group-hover:scale-110">
-                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.519-4.674z"/></svg>
                 </div>
                 <div class="text-center md:text-left">
                     <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Best Rated</div>
@@ -212,12 +198,11 @@
     </div>
 </section>
 
-{{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR (KILIMANJARO) ========== --}}
+{{-- ========== 2. FEATURED PACKAGE (KILIMANJARO DYNAMIC) ========== --}}
 @if($heroTour)
 <section class="py-24 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
-            {{-- Visual Side: Moving Image Slider --}}
             <div class="w-full lg:w-1/2 relative" x-data="{
                 activeSlide: 0,
                 slides: [
@@ -239,14 +224,10 @@
                              x-transition:enter="transition ease-out duration-1000"
                              x-transition:enter-start="opacity-0 scale-110"
                              x-transition:enter-end="opacity-100 scale-100"
-                             x-transition:leave="transition ease-in duration-1000"
-                             x-transition:leave-start="opacity-100"
-                             x-transition:leave-end="opacity-0"
                              class="absolute inset-0 w-full h-full">
                             <img :src="slide" width="800" height="700" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy" decoding="async">
                         </div>
                     </template>
-
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
                     <div class="absolute bottom-10 left-10 right-10">
                         <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl">
@@ -255,15 +236,12 @@
                         </div>
                     </div>
                 </div>
-                {{-- Decorative badge --}}
                 <div class="absolute -top-6 -right-6 w-32 h-32 bg-gold-500 rounded-full flex flex-col items-center justify-center shadow-2xl z-20 transform rotate-12">
                     <span class="text-safari-dark text-[10px] font-black uppercase">From</span>
                     <span class="text-safari-dark text-xl font-black">${{ number_format($heroTour->price) }}</span>
                     <span class="text-safari-dark text-[8px] font-bold uppercase">Per Person</span>
                 </div>
             </div>
-
-            {{-- Info Side --}}
             <div class="lg:w-1/2 space-y-8">
                 <div>
                     <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Signature Expedition</span>
@@ -272,25 +250,15 @@
                     </h2>
                     <div class="w-20 h-1.5 bg-[#e64a19] rounded-full mt-6 mx-auto md:mx-0"></div>
                 </div>
-
                 <div class="flex justify-center md:justify-start">
                     <a href="{{ route('booking.create', $heroTour->slug) }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl hover:scale-105 transition-all text-center uppercase tracking-widest">
                         BOOK THIS TOUR
                     </a>
                 </div>
-
-                <p class="text-gray-600 text-lg leading-relaxed font-light">
-                    {{ $heroTour->short_description }}
-                </p>
-
+                <p class="text-gray-600 text-lg leading-relaxed font-light">{{ $heroTour->short_description }}</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
                     @php
-                        $inclusions = is_array($heroTour->inclusions) ? $heroTour->inclusions : [
-                            'Professional Guides & Porters', 'Airport Transfers Included',
-                            'Hotel Stay Before/After', 'All Park Fees & Permits',
-                            'Quality Camping Gear', 'Fresh Meals & Safe Water',
-                            'Emergency Oxygen & Safety', 'Summit Certificate'
-                        ];
+                        $inclusions = is_array($heroTour->inclusions) ? $heroTour->inclusions : ['Professional Guides', 'Airport Transfers', 'Hotel Stay', 'Park Fees', 'Camping Gear', 'Fresh Meals', 'Emergency Oxygen', 'Summit Certificate'];
                     @endphp
                     @foreach($inclusions as $inc)
                     <div class="flex items-start gap-3 group">
@@ -301,7 +269,6 @@
                     </div>
                     @endforeach
                 </div>
-
                 <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100" x-data="{ openItinerary: false }">
                     <div class="flex items-center justify-between mb-10">
                         <h2 class="font-display text-3xl font-black text-[#e64a19] uppercase tracking-tight">Route summary</h2>
@@ -310,7 +277,6 @@
                             <svg class="w-3 h-3 transition-transform duration-300" :class="openItinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                     </div>
-
                     <div class="space-y-6">
                         @if($heroTour->itinerary && is_array($heroTour->itinerary))
                             @foreach($heroTour->itinerary as $index => $day)
@@ -318,30 +284,17 @@
                                 <div class="flex items-start gap-4">
                                     <span class="text-[#e64a19] font-black text-2xl leading-none">→</span>
                                     <h5 class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
-                                        <span class="text-gray-400">Day {{ is_numeric($index) ? $index : $loop->iteration }}:</span> {{ is_array($day['title'] ?? '') ? implode(', ', $day['title']) : ($day['title'] ?? '') }}
+                                        <span class="text-gray-400">Day {{ $loop->iteration }}:</span> {{ $day['title'] ?? '' }}
                                     </h5>
                                 </div>
                                 <div x-show="openItinerary" x-collapse>
-                                    <div class="pl-9 space-y-4">
-                                        <p class="text-gray-600 text-sm md:text-base leading-relaxed font-medium">
-                                            {{ is_array($day['description'] ?? '') ? implode("\n", $day['description']) : ($day['description'] ?? '') }}
-                                        </p>
-                                    </div>
+                                    <div class="pl-9"><p class="text-gray-600 text-sm md:text-base leading-relaxed font-medium">{{ $day['description'] ?? '' }}</p></div>
                                 </div>
                             </div>
                             @endforeach
-                        @else
-                            <div class="flex items-start gap-4">
-                                <span class="text-[#e64a19] font-black text-2xl">→</span>
-                                <p class="text-gray-800 font-bold text-lg leading-tight">
-                                    <span class="text-gray-900">Itinerary for {{ $heroTour->duration_text }}:</span>
-                                    {{ $heroTour->short_description }}
-                                </p>
-                            </div>
                         @endif
                     </div>
                 </div>
-
                 <div class="pt-6 flex flex-col sm:flex-row gap-4">
                     <a href="{{ route('tours.index') }}" class="flex-1 px-10 py-5 rounded-full border-2 border-safari-dark text-safari-dark text-sm font-black uppercase tracking-widest hover:bg-safari-dark hover:text-white transition-all text-center">
                         EXPLORE ALL TOURS
@@ -353,7 +306,7 @@
 </section>
 @endif
 
-{{-- ========== MOUNT KILIMANJARO SECTION (STATIC) ========== --}}
+{{-- ========== 3. MOUNT KILIMANJARO (STATIC) ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden border-b border-white/5">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="800" class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy" decoding="async">
@@ -362,7 +315,7 @@
     <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
         <span class="inline-block text-gold-400 text-sm font-black uppercase tracking-[0.4em] mb-4">The Roof of Africa</span>
         <h2 class="font-display text-4xl md:text-7xl font-black text-white leading-tight mb-8">Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span></h2>
-        <p class="text-gray-300 text-lg max-w-4xl mx-auto font-light leading-relaxed">Experience the ultimate trek to Africa's highest peak with expert guides and safety equipment.</p>
+        <p class="text-gray-300 text-lg max-w-4xl mx-auto font-light leading-relaxed">Experience the ultimate trek to Africa's highest peak.</p>
         <div class="flex flex-wrap justify-center gap-6 mt-10">
             <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
                 <span class="text-gold-400 font-black text-xl">5,895m</span>
@@ -394,7 +347,7 @@
     </div>
 </section>
 
-{{-- ========== FEATURED TOURS SECTION ========== --}}
+{{-- ========== 4. FEATURED TOURS ========== --}}
 <section class="py-24 bg-white" x-data="{
     scrollBy(distance) {
         const slider = document.getElementById('tours-slider');
@@ -407,7 +360,6 @@
             <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
             <div class="section-divider"></div>
         </div>
-
         <div class="relative group">
             <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @forelse($featuredTours as $tour)
@@ -437,7 +389,7 @@
     </div>
 </section>
 
-{{-- ========== TESTIMONIALS SECTION (SLIDER) ========== --}}
+{{-- ========== 5. GUEST STORIES ========== --}}
 <section class="py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100" x-data="{
     scrollBy(distance) {
         const slider = document.getElementById('testimonials-slider');
@@ -449,58 +401,20 @@
         <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark">What Travelers Say</h2>
         <div class="w-16 h-1.5 bg-gold-500 mt-6 rounded-full mx-auto"></div>
     </div>
-
     <div class="relative max-w-6xl mx-auto">
         <div id="testimonials-slider" class="flex gap-8 overflow-x-auto pb-12 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
-            @php
-            $customTestimonials = [
-                [
-                    'name' => 'Sarah Mitchell',
-                    'title' => 'Safari Traveler',
-                    'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.',
-                    'initials' => 'SA'
-                ],
-                [
-                    'name' => 'Marco & Julia',
-                    'title' => 'Honeymoon Couple',
-                    'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.',
-                    'initials' => 'MA'
-                ],
-                [
-                    'name' => 'David Chen',
-                    'title' => 'Mountain Climber',
-                    'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.',
-                    'initials' => 'DA'
-                ]
-            ];
-            @endphp
+            @php $customTestimonials = [['name' => 'Sarah Mitchell', 'title' => 'Safari Traveler', 'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.', 'initials' => 'SA'], ['name' => 'Marco & Julia', 'title' => 'Honeymoon Couple', 'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.', 'initials' => 'MA'], ['name' => 'David Chen', 'title' => 'Mountain Climber', 'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.', 'initials' => 'DA']]; @endphp
             @foreach($customTestimonials as $t)
             <div class="snap-center shrink-0 w-[85vw] md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
                 <div class="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col relative group">
-                    {{-- Decorative Quote Mark --}}
-                    <div class="absolute top-6 right-8 text-gold-100 group-hover:text-gold-200 transition-colors duration-500">
-                        <svg class="w-16 h-16 fill-current" viewBox="0 0 32 32"><path d="M10 8v8H6v6h6V8h-2zm12 0v8h-4v6h6V8h-2z"/></svg>
-                    </div>
-
-                    <div class="flex text-gold-500 mb-8 gap-1 relative z-10">
-                        @for($i=0; $i<5; $i++) <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
-                    </div>
-
+                    <div class="absolute top-6 right-8 text-gold-100 group-hover:text-gold-200 transition-colors duration-500"><svg class="w-16 h-16 fill-current" viewBox="0 0 32 32"><path d="M10 8v8H6v6h6V8h-2zm12 0v8h-4v6h6V8h-2z"/></svg></div>
+                    <div class="flex text-gold-500 mb-8 gap-1 relative z-10">@for($i=0; $i<5; $i++) <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor</div>
                     <p class="text-gray-700 text-lg leading-relaxed mb-10 flex-grow italic font-light relative z-10">"{{ $t['content'] }}"</p>
-
-                    <div class="flex items-center gap-5 pt-8 border-t border-gray-50 relative z-10">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-white font-black text-xl shadow-lg transform -rotate-3 group-hover:rotate-0 transition-transform duration-300">{{ $t['initials'] }}</div>
-                        <div>
-                            <h4 class="font-black text-safari-dark text-lg leading-tight">{{ $t['name'] }}</h4>
-                            <p class="text-gold-600 text-xs font-bold uppercase tracking-widest mt-1">{{ $t['title'] }}</p>
-                        </div>
-                    </div>
+                    <div class="flex items-center gap-5 pt-8 border-t border-gray-50 relative z-10"><div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-white font-black text-xl shadow-lg transform -rotate-3 group-hover:rotate-0 transition-transform duration-300">{{ $t['initials'] }}</div><div><h4 class="font-black text-safari-dark text-lg leading-tight">{{ $t['name'] }}</h4><p class="text-gold-600 text-xs font-bold uppercase tracking-widest mt-1">{{ $t['title'] }}</p></div></div>
                 </div>
             </div>
             @endforeach
         </div>
-
-        {{-- Slider Controls --}}
         <div class="flex justify-center gap-4 mt-8">
             <button @click="scrollBy(-400)" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
             <button @click="scrollBy(400)" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
@@ -508,19 +422,16 @@
     </div>
 </section>
 
-{{-- ========== LATEST BLOG SECTION ========== --}}
+{{-- ========== 6. SAFARI JOURNAL (BLOG) ========== --}}
 @if(isset($latestPosts) && $latestPosts->count() > 0)
 <section id="blog" class="py-24 bg-white border-t border-gray-50">
     <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-16">
             <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Safari Journal</span>
             <h2 class="font-display text-4xl md:text-6xl font-black text-gray-900 leading-tight">Latest Stories & Insights</h2>
-            <p class="text-gray-500 text-lg mt-6 max-w-3xl mx-auto leading-relaxed font-light">
-                Discover expert travel guides, breathtaking wildlife photography, and heartwarming stories from our latest expeditions across the plains of Tanzania.
-            </p>
+            <p class="text-gray-500 text-lg mt-6 max-w-3xl mx-auto leading-relaxed font-light">Explore expert travel guides and breathtaking photography.</p>
             <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
         </div>
-
         <div class="relative group">
             <div id="blog-slider" class="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($latestPosts as $post)
@@ -531,33 +442,21 @@
                             <div class="absolute top-6 left-6 bg-gold-500 text-safari-dark text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">New Post</div>
                         </div>
                         <div class="p-10 flex flex-col flex-grow">
-                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
-                                <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
-                            </h3>
+                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors"><a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a></h3>
                             <p class="text-gray-600 text-base line-clamp-3 mb-8 leading-relaxed font-light">{{ $post->excerpt }}</p>
-                            <div class="mt-auto pt-6 border-t border-gray-50">
-                                <a href="{{ route('blog.show', $post->slug) }}" class="text-gold-600 font-black text-sm uppercase tracking-widest flex items-center gap-3 group/link">
-                                    Read Full Story
-                                    <svg class="w-5 h-5 transform transition-transform group-hover/link:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                                </a>
-                            </div>
+                            <div class="mt-auto pt-6 border-t border-gray-50"><a href="{{ route('blog.show', $post->slug) }}" class="text-gold-600 font-black text-sm uppercase tracking-widest flex items-center gap-3 group/link">Read Full Story <svg class="w-5 h-5 transform transition-transform group-hover/link:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
                         </div>
                     </div>
                 </div>
                 @endforeach
             </div>
         </div>
-        <div class="text-center mt-12">
-            <a href="{{ route('blog.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-4">
-                View All Stories
-                <svg class="w-5 h-5 fill-none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </a>
-        </div>
+        <div class="text-center mt-12"><a href="{{ route('blog.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-4">View All Stories <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
     </div>
 </section>
 @endif
 
-{{-- ========== HOME FOOTER BANNER ========== --}}
+{{-- ========== 7. HOME FOOTER BANNER ========== --}}
 <section class="relative h-[60vh] min-h-[500px] flex items-center overflow-hidden bg-safari-dark">
     <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}" width="1920" height="600" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa" loading="lazy" decoding="async">
     <div class="absolute inset-0 bg-gradient-to-t from-safari-dark via-transparent to-transparent"></div>
