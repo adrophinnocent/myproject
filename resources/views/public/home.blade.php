@@ -390,6 +390,47 @@
     </div>
 </section>
 
+{{-- ========== 3.5 WHY CHOOSE US SECTION ========== --}}
+<section class="py-24 bg-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+            <span class="text-gold-600 text-sm font-semibold uppercase tracking-[0.3em] mb-3 block">The Twina Advantage</span>
+            <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark">Why Journey With Us?</h2>
+            <div class="w-16 h-1.5 bg-gold-500 mt-6 rounded-full mx-auto"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {{-- USP 1 --}}
+            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
+                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">🛡️</div>
+                <h4 class="font-bold text-gray-900 text-lg mb-3">Expert Local Guides</h4>
+                <p class="text-gray-500 text-sm leading-relaxed">Our guides are born and raised in Tanzania, offering deep cultural insights and unmatched wildlife tracking skills.</p>
+            </div>
+
+            {{-- USP 2 --}}
+            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
+                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">✨</div>
+                <h4 class="font-bold text-gray-900 text-lg mb-3">Tailor-Made Safaris</h4>
+                <p class="text-gray-500 text-sm leading-relaxed">We don't do "one size fits all." Every itinerary is custom-crafted to match your rhythm, budget, and wildest dreams.</p>
+            </div>
+
+            {{-- USP 3 --}}
+            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
+                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">💎</div>
+                <h4 class="font-bold text-gray-900 text-lg mb-3">Direct Local Pricing</h4>
+                <p class="text-gray-500 text-sm leading-relaxed">By booking directly with us, you cut out the middlemen, ensuring the best value and supporting the local economy.</p>
+            </div>
+
+            {{-- USP 4 --}}
+            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
+                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">📞</div>
+                <h4 class="font-bold text-gray-900 text-lg mb-3">24/7 Ground Support</h4>
+                <p class="text-gray-500 text-sm leading-relaxed">From your arrival at Kilimanjaro to your final departure, our team is on standby 24/7 to ensure your safety and comfort.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 {{-- ========== 4. FEATURED TOURS ========== --}}
 <section class="py-24 bg-white" x-data="{
     scrollBy(distance) {
