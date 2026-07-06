@@ -57,7 +57,7 @@
                         @endif
 
                         {{-- Overlay Content for each slide --}}
-                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-40">
+                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-20">
                             <div class="max-w-5xl">
                                 @if($slide->subtitle)
                                     <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
@@ -70,12 +70,22 @@
                                     </h1>
                                 @endif
                                 @if($slide->cta_text)
-                                    <div class="mt-10">
+                                    <div class="mt-10 mb-8">
                                         <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105 pointer-events-auto">
                                             {{ $slide->cta_text }}
                                         </a>
                                     </div>
                                 @endif
+
+                                {{-- Additional Action Buttons (Always Visible over Background) --}}
+                                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-12">
+                                    <a href="{{ route('tours.index') }}" class="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px] pointer-events-auto">
+                                        Plan Your Safari
+                                    </a>
+                                    <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-gold-500 hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px] pointer-events-auto">
+                                        Climb Kilimanjaro
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -148,11 +158,11 @@
         </div>
     </div>
 
-    <!-- Content Overlay: Search Bar & Trust Strip (Optimized for Mobile) -->
+    <!-- Bottom Overlay: Search Bar & Trust Strip -->
     <div class="relative z-30 flex-grow flex flex-col items-center justify-end pb-8 md:pb-16 px-4">
         <div class="w-full max-w-6xl mx-auto text-center">
 
-            {{-- 1. SEARCH BAR --}}
+            {{-- 1. SEARCH BAR (EXTENDED BELOW) --}}
             <div class="max-w-5xl mx-auto mb-10">
                 <div class="bg-black/50 backdrop-blur-3xl rounded-[2rem] md:rounded-full p-3 md:p-1.5 border-2 border-white/20 shadow-[0_20px_50px_-12px_rgba(212,175,55,0.4)]">
                     <form action="{{ route('tours.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 md:gap-0">
@@ -200,7 +210,7 @@
                 </div>
             </div>
 
-            {{-- 2. TRUST STRIP (Improved Spacing & Responsiveness) --}}
+            {{-- 2. TRUST STRIP --}}
             <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 px-2">
                 <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
                     <div class="text-gold-400 transition-transform group-hover:scale-110">
