@@ -312,40 +312,70 @@
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="800" class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy" decoding="async">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
     </div>
-    <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
-        <span class="inline-block text-gold-400 text-sm font-black uppercase tracking-[0.4em] mb-4">The Roof of Africa</span>
-        <h2 class="font-display text-4xl md:text-8xl font-black text-white leading-tight mb-8">
-            Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span>
-        </h2>
-        <p class="text-gray-300 text-lg md:text-xl max-w-4xl mx-auto font-light leading-relaxed">
-            Experience the ultimate trek to <span class="text-white font-bold">Africa's highest peak</span>. Stand at the summit of the world's tallest free-standing mountain and witness the sunrise above the clouds.
-        </p>
-        <div class="flex flex-wrap justify-center gap-6 mt-10">
-            <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                <span class="text-gold-400 font-black text-xl">5,895m</span>
-                <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Peak Elevation</span>
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+            <span class="inline-block text-gold-400 text-sm font-black uppercase tracking-[0.4em] mb-4">The Roof of Africa</span>
+            <h2 class="font-display text-4xl md:text-8xl font-black text-white leading-tight mb-8">
+                Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span>: The Ultimate Bucket-List Trek
+            </h2>
+            <p class="text-gray-300 text-lg md:text-2xl max-w-5xl mx-auto font-light leading-relaxed">
+                Towering at an awe-inspiring <span class="text-white font-bold">5,895 meters</span> (19,341 feet), Mount Kilimanjaro is a beacon for adventurers worldwide. As one of the legendary Seven Summits, it demands respect, preparation, and passion. But the reward is entirely unmatched.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
+                <div class="text-gold-500 text-3xl mb-4 group-hover:scale-110 transition-transform">🌍</div>
+                <h3 class="text-white font-bold text-xl mb-3">The Route</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Journey from equatorial heat to arctic cold, witnessing changing landscapes that feel like traveling from the equator to the North Pole in just a few days.</p>
             </div>
-            <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                <span class="text-gold-400 font-black text-xl">98%</span>
-                <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Success Rate</span>
+            <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
+                <div class="text-gold-500 text-3xl mb-4 group-hover:scale-110 transition-transform">🤝</div>
+                <h3 class="text-white font-bold text-xl mb-3">The Experience</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Walk alongside expert local guides, bond with a team of fellow adventurers, and sleep beneath a canopy of stars untouched by city lights.</p>
+            </div>
+            <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
+                <div class="text-gold-500 text-3xl mb-4 group-hover:scale-110 transition-transform">🏔️</div>
+                <h3 class="text-white font-bold text-xl mb-3">The Summit</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Test your grit during the final, challenging night-climb, and reach the top just as the African sun breaks over the horizon.</p>
             </div>
         </div>
-        <div class="mt-16 bg-white/5 border border-white/5 rounded-[3rem] p-8 md:p-16 backdrop-blur-md max-w-4xl mx-auto">
-            <h3 class="font-display text-2xl font-black text-[#e64a19] mb-10 uppercase tracking-widest">Route Options</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 text-left">
+
+        <div class="max-w-4xl mx-auto text-center">
+            <p class="text-gold-400 text-xl md:text-2xl font-display italic mb-10">
+                "This is your chance to do something extraordinary. Lace up your boots, pack your determination, and let’s claim the Roof of Africa together."
+            </p>
+            <div class="flex flex-wrap justify-center gap-6 mt-10">
+                <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+                    <span class="text-gold-400 font-black text-xl">5,895m</span>
+                    <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Peak Elevation</span>
+                </div>
+                <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+                    <span class="text-gold-400 font-black text-xl">98%</span>
+                    <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Success Rate</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-20 bg-white/5 border border-white/5 rounded-[3rem] p-8 md:p-16 backdrop-blur-md max-w-5xl mx-auto">
+            <h3 class="font-display text-2xl font-black text-[#e64a19] mb-10 text-center uppercase tracking-widest">Route Options</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
                 @php $routes = [['n' => 'Machame', 'a' => 'Whiskey Route'], ['n' => 'Marangu', 'a' => 'Coca-Cola Route'], ['n' => 'Lemosho', 'a' => 'Scenic Route'], ['n' => 'Rongai', 'a' => 'Northern Route']]; @endphp
                 @foreach($routes as $r)
-                <div class="flex items-center gap-5 group cursor-default">
-                    <span class="text-[#e64a19] font-black text-2xl leading-none transform transition-transform group-hover:translate-x-2">→</span>
+                <div class="flex items-center gap-4 group cursor-default">
+                    <span class="text-gold-500 font-black text-xl">→</span>
                     <div class="flex flex-col">
-                        <span class="text-white font-bold text-xl leading-tight">{{ $r['n'] }}</span>
-                        <span class="text-gold-500/60 text-[10px] font-black uppercase tracking-widest mt-1">{{ $r['a'] }}</span>
+                        <span class="text-white font-bold text-lg leading-tight">{{ $r['n'] }}</span>
+                        <span class="text-gray-500 text-[9px] font-black uppercase tracking-widest mt-1">{{ $r['a'] }}</span>
                     </div>
                 </div>
                 @endforeach
             </div>
-            <div class="mt-12">
-                <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="btn-gold px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest transition-all hover:scale-105 inline-flex items-center gap-3">Explore All Packages <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+            <div class="mt-16 text-center">
+                <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="btn-gold px-12 py-5 rounded-full text-sm font-black uppercase tracking-widest transition-all hover:scale-105 inline-flex items-center gap-4">
+                    Explore All Packages
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
             </div>
         </div>
     </div>
