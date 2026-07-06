@@ -30,7 +30,7 @@
 {{-- ========== VIDEO HERO SECTION ========== --}}
 <section class="relative min-h-screen flex flex-col overflow-hidden bg-safari-dark">
     {{-- Background Video/Image --}}
-    <div class="absolute inset-0 z-0 pointer-events-none">
+    <div class="absolute inset-0 z-0">
         <div class="absolute inset-0 bg-black/40 z-10"></div>
 
         @if($sliders && $sliders->count() > 0)
@@ -49,15 +49,15 @@
                          x-transition:leave-end="opacity-0"
                          class="absolute inset-0 w-full h-full">
                         @if($slide->type === 'video')
-                            <video autoplay muted loop playsinline class="w-full h-full object-cover">
+                            <video autoplay muted loop playsinline class="w-full h-full object-cover pointer-events-none">
                                 <source src="{{ $slide->image_url }}" type="video/mp4">
                             </video>
                         @else
-                            <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="{{ $slide->title }}" loading="eager">
+                            <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover pointer-events-none" alt="{{ $slide->title }}" loading="eager">
                         @endif
 
                         {{-- Overlay Content for each slide --}}
-                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-20">
+                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-40">
                             <div class="max-w-5xl">
                                 @if($slide->subtitle)
                                     <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
@@ -88,7 +88,7 @@
                     <source srcset="{{ asset('images/banners/hero_fallback.webp') }}" type="image/webp">
                     <img src="{{ asset('images/banners/hero_fallback.webp') }}"
                          width="1920" height="1080"
-                         class="w-full h-full object-cover opacity-60"
+                         class="w-full h-full object-cover opacity-60 pointer-events-none"
                          alt="Tanzania Safari"
                          loading="eager"
                          fetchpriority="high">
