@@ -390,42 +390,59 @@
     </div>
 </section>
 
-{{-- ========== 3.5 WHY CHOOSE US SECTION ========== --}}
-<section class="py-24 bg-white relative overflow-hidden">
+{{-- ========== 3.5 WHY CHOOSE US SECTION (COMPACT UNIFIED BOX) ========== --}}
+<section class="py-16 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="text-center mb-16">
-            <span class="text-gold-600 text-sm font-semibold uppercase tracking-[0.3em] mb-3 block">The Twina Advantage</span>
-            <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark">Why Journey With Us?</h2>
-            <div class="w-16 h-1.5 bg-gold-500 mt-6 rounded-full mx-auto"></div>
-        </div>
+        <div class="bg-[#fcfaf7] rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-2xl shadow-gold-500/5 relative overflow-hidden group">
+            {{-- Decorative background accent --}}
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gold-500/5 rounded-full -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110"></div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {{-- USP 1 --}}
-            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
-                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">🛡️</div>
-                <h4 class="font-bold text-gray-900 text-lg mb-3">Expert Local Guides</h4>
-                <p class="text-gray-500 text-sm leading-relaxed">Our guides are born and raised in Tanzania, offering deep cultural insights and unmatched wildlife tracking skills.</p>
-            </div>
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                {{-- Title Part --}}
+                <div class="lg:w-1/3 text-center lg:text-left relative z-10">
+                    <span class="text-gold-600 text-[10px] font-black uppercase tracking-[0.5em] mb-3 block">The Twina Advantage</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-[1.1]">Why Journey <br class="hidden lg:block"> With Us?</h2>
+                    <div class="w-16 h-1.5 bg-gold-500 mt-6 mx-auto lg:mx-0 rounded-full"></div>
+                </div>
 
-            {{-- USP 2 --}}
-            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
-                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">✨</div>
-                <h4 class="font-bold text-gray-900 text-lg mb-3">Tailor-Made Safaris</h4>
-                <p class="text-gray-500 text-sm leading-relaxed">We don't do "one size fits all." Every itinerary is custom-crafted to match your rhythm, budget, and wildest dreams.</p>
-            </div>
+                {{-- Features Part --}}
+                <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 relative z-10">
+                    {{-- USP 1 --}}
+                    <div class="flex items-start gap-5 group/item">
+                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">🛡️</div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">Expert Local Guides</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed font-light">Born and raised in Tanzania, offering deep cultural insights and tracking skills.</p>
+                        </div>
+                    </div>
 
-            {{-- USP 3 --}}
-            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
-                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">💎</div>
-                <h4 class="font-bold text-gray-900 text-lg mb-3">Direct Local Pricing</h4>
-                <p class="text-gray-500 text-sm leading-relaxed">By booking directly with us, you cut out the middlemen, ensuring the best value and supporting the local economy.</p>
-            </div>
+                    {{-- USP 2 --}}
+                    <div class="flex items-start gap-5 group/item">
+                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">✨</div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">Tailor-Made Safaris</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed font-light">Every itinerary is custom-crafted to match your rhythm, budget, and dreams.</p>
+                        </div>
+                    </div>
 
-            {{-- USP 4 --}}
-            <div class="p-8 rounded-[2.5rem] bg-[#fcfaf7] border border-gray-100 hover:border-gold-500/30 transition-all duration-500 group">
-                <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">📞</div>
-                <h4 class="font-bold text-gray-900 text-lg mb-3">24/7 Ground Support</h4>
-                <p class="text-gray-500 text-sm leading-relaxed">From your arrival at Kilimanjaro to your final departure, our team is on standby 24/7 to ensure your safety and comfort.</p>
+                    {{-- USP 3 --}}
+                    <div class="flex items-start gap-5 group/item">
+                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">💎</div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">Direct Local Pricing</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed font-light">No middlemen, ensuring the best value while supporting the local economy.</p>
+                        </div>
+                    </div>
+
+                    {{-- USP 4 --}}
+                    <div class="flex items-start gap-5 group/item">
+                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">📞</div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">24/7 Ground Support</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed font-light">Our team is on standby 24/7 to ensure your total safety and comfort.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
