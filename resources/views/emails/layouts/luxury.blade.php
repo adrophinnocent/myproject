@@ -63,9 +63,12 @@
 <body>
     <div class="container">
         <div class="header">
-            @php $logo = \App\Models\Setting::get('logo'); @endphp
-            @if($logo)
-                <img src="{{ $message->embed(storage_path('app/public/' . $logo)) }}" alt="Twina Safaris" style="max-width: 150px;">
+            @php
+                $logo = \App\Models\Setting::get('logo');
+                $logoPath = $logo ? storage_path('app/public/' . $logo) : null;
+            @endphp
+            @if($logoPath && file_exists($logoPath))
+                <img src="{{ $message->embed($logoPath) }}" alt="Twina Safaris" style="max-width: 150px;">
             @else
                 <h2 style="color: #D4AF37; margin: 0;">TWINA SAFARIS</h2>
             @endif

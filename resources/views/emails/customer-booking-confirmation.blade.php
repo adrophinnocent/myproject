@@ -12,8 +12,8 @@
                 <td style="font-weight: 600;">{{ $booking->booking_reference }}</td>
             </tr>
             <tr>
-                <td style="font-weight: 600; color: #888;">Tour:</td>
-                <td>{{ $booking->tour->title }}</td>
+                <td style="font-weight: 600; color: #888;">Safari Package:</td>
+                <td>{{ $booking->tour->title ?? $booking->safari->title ?? 'Safari Expedition' }}</td>
             </tr>
             <tr>
                 <td style="font-weight: 600; color: #888;">Travel Date:</td>

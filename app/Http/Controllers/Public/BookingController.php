@@ -73,24 +73,44 @@ class BookingController extends Controller
 
         $booking->save();
 
+        // Ensure relationships are loaded for email templates
+        $booking->load(['tour', 'safari']);
+
         // 1. Generate PDF Itinerary
-        $pdfPath = $this->pdfService->generateItinerary($booking);
+        try {
+            $pdfPath = $this->pdfService->generateItinerary($booking);
+        } catch (\Exception $e) {
+            \Log::error('PDF Generation failed: ' . $e->getMessage());
+            $pdfPath = null;
+        }
 
         // 2. Send Booking Confirmation to Customer (with PDF attachment)
-        Mail::to($booking->email)->send(new CustomerBookingConfirmation($booking, $pdfPath));
+        try {
+            Mail::to($booking->email)->send(new CustomerBookingConfirmation($booking, $pdfPath));
+        } catch (\Exception $e) {
+            \Log::error('Customer Mail failed: ' . $e->getMessage());
+        }
 
         // 3. Send Admin Alert
-        $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
-        Mail::to($adminEmail)->send(new AdminNewBookingNotification($booking));
+        try {
+            $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
+            Mail::to($adminEmail)->send(new AdminNewBookingNotification($booking));
+        } catch (\Exception $e) {
+            \Log::error('Admin Mail failed: ' . $e->getMessage());
+        }
 
         // 4. Create Admin Dashboard Notification
-        AdminNotification::create([
-            'type' => 'booking',
-            'title' => 'New Booking: ' . $booking->booking_reference,
-            'message' => 'New reservation from ' . $booking->first_name . ' for ' . $tour->title,
-            'link' => route('admin.bookings.show', $booking),
-            'is_read' => false
-        ]);
+        try {
+            AdminNotification::create([
+                'type' => 'booking',
+                'title' => 'New Booking: ' . $booking->booking_reference,
+                'message' => 'New reservation from ' . $booking->first_name . ' for ' . ($booking->tour->title ?? $booking->safari->title ?? 'Tour'),
+                'link' => route('admin.bookings.show', $booking),
+                'is_read' => false
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Admin Notification failed: ' . $e->getMessage());
+        }
 
         return redirect()->route('booking.success', $booking->booking_reference);
     }

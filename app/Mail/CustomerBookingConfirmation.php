@@ -25,8 +25,10 @@ class CustomerBookingConfirmation extends Mailable
 
     public function envelope(): Envelope
     {
+        $itemName = $this->booking->tour->title ?? $this->booking->safari->title ?? 'Your Safari';
+
         return new Envelope(
-            subject: 'Booking Confirmation: ' . $this->booking->tour->title . ' (Ref: ' . $this->booking->booking_reference . ')',
+            subject: 'Booking Confirmation: ' . $itemName . ' (Ref: ' . $this->booking->booking_reference . ')',
         );
     }
 

@@ -14,7 +14,7 @@
 
     <div style="background-color: #fcfaf7; padding: 20px; border-radius: 10px; margin: 20px 0; border: 1px solid #D4AF37;">
         <h3 style="margin-top: 0; color: #D4AF37;">Booking Details</h3>
-        <p><strong>Tour:</strong> {{ $booking->tour->title }}</p>
+        <p><strong>Package:</strong> {{ $booking->tour->title ?? $booking->safari->title ?? 'N/A' }}</p>
         <p><strong>Date:</strong> {{ $booking->travel_date->format('M d, Y') }}</p>
         <p><strong>Guests:</strong> {{ $booking->number_of_adults + $booking->number_of_children }}</p>
         <p><strong>Total Value:</strong> ${{ number_format($booking->total_price, 2) }}</p>
