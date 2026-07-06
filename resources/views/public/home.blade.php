@@ -314,8 +314,12 @@
     </div>
     <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
         <span class="inline-block text-gold-400 text-sm font-black uppercase tracking-[0.4em] mb-4">The Roof of Africa</span>
-        <h2 class="font-display text-4xl md:text-7xl font-black text-white leading-tight mb-8">Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span></h2>
-        <p class="text-gray-300 text-lg max-w-4xl mx-auto font-light leading-relaxed">Experience the ultimate trek to Africa's highest peak.</p>
+        <h2 class="font-display text-4xl md:text-8xl font-black text-white leading-tight mb-8">
+            Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span>
+        </h2>
+        <p class="text-gray-300 text-lg md:text-xl max-w-4xl mx-auto font-light leading-relaxed">
+            Experience the ultimate trek to <span class="text-white font-bold">Africa's highest peak</span>. Stand at the summit of the world's tallest free-standing mountain and witness the sunrise above the clouds.
+        </p>
         <div class="flex flex-wrap justify-center gap-6 mt-10">
             <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
                 <span class="text-gold-400 font-black text-xl">5,895m</span>
