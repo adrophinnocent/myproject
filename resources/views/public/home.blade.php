@@ -97,10 +97,6 @@
                                 </a>
                             @endif
 
-                            <a href="{{ route('tours.index') }}" class="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px]">
-                                Plan Your Safari
-                            </a>
-
                             <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-gold-500 hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px]">
                                 Climb Kilimanjaro
                             </a>
