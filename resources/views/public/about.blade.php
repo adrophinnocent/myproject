@@ -282,11 +282,11 @@
 
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             @foreach([
-                ['name' => 'Lion', 'img' => asset('images/big-five/lion.jpg')],
-                ['name' => 'Elephant', 'img' => asset('images/big-five/elephant.jpg')],
-                ['name' => 'Leopard', 'img' => asset('images/big-five/leopard.jpg')],
-                ['name' => 'Buffalo', 'img' => asset('images/big-five/buffalo.jpg')],
-                ['name' => 'Rhino', 'img' => asset('images/big-five/rhino.jpg')]
+                ['name' => 'Lion', 'img' => asset('images/big-five/lion.webp')],
+                ['name' => 'Elephant', 'img' => asset('images/big-five/elephant.webp')],
+                ['name' => 'Leopard', 'img' => asset('images/big-five/leopard.webp')],
+                ['name' => 'Buffalo', 'img' => asset('images/big-five/buffalo.webp')],
+                ['name' => 'Rhino', 'img' => asset('images/big-five/rhino.webp')]
             ] as $animal)
             <div class="group relative h-[450px] overflow-hidden rounded-2xl shadow-2xl">
                 <img src="{{ $animal['img'] }}" alt="{{ $animal['name'] }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
