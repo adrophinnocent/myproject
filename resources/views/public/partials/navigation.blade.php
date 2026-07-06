@@ -39,7 +39,17 @@
                 <span class="font-bold">{{ $phone }}</span>
             </a>
             <span class="text-gray-600">|</span>
-            <span class="text-gray-500">4.9/5 · TripAdvisor Certificate of Excellence</span>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-[#34E0A1]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14H15v-1h1.5v1zm-3-2H12v-1h1.5v1zm0-2H12V9h1.5v1zm3 0H15V9h1.5v1zM9 16H7.5v-1H9v1zm0-2H7.5v-1H9v1zm0-2H7.5V9H9v1zm3 4h-1.5v-1h1.5v1z"/></svg>
+                    <span class="text-gray-500"><span class="text-white font-bold">4.9/5</span> TripAdvisor</span>
+                </div>
+                <span class="text-gray-700">·</span>
+                <div class="flex items-center gap-1.5">
+                    <svg class="w-3 h-3 text-[#4285F4]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.08 4.44-1.12 1.12-2.8 2.32-5.76 2.32-4.68 0-8.24-3.8-8.24-8.48s3.56-8.48 8.24-8.48c2.52 0 4.24 1 5.56 2.24l2.32-2.32C18.48 2.08 15.8 0 12.48 0 5.48 0 0 5.48 0 12.48S5.48 24.96 12.48 24.96c3.76 0 6.6-1.24 8.84-3.6 2.32-2.32 3.04-5.56 3.04-8.12 0-.76-.08-1.52-.2-2.32h-11.68z"/></svg>
+                    <span class="text-gray-500"><span class="text-white font-bold">5.0/5</span> Google Reviews</span>
+                </div>
+            </div>
         </div>
         <div class="flex items-center gap-4">
             <!-- Currency Switcher -->
