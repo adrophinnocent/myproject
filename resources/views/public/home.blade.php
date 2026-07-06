@@ -399,9 +399,12 @@
 }">
     <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-16">
-            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Handpicked Experiences</span>
-            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
-            <div class="section-divider"></div>
+            <span class="text-gold-600 text-sm font-semibold uppercase tracking-[0.3em] mb-3 block">Handpicked Experiences</span>
+            <h2 class="font-display text-4xl md:text-6xl font-black text-gray-900 mb-6">Featured Safari Tours</h2>
+            <p class="text-gray-500 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light">
+                Discover our curated collection of <span class="text-gold-600 font-bold">extraordinary journeys</span>. From the vast plains of the Serengeti to the hidden gems of the Ngorongoro Crater, each tour is designed to immerse you in the raw beauty and majestic wildlife of Tanzania.
+            </p>
+            <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
         </div>
         <div class="relative group">
             <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
