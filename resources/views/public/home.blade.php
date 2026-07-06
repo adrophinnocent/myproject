@@ -431,6 +431,34 @@
     </div>
 </section>
 
+{{-- ========== 3.7 OUR IMPACT IN NUMBERS (STATISTICS) ========== --}}
+<section class="py-12 bg-safari-dark border-y border-white/5 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-0 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">500+</div>
+                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Happy Travelers</p>
+            </div>
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">150+</div>
+                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Safari Packages</p>
+            </div>
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">10+</div>
+                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Years Experience</p>
+            </div>
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">100%</div>
+                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Safety Record</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 {{-- ========== 4. FEATURED TOURS ========== --}}
 <section class="py-24 bg-white" x-data="{
     scrollBy(distance) {
