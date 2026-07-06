@@ -432,27 +432,41 @@
 </section>
 
 {{-- ========== 3.7 OUR IMPACT IN NUMBERS (STATISTICS) ========== --}}
-<section class="py-12 bg-safari-dark border-y border-white/5 relative overflow-hidden">
+<section class="py-12 bg-safari-dark border-y border-white/5 relative overflow-hidden" x-data="{
+    startCount(target, duration, callback) {
+        let start = 0;
+        const increment = target / (duration / 16);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= target) {
+                callback(target);
+                clearInterval(timer);
+            } else {
+                callback(Math.floor(start));
+            }
+        }, 16);
+    }
+}">
     <div class="absolute inset-0 opacity-10">
         <div class="absolute top-0 left-0 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl"></div>
         <div class="absolute bottom-0 right-0 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl"></div>
     </div>
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">500+</div>
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(500, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
                 <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Happy Travelers</p>
             </div>
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">150+</div>
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(150, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
                 <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Safari Packages</p>
             </div>
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">10+</div>
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(10, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
                 <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Years Experience</p>
             </div>
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500">100%</div>
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(100, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>%</div>
                 <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Safety Record</p>
             </div>
         </div>
