@@ -14,29 +14,32 @@ class PdfService
 
         $pdf = Pdf::loadView('emails.itinerary-pdf', compact('booking'));
 
-        // Ensure the directory exists
-        if (!Storage::disk('public')->exists('temp')) {
-            Storage::disk('public')->makeDirectory('temp');
+        // Use standard filesystem to avoid issues with custom disks on shared hosting
+        $storageDir = storage_path('app/public/temp');
+        if (!file_exists($storageDir)) {
+            mkdir($storageDir, 0755, true);
         }
 
-        Storage::disk('public')->put($path, $pdf->output());
+        $fullPath = $storageDir . '/' . $fileName;
+        file_put_contents($fullPath, $pdf->output());
 
-        return storage_path('app/public/' . $path);
+        return $fullPath;
     }
 
     public function generateInvoice($booking)
     {
         $fileName = 'invoice-' . $booking->booking_reference . '.pdf';
-        $path = 'temp/' . $fileName;
 
         $pdf = Pdf::loadView('emails.invoice-pdf', compact('booking'));
 
-        if (!Storage::disk('public')->exists('temp')) {
-            Storage::disk('public')->makeDirectory('temp');
+        $storageDir = storage_path('app/public/temp');
+        if (!file_exists($storageDir)) {
+            mkdir($storageDir, 0755, true);
         }
 
-        Storage::disk('public')->put($path, $pdf->output());
+        $fullPath = $storageDir . '/' . $fileName;
+        file_put_contents($fullPath, $pdf->output());
 
-        return storage_path('app/public/' . $path);
+        return $fullPath;
     }
 }

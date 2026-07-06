@@ -82,7 +82,8 @@
         <div class="header">
             @php
                 $logo = \App\Models\Setting::get('logo');
-                $logoPath = $logo ? public_path('storage/' . $logo) : null;
+                // Use storage_path directly to avoid public_path/symlink issues during PDF generation
+                $logoPath = $logo ? storage_path('app/public/' . $logo) : null;
             @endphp
             @if($logoPath && file_exists($logoPath))
                 <img src="{{ 'data:image/' . pathinfo($logoPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($logoPath)) }}" style="height: 40px;">

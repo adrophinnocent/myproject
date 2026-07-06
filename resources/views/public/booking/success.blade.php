@@ -190,10 +190,16 @@
         </div>
 
         <div class="mt-16 text-center">
-            <p class="text-gray-400 text-xs italic">
-                A copy of this confirmation has been sent to <span class="text-gray-600 font-bold">{{ $booking->email }}</span>.<br>
-                Please check your inbox (and spam folder) for further details.
-            </p>
+            <div class="inline-block bg-white border border-gold-500/20 px-8 py-6 rounded-[2rem] shadow-xl shadow-gold-500/5 animate-pulse-soft">
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <span class="flex h-2 w-2 rounded-full bg-gold-500"></span>
+                    <p class="text-safari-dark font-black text-sm uppercase tracking-widest">Confirmation Sent</p>
+                </div>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    A copy of this confirmation has been sent to <span class="text-gold-600 font-black">{{ $booking->email }}</span>.<br>
+                    Please check your <span class="font-bold">inbox</span> (and spam folder) for further details.
+                </p>
+            </div>
         </div>
 
     </div>
@@ -201,5 +207,13 @@
 
 <style>
     [x-cloak] { display: none !important; }
+
+    @keyframes pulse-soft {
+        0%, 100% { transform: scale(1); box-shadow: 0 20px 25px -5px rgb(212 175 55 / 0.05); }
+        50% { transform: scale(1.03); box-shadow: 0 25px 30px -5px rgb(212 175 55 / 0.1); }
+    }
+    .animate-pulse-soft {
+        animation: pulse-soft 4s ease-in-out infinite;
+    }
 </style>
 @endsection
