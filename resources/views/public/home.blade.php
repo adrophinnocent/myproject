@@ -585,20 +585,7 @@
 </section>
 @endif
 
-{{-- ========== 7. HOME FOOTER BANNER ========== --}}
-<section class="relative h-[60vh] min-h-[500px] flex items-center overflow-hidden bg-safari-dark">
-    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}" width="1920" height="600" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa" loading="lazy" decoding="async">
-    <div class="absolute inset-0 bg-gradient-to-t from-safari-dark via-transparent to-transparent"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
-        <h2 class="font-display text-5xl md:text-8xl text-white font-black mb-10 leading-tight drop-shadow-2xl">Start Your <span class="text-gold-400 italic">Legacy</span> Today</h2>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-8">
-            <a href="{{ route('tours.index') }}" class="btn-gold px-14 py-6 rounded-full text-xl font-black shadow-2xl transition-all hover:scale-110 active:scale-95">Explore All Tours</a>
-            <a href="{{ route('trip-plan.index') }}" class="bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white hover:bg-white hover:text-safari-dark px-14 py-6 rounded-full text-xl font-black transition-all">Plan Custom Trip</a>
-        </div>
-    </div>
-</section>
-
-{{-- ========== 8. TRUST & AFFILIATIONS STRIP ========== --}}
+{{-- ========== 6.5 TRUST & AFFILIATIONS STRIP ========== --}}
 <section class="py-16 bg-white border-t border-gray-100">
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex flex-wrap items-center justify-center gap-8 md:gap-16 transition-all duration-700">
@@ -626,6 +613,19 @@
                 </div>
                 <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">Sustainable Tourism Partner</span>
             </div>
+        </div>
+    </div>
+</section>
+
+{{-- ========== 7. HOME FOOTER BANNER ========== --}}
+<section class="relative h-[60vh] min-h-[500px] flex items-center overflow-hidden bg-safari-dark">
+    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}" width="1920" height="600" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa" loading="lazy" decoding="async">
+    <div class="absolute inset-0 bg-gradient-to-t from-safari-dark via-transparent to-transparent"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
+        <h2 class="font-display text-5xl md:text-8xl text-white font-black mb-10 leading-tight drop-shadow-2xl">Start Your <span class="text-gold-400 italic">Legacy</span> Today</h2>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-8">
+            <a href="{{ route('tours.index') }}" class="btn-gold px-14 py-6 rounded-full text-xl font-black shadow-2xl transition-all hover:scale-110 active:scale-95">Explore All Tours</a>
+            <a href="{{ route('trip-plan.index') }}" class="bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white hover:bg-white hover:text-safari-dark px-14 py-6 rounded-full text-xl font-black transition-all">Plan Custom Trip</a>
         </div>
     </div>
 </section>
