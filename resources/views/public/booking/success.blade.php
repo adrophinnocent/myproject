@@ -104,13 +104,9 @@
 
                 {{-- Right Side: Payment & Next Steps --}}
                 <div class="lg:col-span-5 bg-gray-50/50 p-8 md:p-12">
-                    <div class="flex items-center justify-between mb-8">
-                        <h3 class="text-xl font-bold text-safari-dark">Payment Details</h3>
-                        <a href="{{ route('booking.download', $booking->booking_reference) }}" class="flex items-center gap-1.5 text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 bg-gold-50 px-3 py-1.5 rounded-full transition-all">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            Get PDF
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-safari-dark mb-8 flex items-center gap-2">
+                        Payment Details
+                    </h3>
 
                     <div class="bg-white border border-gold-500/20 rounded-3xl p-8 shadow-xl shadow-gold-500/5 mb-8 relative">
                         <div class="absolute -top-3 -right-3 w-10 h-10 bg-gold-500 rounded-full flex items-center justify-center text-safari-dark shadow-lg">
@@ -148,6 +144,15 @@
                                 </p>
                             </div>
                         </div>
+                    </div>
+
+                    {{-- Download PDF Section --}}
+                    <div class="mb-10">
+                        <a href="{{ route('booking.download', $booking->booking_reference) }}" class="w-full btn-gold py-5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-gold-500/10 hover:scale-[1.02] active:scale-95 transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Download Full Itinerary (PDF)
+                        </a>
+                        <p class="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-3">Ready to print or save on your device</p>
                     </div>
 
                     <div class="space-y-6">
