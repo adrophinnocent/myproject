@@ -120,4 +120,17 @@ class BookingController extends Controller
         $booking = Booking::where('booking_reference', $reference)->with(['tour', 'safari'])->firstOrFail();
         return view('public.booking.success', compact('booking'));
     }
+
+    public function downloadItinerary($reference)
+    {
+        $booking = Booking::where('booking_reference', $reference)->with(['tour', 'safari'])->firstOrFail();
+
+        try {
+            $pdfPath = $this->pdfService->generateItinerary($booking);
+            return response()->download($pdfPath, 'Itinerary-' . $booking->booking_reference . '.pdf');
+        } catch (\Exception $e) {
+            \Log::error('PDF Download failed: ' . $e->getMessage());
+            return back()->with('error', 'Sorry, we could not generate the PDF at this moment. Please try again later.');
+        }
+    }
 }

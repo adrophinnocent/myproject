@@ -67,14 +67,50 @@
                                 <strong>Urgent Note:</strong> Your booking is currently reserved for the next <strong>24 hours</strong>. Please complete the payment process below to secure your spot.
                             </p>
                         </div>
+
+                        {{-- Itinerary Preview Accordion --}}
+                        <div class="mt-8 border-t border-gray-100 pt-8" x-data="{ openPreview: false }">
+                            <button @click="openPreview = !openPreview" class="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gold-50 transition-colors group">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xl">🗺️</span>
+                                    <span class="font-bold text-gray-900">Preview My Itinerary</span>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400 group-hover:text-gold-600 transition-transform" :class="openPreview ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+
+                            <div x-show="openPreview" x-collapse>
+                                <div class="mt-4 space-y-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                                    @php
+                                        $itinerary = $booking->bookable_item->itinerary ?? [];
+                                        if (is_string($itinerary)) $itinerary = json_decode($itinerary, true);
+                                    @endphp
+
+                                    @forelse($itinerary as $index => $item)
+                                        <div class="flex gap-4 p-4 border-l-2 border-gold-500 bg-white">
+                                            <div class="font-black text-gold-600 text-xs shrink-0">DAY {{ $loop->iteration }}</div>
+                                            <div>
+                                                <h4 class="font-bold text-gray-900 text-sm mb-1">{{ is_array($item) ? ($item['title'] ?? '') : $item }}</h4>
+                                                <p class="text-gray-500 text-xs leading-relaxed line-clamp-2">{{ is_array($item) ? ($item['description'] ?? '') : '' }}</p>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <p class="text-gray-400 text-xs italic p-4">Detailed day-by-day itinerary will be shared upon payment confirmation.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {{-- Right Side: Payment & Next Steps --}}
                 <div class="lg:col-span-5 bg-gray-50/50 p-8 md:p-12">
-                    <h3 class="text-xl font-bold text-safari-dark mb-8 flex items-center gap-2">
-                        Payment Instructions
-                    </h3>
+                    <div class="flex items-center justify-between mb-8">
+                        <h3 class="text-xl font-bold text-safari-dark">Payment Details</h3>
+                        <a href="{{ route('booking.download', $booking->booking_reference) }}" class="flex items-center gap-1.5 text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 bg-gold-50 px-3 py-1.5 rounded-full transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Get PDF
+                        </a>
+                    </div>
 
                     <div class="bg-white border border-gold-500/20 rounded-3xl p-8 shadow-xl shadow-gold-500/5 mb-8 relative">
                         <div class="absolute -top-3 -right-3 w-10 h-10 bg-gold-500 rounded-full flex items-center justify-center text-safari-dark shadow-lg">
