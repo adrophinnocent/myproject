@@ -136,7 +136,8 @@
 
     {{-- 4. BOTTOM OVERLAY: SEARCH BAR --}}
     <div class="relative z-50 w-full max-w-6xl mx-auto text-center pb-12 md:pb-20 px-4 mt-auto">
-        <div class="max-w-5xl mx-auto">
+        {{-- 1. SEARCH BAR --}}
+        <div class="max-w-5xl mx-auto mb-10">
             <div class="bg-black/50 backdrop-blur-3xl rounded-[2rem] md:rounded-full p-3 md:p-1.5 border-2 border-white/20 shadow-[0_20px_50px_-12px_rgba(212,175,55,0.4)]">
                 <form action="{{ route('tours.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 md:gap-0">
                     <div class="relative flex-1">
@@ -180,6 +181,46 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        {{-- 2. TRUST STRIP (EXTENDED BELOW SEARCH BAR) --}}
+        <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 px-2">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
+                <div class="text-gold-400 transition-transform group-hover:scale-110">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Best Rated</div>
+                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">TripAdvisor 2024</div>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
+                <div class="text-gold-400 transition-transform group-hover:scale-110">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight whitespace-nowrap">Safe & Secure</div>
+                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Certified Operator</div>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
+                <div class="text-gold-400 transition-transform group-hover:scale-110">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Affordable</div>
+                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Direct Pricing</div>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 group">
+                <div class="text-gold-400 transition-transform group-hover:scale-110">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight whitespace-nowrap">24/7 Support</div>
+                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Expert Assistance</div>
+                </div>
             </div>
         </div>
     </div>
