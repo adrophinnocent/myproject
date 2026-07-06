@@ -105,7 +105,7 @@
         </div>
     </div>
 
-    {{-- 3. SEASON INDICATOR (Floating) --}}
+    {{-- 3. SEASON INDICATOR --}}
     <div class="absolute top-24 right-6 md:top-32 md:right-10 z-40">
         <div class="flex flex-col gap-4 items-center">
             <div class="season-light relative group cursor-help" id="green-container" style="display:none;">
@@ -213,7 +213,7 @@
 </section>
 
 {{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
-<section class="py-24 bg-safari-dark relative overflow-hidden">
+<section class="py-24 bg-safari-dark relative overflow-hidden border-b border-white/5">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="1080" class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
@@ -253,7 +253,7 @@
     </div>
 </section>
 
-{{-- ========== FEATURED TOURS ========== --}}
+{{-- ========== FEATURED TOURS SECTION ========== --}}
 <section class="py-24 bg-white" x-data="{
     scrollBy(distance) {
         const slider = document.getElementById('tours-slider');
@@ -266,6 +266,7 @@
             <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Featured Safari Tours</h2>
             <div class="section-divider"></div>
         </div>
+
         <div class="relative group">
             <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @forelse($featuredTours as $tour)
@@ -295,68 +296,135 @@
     </div>
 </section>
 
+{{-- ========== TESTIMONIALS SECTION (SLIDER) ========== --}}
+<section class="py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100" x-data="{
+    scrollBy(distance) {
+        const slider = document.getElementById('testimonials-slider');
+        if (slider) { slider.scrollBy({ left: distance, behavior: 'smooth' }); }
+    }
+}">
+    <div class="max-w-7xl mx-auto px-4 mb-16 text-center">
+        <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Guest Stories</span>
+        <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark">What Travelers Say</h2>
+        <div class="w-16 h-1.5 bg-gold-500 mt-6 rounded-full mx-auto"></div>
+    </div>
+
+    <div class="relative max-w-6xl mx-auto">
+        <div id="testimonials-slider" class="flex gap-8 overflow-x-auto pb-12 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
+            @php
+            $customTestimonials = [
+                [
+                    'name' => 'Sarah Mitchell',
+                    'title' => 'Safari Traveler',
+                    'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.',
+                    'initials' => 'SA'
+                ],
+                [
+                    'name' => 'Marco & Julia',
+                    'title' => 'Honeymoon Couple',
+                    'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.',
+                    'initials' => 'MA'
+                ],
+                [
+                    'name' => 'David Chen',
+                    'title' => 'Mountain Climber',
+                    'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.',
+                    'initials' => 'DA'
+                ]
+            ];
+            @endphp
+            @foreach($customTestimonials as $t)
+            <div class="snap-center shrink-0 w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
+                <div class="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col relative group">
+                    {{-- Decorative Quote Mark --}}
+                    <div class="absolute top-6 right-8 text-gold-100 group-hover:text-gold-200 transition-colors duration-500">
+                        <svg class="w-16 h-16 fill-current" viewBox="0 0 32 32"><path d="M10 8v8H6v6h6V8h-2zm12 0v8h-4v6h6V8h-2z"/></svg>
+                    </div>
+
+                    <div class="flex text-gold-500 mb-8 gap-1 relative z-10">
+                        @for($i=0; $i<5; $i++) <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
+                    </div>
+
+                    <p class="text-gray-700 text-lg leading-relaxed mb-10 flex-grow italic font-light relative z-10">"{{ $t['content'] }}"</p>
+
+                    <div class="flex items-center gap-5 pt-8 border-t border-gray-50 relative z-10">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-white font-black text-xl shadow-lg transform -rotate-3 group-hover:rotate-0 transition-transform duration-300">{{ $t['initials'] }}</div>
+                        <div>
+                            <h4 class="font-black text-safari-dark text-lg leading-tight">{{ $t['name'] }}</h4>
+                            <p class="text-gold-600 text-xs font-bold uppercase tracking-widest mt-1">{{ $t['title'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        {{-- Slider Controls --}}
+        <div class="flex justify-center gap-4 mt-8">
+            <button @click="scrollBy(-400)" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+            <button @click="scrollBy(400)" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+    </div>
+</section>
+
 {{-- ========== LATEST BLOG SECTION ========== --}}
 @if(isset($latestPosts) && $latestPosts->count() > 0)
-<section id="blog" class="py-24 bg-gray-50 border-t border-gray-100">
+<section id="blog" class="py-24 bg-white border-t border-gray-50">
     <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-16">
-            <span class="text-gold-600 text-sm font-semibold uppercase tracking-widest">Safari Journal</span>
-            <h2 class="font-display text-4xl md:text-5xl text-gray-900 mt-3 mb-4">Latest From The Blog</h2>
-            <div class="section-divider mx-auto mb-8"></div>
+            <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Safari Journal</span>
+            <h2 class="font-display text-4xl md:text-6xl font-black text-gray-900 leading-tight">Latest Stories & Insights</h2>
+            <p class="text-gray-500 text-lg mt-6 max-w-3xl mx-auto leading-relaxed font-light">
+                Discover expert travel guides, breathtaking wildlife photography, and heartwarming stories from our latest expeditions across the plains of Tanzania.
+            </p>
+            <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
         </div>
+
         <div class="relative group">
-            <div id="blog-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
+            <div id="blog-slider" class="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($latestPosts as $post)
-                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-                    <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all h-full flex flex-col">
-                        <div class="relative h-56 overflow-hidden"><img src="{{ $post->featured_image_url }}" width="400" height="224" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"></div>
-                        <div class="p-8 flex flex-col flex-grow">
-                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors"><a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a></h3>
-                            <p class="text-gray-600 text-sm line-clamp-3 mb-6">{{ $post->excerpt }}</p>
-                            <div class="mt-auto"><a href="{{ route('blog.show', $post->slug) }}" class="text-gold-600 font-bold text-sm flex items-center gap-2">Read Story →</a></div>
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
+                    <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col group">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="{{ $post->featured_image_url }}" width="400" height="224" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
+                            <div class="absolute top-6 left-6 bg-gold-500 text-safari-dark text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">New Post</div>
+                        </div>
+                        <div class="p-10 flex flex-col flex-grow">
+                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
+                                <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
+                            </h3>
+                            <p class="text-gray-600 text-base line-clamp-3 mb-8 leading-relaxed font-light">{{ $post->excerpt }}</p>
+                            <div class="mt-auto pt-6 border-t border-gray-50">
+                                <a href="{{ route('blog.show', $post->slug) }}" class="text-gold-600 font-black text-sm uppercase tracking-widest flex items-center gap-3 group/link">
+                                    Read Full Story
+                                    <svg class="w-5 h-5 transform transition-transform group-hover/link:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 @endforeach
             </div>
         </div>
-        <div class="text-center mt-12"><a href="{{ route('blog.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">View All Blog <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
+        <div class="text-center mt-12">
+            <a href="{{ route('blog.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-4">
+                View All Stories
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+        </div>
     </div>
 </section>
 @endif
 
-{{-- ========== TESTIMONIALS SECTION ========== --}}
-<section class="py-16 md:py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 mb-10 md:mb-16 text-center">
-        <span class="text-gold-600 text-[10px] md:text-sm font-black uppercase tracking-[0.3em] mb-2 block">Guest Stories</span>
-        <h2 class="font-display text-3xl md:text-5xl font-black text-safari-dark">What Travelers Say</h2>
-        <div class="w-12 h-1 bg-gold-500 mt-4 rounded-full mx-auto"></div>
-    </div>
-    <div class="relative">
-        <div id="testimonials-slider" class="flex gap-5 overflow-x-auto pb-8 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
-            @php $customTestimonials = [['name' => 'Sarah Mitchell', 'title' => 'Safari Traveler', 'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.', 'initials' => 'SA'], ['name' => 'Marco & Julia', 'title' => 'Honeymoon Couple', 'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.', 'initials' => 'MA'], ['name' => 'David Chen', 'title' => 'Mountain Climber', 'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.', 'initials' => 'DA']]; @endphp
-            @foreach($customTestimonials as $t)
-            <div class="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13px)]">
-                <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all h-full flex flex-col">
-                    <div class="flex text-gold-500 mb-4 gap-0.5">@for($i=0; $i<5; $i++) <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor</div>
-                    <p class="text-gray-700 text-base leading-relaxed mb-6 flex-grow">{{ $t['content'] }}</p>
-                    <div class="flex items-center gap-4 pt-4 border-t border-gray-100"><div class="w-12 h-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-white font-black text-lg shadow-md">{{ $t['initials'] }}</div><div><h4 class="font-black text-safari-dark text-sm">{{ $t['name'] }}</h4><p class="text-gold-600 text-xs font-medium">{{ $t['title'] }}</p></div></div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
 {{-- ========== HOME FOOTER BANNER ========== --}}
-<section class="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden bg-safari-dark">
+<section class="relative h-[60vh] min-h-[500px] flex items-center overflow-hidden bg-safari-dark">
     <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}" width="1920" height="800" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa">
     <div class="absolute inset-0 bg-gradient-to-t from-safari-dark via-transparent to-transparent"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
-        <h2 class="font-display text-5xl md:text-7xl text-white font-black mb-8 leading-tight">Start Your <span class="text-gold-400 italic">Legacy</span> Today</h2>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a href="{{ route('tours.index') }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black transition-all hover:scale-105">Explore All Tours</a>
-            <a href="{{ route('trip-plan.index') }}" class="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-safari-dark px-12 py-5 rounded-full text-lg font-black transition-all">Plan Custom Trip</a>
+        <h2 class="font-display text-5xl md:text-8xl text-white font-black mb-10 leading-tight drop-shadow-2xl">Start Your <span class="text-gold-400 italic">Legacy</span> Today</h2>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-8">
+            <a href="{{ route('tours.index') }}" class="btn-gold px-14 py-6 rounded-full text-xl font-black shadow-2xl transition-all hover:scale-110 active:scale-95">Explore All Tours</a>
+            <a href="{{ route('trip-plan.index') }}" class="bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white hover:bg-white hover:text-safari-dark px-14 py-6 rounded-full text-xl font-black transition-all">Plan Custom Trip</a>
         </div>
     </div>
 </section>
