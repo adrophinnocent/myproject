@@ -19,11 +19,25 @@
      $navCategories = \App\Models\Category::where('is_active', true)->get();
 @endphp
 
+<style>
+    @keyframes phone-breathe {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-3px) scale(1.03); }
+    }
+    .animate-phone-breathe {
+        display: inline-flex;
+        animation: phone-breathe 2s ease-in-out infinite;
+    }
+</style>
+
 <!-- Top bar -->
 <div class="hidden lg:block bg-[#0a0703] border-b border-gold-500/10 text-xs py-2">
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
         <div class="flex items-center gap-6 text-gray-400">
-            <a href="tel:{{ $phone }}" class="flex items-center gap-1.5 hover:text-gold-400 transition-colors">{{ $phone }}</a>
+            <a href="tel:{{ $phone }}" class="flex items-center gap-2 hover:text-gold-400 transition-colors animate-phone-breathe">
+                <svg class="w-3 h-3 text-gold-500" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.17 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                <span class="font-bold">{{ $phone }}</span>
+            </a>
             <span class="text-gray-600">|</span>
             <span class="text-gray-500">4.9/5 · TripAdvisor Certificate of Excellence</span>
         </div>
@@ -176,12 +190,14 @@
                 </div>
 
                 <div class="flex flex-col gap-3 px-4 pt-2">
-                    <a href="tel:{{ $phone }}" class="flex items-center gap-3 text-gray-400 text-sm hover:text-gold-400 transition-colors">
-                        <span class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-lg">📞</span>
-                        {{ $phone }}
+                    <a href="tel:{{ $phone }}" class="flex items-center gap-3 text-gray-400 text-sm hover:text-gold-400 transition-colors animate-phone-breathe">
+                        <span class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-lg">
+                            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.17 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        </span>
+                        <span class="font-bold">{{ $phone }}</span>
                     </a>
                     <a href="mailto:{{ $email }}" class="flex items-center gap-3 text-gray-400 text-sm hover:text-gold-400 transition-colors">
-                        <span class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-lg">✉️</span>
+                        <span class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-lg text-gold-500">✉️</span>
                         {{ $email }}
                     </a>
                 </div>

@@ -111,8 +111,8 @@
                         <svg class="w-4 h-4 text-gold-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         <a href="mailto:{{ $siteEmail }}" class="hover:text-gold-400 transition-colors">{{ $siteEmail }}</a>
                     </li>
-                    <li class="flex items-center gap-3 text-white font-bold group">
-                        <svg class="w-4 h-4 text-gold-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    <li class="flex items-center gap-3 text-white font-bold group animate-phone-breathe">
+                        <svg class="w-4 h-4 text-gold-500 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.17 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
                         <a href="tel:{{ $sitePhone }}" class="hover:text-gold-400 transition-colors">{{ $sitePhone }}</a>
                     </li>
                 </ul>
@@ -159,19 +159,22 @@
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-4 md:gap-8">
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Visa_2021.svg" width="60" height="20" alt="Visa" class="h-4 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
+                        <svg viewBox="0 0 48 48" class="h-5 w-auto grayscale group-hover:grayscale-0 transition-all" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M32.8 15.6322L29.6 33.1092H34.4L37.6 15.6322H32.8ZM21.6 15.6322L16.4 28.5115L15.6 24.1149C14.4 20.2069 11.2 16.5862 7.6 14.8736L7.6 15.2529L12.4 33.1092H17.6L25.2 15.6322H21.6ZM39.6 15.6322L36 33.1092H40.8L44.4 15.6322H39.6Z" fill="#1434CB"/>
+                            <path d="M12.4 33.1092L11.6 28.7126L7.6 14.8736L7.6 15.2529L12.4 33.1092Z" fill="#F7B600"/>
+                        </svg>
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" width="60" height="30" alt="Mastercard" class="h-6 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
+                        <img src="https://raw.githubusercontent.com/a-bentley/payment-icons/master/assets/png/mastercard.png" width="60" height="30" alt="Mastercard" class="h-6 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" width="60" height="20" alt="PayPal" class="h-4 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
+                        <img src="https://raw.githubusercontent.com/a-bentley/payment-icons/master/assets/png/paypal.png" width="60" height="20" alt="PayPal" class="h-4 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" width="60" height="25" alt="Apple Pay" class="h-5 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
+                        <img src="https://raw.githubusercontent.com/a-bentley/payment-icons/master/assets/png/apple-pay.png" width="60" height="25" alt="Apple Pay" class="h-5 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" width="60" height="25" alt="Amex" class="h-5 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
+                        <img src="https://raw.githubusercontent.com/a-bentley/payment-icons/master/assets/png/amex.png" width="60" height="25" alt="Amex" class="h-5 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                 </div>
             </div>
