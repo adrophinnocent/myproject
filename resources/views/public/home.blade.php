@@ -57,8 +57,8 @@
                         @endif
 
                         {{-- Overlay Content for each slide --}}
-                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-20">
-                            <div class="max-w-5xl">
+                        <div class="absolute inset-0 flex items-center justify-center text-center px-4 z-50">
+                            <div class="max-w-5xl pointer-events-auto">
                                 @if($slide->subtitle)
                                     <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] mb-6 animate-pulse">
                                         {{ $slide->subtitle }}
@@ -71,7 +71,7 @@
                                 @endif
                                 @if($slide->cta_text)
                                     <div class="mt-10 mb-8">
-                                        <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105 pointer-events-auto">
+                                        <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105">
                                             {{ $slide->cta_text }}
                                         </a>
                                     </div>
@@ -79,10 +79,10 @@
 
                                 {{-- Additional Action Buttons (Always Visible over Background) --}}
                                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-12">
-                                    <a href="{{ route('tours.index') }}" class="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px] pointer-events-auto">
+                                    <a href="{{ route('tours.index') }}" class="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px]">
                                         Plan Your Safari
                                     </a>
-                                    <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-gold-500 hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px] pointer-events-auto">
+                                    <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-gold-500 hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px]">
                                         Climb Kilimanjaro
                                     </a>
                                 </div>
