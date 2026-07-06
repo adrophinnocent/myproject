@@ -105,7 +105,7 @@
         </div>
     </div>
 
-    {{-- 3. SEASON INDICATOR --}}
+    {{-- 3. SEASON INDICATOR (Floating) --}}
     <div class="absolute top-24 right-6 md:top-32 md:right-10 z-40">
         <div class="flex flex-col gap-4 items-center">
             <div class="season-light relative group cursor-help" id="green-container" style="display:none;">
@@ -212,7 +212,148 @@
     </div>
 </section>
 
-{{-- ========== MOUNT KILIMANJARO SECTION ========== --}}
+{{-- ========== FEATURED PACKAGE: DYNAMIC HERO TOUR (KILIMANJARO) ========== --}}
+@if($heroTour)
+<section class="py-24 bg-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="flex flex-col lg:flex-row gap-16 items-center">
+            {{-- Visual Side: Moving Image Slider --}}
+            <div class="w-full lg:w-1/2 relative" x-data="{
+                activeSlide: 0,
+                slides: [
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-1') }}',
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-2') }}',
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-3') }}',
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-4') }}',
+                    '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-5') }}'
+                ],
+                init() {
+                    setInterval(() => {
+                        this.activeSlide = (this.activeSlide + 1) % this.slides.length;
+                    }, 5000);
+                }
+            }">
+                <div class="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl h-[450px] md:h-[700px]">
+                    <template x-for="(slide, index) in slides" :key="index">
+                        <div x-show="activeSlide === index"
+                             x-transition:enter="transition ease-out duration-1000"
+                             x-transition:enter-start="opacity-0 scale-110"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-1000"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="absolute inset-0 w-full h-full">
+                            <img :src="slide" width="800" height="700" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy">
+                        </div>
+                    </template>
+
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+                    <div class="absolute bottom-10 left-10 right-10">
+                        <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl">
+                            <p class="text-white text-lg font-bold mb-2">🏔️ {{ $heroTour->title }}</p>
+                            <p class="text-gold-400 text-sm font-black uppercase tracking-widest">The Ultimate Experience</p>
+                        </div>
+                    </div>
+                </div>
+                {{-- Decorative badge --}}
+                <div class="absolute -top-6 -right-6 w-32 h-32 bg-gold-500 rounded-full flex flex-col items-center justify-center shadow-2xl z-20 transform rotate-12">
+                    <span class="text-safari-dark text-[10px] font-black uppercase">From</span>
+                    <span class="text-safari-dark text-xl font-black">${{ number_format($heroTour->price) }}</span>
+                    <span class="text-safari-dark text-[8px] font-bold uppercase">Per Person</span>
+                </div>
+            </div>
+
+            {{-- Info Side --}}
+            <div class="lg:w-1/2 space-y-8">
+                <div>
+                    <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Signature Expedition</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-tight text-center md:text-left">
+                        {{ \App\Helpers\AssetHelper::asString($heroTour->title) }}
+                    </h2>
+                    <div class="w-20 h-1.5 bg-[#e64a19] rounded-full mt-6 mx-auto md:mx-0"></div>
+                </div>
+
+                <div class="flex justify-center md:justify-start">
+                    <a href="{{ route('booking.create', $heroTour->slug) }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl hover:scale-105 transition-all text-center uppercase tracking-widest">
+                        BOOK THIS TOUR
+                    </a>
+                </div>
+
+                <p class="text-gray-600 text-lg leading-relaxed font-light">
+                    {{ $heroTour->short_description }}
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
+                    @php
+                        $inclusions = is_array($heroTour->inclusions) ? $heroTour->inclusions : [
+                            'Professional Guides & Porters', 'Airport Transfers Included',
+                            'Hotel Stay Before/After', 'All Park Fees & Permits',
+                            'Quality Camping Gear', 'Fresh Meals & Safe Water',
+                            'Emergency Oxygen & Safety', 'Summit Certificate'
+                        ];
+                    @endphp
+                    @foreach($inclusions as $inc)
+                    <div class="flex items-start gap-3 group">
+                        <div class="w-6 h-6 shrink-0 rounded-full bg-gold-500/10 flex items-center justify-center mt-0.5 group-hover:bg-gold-500 transition-colors duration-300">
+                            <svg class="w-3 h-3 text-gold-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <span class="text-gray-700 text-sm font-black uppercase tracking-tight leading-tight">{{ is_array($inc) ? implode(', ', $inc) : $inc }}</span>
+                    </div>
+                    @endforeach
+                </div>
+
+                <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100" x-data="{ openItinerary: false }">
+                    <div class="flex items-center justify-between mb-10">
+                        <h2 class="font-display text-3xl font-black text-[#e64a19] uppercase tracking-tight">Route summary</h2>
+                        <button @click="openItinerary = !openItinerary" class="text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 transition-colors flex items-center gap-1.5">
+                            <span x-text="openItinerary ? 'Hide Details' : 'View Day-by-Day'"></span>
+                            <svg class="w-3 h-3 transition-transform duration-300" :class="openItinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        @if($heroTour->itinerary && is_array($heroTour->itinerary))
+                            @foreach($heroTour->itinerary as $index => $day)
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-start gap-4">
+                                    <span class="text-[#e64a19] font-black text-2xl leading-none">→</span>
+                                    <h5 class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
+                                        <span class="text-gray-400">Day {{ is_numeric($index) ? $index : $loop->iteration }}:</span> {{ is_array($day['title'] ?? '') ? implode(', ', $day['title']) : ($day['title'] ?? '') }}
+                                    </h5>
+                                </div>
+                                <div x-show="openItinerary" x-collapse>
+                                    <div class="pl-9 space-y-4">
+                                        <p class="text-gray-600 text-sm md:text-base leading-relaxed font-medium">
+                                            {{ is_array($day['description'] ?? '') ? implode("\n", $day['description']) : ($day['description'] ?? '') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                            <div class="flex items-start gap-4">
+                                <span class="text-[#e64a19] font-black text-2xl">→</span>
+                                <p class="text-gray-800 font-bold text-lg leading-tight">
+                                    <span class="text-gray-900">Itinerary for {{ $heroTour->duration_text }}:</span>
+                                    {{ $heroTour->short_description }}
+                                </p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="pt-6 flex flex-col sm:flex-row gap-4">
+                    <a href="{{ route('tours.index') }}" class="flex-1 px-10 py-5 rounded-full border-2 border-safari-dark text-safari-dark text-sm font-black uppercase tracking-widest hover:bg-safari-dark hover:text-white transition-all text-center">
+                        EXPLORE ALL TOURS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ========== MOUNT KILIMANJARO SECTION (STATIC) ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden border-b border-white/5">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="1080" class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy">
@@ -238,7 +379,7 @@
                 @php $routes = [['n' => 'Machame', 'a' => 'Whiskey Route'], ['n' => 'Marangu', 'a' => 'Coca-Cola Route'], ['n' => 'Lemosho', 'a' => 'Scenic Route'], ['n' => 'Rongai', 'a' => 'Northern Route']]; @endphp
                 @foreach($routes as $r)
                 <div class="flex items-center gap-5 group cursor-default">
-                    <span class="text-[#e64a19] font-black text-2xl leading-none">→</span>
+                    <span class="text-[#e64a19] font-black text-2xl leading-none transform transition-transform group-hover:translate-x-2">→</span>
                     <div class="flex flex-col">
                         <span class="text-white font-bold text-xl leading-tight">{{ $r['n'] }}</span>
                         <span class="text-gold-500/60 text-[10px] font-black uppercase tracking-widest mt-1">{{ $r['a'] }}</span>
@@ -383,7 +524,7 @@
         <div class="relative group">
             <div id="blog-slider" class="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($latestPosts as $post)
-                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
+                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                     <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col group">
                         <div class="relative h-64 overflow-hidden">
                             <img src="{{ $post->featured_image_url }}" width="400" height="224" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
@@ -409,7 +550,7 @@
         <div class="text-center mt-12">
             <a href="{{ route('blog.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-4">
                 View All Stories
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                <svg class="w-5 h-5 fill-none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
         </div>
     </div>
