@@ -55,12 +55,12 @@
                             <source src="{{ $slide->image_url }}" type="video/mp4">
                         </video>
                     @else
-                        <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="{{ $slide->title }}">
+                        <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="{{ $slide->title }}" loading="eager" fetchpriority="high">
                     @endif
                 </div>
             @endforeach
         @else
-            <img src="{{ asset('images/banners/hero_fallback.webp') }}" width="1920" height="1080" class="w-full h-full object-cover opacity-60" alt="Tanzania Safari">
+            <img src="{{ asset('images/banners/hero_fallback.webp') }}" width="1920" height="1080" class="w-full h-full object-cover opacity-60" alt="Tanzania Safari" loading="eager" fetchpriority="high">
         @endif
     </div>
 
@@ -82,13 +82,13 @@
                                 </span>
                             @endif
                             @if($slide->title)
-                                <h1 class="font-display text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
+                                <h1 class="font-display text-3xl sm:text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
                                     {{ $slide->title }}
                                 </h1>
                             @endif
                         </div>
 
-                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 relative z-50">
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 relative z-50 pt-4 md:pt-0">
                             @if($slide->cta_text)
                                 <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl transition-all hover:scale-105 active:scale-95 min-w-[220px]">
                                     {{ $slide->cta_text }}
@@ -243,7 +243,7 @@
                              x-transition:leave-start="opacity-100"
                              x-transition:leave-end="opacity-0"
                              class="absolute inset-0 w-full h-full">
-                            <img :src="slide" width="800" height="700" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy">
+                            <img :src="slide" width="800" height="700" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy" decoding="async">
                         </div>
                     </template>
 
@@ -356,7 +356,7 @@
 {{-- ========== MOUNT KILIMANJARO SECTION (STATIC) ========== --}}
 <section class="py-24 bg-safari-dark relative overflow-hidden border-b border-white/5">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="1080" class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy">
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="800" class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy" decoding="async">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
     </div>
     <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
@@ -411,9 +411,9 @@
         <div class="relative group">
             <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @forelse($featuredTours as $tour)
-                    <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                    <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
-                            <div class="relative h-56"><img src="{{ $tour->featured_image_url }}" width="400" height="224" alt="{{ \App\Helpers\AssetHelper::asString($tour->title) }}" class="w-full h-full object-cover" loading="lazy"></div>
+                            <div class="relative h-56"><img src="{{ $tour->featured_image_url }}" width="600" height="400" alt="{{ \App\Helpers\AssetHelper::asString($tour->title) }}" class="w-full h-full object-cover" loading="lazy" decoding="async"></div>
                             <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
                                 <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold"><span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span></div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-1"><a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a></h3>
@@ -475,7 +475,7 @@
             ];
             @endphp
             @foreach($customTestimonials as $t)
-            <div class="snap-center shrink-0 w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
+            <div class="snap-center shrink-0 w-[85vw] md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
                 <div class="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col relative group">
                     {{-- Decorative Quote Mark --}}
                     <div class="absolute top-6 right-8 text-gold-100 group-hover:text-gold-200 transition-colors duration-500">
@@ -524,10 +524,10 @@
         <div class="relative group">
             <div id="blog-slider" class="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($latestPosts as $post)
-                <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                     <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col group">
                         <div class="relative h-64 overflow-hidden">
-                            <img src="{{ $post->featured_image_url }}" width="400" height="224" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
+                            <img src="{{ $post->featured_image_url }}" width="600" height="400" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" loading="lazy" decoding="async">
                             <div class="absolute top-6 left-6 bg-gold-500 text-safari-dark text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">New Post</div>
                         </div>
                         <div class="p-10 flex flex-col flex-grow">
@@ -559,7 +559,7 @@
 
 {{-- ========== HOME FOOTER BANNER ========== --}}
 <section class="relative h-[60vh] min-h-[500px] flex items-center overflow-hidden bg-safari-dark">
-    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}" width="1920" height="800" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa">
+    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}" width="1920" height="600" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa" loading="lazy" decoding="async">
     <div class="absolute inset-0 bg-gradient-to-t from-safari-dark via-transparent to-transparent"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
         <h2 class="font-display text-5xl md:text-8xl text-white font-black mb-10 leading-tight drop-shadow-2xl">Start Your <span class="text-gold-400 italic">Legacy</span> Today</h2>

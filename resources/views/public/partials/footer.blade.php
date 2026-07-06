@@ -20,7 +20,7 @@
             <div class="space-y-6">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 group">
                     @if(\App\Models\Setting::get('footer_logo') || \App\Models\Setting::get('logo'))
-                        <img src="{{ asset('storage/' . (\App\Models\Setting::get('footer_logo') ?: \App\Models\Setting::get('logo'))) }}" alt="{{ \App\Helpers\AssetHelper::asString($siteName) }}" class="h-12 w-auto object-contain">
+                        <img src="{{ asset('storage/' . (\App\Models\Setting::get('footer_logo') ?: \App\Models\Setting::get('logo'))) }}" width="180" height="48" alt="{{ \App\Helpers\AssetHelper::asString($siteName) }}" class="h-12 w-auto object-contain" loading="lazy">
                     @else
                         <div class="w-10 h-10 bg-gradient-to-br from-gold-400 to-gold-600 rounded-lg flex items-center justify-center shadow-lg transition-all">
                             <svg class="w-6 h-6 text-safari-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9-9c1.657 0 3 1.343 3 3s-1.343 3-3 3m0-6H7m10 0v6m0 6H7m10 0v-6M3 12a9 9 0 019-9m-9 9a9 9 0 009 9m-9-9c1.657 0-3 1.343-3 3s1.343 3 3 3m0-6h10"></path></svg>
@@ -159,19 +159,19 @@
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-4 md:gap-8">
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Visa_2021.svg" alt="Visa" class="h-4 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Visa_2021.svg" width="60" height="20" alt="Visa" class="h-4 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-6 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" width="60" height="30" alt="Mastercard" class="h-6 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="h-4 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" width="60" height="20" alt="PayPal" class="h-4 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" class="h-5 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" width="60" height="25" alt="Apple Pay" class="h-5 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                     <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white hover:scale-110 transition-all duration-500 group">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" class="h-5 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" width="60" height="25" alt="Amex" class="h-5 grayscale group-hover:grayscale-0 transition-all" loading="lazy">
                     </div>
                 </div>
             </div>
