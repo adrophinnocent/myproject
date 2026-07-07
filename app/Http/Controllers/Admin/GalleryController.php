@@ -43,7 +43,7 @@ class GalleryController extends Controller
 
         $album->save();
 
-        return redirect()->route('admin.gallery.edit', $album)->with('success', 'Album created!');
+        return redirect()->route('admin.gallery.index')->with('success', 'Album created successfully! You can now add images to it.');
     }
 
     public function edit(GalleryAlbum $album)
