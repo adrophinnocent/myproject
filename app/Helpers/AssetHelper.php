@@ -69,17 +69,27 @@ class AssetHelper
     public static function getLogoUrl($type = 'logo')
     {
         try {
-            $extensions = ['webp', 'png', 'jpg', 'jpeg', 'svg', 'PNG', 'JPG'];
+            // 1. Check Admin Setting
+            $settingValue = \App\Models\Setting::get($type);
+            if ($settingValue && is_string($settingValue)) {
+                return asset('storage/' . $settingValue);
+            }
+
+            // 2. Check public/uploads (New Simple System)
+            $uploadPaths = ["uploads/{$type}.png", "uploads/{$type}.jpg", "uploads/logo/{$type}.png"];
+            foreach ($uploadPaths as $path) {
+                if (file_exists(public_path($path))) {
+                    return asset($path);
+                }
+            }
+
+            // 3. Check public/images/logos
+            $extensions = ['webp', 'png', 'jpg', 'jpeg', 'svg'];
             foreach ($extensions as $ext) {
                 $localPath = "images/logos/{$type}.{$ext}";
                 if (file_exists(public_path($localPath))) {
                     return asset($localPath);
                 }
-            }
-
-            $settingValue = \App\Models\Setting::get($type);
-            if ($settingValue && is_string($settingValue)) {
-                return asset('storage/' . $settingValue);
             }
         } catch (\Throwable $e) {
             Log::error("AssetHelper Logo Error: " . $e->getMessage());
@@ -100,7 +110,12 @@ class AssetHelper
                 return asset('storage/' . $settingValue);
             }
 
-            // 2. Fallback to local files
+            // 2. Check public/uploads
+            if (file_exists(public_path('uploads/favicon.ico'))) {
+                return asset('uploads/favicon.ico');
+            }
+
+            // 3. Fallback to local files
             $paths = ['favicon.ico', 'images/logos/favicon.ico', 'images/favicon.ico'];
             foreach ($paths as $path) {
                 if (file_exists(public_path($path)) && filesize(public_path($path)) > 0) {
