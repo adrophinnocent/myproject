@@ -390,22 +390,26 @@
                 <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8 relative z-10">
                     {{-- USP 1 --}}
                     <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Expert Local Guides</h4>
+                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Expert Local Guides</h4>
+                        <p class="text-gray-500 text-[11px] leading-snug font-light">Deep local knowledge and unmatched wildlife tracking skills.</p>
                     </div>
 
                     {{-- USP 2 --}}
                     <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Tailor-Made Safaris</h4>
+                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Tailor-Made Safaris</h4>
+                        <p class="text-gray-500 text-[11px] leading-snug font-light">Unique itineraries designed around your dreams and budget.</p>
                     </div>
 
                     {{-- USP 3 --}}
                     <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Direct Local Pricing</h4>
+                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Direct Local Pricing</h4>
+                        <p class="text-gray-500 text-[11px] leading-snug font-light">Best value guaranteed by booking directly with the source.</p>
                     </div>
 
                     {{-- USP 4 --}}
                     <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">24/7 Ground Support</h4>
+                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">24/7 Ground Support</h4>
+                        <p class="text-gray-500 text-[11px] leading-snug font-light">On-call assistance from arrival to departure for peace of mind.</p>
                     </div>
                 </div>
             </div>
