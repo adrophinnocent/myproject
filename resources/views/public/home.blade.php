@@ -532,17 +532,17 @@
             {{-- TripAdvisor --}}
             <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
                 <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <img src="https://www.vectorlogo.zone/logos/tripadvisor/tripadvisor-ar21.svg" class="h-10 w-auto" alt="TripAdvisor">
+                    <svg viewBox="0 0 24 24" class="h-10 w-10 text-[#34E0A1]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0zm0 21.6c-5.302 0-9.6-4.298-9.6-9.6S6.698 2.4 12 2.4s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6zm4.183-14.4c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm-8.366 0c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm4.183 9.6c-1.988 0-3.6-1.612-3.6-3.6h7.2c0 1.988-1.612 3.6-3.6 3.6z"/></svg>
                 </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Excellence Award</span>
+                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">TripAdvisor Excellence</span>
             </div>
 
             {{-- Google --}}
             <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
                 <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <img src="https://www.vectorlogo.zone/logos/google/google-ar21.svg" class="h-10 w-auto" alt="Google Reviews">
+                    <svg viewBox="0 0 24 24" class="h-10 w-10" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c1.61-1.48 2.54-3.67 2.54-6.09z" fill="#4285F4"/><path d="M12 23c3.11 0 5.71-1.03 7.62-2.79l-3.57-2.77c-1.01.68-2.3 1.08-4.05 1.08-3.11 0-5.75-2.1-6.7-4.91H1.05v2.85C2.94 19.46 7.18 23 12 23z" fill="#34A853"/><path d="M5.3 13.61c-.24-.68-.37-1.42-.37-2.18s.13-1.5-.37-2.18V6.4H1.05c-.68 1.4-1.05 2.96-1.05 4.6s.37 3.2 1.05 4.6l4.25-3.39z" fill="#FBBC05"/><path d="M12 4.75c1.69 0 3.2.58 4.39 1.71l3.3-3.3C17.7 1.19 15.11 0 12 0 7.18 0 2.94 3.54 1.05 8.12l4.25 3.39C6.25 8.65 8.89 6.55 12 6.55z" fill="#EA4335"/></svg>
                 </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Verified Reviews</span>
+                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Verified Google Reviews</span>
             </div>
 
             {{-- Licensed --}}
