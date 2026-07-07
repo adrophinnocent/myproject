@@ -330,24 +330,6 @@
             <h2 class="font-display text-4xl md:text-8xl font-black text-white leading-tight mb-8">
                 Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span>: The Ultimate Bucket-List Trek
             </h2>
-            <p class="text-gray-300 text-lg md:text-2xl max-w-5xl mx-auto font-light leading-relaxed">
-                Towering at an awe-inspiring <span class="text-white font-bold">5,895 meters</span> (19,341 feet), Mount Kilimanjaro is a beacon for adventurers worldwide. As one of the legendary Seven Summits, it demands respect, preparation, and passion. But the reward is entirely unmatched.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-            <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
-                <h3 class="text-white font-bold text-xl mb-3">The Route</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">Journey from equatorial heat to arctic cold, witnessing changing landscapes that feel like traveling from the equator to the North Pole in just a few days.</p>
-            </div>
-            <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
-                <h3 class="text-white font-bold text-xl mb-3">The Experience</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">Walk alongside expert local guides, bond with a team of fellow adventurers, and sleep beneath a canopy of stars untouched by city lights.</p>
-            </div>
-            <div class="bg-white/5 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:border-gold-500/50 transition-all group">
-                <h3 class="text-white font-bold text-xl mb-3">The Summit</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">Test your grit during the final, challenging night-climb, and reach the top just as the African sun breaks over the horizon.</p>
-            </div>
         </div>
 
         <div class="max-w-4xl mx-auto text-center">
@@ -400,47 +382,30 @@
             <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                 {{-- Title Part --}}
                 <div class="lg:w-1/3 text-center lg:text-left relative z-10">
-                    <span class="text-gold-600 text-[10px] font-black uppercase tracking-[0.5em] mb-3 block">The Twina Advantage</span>
                     <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-[1.1]">Why Journey <br class="hidden lg:block"> With Us?</h2>
                     <div class="w-16 h-1.5 bg-gold-500 mt-6 mx-auto lg:mx-0 rounded-full"></div>
                 </div>
 
                 {{-- Features Part --}}
-                <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 relative z-10">
+                <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8 relative z-10">
                     {{-- USP 1 --}}
-                    <div class="flex items-start gap-5 group/item">
-                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">🛡️</div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">Expert Local Guides</h4>
-                            <p class="text-gray-500 text-sm leading-relaxed font-light">Born and raised in Tanzania, offering deep cultural insights and tracking skills.</p>
-                        </div>
+                    <div class="group/item">
+                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Expert Local Guides</h4>
                     </div>
 
                     {{-- USP 2 --}}
-                    <div class="flex items-start gap-5 group/item">
-                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">✨</div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">Tailor-Made Safaris</h4>
-                            <p class="text-gray-500 text-sm leading-relaxed font-light">Every itinerary is custom-crafted to match your rhythm, budget, and dreams.</p>
-                        </div>
+                    <div class="group/item">
+                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Tailor-Made Safaris</h4>
                     </div>
 
                     {{-- USP 3 --}}
-                    <div class="flex items-start gap-5 group/item">
-                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">💎</div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">Direct Local Pricing</h4>
-                            <p class="text-gray-500 text-sm leading-relaxed font-light">No middlemen, ensuring the best value while supporting the local economy.</p>
-                        </div>
+                    <div class="group/item">
+                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Direct Local Pricing</h4>
                     </div>
 
                     {{-- USP 4 --}}
-                    <div class="flex items-start gap-5 group/item">
-                        <div class="w-14 h-14 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl group-hover/item:bg-gold-500 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-500 border border-gray-100">📞</div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg mb-1 transition-colors group-hover/item:text-gold-600">24/7 Ground Support</h4>
-                            <p class="text-gray-500 text-sm leading-relaxed font-light">Our team is on standby 24/7 to ensure your total safety and comfort.</p>
-                        </div>
+                    <div class="group/item">
+                        <h4 class="font-bold text-gray-900 text-base mb-1 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">24/7 Ground Support</h4>
                     </div>
                 </div>
             </div>
