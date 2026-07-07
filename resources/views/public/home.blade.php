@@ -169,42 +169,42 @@
                 </form>
             </div>
         </div>
-        <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 px-2">
-            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
-                <div class="text-gold-400 transition-transform group-hover:scale-110">
-                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-                </div>
-                <div class="text-center md:text-left">
-                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Best Rated</div>
-                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">TripAdvisor 2024</div>
-                </div>
+    </div>
+</section>
+
+{{-- ========== 1.5 IMPACT IN NUMBERS (STATISTICS - WHITE BG) ========== --}}
+<section class="py-12 bg-white border-b border-gray-100 relative overflow-hidden" x-data="{
+    startCount(target, duration, callback) {
+        let start = 0;
+        const increment = target / (duration / 16);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= target) {
+                callback(target);
+                clearInterval(timer);
+            } else {
+                callback(Math.floor(start));
+            }
+        }, 16);
+    }
+}">
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(500, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Happy Travelers</p>
             </div>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
-                <div class="text-gold-400 transition-transform group-hover:scale-110">
-                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                </div>
-                <div class="text-center md:text-left">
-                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest whitespace-nowrap">Safe & Secure</div>
-                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Certified Operator</div>
-                </div>
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(150, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Safari Packages</p>
             </div>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 md:border-r border-white/10 group">
-                <div class="text-gold-400 transition-transform group-hover:scale-110">
-                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.347 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div class="text-center md:text-left">
-                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Affordable</div>
-                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Direct Pricing</div>
-                </div>
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(10, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Years Experience</p>
             </div>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 group">
-                <div class="text-gold-400 transition-transform group-hover:scale-110">
-                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                </div>
-                <div class="text-center md:text-left">
-                    <div class="text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest whitespace-nowrap">24/7 Support</div>
-                    <div class="text-gray-400 text-[8px] md:text-[9px] font-bold">Expert Assistance</div>
-                </div>
+            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(100, 2000, (val) => current = val) }">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>%</div>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Safety Record</p>
             </div>
         </div>
     </div>
@@ -413,48 +413,6 @@
     </div>
 </section>
 
-{{-- ========== 3.7 OUR IMPACT IN NUMBERS (STATISTICS) ========== --}}
-<section class="py-12 bg-safari-dark border-y border-white/5 relative overflow-hidden" x-data="{
-    startCount(target, duration, callback) {
-        let start = 0;
-        const increment = target / (duration / 16);
-        const timer = setInterval(() => {
-            start += increment;
-            if (start >= target) {
-                callback(target);
-                clearInterval(timer);
-            } else {
-                callback(Math.floor(start));
-            }
-        }, 16);
-    }
-}">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 left-0 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 w-64 h-64 bg-gold-500/20 rounded-full blur-3xl"></div>
-    </div>
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(500, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Happy Travelers</p>
-            </div>
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(150, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Safari Packages</p>
-            </div>
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(10, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Years Experience</p>
-            </div>
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(100, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-500 mb-2 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>%</div>
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-[0.3em]">Safety Record</p>
-            </div>
-        </div>
-    </div>
-</section>
-
 {{-- ========== 4. FEATURED TOURS ========== --}}
 <section class="py-24 bg-white" x-data="{
     scrollBy(distance) {
@@ -574,9 +532,9 @@
             {{-- TripAdvisor --}}
             <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
                 <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Tripadvisor_Logo.svg" class="h-10 w-auto" alt="TripAdvisor">
+                    <img src="https://www.vectorlogo.zone/logos/tripadvisor/tripadvisor-ar21.svg" class="h-10 w-auto" alt="TripAdvisor">
                 </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">TripAdvisor Excellence</span>
+                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Excellence Award</span>
             </div>
 
             {{-- Google --}}
@@ -584,7 +542,7 @@
                 <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
                     <img src="https://www.vectorlogo.zone/logos/google/google-ar21.svg" class="h-10 w-auto" alt="Google Reviews">
                 </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Verified Google Business</span>
+                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Verified Reviews</span>
             </div>
 
             {{-- Licensed --}}
