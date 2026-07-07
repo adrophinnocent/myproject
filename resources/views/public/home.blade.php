@@ -573,18 +573,16 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {{-- TripAdvisor --}}
             <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
-                <div class="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <svg viewBox="0 0 24 24" class="w-10 h-10 text-[#34E0A1]" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14H15v-1h1.5v1zm-3-2H12v-1h1.5v1zm0-2H12V9h1.5v1zm3 0H15V9h1.5v1zM9 16H7.5v-1H9v1zm0-2H7.5v-1H9v1zm0-2H7.5V9H9v1zm3 4h-1.5v-1h1.5v1z"/></svg>
+                <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Tripadvisor_Logo.svg" class="h-10 w-auto" alt="TripAdvisor">
                 </div>
                 <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">TripAdvisor Excellence</span>
             </div>
 
             {{-- Google --}}
             <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
-                <div class="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <svg viewBox="0 0 24 24" class="w-9 h-9" fill="currentColor">
-                        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.08 4.44-1.12 1.12-2.8 2.32-5.76 2.32-4.68 0-8.24-3.8-8.24-8.48s3.56-8.48 8.24-8.48c2.52 0 4.24 1 5.56 2.24l2.32-2.32C18.48 2.08 15.8 0 12.48 0 5.48 0 0 5.48 0 12.48S5.48 24.96 12.48 24.96c3.76 0 6.6-1.24 8.84-3.6 2.32-2.32 3.04-5.56 3.04-8.12 0-.76-.08-1.52-.2-2.32h-11.68z" fill="#4285F4"/>
-                    </svg>
+                <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <img src="https://www.vectorlogo.zone/logos/google/google-ar21.svg" class="h-10 w-auto" alt="Google Reviews">
                 </div>
                 <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Verified Google Business</span>
             </div>

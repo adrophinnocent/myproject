@@ -48,13 +48,13 @@
             <span class="text-gray-600">|</span>
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-[#34E0A1]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14H15v-1h1.5v1zm-3-2H12v-1h1.5v1zm0-2H12V9h1.5v1zm3 0H15V9h1.5v1zM9 16H7.5v-1H9v1zm0-2H7.5v-1H9v1zm0-2H7.5V9H9v1zm3 4h-1.5v-1h1.5v1z"/></svg>
-                    <span class="text-gray-500"><span class="text-white font-bold">4.9/5</span> TripAdvisor</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Tripadvisor_Logo.svg" class="h-4 w-auto" alt="TripAdvisor">
+                    <span class="text-gray-500"><span class="text-white font-bold">4.9/5</span></span>
                 </div>
                 <span class="text-gray-700">·</span>
                 <div class="flex items-center gap-1.5">
-                    <svg class="w-3 h-3 text-[#4285F4]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.08 4.44-1.12 1.12-2.8 2.32-5.76 2.32-4.68 0-8.24-3.8-8.24-8.48s3.56-8.48 8.24-8.48c2.52 0 4.24 1 5.56 2.24l2.32-2.32C18.48 2.08 15.8 0 12.48 0 5.48 0 0 5.48 0 12.48S5.48 24.96 12.48 24.96c3.76 0 6.6-1.24 8.84-3.6 2.32-2.32 3.04-5.56 3.04-8.12 0-.76-.08-1.52-.2-2.32h-11.68z"/></svg>
-                    <span class="text-gray-500"><span class="text-white font-bold">5.0/5</span> Google Reviews</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_\"Reviews\"_logo.svg" onerror="this.src='https://www.vectorlogo.zone/logos/google/google-ar21.svg'" class="h-4 w-auto" alt="Google Reviews">
+                    <span class="text-gray-500"><span class="text-white font-bold">5.0/5</span></span>
                 </div>
             </div>
         </div>
@@ -96,13 +96,13 @@
         {{-- Mobile Rating Strip (Visible only on small screens) --}}
         <div class="lg:hidden flex items-center justify-center gap-4 py-2 border-b border-white/5 bg-black/20 backdrop-blur-sm -mx-4 mb-1">
             <div class="flex items-center gap-1">
-                <svg class="w-3 h-3 text-[#34E0A1]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14H15v-1h1.5v1zm-3-2H12v-1h1.5v1zm0-2H12V9h1.5v1zm3 0H15V9h1.5v1zM9 16H7.5v-1H9v1zm0-2H7.5v-1H9v1zm0-2H7.5V9H9v1zm3 4h-1.5v-1h1.5v1z"/></svg>
-                <span class="text-[10px] text-gray-400"><span class="text-white font-bold">4.9/5</span> TripAdvisor</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Tripadvisor_Logo.svg" class="h-3 w-auto" alt="TripAdvisor">
+                <span class="text-[10px] text-gray-400"><span class="text-white font-bold">4.9/5</span></span>
             </div>
             <span class="text-gray-700">·</span>
             <div class="flex items-center gap-1">
-                <svg class="w-2.5 h-2.5 text-[#4285F4]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.08 4.44-1.12 1.12-2.8 2.32-5.76 2.32-4.68 0-8.24-3.8-8.24-8.48s3.56-8.48 8.24-8.48c2.52 0 4.24 1 5.56 2.24l2.32-2.32C18.48 2.08 15.8 0 12.48 0 5.48 0 0 5.48 0 12.48S5.48 24.96 12.48 24.96c3.76 0 6.6-1.24 8.84-3.6 2.32-2.32 3.04-5.56 3.04-8.12 0-.76-.08-1.52-.2-2.32h-11.68z"/></svg>
-                <span class="text-[10px] text-gray-400"><span class="text-white font-bold">5.0/5</span> Google</span>
+                <img src="https://www.vectorlogo.zone/logos/google/google-ar21.svg" class="h-3 w-auto" alt="Google">
+                <span class="text-[10px] text-gray-400"><span class="text-white font-bold">5.0/5</span></span>
             </div>
         </div>
 
