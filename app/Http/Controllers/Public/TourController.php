@@ -119,8 +119,22 @@ class TourController extends Controller
         return view('public.tours.index', compact('tours', 'categories', 'destinations'));
     }
 
-    public function show(Tour $tour)
+    public function show($type, $slug = null)
     {
+        // Robust handling: If only one parameter is passed, it's the slug
+        if ($slug === null) {
+            $slug = $type;
+            // Try to find if it's a safari first, then tour
+            $tour = \App\Models\Safari::where('slug', $slug)->first()
+                    ?? Tour::where('slug', $slug)->firstOrFail();
+        } else {
+            if ($type === 'safari') {
+                $tour = \App\Models\Safari::where('slug', $slug)->firstOrFail();
+            } else {
+                $tour = Tour::where('slug', $slug)->firstOrFail();
+            }
+        }
+
         $tour->load(['category', 'destination', 'images', 'translations', 'reviews']);
 
         $relatedTours = Tour::where('is_published', true)

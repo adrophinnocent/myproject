@@ -12,7 +12,7 @@ class CampaignController extends Controller
 {
     public function show(Request $request, $slug)
     {
-        $campaign = Campaign::where('slug', $slug)->firstOrFail();
+        $campaign = Campaign::where('slug', $slug)->with(['tour.images', 'tour.category'])->firstOrFail();
 
         // Fetch related tours from the actual tours table
         $relatedTours = \App\Models\Tour::published()

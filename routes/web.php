@@ -31,8 +31,8 @@ Route::get('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingContro
 Route::post('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'store'])->name('booking.store');
 Route::get('/booking/success/{reference}', [App\Http\Controllers\Public\BookingController::class, 'success'])->name('booking.success');
 
-// Dynamic Tour Show Route
-Route::get('/tours/{tour:slug}', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
+// Dynamic Tour Show Route (Robust version)
+Route::get('/tours/{type}/{slug?}', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
 
 // Tour Inquiries
 Route::post('/tours/{tour:id}/inquiry', [App\Http\Controllers\Public\InquiryController::class, 'store'])->name('tours.inquiry');
