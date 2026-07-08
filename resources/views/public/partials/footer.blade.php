@@ -149,58 +149,6 @@
 
         </div>
 
-        <!-- Payment Methods -->
-        <div class="mt-16 pt-10 border-t border-white/5">
-            <div class="max-w-xl mx-auto">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="h-px flex-1 bg-white/10"></div>
-                    <span class="text-gray-500 text-[10px] font-black uppercase tracking-[0.4em] whitespace-nowrap">Secured Payments</span>
-                    <div class="h-px flex-1 bg-white/10"></div>
-                </div>
-                <div class="flex flex-wrap items-center justify-center gap-4 md:gap-8">
-                    {{-- Visa --}}
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white/10 hover:scale-110 transition-all duration-500 group">
-                        <svg class="h-5 w-auto" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.825 32.55H23.5125L26.4375 15.45H21.75L18.825 32.55ZM40.0875 15.8625C39.2625 15.5625 37.9125 15.2625 36.3 15.2625C31.575 15.2625 28.2 17.775 28.1625 21.375C28.125 24.0375 30.525 25.5375 32.325 26.4375C34.2 27.3375 34.8 27.9 34.7625 28.725C34.7625 29.9625 33.3 30.525 31.875 30.525C29.625 30.525 28.3125 29.925 27.2625 29.4375L26.625 33.7875C27.825 34.35 29.85 34.8 31.9875 34.8375C37.05 34.8375 40.3125 32.325 40.3875 28.425C40.425 26.2125 39.1125 24.6375 36.075 23.175C34.2375 22.3125 33.15 21.7125 33.15 20.8125C33.15 20.025 34.0125 19.1625 35.8125 19.1625C37.275 19.125 38.475 19.5 39.2625 19.9125L39.75 15.8625H40.0875ZM47.25 15.45H43.65C42.4125 15.45 41.625 16.125 41.2125 17.25L35.25 32.55H40.2375L41.25 29.85H47.25L47.775 32.55H52.5L48.6 15.45H47.25ZM42.525 26.175L44.8875 19.725L46.2 26.175H42.525ZM15.0375 15.45L10.0875 27.15L9.4875 24.1125C8.3625 19.3875 5.1 16.125 1.05 15.45L0.9 15.4125V32.55H5.85L5.8875 19.2375L13.1625 32.55H18.45L26.0625 15.45H15.0375Z" fill="#2563EB"/>
-                            <path d="M10.125 27.1125L5.85 19.2L5.8125 32.55H10.125V27.1125Z" fill="#F59E0B"/>
-                        </svg>
-                    </div>
-                    {{-- Mastercard --}}
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white/10 hover:scale-110 transition-all duration-500 group">
-                        <svg class="h-6 w-auto" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="7" cy="9" r="7" fill="#EB001B"/>
-                            <circle cx="17" cy="9" r="7" fill="#F79E1B"/>
-                            <path d="M12 1.95605C10.1172 3.56836 8.92871 5.96191 8.92871 8.64355C8.92871 11.3252 10.1172 13.7188 12 15.3311C13.8828 13.7188 15.0713 11.3252 15.0713 8.64355C15.0713 5.96191 13.8828 3.56836 12 1.95605Z" fill="#FF5F00"/>
-                        </svg>
-                    </div>
-                    {{-- PayPal --}}
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white/10 hover:scale-110 transition-all duration-500 group">
-                        <svg class="h-5 w-auto" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19.921 7.214C19.643 3.57 17.387 1.488 13.435 1.488H4.664C3.89 1.488 3.238 2.051 3.125 2.809L0.016 23.149C-0.05 23.585 0.286 23.985 0.727 23.985H5.412L6.643 15.93C6.755 15.172 7.406 14.61 8.18 14.61H10.127C15.158 14.61 18.064 12.148 19.043 7.644C19.055 7.591 19.066 7.538 19.077 7.485C19.387 7.394 19.667 7.303 19.921 7.214Z" fill="#253B80"/>
-                            <path d="M23.237 8.026C22.618 13.226 19.123 16.038 14.092 16.038H10.669L9.438 24.094C9.325 24.851 8.673 25.414 7.899 25.414H3.454L2.342 26.685C2.127 26.814 1.956 27.027 1.907 27.288L1.758 28.261C1.69 28.697 2.028 29.097 2.469 29.097H6.945C7.72 29.097 8.371 28.535 8.484 27.777L9.845 20.354L10.231 17.433C10.344 16.675 10.995 16.113 11.769 16.113H13.716C18.747 16.113 22.062 13.652 23.041 9.148C23.14 8.694 23.206 8.307 23.237 8.026Z" fill="#179BD7"/>
-                        </svg>
-                    </div>
-                    {{-- Apple Pay --}}
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white/10 hover:scale-110 transition-all duration-500 group">
-                        <svg class="h-6 w-auto" viewBox="0 0 50 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.82 7.37c-.55 0-1.55.51-2.14 1.15-1.02 1.12-1.74 2.87-1.74 4.63 0 2.86 1.94 6.7 4.23 6.7.67 0 1.25-.26 1.83-.58.55-.31 1.2-.62 1.98-.62.7 0 1.26.31 1.86.62.59.32 1.26.61 1.94.61 2.37 0 4.14-3.61 4.14-5.32-.01-.04-1.89-.78-1.91-3.04 0-1.89 1.44-2.81 1.54-2.88-1.05-1.54-2.61-1.72-3.17-1.76-.75-.05-2.07.45-2.79.45-.72 0-1.87-.45-2.77-.45V7.37zm2.46-1.56c1.23-.1 2.31-.86 2.81-2.01.1-.23.18-.5.21-.76-.02-.02-.04-.02-.06-.02-1.29 0-2.52.8-3.08 1.99-.18.39-.32.86-.32 1.34 0 .09.02.19.04.28.02 0 .04.01.06.01.12.1.23.16.34.17z" fill="white"/>
-                            <path d="M30.68 18.66h2.46v-1.3c0-1.84.99-2.74 2.89-2.74h.61v-2h-.91c-2.31 0-3.66.97-4.13 2.15h-.06l-.21-1.84h-2.18v10.15h2.46v-4.42h.07c.45.89 1.62 1.48 2.8 1.48 2.45 0 4.41-2.09 4.41-5.11 0-2.93-2.01-5.06-4.51-5.06-1.32 0-2.45.62-3.1 1.48h-.06l-.08-1.18h-2.15l.66 4.39zm3.8 2.11c-1.39 0-2.44-.99-2.44-2.46s1.05-2.43 2.44-2.43c1.39 0 2.44.99 2.44 2.43s-1.05 2.46-2.44 2.46zM46.72 12.63l-2.66 5.86h-.06l-2.65-5.86h-2.65l4.08 8.13-1.4 3.03h-2.51v1.98h1.22c1.47 0 2.45-.63 3.02-1.92l5.06-11.22h-2.45zM22.84 10.35h-2.61l-3.9 12.14h2.52l.93-3.14h3.6l.93 3.14h2.53l-4-12.14zm-.31 7.02h-2.18l1.09-3.77h.05l1.04 3.77z" fill="white"/>
-                        </svg>
-                    </div>
-                    {{-- Amex --}}
-                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl hover:bg-white/10 hover:scale-110 transition-all duration-500 group">
-                        <svg class="h-5 w-auto" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="24" height="24" rx="2" fill="#0070CE"/>
-                            <path d="M4 14.5L5.5 10L7 14.5H4ZM5.1 13.5H5.9L5.5 11.2L5.1 13.5Z" fill="white"/>
-                            <path d="M8.5 14.5V10H10L11 12.5L12 10H13.5V14.5H12.5V11.2L11.5 13.5H10.5L9.5 11.2V14.5H8.5Z" fill="white"/>
-                            <path d="M15 14.5V10H18V10.8H16V11.8H17.5V12.5H16V13.7H18V14.5H15Z" fill="white"/>
-                            <path d="M19.5 14.5L20.5 12.2L21.5 14.5H23L21.2 11.2L23 10H21.5L20.5 11.5L19.5 10H18L19.8 12.2L18 14.5H19.5Z" fill="white"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Bottom Bar -->
         <div class="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-3">
