@@ -119,12 +119,9 @@ class TourController extends Controller
         return view('public.tours.index', compact('tours', 'categories', 'destinations'));
     }
 
-    public function show(string $type, string $slug)
+    public function show(Tour $tour)
     {
-        $model = ($type === 'safari') ? \App\Models\Safari::class : Tour::class;
-        $tour = $model::where('slug', $slug)->firstOrFail();
-
-        $tour->load(['category', 'destination', 'images', 'reviews']);
+        $tour->load(['category', 'destination', 'images', 'translations', 'reviews']);
 
         $relatedTours = Tour::where('is_published', true)
             ->where('id', '!=', $tour->id)
@@ -133,8 +130,7 @@ class TourController extends Controller
                     ->orWhere('destination_id', $tour->destination_id);
             })
             ->take(4)
-            ->get()
-            ->map(function($t) { $t->item_type = 'tour'; return $t; });
+            ->get();
 
         return view('public.tours.show', compact('tour', 'relatedTours'));
     }

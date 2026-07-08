@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class Campaign extends Model
 {
     protected $fillable = [
-        'title', 'slug', 'type', 'description', 'itinerary',
+        'tour_id', 'title', 'slug', 'type', 'description', 'itinerary',
         'highlights', 'inclusions', 'exclusions',
         'price', 'currency', 'image', 'video_url', 'status',
         'tracking_id', 'meta_title', 'meta_description', 'published_at'
@@ -26,6 +26,11 @@ class Campaign extends Model
                 $model->tracking_id = (string) Str::uuid();
             }
         });
+    }
+
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
     }
 
     public function leads()

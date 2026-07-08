@@ -27,13 +27,12 @@ Route::get('/lang/{locale}', function ($locale) {
 Route::get('/tours', [App\Http\Controllers\Public\TourController::class, 'index'])->name('tours.index');
 
 // Public Booking Routes
-Route::get('/tours/{slug}/book', [App\Http\Controllers\Public\BookingController::class, 'create'])->name('booking.create');
-Route::post('/tours/{slug}/book', [App\Http\Controllers\Public\BookingController::class, 'store'])->name('booking.store');
+Route::get('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'create'])->name('booking.create');
+Route::post('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'store'])->name('booking.store');
 Route::get('/booking/success/{reference}', [App\Http\Controllers\Public\BookingController::class, 'success'])->name('booking.success');
-Route::get('/booking/download/{reference}', [App\Http\Controllers\Public\BookingController::class, 'downloadItinerary'])->name('booking.download');
 
-// Dynamic Tour Show Route (Must be after specific routes like /book)
-Route::get('/tours/{type}/{slug}.html', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
+// Dynamic Tour Show Route
+Route::get('/tours/{tour:slug}', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
 
 // Tour Inquiries
 Route::post('/tours/{tour:id}/inquiry', [App\Http\Controllers\Public\InquiryController::class, 'store'])->name('tours.inquiry');

@@ -26,30 +26,26 @@ class CampaignController extends Controller
 
     public function getTourData($id)
     {
-        $tour = \App\Models\Tour::with('category')->findOrFail($id);
+        $tour = \App\Models\Tour::with(['category', 'destination'])->findOrFail($id);
 
-        // Handle itinerary if it's an array or string
+        // Standardize Itinerary for Landing Page
         $itineraryText = '';
         if (is_array($tour->itinerary)) {
-            foreach ($tour->itinerary as $day) {
-                $title = $day['title'] ?? ($day['day'] ?? '');
-                $desc = $day['description'] ?? ($day['content'] ?? '');
-                $itineraryText .= "{$title}\n{$desc}\n\n";
+            foreach ($tour->itinerary as $index => $day) {
+                $dayTitle = $day['title'] ?? "Day " . ($index + 1);
+                $dayDesc = $day['description'] ?? '';
+                $itineraryText .= "DAY " . ($index + 1) . ": " . strtoupper($dayTitle) . "\n" . $dayDesc . "\n\n";
             }
         } else {
             $itineraryText = $tour->itinerary;
         }
 
-        // If itinerary is still empty, fallback to the long description
-        if (empty($itineraryText)) {
-            $itineraryText = strip_tags($tour->description);
-        }
-
-        // Format inclusions/exclusions/highlights
         $formatList = function($items) {
             if (empty($items)) return '';
             if (is_array($items)) {
-                return implode("\n", array_map(fn($i) => is_array($i) ? implode(', ', $i) : $i, $items));
+                return implode("\n", array_map(function($i) {
+                    return is_array($i) ? implode(', ', $i) : $i;
+                }, $items));
             }
             return (string)$items;
         };
@@ -62,13 +58,14 @@ class CampaignController extends Controller
             'inclusions' => $formatList($tour->inclusions),
             'exclusions' => $formatList($tour->exclusions),
             'price' => (float) $tour->price,
-            'category' => $tour->category?->name ?? 'Safari Tours',
+            'category' => $tour->category?->name ?? 'Luxury Safari',
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'tour_id' => 'nullable|exists:tours,id',
             'title' => 'required|string|max:255',
             'type' => 'required|string',
             'description' => 'nullable|string',
@@ -94,12 +91,15 @@ class CampaignController extends Controller
 
     public function edit(Campaign $campaign)
     {
-        return view('admin.campaigns.edit', compact('campaign'));
+        $tours = \App\Models\Tour::orderBy('title')->get();
+        $categories = \App\Models\Category::orderBy('name')->get();
+        return view('admin.campaigns.edit', compact('campaign', 'tours', 'categories'));
     }
 
     public function update(Request $request, Campaign $campaign)
     {
         $validated = $request->validate([
+            'tour_id' => 'nullable|exists:tours,id',
             'title' => 'required|string|max:255',
             'type' => 'required|string',
             'description' => 'nullable|string',

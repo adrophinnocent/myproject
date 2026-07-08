@@ -27,6 +27,7 @@
 
         <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data" id="campaign-form" class="p-8 space-y-6">
             @csrf
+            <input type="hidden" name="tour_id" id="ad_tour_id">
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -108,6 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/admin/campaigns/tour-data/${tourId}`)
             .then(response => response.json())
             .then(data => {
+                document.getElementById('ad_tour_id').value = tourId;
                 document.getElementById('ad_title').value = data.title;
                 document.getElementById('ad_description').value = data.description;
                 document.getElementById('ad_itinerary').value = data.itinerary;

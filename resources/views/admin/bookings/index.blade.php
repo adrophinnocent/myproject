@@ -47,7 +47,7 @@
                     <div class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mt-1">{{ $booking->booking_reference }}</div>
                 </td>
                 <td class="px-6 py-5">
-                    <div class="text-xs font-bold text-gray-600 line-clamp-1 max-w-[200px]">{{ $booking->bookable_item?->title ?? 'N/A' }}</div>
+                    <div class="text-xs font-bold text-gray-600 line-clamp-1 max-w-[200px]">{{ $booking->tour?->title ?? 'N/A' }}</div>
                 </td>
                 <td class="px-6 py-5 whitespace-nowrap">
                     <span class="text-xs font-black text-gray-800 tracking-tighter">{{ $booking->travel_date?->format('d M, Y') ?? 'TBD' }}</span>
@@ -63,8 +63,10 @@
                     </span>
                 </td>
                 <td class="px-6 py-5 text-right">
-                    <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <a href="{{ route('admin.bookings.show', $booking) }}" class="neo-btn px-4 py-2 text-[10px] font-black text-amber-600 uppercase tracking-widest hover:bg-white transition-all">View</a>
+                    <div class="flex justify-end gap-2">
+                        <a href="{{ route('admin.bookings.show', $booking) }}" class="inline-flex items-center px-4 py-2 bg-gold-500 text-safari-dark text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gold-600 transition-all shadow-lg shadow-gold-500/10">
+                            Manage
+                        </a>
                         <form method="POST" action="{{ route('admin.bookings.destroy', $booking) }}" class="inline-block" onsubmit="return confirm('Delete booking?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="px-4 py-2 text-[10px] font-black text-red-400 uppercase tracking-widest hover:text-red-600">Delete</button>
@@ -101,7 +103,7 @@
         <div class="bg-gray-50 rounded-2xl p-4 mb-6 space-y-2">
             <div class="flex justify-between items-center text-[10px]">
                 <span class="font-black text-gray-400 uppercase">Package:</span>
-                <span class="font-bold text-gray-700 line-clamp-1 text-right">{{ $booking->bookable_item?->title ?? 'N/A' }}</span>
+                <span class="font-bold text-gray-700 line-clamp-1 text-right">{{ $booking->tour?->title ?? 'N/A' }}</span>
             </div>
             <div class="flex justify-between items-center text-[10px]">
                 <span class="font-black text-gray-400 uppercase">Travel Date:</span>

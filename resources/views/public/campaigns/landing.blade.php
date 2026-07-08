@@ -7,9 +7,35 @@
 
 @section('content')
 <div class="bg-white min-h-screen">
-    {{-- Hero Section --}}
-    <div class="relative h-[70vh] flex items-center justify-center overflow-hidden bg-[#0a0703]">
-        <img src="{{ $campaign->image_url }}" class="absolute inset-0 w-full h-full object-cover opacity-50">
+    {{-- Hero Section with Dynamic Slider --}}
+    <div class="relative h-[70vh] flex items-center justify-center overflow-hidden bg-[#0a0703]"
+         x-data="{
+            activeSlide: 0,
+            slides: [
+                '{{ $campaign->image_url }}',
+                @if($campaign->tour)
+                    @foreach($campaign->tour->images as $img)
+                        '{{ asset('storage/' . $img->image_path) }}',
+                    @endforeach
+                @endif
+            ],
+            init() {
+                if(this.slides.length > 1) {
+                    setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length }, 5000);
+                }
+            }
+         }">
+
+        <template x-for="(slide, index) in slides" :key="index">
+            <div x-show="activeSlide === index"
+                 x-transition:enter="transition ease-out duration-1000"
+                 x-transition:enter-start="opacity-0 scale-105"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="absolute inset-0 w-full h-full">
+                <img :src="slide" class="w-full h-full object-cover opacity-50">
+            </div>
+        </template>
+
         <div class="absolute inset-0 bg-gradient-to-t from-[#0a0703] via-transparent to-transparent"></div>
 
         <div class="relative z-10 text-center px-4 max-w-5xl">
@@ -24,6 +50,15 @@
                 Exclusive Offer from ${{ number_format($campaign->price, 0) }}
             </div>
             @endif
+        </div>
+
+        {{-- Slider Indicators --}}
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20" x-show="slides.length > 1">
+            <template x-for="(slide, index) in slides" :key="index">
+                <button @click="activeSlide = index"
+                        class="w-8 h-1 rounded-full transition-all duration-500"
+                        :class="activeSlide === index ? 'bg-gold-500' : 'bg-white/20'"></button>
+            </template>
         </div>
     </div>
 
@@ -71,9 +106,29 @@
 
                 @if($campaign->itinerary)
                 <div>
-                    <h2 class="font-display text-4xl font-black text-gray-900 mb-8 tracking-tight border-l-4 border-gold-500 pl-6">Detailed Itinerary</h2>
-                    <div class="prose max-w-none text-gray-700 whitespace-pre-line text-lg leading-relaxed font-medium bg-gray-50 p-8 rounded-3xl border border-gray-100">
-                        {{ $campaign->itinerary }}
+                    <h2 class="font-display text-4xl font-black text-gray-900 mb-8 tracking-tight border-l-4 border-gold-500 pl-6">Adventure Program</h2>
+                    <div class="space-y-6">
+                        @php
+                            $days = explode("\n\n", trim($campaign->itinerary));
+                        @endphp
+                        @foreach($days as $index => $day)
+                            @php
+                                $parts = explode("\n", $day, 2);
+                                $title = $parts[0] ?? '';
+                                $desc = $parts[1] ?? '';
+                            @endphp
+                            @if($title)
+                            <div class="relative pl-12 group">
+                                <div class="absolute left-0 top-0 w-8 h-8 bg-gold-500 rounded-full flex items-center justify-center text-safari-dark font-black text-xs shadow-lg group-hover:scale-110 transition-transform">
+                                    {{ $index + 1 }}
+                                </div>
+                                <div class="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
+                                    <h4 class="font-display text-xl font-bold text-gray-900 mb-4 tracking-tight">{{ $title }}</h4>
+                                    <p class="text-gray-600 leading-relaxed text-sm font-medium">{{ $desc }}</p>
+                                </div>
+                            </div>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
                 @endif
