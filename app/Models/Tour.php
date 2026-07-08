@@ -199,4 +199,9 @@ class Tour extends Model
 
         return null;
     }
+
+    public function getItemTypeAttribute(): string
+    {
+        return 'tour';
+    }
 }

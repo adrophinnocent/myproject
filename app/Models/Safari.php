@@ -136,4 +136,9 @@ class Safari extends Model
 
         return null;
     }
+
+    public function getItemTypeAttribute(): string
+    {
+        return 'safari';
+    }
 }
