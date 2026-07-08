@@ -58,6 +58,22 @@
                 <textarea name="itinerary" id="ad_itinerary" rows="8" class="w-full border-gray-200 rounded-xl px-4 py-3 focus:ring-amber-500/20" placeholder="Day 1: Arrival... Day 2: Serengeti Game Drive..."></textarea>
             </div>
 
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Highlights (one per line)</label>
+                <textarea name="highlights" id="ad_highlights" rows="4" class="w-full border-gray-200 rounded-xl px-4 py-3 focus:ring-amber-500/20" placeholder="Witness the Great Migration..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Inclusions</label>
+                    <textarea name="inclusions" id="ad_inclusions" rows="4" class="w-full border-gray-200 rounded-xl px-4 py-3 focus:ring-amber-500/20" placeholder="All park fees... Professional guides..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Exclusions</label>
+                    <textarea name="exclusions" id="ad_exclusions" rows="4" class="w-full border-gray-200 rounded-xl px-4 py-3 focus:ring-amber-500/20" placeholder="Tipping... International flights..."></textarea>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Featured Image</label>
@@ -95,6 +111,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('ad_title').value = data.title;
                 document.getElementById('ad_description').value = data.description;
                 document.getElementById('ad_itinerary').value = data.itinerary;
+                document.getElementById('ad_highlights').value = data.highlights;
+                document.getElementById('ad_inclusions').value = data.inclusions;
+                document.getElementById('ad_exclusions').value = data.exclusions;
                 document.getElementById('ad_price').value = data.price;
 
                 // Select the correct category/type

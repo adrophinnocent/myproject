@@ -9,6 +9,7 @@ class Campaign extends Model
 {
     protected $fillable = [
         'title', 'slug', 'type', 'description', 'itinerary',
+        'highlights', 'inclusions', 'exclusions',
         'price', 'currency', 'image', 'video_url', 'status',
         'tracking_id', 'meta_title', 'meta_description', 'published_at'
     ];

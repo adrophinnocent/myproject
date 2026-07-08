@@ -45,10 +45,22 @@ class CampaignController extends Controller
             $itineraryText = strip_tags($tour->description);
         }
 
+        // Format inclusions/exclusions/highlights
+        $formatList = function($items) {
+            if (empty($items)) return '';
+            if (is_array($items)) {
+                return implode("\n", array_map(fn($i) => is_array($i) ? implode(', ', $i) : $i, $items));
+            }
+            return (string)$items;
+        };
+
         return response()->json([
             'title' => $tour->title,
             'description' => $tour->short_description ?? Str::limit(strip_tags($tour->description), 160),
             'itinerary' => trim($itineraryText),
+            'highlights' => $formatList($tour->highlights),
+            'inclusions' => $formatList($tour->inclusions),
+            'exclusions' => $formatList($tour->exclusions),
             'price' => (float) $tour->price,
             'category' => $tour->category?->name ?? 'Safari Tours',
         ]);
@@ -61,6 +73,9 @@ class CampaignController extends Controller
             'type' => 'required|string',
             'description' => 'nullable|string',
             'itinerary' => 'nullable|string',
+            'highlights' => 'nullable|string',
+            'inclusions' => 'nullable|string',
+            'exclusions' => 'nullable|string',
             'price' => 'nullable|numeric',
             'image' => 'nullable|image|max:5120',
             'status' => 'required|string',
@@ -89,6 +104,9 @@ class CampaignController extends Controller
             'type' => 'required|string',
             'description' => 'nullable|string',
             'itinerary' => 'nullable|string',
+            'highlights' => 'nullable|string',
+            'inclusions' => 'nullable|string',
+            'exclusions' => 'nullable|string',
             'price' => 'nullable|numeric',
             'image' => 'nullable|image|max:5120',
             'status' => 'required|string',

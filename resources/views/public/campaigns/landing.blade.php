@@ -71,12 +71,66 @@
 
                 @if($campaign->itinerary)
                 <div>
-                    <h2 class="font-display text-4xl font-black text-gray-900 mb-8 tracking-tight border-l-4 border-gold-500 pl-6">Experience Highlights</h2>
+                    <h2 class="font-display text-4xl font-black text-gray-900 mb-8 tracking-tight border-l-4 border-gold-500 pl-6">Detailed Itinerary</h2>
                     <div class="prose max-w-none text-gray-700 whitespace-pre-line text-lg leading-relaxed font-medium bg-gray-50 p-8 rounded-3xl border border-gray-100">
                         {{ $campaign->itinerary }}
                     </div>
                 </div>
                 @endif
+
+                @if($campaign->highlights)
+                <div>
+                    <h2 class="font-display text-4xl font-black text-gray-900 mb-8 tracking-tight border-l-4 border-gold-500 pl-6">Experience Highlights</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach(explode("\n", $campaign->highlights) as $highlight)
+                            @if(trim($highlight))
+                            <div class="flex items-start gap-3 p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
+                                <span class="text-gold-600 font-bold">✓</span>
+                                <span class="text-gray-700 font-bold text-sm">{{ $highlight }}</span>
+                            </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    @if($campaign->inclusions)
+                    <div>
+                        <h2 class="font-display text-3xl font-black text-gray-900 mb-6 tracking-tight flex items-center gap-3">
+                            <span class="text-green-500">✓</span> What's Included
+                        </h2>
+                        <ul class="space-y-3">
+                            @foreach(explode("\n", $campaign->inclusions) as $inc)
+                                @if(trim($inc))
+                                <li class="flex items-start gap-3 text-gray-600 text-sm font-medium">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 mt-2 shrink-0"></span>
+                                    {{ $inc }}
+                                </li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    @if($campaign->exclusions)
+                    <div>
+                        <h2 class="font-display text-3xl font-black text-gray-900 mb-6 tracking-tight flex items-center gap-3">
+                            <span class="text-red-500">✕</span> What's Excluded
+                        </h2>
+                        <ul class="space-y-3">
+                            @foreach(explode("\n", $campaign->exclusions) as $exc)
+                                @if(trim($exc))
+                                <li class="flex items-start gap-3 text-gray-400 text-sm font-medium">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300 mt-2 shrink-0"></span>
+                                    {{ $exc }}
+                                </li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+                </div>
             </div>
 
             {{-- Sticky Form Card --}}
