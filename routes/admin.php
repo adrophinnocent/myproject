@@ -18,6 +18,21 @@ Route::get('/admin/login', function() {
 Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])->name('admin.login');
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
+    // Priority Routes (Moved Bookings here)
+    Route::resource('/bookings', App\Http\Controllers\Admin\BookingController::class)->names([
+        'index' => 'admin.bookings.index',
+        'create' => 'admin.bookings.create',
+        'store' => 'admin.bookings.store',
+        'show' => 'admin.bookings.show',
+        'edit' => 'admin.bookings.edit',
+        'update' => 'admin.bookings.update',
+        'destroy' => 'admin.bookings.destroy',
+    ]);
+    Route::patch('/bookings/{booking}/update-status', [App\Http\Controllers\Admin\BookingController::class, 'updateStatus'])->name('admin.bookings.update-status');
+    Route::post('/bookings/{booking}/update-status', [App\Http\Controllers\Admin\BookingController::class, 'updateStatus']);
+    Route::get('/bookings/{booking}/download-itinerary', [App\Http\Controllers\Admin\BookingController::class, 'downloadItinerary'])->name('admin.bookings.download-itinerary');
+    Route::get('/bookings/{booking}/download-invoice', [App\Http\Controllers\Admin\BookingController::class, 'downloadInvoice'])->name('admin.bookings.download-invoice');
+
     Route::get('/dashboard', [App\Http\Controllers\Admin\AnalyticsController::class, 'dashboard'])->name('admin.dashboard');
 
     // Chart Routes
@@ -129,20 +144,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'update' => 'admin.destinations.update',
         'destroy' => 'admin.destinations.destroy',
     ]);
-
-    Route::resource('/bookings', App\Http\Controllers\Admin\BookingController::class)->names([
-        'index' => 'admin.bookings.index',
-        'create' => 'admin.bookings.create',
-        'store' => 'admin.bookings.store',
-        'show' => 'admin.bookings.show',
-        'edit' => 'admin.bookings.edit',
-        'update' => 'admin.bookings.update',
-        'destroy' => 'admin.bookings.destroy',
-    ]);
-    Route::patch('/bookings/{booking}/update-status', [App\Http\Controllers\Admin\BookingController::class, 'updateStatus'])->name('admin.bookings.update-status');
-    Route::post('/bookings/{booking}/update-status', [App\Http\Controllers\Admin\BookingController::class, 'updateStatus']);
-    Route::get('/bookings/{booking}/download-itinerary', [App\Http\Controllers\Admin\BookingController::class, 'downloadItinerary'])->name('admin.bookings.download-itinerary');
-    Route::get('/bookings/{booking}/download-invoice', [App\Http\Controllers\Admin\BookingController::class, 'downloadInvoice'])->name('admin.bookings.download-invoice');
 
     Route::resource('/gallery', App\Http\Controllers\Admin\GalleryController::class)->parameters(['gallery' => 'album'])->names([
         'index' => 'admin.gallery.index',

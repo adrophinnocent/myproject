@@ -78,30 +78,34 @@
                 <div class="bg-gray-50/50 px-10 py-6 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="font-black text-gray-800 uppercase tracking-tighter text-base">Reserved Adventure</h3>
                     <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.2em] bg-gold-50 px-3 py-1 rounded-full border border-gold-100">
-                        {{ $booking->tour->category->name ?? 'Package' }}
+                        {{ $booking->bookable_item->category->name ?? 'Package' }}
                     </span>
                 </div>
                 <div class="p-10">
                     <div class="flex flex-col md:flex-row gap-10">
-                        <div class="w-full md:w-64 h-44 rounded-[2rem] overflow-hidden shadow-2xl relative">
-                            <img src="{{ $booking->tour->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="w-full md:w-64 h-44 rounded-[2rem] overflow-hidden shadow-2xl relative bg-gray-100 flex items-center justify-center">
+                            @if($booking->bookable_item)
+                                <img src="{{ $booking->bookable_item->featured_image_url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            @else
+                                <span class="text-4xl">🦁</span>
+                            @endif
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                             <div class="absolute bottom-5 left-6">
                                 <p class="text-[10px] text-white/70 font-bold uppercase tracking-widest">Destination</p>
-                                <p class="text-white font-bold">{{ $booking->tour->destination->name ?? 'Tanzania' }}</p>
+                                <p class="text-white font-bold">{{ $booking->bookable_item->destination->name ?? 'Tanzania' }}</p>
                             </div>
                         </div>
                         <div class="flex-1 space-y-6">
-                            <h4 class="text-2xl font-black text-gray-900 leading-tight tracking-tight">{{ $booking->tour->title }}</h4>
+                            <h4 class="text-2xl font-black text-gray-900 leading-tight tracking-tight">{{ $booking->bookable_item->title ?? 'Deleted or Missing Package' }}</h4>
 
-                            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-gray-50">
+                            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-gray-100">
                                 <div>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Travel Date</p>
-                                    <p class="text-sm font-black text-gray-800">{{ $booking->travel_date->format('l, M d, Y') }}</p>
+                                    <p class="text-sm font-black text-gray-800">{{ $booking->travel_date ? $booking->travel_date->format('l, M d, Y') : 'Not Set' }}</p>
                                 </div>
                                 <div>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Duration</p>
-                                    <p class="text-sm font-black text-gray-800">{{ $booking->tour->duration_text }}</p>
+                                    <p class="text-sm font-black text-gray-800">{{ $booking->bookable_item->duration_text ?? 'N/A' }}</p>
                                 </div>
                                 <div>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Party Size</p>
@@ -109,7 +113,7 @@
                                 </div>
                                 <div>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Package Price</p>
-                                    <p class="text-sm font-black text-gold-600">{{ $booking->tour->formatted_price }} / person</p>
+                                    <p class="text-sm font-black text-gold-600">{{ $booking->bookable_item->formatted_price ?? 'N/A' }} / person</p>
                                 </div>
                             </div>
                         </div>

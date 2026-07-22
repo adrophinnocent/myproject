@@ -206,8 +206,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Twina AI Assistant</h3>
-                            <p class="text-xs text-white/80">Expert Safari Guide</p>
+                            <h3 class="font-semibold">{{ __('Twina AI Assistant') }}</h3>
+                            <p class="text-xs text-white/80">{{ __('Expert Safari Guide') }}</p>
                         </div>
                     </div>
                     <button @click="isAiOpen = false" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
@@ -219,7 +219,7 @@
             </div>
             <div class="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50" id="ai-chat-messages">
                 <div class="bg-white p-3 rounded-xl rounded-tl-none shadow-sm max-w-[85%] border border-gray-100">
-                    <p class="text-sm text-gray-700 font-medium">Jambo! I'm your Twina Safaris guide. How can I help you today?</p>
+                    <p class="text-sm text-gray-700 font-medium">{{ __('Jambo! I\'m your Twina Safaris guide. How can I help you today?') }}</p>
                 </div>
                 <template x-for="(msg, index) in messages" :key="index">
                     <div :class="msg.from === 'user' ? 'ml-auto text-right' : 'mr-auto text-left'">
@@ -245,7 +245,7 @@
                     <input type="text"
                            x-model="userInput"
                            :disabled="isLoading"
-                           placeholder="Ask about safaris, prices..."
+                           placeholder="{{ __('Ask about safaris, prices...') }}"
                            class="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-50 transition-all">
                     <button type="submit"
                             :disabled="isLoading || !userInput.trim()"

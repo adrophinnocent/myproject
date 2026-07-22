@@ -71,23 +71,23 @@
                         <div class="space-y-4">
                             @if($slide->subtitle)
                                 <span class="inline-block text-gold-400 text-sm md:text-lg font-bold uppercase tracking-[0.4em] animate-pulse">
-                                    {{ $slide->subtitle }}
+                                    {{ __($slide->subtitle) }}
                                 </span>
                             @endif
                             @if($slide->title)
                                 <h1 class="font-display text-3xl sm:text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
-                                    {{ $slide->title }}
+                                    {{ __($slide->title) }}
                                 </h1>
                             @endif
                         </div>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 relative z-50 pt-4 md:pt-0">
                             @if($slide->cta_text)
                                 <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl transition-all hover:scale-105 active:scale-95 min-w-[220px]">
-                                    {{ $slide->cta_text }}
+                                    {{ __($slide->cta_text) }}
                                 </a>
                             @endif
                             <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-gold-500 hover:text-safari-dark px-10 py-4 rounded-full text-sm font-black transition-all min-w-[220px]">
-                                Climb Kilimanjaro
+                                {{ __('Climb Kilimanjaro') }}
                             </a>
                         </div>
                     </div>
@@ -128,9 +128,9 @@
                 <form action="{{ route('tours.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 md:gap-0">
                     <div class="relative flex-1">
                         <select name="destination" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
-                            <option value="" class="text-gray-900">Where to?</option>
+                            <option value="" class="text-gray-900">{{ __('Where to?') }}</option>
                             @foreach(\App\Models\Destination::where('is_active', true)->get() as $dest)
-                            <option value="{{ $dest->id }}" class="text-gray-900">{{ $dest->name }}</option>
+                            <option value="{{ $dest->id }}" class="text-gray-900">{{ __($dest->name) }}</option>
                             @endforeach
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
@@ -139,9 +139,9 @@
                     </div>
                     <div class="relative flex-1">
                         <select name="category" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
-                            <option value="" class="text-gray-900">Adventure Type</option>
+                            <option value="" class="text-gray-900">{{ __('Adventure Type') }}</option>
                             @foreach(\App\Models\Category::where('is_active', true)->get() as $cat)
-                            <option value="{{ $cat->id }}" class="text-gray-900">{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" class="text-gray-900">{{ __($cat->name) }}</option>
                             @endforeach
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
@@ -150,11 +150,11 @@
                     </div>
                     <div class="relative flex-1">
                         <select name="duration" class="w-full bg-white/10 md:bg-transparent border-0 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
-                            <option value="" class="text-gray-900">How long?</option>
-                            <option value="1-3" class="text-gray-900">1-3 Days</option>
-                            <option value="4-7" class="text-gray-900">4-7 Days</option>
-                            <option value="8-14" class="text-gray-900">8-14 Days</option>
-                            <option value="15+" class="text-gray-900">15+ Days</option>
+                            <option value="" class="text-gray-900">{{ __('How long?') }}</option>
+                            <option value="1-3" class="text-gray-900">1-3 {{ __('Days') }}</option>
+                            <option value="4-7" class="text-gray-900">4-7 {{ __('Days') }}</option>
+                            <option value="8-14" class="text-gray-900">8-14 {{ __('Days') }}</option>
+                            <option value="15+" class="text-gray-900">15+ {{ __('Days') }}</option>
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -163,7 +163,7 @@
                     <div class="md:w-48">
                         <button type="submit" class="w-full h-full bg-gold-500 hover:bg-gold-600 text-safari-dark py-4 px-8 rounded-2xl md:rounded-full font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 group">
                             <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            SEARCH
+                            {{ __('SEARCH') }}
                         </button>
                     </div>
                 </form>
@@ -192,19 +192,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
             <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(500, 2000, (val) => current = val) }">
                 <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
-                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Happy Travelers</p>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Happy Travelers') }}</p>
             </div>
             <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(150, 2000, (val) => current = val) }">
                 <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
-                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Safari Packages</p>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Safari Packages') }}</p>
             </div>
             <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(10, 2000, (val) => current = val) }">
                 <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
-                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Years Experience</p>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Years Experience') }}</p>
             </div>
             <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(100, 2000, (val) => current = val) }">
                 <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>%</div>
-                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">Safety Record</p>
+                <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Safety Record') }}</p>
             </div>
         </div>
     </div>
@@ -256,47 +256,51 @@
             </div>
             <div class="lg:w-1/2 space-y-8">
                 <div>
-                    <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Signature Expedition</span>
+                    <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">{{ __('Signature Expedition') }}</span>
                     <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-tight text-center md:text-left">
-                        {{ \App\Helpers\AssetHelper::asString($heroTour->title) }}
+                        {{ $heroTour->translate('title') }}
                     </h2>
                     <div class="w-20 h-1.5 bg-[#e64a19] rounded-full mt-6 mx-auto md:mx-0"></div>
                 </div>
                 <div class="flex justify-center md:justify-start">
                     <a href="{{ route('booking.create', $heroTour->slug) }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl hover:scale-105 transition-all text-center uppercase tracking-widest">
-                        BOOK THIS TOUR
+                        {{ __('BOOK THIS TOUR') }}
                     </a>
                 </div>
-                <p class="text-gray-600 text-lg leading-relaxed font-light">{{ $heroTour->short_description }}</p>
+                <p class="text-gray-600 text-lg leading-relaxed font-light">{{ $heroTour->translate('short_description') }}</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
                     @php
-                        $inclusions = is_array($heroTour->inclusions) ? $heroTour->inclusions : ['Professional Guides', 'Airport Transfers', 'Hotel Stay', 'Park Fees', 'Camping Gear', 'Fresh Meals', 'Emergency Oxygen', 'Summit Certificate'];
+                        $inclusions = $heroTour->translate('inclusions');
+                        if (!is_array($inclusions)) {
+                            $inclusions = ['Professional Guides', 'Airport Transfers', 'Hotel Stay', 'Park Fees', 'Camping Gear', 'Fresh Meals', 'Emergency Oxygen', 'Summit Certificate'];
+                        }
                     @endphp
                     @foreach($inclusions as $inc)
                     <div class="flex items-start gap-3 group">
                         <div class="w-6 h-6 shrink-0 rounded-full bg-gold-500/10 flex items-center justify-center mt-0.5 group-hover:bg-gold-500 transition-colors duration-300">
                             <svg class="w-3 h-3 text-gold-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
                         </div>
-                        <span class="text-gray-700 text-sm font-black uppercase tracking-tight leading-tight">{{ is_array($inc) ? implode(', ', $inc) : $inc }}</span>
+                        <span class="text-gray-700 text-sm font-black uppercase tracking-tight leading-tight">{{ is_array($inc) ? implode(', ', $inc) : __($inc) }}</span>
                     </div>
                     @endforeach
                 </div>
                 <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100" x-data="{ openItinerary: false }">
                     <div class="flex items-center justify-between mb-10">
-                        <h2 class="font-display text-3xl font-black text-[#e64a19] uppercase tracking-tight">Route summary</h2>
+                        <h2 class="font-display text-3xl font-black text-[#e64a19] uppercase tracking-tight">{{ __('Route summary') }}</h2>
                         <button @click="openItinerary = !openItinerary" class="text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 transition-colors flex items-center gap-1.5">
-                            <span x-text="openItinerary ? 'Hide Details' : 'View Day-by-Day'"></span>
+                            <span x-text="openItinerary ? '{{ __('Hide Details') }}' : '{{ __('View Day-by-Day') }}'"></span>
                             <svg class="w-3 h-3 transition-transform duration-300" :class="openItinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                     </div>
                     <div class="space-y-6">
-                        @if($heroTour->itinerary && is_array($heroTour->itinerary))
-                            @foreach($heroTour->itinerary as $index => $day)
+                        @php $itinerary = $heroTour->translate('itinerary'); @endphp
+                        @if($itinerary && is_array($itinerary))
+                            @foreach($itinerary as $index => $day)
                             <div class="flex flex-col gap-2">
                                 <div class="flex items-start gap-4">
                                     <span class="text-[#e64a19] font-black text-2xl leading-none">→</span>
                                     <h5 class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
-                                        <span class="text-gray-400">Day {{ $loop->iteration }}:</span> {{ $day['title'] ?? '' }}
+                                        <span class="text-gray-400">{{ __('Day') }} {{ $loop->iteration }}:</span> {{ $day['title'] ?? '' }}
                                     </h5>
                                 </div>
                                 <div x-show="openItinerary" x-collapse>
@@ -309,7 +313,7 @@
                 </div>
                 <div class="pt-6 flex flex-col sm:flex-row gap-4">
                     <a href="{{ route('tours.index') }}" class="flex-1 px-10 py-5 rounded-full border-2 border-safari-dark text-safari-dark text-sm font-black uppercase tracking-widest hover:bg-safari-dark hover:text-white transition-all text-center">
-                        EXPLORE ALL TOURS
+                        {{ __('EXPLORE ALL TOURS') }}
                     </a>
                 </div>
             </div>

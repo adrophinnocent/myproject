@@ -20,7 +20,7 @@
     <div class="relative z-10 max-w-7xl mx-auto px-4 w-full text-center md:text-left">
         <a href="{{ route('gallery.index') }}" class="inline-flex items-center gap-2 text-gold-400 hover:text-white transition-colors mb-6 font-black uppercase tracking-widest text-[10px]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            Back to Collections
+            {{ __('Back to Collections') }}
         </a>
         <h1 class="font-display text-4xl md:text-7xl text-white font-black leading-tight mb-4 tracking-tighter">{{ $album->name }}</h1>
         @if($album->description)
@@ -57,7 +57,7 @@
                         </div>
                     </a>
                     @if($image->caption)
-                        <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest text-center px-4 leading-relaxed">{{ $image->caption }}</p>
+                        <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest text-center px-4 leading-relaxed">{{ __($image->caption) }}</p>
                     @endif
                 </div>
             @endforeach
@@ -65,9 +65,9 @@
     @else
         <div class="text-center py-40 bg-gray-50 rounded-[4rem] border-2 border-dashed border-gray-200">
             <div class="text-9xl mb-10 grayscale opacity-20">📸</div>
-            <h3 class="font-display text-3xl font-black text-gray-800">This collection is coming soon</h3>
-            <p class="text-gray-500 mt-4 max-w-md mx-auto">Our photographers are currently uploading high-resolution frames to this album. Please check back in a few moments.</p>
-            <a href="{{ route('gallery.index') }}" class="btn-gold inline-block mt-12 px-10 py-5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">Explore Other Collections</a>
+            <h3 class="font-display text-3xl font-black text-gray-800">{{ __('This collection is coming soon') }}</h3>
+            <p class="text-gray-500 mt-4 max-w-md mx-auto">{{ __('Our photographers are currently uploading high-resolution frames to this album. Please check back in a few moments.') }}</p>
+            <a href="{{ route('gallery.index') }}" class="btn-gold inline-block mt-12 px-10 py-5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">{{ __('Explore Other Collections') }}</a>
         </div>
     @endif
 </div>
@@ -75,9 +75,9 @@
 {{-- Footer CTA --}}
 <div class="bg-safari-dark py-20">
     <div class="max-w-4xl mx-auto px-4 text-center">
-        <h3 class="font-display text-3xl text-white font-bold mb-4">Capture your own story</h3>
-        <p class="text-gray-400 mb-10">Experience the magic of Tanzania and become part of our visual journey.</p>
-        <a href="{{ route('trip-plan.index') }}" class="btn-gold px-12 py-5 rounded-full text-sm font-black uppercase tracking-widest">Plan My Safari</a>
+        <h3 class="font-display text-3xl text-white font-bold mb-4">{{ __('Capture your own story') }}</h3>
+        <p class="text-gray-400 mb-10">{{ __('Experience the magic of Tanzania and become part of our visual journey.') }}</p>
+        <a href="{{ route('trip-plan.index') }}" class="btn-gold px-12 py-5 rounded-full text-sm font-black uppercase tracking-widest">{{ __('Plan My Safari') }}</a>
     </div>
 </div>
 

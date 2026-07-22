@@ -30,6 +30,7 @@ Route::get('/tours', [App\Http\Controllers\Public\TourController::class, 'index'
 Route::get('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'create'])->name('booking.create');
 Route::post('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'store'])->name('booking.store');
 Route::get('/booking/success/{reference}', [App\Http\Controllers\Public\BookingController::class, 'success'])->name('booking.success');
+Route::get('/booking/download/{reference}', [App\Http\Controllers\Public\BookingController::class, 'downloadItinerary'])->name('booking.download');
 
 // Dynamic Tour Show Route (Robust version)
 Route::get('/tours/{type}/{slug?}', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');

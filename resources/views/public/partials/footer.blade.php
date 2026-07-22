@@ -32,7 +32,7 @@
                     </div>
                 </a>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                    Crafting unforgettable safari experiences since 2010. We specialize in personalized itineraries, luxury lodges, and authentic adventures.
+                    {{ __('Crafting unforgettable safari experiences since 2010. We specialize in personalized itineraries, luxury lodges, and authentic adventures.') }}
                 </p>
                 <div class="flex gap-4 pt-2">
                     <a href="{{ \App\Models\Setting::get('facebook_url', '#') }}" class="w-10 h-10 bg-white/5 hover:bg-gold-500 text-white hover:text-safari-dark rounded-full flex items-center justify-center transition-all border border-white/5 shadow-sm">
@@ -45,7 +45,7 @@
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 448 512"><path d="M448 209.9a210.1 210.1 0 0 1 -122.8-39.3V349.4A162.6 162.6 0 1 1 185 188.3V278.2a74.6 74.6 0 1 0 52.2 71.2V0l88 0a121.2 121.2 0 0 0 1.9 22.2h0A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z"/></svg>
                     </a>
                     @if(\App\Models\Setting::get('google_maps_url'))
-                    <a href="{{ \App\Models\Setting::get('google_maps_url') }}" target="_blank" class="w-10 h-10 bg-white/5 hover:bg-gold-500 text-white hover:text-safari-dark rounded-full flex items-center justify-center transition-all border border-white/5 shadow-sm" title="Find us on Google Maps">
+                    <a href="{{ \App\Models\Setting::get('google_maps_url') }}" target="_blank" class="w-10 h-10 bg-white/5 hover:bg-gold-500 text-white hover:text-safari-dark rounded-full flex items-center justify-center transition-all border border-white/5 shadow-sm" title="{{ __('Find us on Google Maps') }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </a>
                     @endif
@@ -55,42 +55,42 @@
             {{-- Column 2: Quick Links & Popular --}}
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-6">
-                    <h4 class="font-bold text-white uppercase tracking-wider text-[11px]">Quick Links</h4>
+                    <h4 class="font-bold text-white uppercase tracking-wider text-[11px]">{{ __('Quick Links') }}</h4>
                     <ul class="space-y-4 text-sm">
-                        <li><a href="{{ route('tours.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">All Tours</a></li>
-                        <li><a href="{{ route('trip-plan.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">Plan Your Trip</a></li>
-                        <li><a href="{{ route('about') }}" class="text-gray-500 hover:text-gold-400 transition-colors">About Us</a></li>
-                        <li><a href="{{ route('contact.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">Contact</a></li>
+                        <li><a href="{{ route('tours.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('All Tours') }}</a></li>
+                        <li><a href="{{ route('trip-plan.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Plan Your Trip') }}</a></li>
+                        <li><a href="{{ route('about') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('About Us') }}</a></li>
+                        <li><a href="{{ route('contact.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Contact') }}</a></li>
                     </ul>
                 </div>
                 <div class="space-y-6">
                     <h4 class="font-bold text-white uppercase tracking-wider text-[11px] flex items-center gap-2">
                         <svg class="w-3 h-3 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-                        Popular
+                        {{ __('Popular') }}
                     </h4>
                     <ul class="space-y-4 text-sm">
                         <li>
                             <a href="{{ route('tours.index', ['destination' => 'serengeti']) }}" class="flex items-center gap-2.5 text-gray-500 hover:text-gold-400 transition-colors group">
                                 <svg class="w-4 h-4 text-gold-500/50 group-hover:text-gold-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 012.5 2.5V14a2 2 0 002 2h.105M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Serengeti
+                                {{ __('Serengeti') }}
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('tours.index', ['destination' => 'kilimanjaro']) }}" class="flex items-center gap-2.5 text-gray-500 hover:text-gold-400 transition-colors group">
                                 <svg class="w-4 h-4 text-gold-500/50 group-hover:text-gold-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2L2 22h20L12 2zm0 4.5L17.5 18H6.5L12 6.5z"/></svg>
-                                Kilimanjaro
+                                {{ __('Kilimanjaro') }}
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('tours.index', ['destination' => 'zanzibar']) }}" class="flex items-center gap-2.5 text-gray-500 hover:text-gold-400 transition-colors group">
                                 <svg class="w-4 h-4 text-gold-500/50 group-hover:text-gold-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.5 11l.5-1m3 1l-.5-1M12 11l.5-1m3 1l-.5-1m-7 5l-.5 1m3-1l.5 1M12 16l-.5 1m3-1l.5 1M4.5 5.5l.5-1m14 1l-.5-1M7.5 4h10M5 20h14a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>
-                                Zanzibar
+                                {{ __('Zanzibar') }}
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('tours.index', ['destination' => 'ngorongoro']) }}" class="flex items-center gap-2.5 text-gray-500 hover:text-gold-400 transition-colors group">
                                 <svg class="w-4 h-4 text-gold-500/50 group-hover:text-gold-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Ngorongoro
+                                {{ __('Ngorongoro') }}
                             </a>
                         </li>
                     </ul>
@@ -100,12 +100,12 @@
             <div class="space-y-6">
                 <h4 class="font-bold text-white uppercase tracking-wider text-[11px] flex items-center gap-2">
                     <svg class="w-3 h-3 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    Get In Touch
+                    {{ __('Get In Touch') }}
                 </h4>
                 <ul class="space-y-4 text-sm">
                     <li class="flex items-start gap-3 text-gray-500 group">
-                        <svg class="w-4 h-4 text-gold-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <span>Moshi, Kilimanjaro</span>
+                        <svg class="w-4 h-4 text-gold-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>{{ __('Moshi, Kilimanjaro') }}</span>
                     </li>
                     <li class="flex items-center gap-3 text-gray-500 group">
                         <svg class="w-4 h-4 text-gold-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -122,27 +122,27 @@
             <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-gold-500/5 rounded-full -mr-12 -mt-12 transition-transform duration-700 group-hover:scale-150"></div>
 
-                <h4 class="font-bold text-white mb-3 text-lg leading-tight">Subscribe to <br> Newsletter</h4>
-                <p class="text-gray-500 text-xs mb-6 italic">Get exclusive safari deals in your inbox.</p>
+                <h4 class="font-bold text-white mb-3 text-lg leading-tight">{{ __('Subscribe to') }} <br> {{ __('Newsletter') }}</h4>
+                <p class="text-gray-500 text-xs mb-6 italic">{{ __('Get exclusive safari deals in your inbox.') }}</p>
 
                 <form action="{{ route('newsletter.subscribe') }}" method="POST" id="newsletter-form-footer" class="space-y-4">
                     @csrf
                     <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response-footer">
 
                     <div class="space-y-3">
-                        <input type="text" name="name" required placeholder="Your Full Name"
+                        <input type="text" name="name" required placeholder="{{ __('Your Full Name') }}"
                                class="w-full bg-[#1a1209] border border-white/10 rounded-2xl px-5 py-3.5 text-white text-xs outline-none transition-all placeholder:text-gray-600 focus:border-gold-500/50">
 
-                        <input type="email" name="email" required placeholder="Email Address"
+                        <input type="email" name="email" required placeholder="{{ __('Email Address') }}"
                                class="w-full bg-[#1a1209] border border-white/10 rounded-2xl px-5 py-3.5 text-white text-xs outline-none transition-all placeholder:text-gray-600 focus:border-gold-500/50">
                     </div>
 
                     <button type="submit" class="btn-gold w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:shadow-gold-500/30 transition-all active:scale-95">
-                        Join the Journey
+                        {{ __('Join the Journey') }}
                     </button>
 
                     <p class="text-[9px] text-gray-600 text-center mt-3 italic">
-                        No spam. Unsubscribe anytime.
+                        {{ __('No spam. Unsubscribe anytime.') }}
                     </p>
                 </form>
             </div>
@@ -153,12 +153,12 @@
         <div class="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9-9c1.657 0 3 1.343 3 3s-1.343 3-3 3m0-6H7m10 0v6m0 6H7m10 0v-6M3 12a9 9 0 019-9m-9 9a9 9 0 009 9m-9-9c1.657 0-3 1.343-3 3s1.343 3 3 3m0-6h10"></path></svg>
-                <p class="text-gray-600 text-[11px] font-bold uppercase tracking-[0.2em]">© {{ date('Y') }} {{ $siteName }}. All rights reserved.</p>
+                <p class="text-gray-600 text-[11px] font-bold uppercase tracking-[0.2em]">© {{ date('Y') }} {{ $siteName }}. {{ __('All rights reserved.') }}</p>
             </div>
             <div class="flex items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em]">
-                <a href="#" class="text-gray-600 hover:text-gold-400 transition-colors">Privacy Policy</a>
+                <a href="#" class="text-gray-600 hover:text-gold-400 transition-colors">{{ __('Privacy Policy') }}</a>
                 <span class="text-white/10 hidden md:block">|</span>
-                <a href="#" class="text-gray-600 hover:text-gold-400 transition-colors">Terms of Service</a>
+                <a href="#" class="text-gray-600 hover:text-gold-400 transition-colors">{{ __('Terms of Service') }}</a>
             </div>
         </div>
     </div>

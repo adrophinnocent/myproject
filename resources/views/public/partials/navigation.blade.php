@@ -138,7 +138,7 @@
                             <a href="{{ route('tours.index', ['tour_type' => $cat->slug]) }}" class="flex items-start gap-3 p-3 rounded-xl hover:bg-white/10 hover:shadow-lg transition-all group">
                                 <div class="w-1.5 h-1.5 rounded-full bg-gold-500 mt-2 group-hover:scale-125 transition-transform"></div>
                                 <div>
-                                    <div class="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">{{ $cat->name }}</div>
+                                    <div class="text-white text-sm font-semibold group-hover:text-gold-400 transition-colors">{{ __($cat->name) }}</div>
                                     <div class="text-gray-400 text-[10px] mt-0.5 leading-tight">{{ $categoriesWithMeta[$cat->slug]['desc'] ?? __('Explore Africa') }}</div>
                                 </div>
                             </a>

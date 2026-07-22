@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasSlug;
+use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Safari extends Model
 {
-    use HasFactory, SoftDeletes, HasSlug;
+    use HasFactory, SoftDeletes, HasSlug, Translatable;
 
     protected $slugSource = 'title';
 
@@ -114,10 +115,7 @@ class Safari extends Model
         return $this->title;
     }
 
-    public function getTranslation(string $field): mixed
-    {
-        return $this->{$field};
-    }
+
 
     public function getYouTubeEmbedUrlAttribute(): ?string
     {

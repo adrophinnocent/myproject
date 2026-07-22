@@ -50,9 +50,14 @@
             </label>
         </div>
 
-        <div class="pt-6 border-t border-gray-200 flex justify-between items-center">
-            <a href="{{ route('admin.safaris.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Cancel</a>
-            <button type="submit" class="bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-semibold px-6 py-2 rounded-lg transition-colors">Update Safari</button>
+        <!-- Footer Buttons -->
+        <div class="pt-10 border-t border-gray-200 flex flex-col items-center gap-4">
+            <button type="submit" class="w-full md:w-96 bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-black py-4 rounded-2xl transition-all shadow-xl shadow-gold-500/20 uppercase tracking-[0.2em] text-xs">
+                Submit
+            </button>
+            <a href="{{ route('admin.safaris.index') }}" class="text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-all">
+                Cancel & Return
+            </a>
         </div>
     </form>
 </div>
