@@ -98,6 +98,9 @@
     {{-- Custom Header Scripts --}}
     {!! \App\Models\Setting::get('header_scripts') !!}
 
+    {{-- SEO Schema --}}
+    @yield('schema')
+
     {{-- Fonts & CSS --}}
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
