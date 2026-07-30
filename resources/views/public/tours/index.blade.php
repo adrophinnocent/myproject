@@ -96,8 +96,9 @@
 
             @forelse($tours as $tour)
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow mb-6 overflow-hidden flex flex-col md:flex-row">
-                <div class="md:w-64 flex-shrink-0 img-zoom h-56 md:h-auto">
-                    <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->translate('title') }}" class="w-full h-full object-cover">
+                <div class="md:w-64 flex-shrink-0 img-zoom h-56 md:h-auto bg-gray-100">
+                    <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->translate('title') }}"
+                         class="w-full h-full object-cover" loading="lazy" decoding="async">
                 </div>
                 <div class="flex-1 p-6">
                     <div class="flex items-start justify-between mb-2">

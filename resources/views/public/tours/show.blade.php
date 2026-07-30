@@ -6,24 +6,31 @@
 <script type="application/ld+json">
 {
   "@@context": "https://schema.org/",
-  "@@type": "Product",
+  "@@type": "TouristTrip",
   "name": "{{ $tour->title }}",
-  "image": "{{ $tour->featured_image_url }}",
   "description": "{{ $tour->short_description }}",
-  "brand": {
-    "@@type": "Brand",
-    "name": "{{ \App\Models\Setting::get('site_name', 'Twina Safaris') }}"
-  },
+  "image": "{{ $tour->featured_image_url }}",
+  "touristType": "Wildlife",
+  "itinerary": [
+    @if(is_array($tour->itinerary))
+        @foreach($tour->itinerary as $index => $day)
+        {
+          "@@type": "City",
+          "name": "{{ $day['title'] ?? '' }}"
+        }{{ !$loop->last ? ',' : '' }}
+        @endforeach
+    @endif
+  ],
   "offers": {
     "@@type": "Offer",
     "priceCurrency": "USD",
     "price": "{{ $tour->price }}",
-    "availability": "https://schema.org/InStock"
-  },
-  "aggregateRating": {
-    "@@type": "AggregateRating",
-    "ratingValue": "{{ $tour->average_rating }}",
-    "reviewCount": "{{ $tour->review_count }}"
+    "availability": "https://schema.org/InStock",
+    "url": "{{ url()->current() }}",
+    "seller": {
+      "@@type": "Organization",
+      "name": "Twina Safaris"
+    }
   }
 }
 </script>

@@ -121,6 +121,19 @@ class TourController extends Controller
 
     public function show($type, $slug = null)
     {
+        // Handle .html suffix often found in old SEO links
+        if ($slug && str_ends_with($slug, '.html')) {
+            return redirect()->route('tours.show', [
+                'type' => $type,
+                'slug' => str_replace('.html', '', $slug)
+            ], 301);
+        }
+        if (!$slug && str_ends_with($type, '.html')) {
+             return redirect()->route('tours.show', [
+                'type' => str_replace('.html', '', $type)
+            ], 301);
+        }
+
         // Robust handling: If only one parameter is passed, it's the slug
         if ($slug === null) {
             $slug = $type;
@@ -135,7 +148,9 @@ class TourController extends Controller
             }
         }
 
-        $tour->load(['category', 'destination', 'images', 'translations', 'reviews']);
+        $tour->load(['category', 'destination', 'images', 'translations', 'reviews' => function($q) {
+            $q->where('is_approved', true)->latest();
+        }]);
 
         $relatedTours = Tour::where('is_published', true)
             ->where('id', '!=', $tour->id)
@@ -143,6 +158,7 @@ class TourController extends Controller
                 $q->where('category_id', $tour->category_id)
                     ->orWhere('destination_id', $tour->destination_id);
             })
+            ->with(['translations'])
             ->take(4)
             ->get();
 
