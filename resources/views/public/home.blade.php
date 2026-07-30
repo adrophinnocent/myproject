@@ -568,8 +568,23 @@
             <p class="text-gray-500 text-lg mt-6 max-w-3xl mx-auto leading-relaxed font-light">Explore expert travel guides and breathtaking photography.</p>
             <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
         </div>
-        <div class="relative group">
-            <div id="blog-slider" class="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar scroll-smooth">
+        <div class="relative group" x-data="{
+            activeIndex: 0,
+            slidesCount: {{ $latestPosts->count() }},
+            scrollTo(index) {
+                const el = $refs.blogSlider;
+                const scrollAmount = (el.scrollWidth / this.slidesCount) * index;
+                el.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+            },
+            updateIndex() {
+                const el = $refs.blogSlider;
+                this.activeIndex = Math.round(el.scrollLeft / (el.scrollWidth / this.slidesCount));
+            }
+        }">
+            <div id="blog-slider"
+                 x-ref="blogSlider"
+                 @scroll="updateIndex"
+                 class="flex gap-8 overflow-x-auto pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($latestPosts as $post)
                 <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                     <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col group">
@@ -585,6 +600,15 @@
                     </div>
                 </div>
                 @endforeach
+            </div>
+
+            {{-- Modern Navigation Dots --}}
+            <div class="flex justify-center gap-2 mt-4">
+                <template x-for="(i, index) in Array.from({ length: slidesCount })">
+                    <button @click="scrollTo(index)"
+                            :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
+                            class="h-2 rounded-full transition-all duration-300 outline-none"></button>
+                </template>
             </div>
         </div>
         <div class="text-center mt-12"><a href="{{ route('blog.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-4">View All Stories <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>

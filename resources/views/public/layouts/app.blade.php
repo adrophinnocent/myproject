@@ -136,6 +136,8 @@
         .btn-gold:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(212,175,55,0.4); }
         .btn-outline-gold { border:2px solid #D4AF37; color:#D4AF37; transition: all 0.3s; }
         .btn-outline-gold:hover { background:#D4AF37; color:#ffffff; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
     @yield('styles')
