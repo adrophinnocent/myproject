@@ -427,24 +427,6 @@
                             {{ __('Your safety and comfort are our non-negotiable priorities. From the moment you step off the plane until your final departure, our dedicated logistics team is available around the clock. We handle every detail, from flight transfers to medical contingencies, giving you the absolute peace of mind to fully immerse yourself in the majestic beauty of the African wilderness.') }}
                         </p>
                     </div>
-
-                    {{-- USP 5 --}}
-                    <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Ethics') }}</span>
-                        <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Sustainable Travel') }}</h4>
-                        <p class="text-gray-600 text-xs leading-relaxed font-medium">
-                            {{ __('We are deeply committed to preserving the wild spaces we call home. Our operations follow strict low-impact guidelines, supporting eco-friendly lodges and plastic-free initiatives. By choosing us, you become a partner in protecting Tanzania’s natural heritage for future generations, ensuring that the wild remains wild.') }}
-                        </p>
-                    </div>
-
-                    {{-- USP 6 --}}
-                    <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Heritage') }}</span>
-                        <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Authentic Connections') }}</h4>
-                        <p class="text-gray-600 text-xs leading-relaxed font-medium">
-                            {{ __('Beyond the wildlife, we connect you with the vibrant soul of Tanzania. Through respectful and meaningful cultural exchanges with local tribes and communities, we offer a rare glimpse into the traditions and history of our land. Experience the true warmth of African hospitality that stays with you long after you return home.') }}
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
