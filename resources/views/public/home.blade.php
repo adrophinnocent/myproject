@@ -445,12 +445,23 @@
             </p>
             <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
         </div>
-        <div class="relative group">
-            <div id="tours-slider" class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar scroll-smooth">
+        <div class="relative group" x-data="{
+            scrollProgress: 0,
+            updateProgress() {
+                const el = $refs.slider;
+                this.scrollProgress = (el.scrollLeft / (el.scrollWidth - el.clientWidth)) * 100;
+            }
+        }">
+            <div id="tours-slider"
+                 x-ref="slider"
+                 @scroll="updateProgress"
+                 class="flex gap-6 overflow-x-auto pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @forelse($featuredTours as $tour)
                     <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
-                            <div class="relative h-56"><img src="{{ $tour->featured_image_url }}" width="600" height="400" alt="{{ \App\Helpers\AssetHelper::asString($tour->title) }}" class="w-full h-full object-cover" loading="lazy" decoding="async"></div>
+                            <div class="relative h-56 bg-gray-100">
+                                <img src="{{ $tour->featured_image_url }}" width="600" height="400" alt="{{ \App\Helpers\AssetHelper::asString($tour->title) }}" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                            </div>
                             <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
                                 <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold"><span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span></div>
                                 <h3 class="font-display text-xl font-semibold text-gray-900 mb-1"><a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a></h3>
@@ -469,6 +480,13 @@
                     <div class="w-full text-center py-10 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200"><h3 class="text-lg font-bold text-gray-500 uppercase tracking-widest">Tours Coming Soon</h3></div>
                 @endforelse
             </div>
+
+            {{-- Custom Progress Indicator --}}
+            <div class="max-w-xs mx-auto mt-4 bg-gray-100 h-1 rounded-full overflow-hidden relative">
+                <div class="absolute top-0 left-0 h-full bg-gold-500 transition-all duration-150 rounded-full"
+                     :style="`width: ${scrollProgress}%`"
+                     style="width: 0%"></div>
+            </div>
         </div>
         <div class="text-center mt-12"><a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">View All Tours <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
     </div>
@@ -486,8 +504,17 @@
         <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark">What Travelers Say</h2>
         <div class="w-16 h-1.5 bg-gold-500 mt-6 rounded-full mx-auto"></div>
     </div>
-    <div class="relative max-w-6xl mx-auto">
-        <div id="testimonials-slider" class="flex gap-8 overflow-x-auto pb-12 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
+    <div class="relative max-w-6xl mx-auto" x-data="{
+        scrollProgress: 0,
+        updateProgress() {
+            const el = $refs.testiSlider;
+            this.scrollProgress = (el.scrollLeft / (el.scrollWidth - el.clientWidth)) * 100;
+        }
+    }">
+        <div id="testimonials-slider"
+             x-ref="testiSlider"
+             @scroll="updateProgress"
+             class="flex gap-8 overflow-x-auto pb-12 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
             @php $customTestimonials = [['name' => 'Sarah Mitchell', 'title' => 'Safari Traveler', 'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.', 'initials' => 'SA'], ['name' => 'Marco & Julia', 'title' => 'Honeymoon Couple', 'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.', 'initials' => 'MA'], ['name' => 'David Chen', 'title' => 'Mountain Climber', 'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.', 'initials' => 'DA']]; @endphp
             @foreach($customTestimonials as $t)
             <div class="snap-center shrink-0 w-[85vw] md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
@@ -500,9 +527,17 @@
             </div>
             @endforeach
         </div>
+
+        {{-- Custom Progress Indicator --}}
+        <div class="max-w-xs mx-auto mt-2 bg-gray-100 h-1 rounded-full overflow-hidden relative mb-8">
+            <div class="absolute top-0 left-0 h-full bg-gold-500 transition-all duration-150 rounded-full"
+                 :style="`width: ${scrollProgress}%`"
+                 style="width: 0%"></div>
+        </div>
+
         <div class="flex justify-center gap-4 mt-8">
-            <button @click="scrollBy(-400)" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-            <button @click="scrollBy(400)" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+            <button @click="const el = $refs.testiSlider; el.scrollBy({ left: -400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+            <button @click="const el = $refs.testiSlider; el.scrollBy({ left: 400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
         </div>
     </div>
 </section>
