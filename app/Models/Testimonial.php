@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Testimonial extends Model
 {
-    use HasFactory;
+    use HasFactory, Translatable;
 
     protected $fillable = [
         'name',

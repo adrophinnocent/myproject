@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Slider extends Model
 {
-    use HasFactory;
+    use HasFactory, Translatable;
 
     protected $fillable = [
         'title', 'subtitle', 'image', 'type', 'mime_type', 'page', 'media_id',

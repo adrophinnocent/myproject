@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Campaign extends Model
 {
+    use Translatable;
+
     protected $fillable = [
         'tour_id', 'title', 'slug', 'type', 'description', 'itinerary',
         'highlights', 'inclusions', 'exclusions',

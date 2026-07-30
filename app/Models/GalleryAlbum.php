@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GalleryAlbum extends Model
 {
-    use \App\Traits\HasSlug;
+    use \App\Traits\HasSlug, Translatable;
 
     protected $fillable = ['name', 'slug', 'description', 'cover_image', 'is_published', 'sort_order'];
 
