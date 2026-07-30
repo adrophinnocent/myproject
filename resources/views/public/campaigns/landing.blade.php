@@ -109,25 +109,39 @@
                     <h2 class="font-display text-4xl font-black text-gray-900 mb-8 tracking-tight border-l-4 border-gold-500 pl-6">{{ __('Adventure Program') }}</h2>
                     <div class="space-y-6">
                         @php
-                            $days = explode("\n\n", trim($campaign->translate('itinerary')));
+                            $rawItinerary = $campaign->translate('itinerary');
+                            // Split by "DAY X:" pattern to handle poorly formatted text
+                            $dayBlocks = preg_split('/(DAY\s+\d+:)/i', $rawItinerary, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+                            $formattedDays = [];
+                            for ($i = 0; $i < count($dayBlocks); $i += 2) {
+                                $header = trim($dayBlocks[$i] ?? '');
+                                $content = trim($dayBlocks[$i+1] ?? '');
+                                if ($header && $content) {
+                                    $formattedDays[] = ['title' => $header, 'desc' => $content];
+                                }
+                            }
+
+                            // Fallback if the regex didn't find anything
+                            if (empty($formattedDays)) {
+                                $days = explode("\n\n", trim($rawItinerary));
+                                foreach($days as $index => $day) {
+                                    $parts = explode("\n", $day, 2);
+                                    $formattedDays[] = ['title' => $parts[0] ?? 'Day ' . ($index + 1), 'desc' => $parts[1] ?? ''];
+                                }
+                            }
                         @endphp
-                        @foreach($days as $index => $day)
-                            @php
-                                $parts = explode("\n", $day, 2);
-                                $title = $parts[0] ?? '';
-                                $desc = $parts[1] ?? '';
-                            @endphp
-                            @if($title)
+
+                        @foreach($formattedDays as $index => $day)
                             <div class="relative pl-12 group">
                                 <div class="absolute left-0 top-0 w-8 h-8 bg-gold-500 rounded-full flex items-center justify-center text-safari-dark font-black text-xs shadow-lg group-hover:scale-110 transition-transform">
                                     {{ $index + 1 }}
                                 </div>
                                 <div class="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
-                                    <h4 class="font-display text-xl font-bold text-gray-900 mb-4 tracking-tight">{{ $title }}</h4>
-                                    <p class="text-gray-600 leading-relaxed text-sm font-medium">{{ $desc }}</p>
+                                    <h4 class="font-display text-xl font-bold text-gray-900 mb-4 tracking-tight uppercase">{{ $day['title'] }}</h4>
+                                    <p class="text-gray-600 leading-relaxed text-sm font-medium">{{ $day['desc'] }}</p>
                                 </div>
                             </div>
-                            @endif
                         @endforeach
                     </div>
                 </div>
