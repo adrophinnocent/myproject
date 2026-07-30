@@ -75,17 +75,17 @@ class HomeController extends Controller
         $categories = \App\Models\Category::active()->get();
 
         $latestPosts = BlogPost::published()
-            ->with('category')
+            ->with(['category', 'translations'])
             ->latest('published_at')
             ->take(3)
             ->get();
 
         // Find a specific "Hero Tour" (ONLY Kilimanjaro Trekking Category)
-        $heroTour = Tour::where('slug', '8-day-machame-route')->first()
-                    ?? Tour::featured()->published()->whereHas('category', function($q) {
+        $heroTour = Tour::with(['category', 'destination', 'translations'])->where('slug', '8-day-machame-route')->first()
+                    ?? Tour::with(['category', 'destination', 'translations'])->featured()->published()->whereHas('category', function($q) {
                            $q->where('slug', 'kilimanjaro-trekking');
                        })->first()
-                    ?? Tour::published()->whereHas('category', function($q) {
+                    ?? Tour::with(['category', 'destination', 'translations'])->published()->whereHas('category', function($q) {
                            $q->where('slug', 'kilimanjaro-trekking');
                        })->first();
 

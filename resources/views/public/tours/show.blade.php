@@ -577,10 +577,26 @@
     @endif
 </div>
 
-<div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-full rounded-lg">
-    <button class="absolute top-4 right-4 text-white text-3xl" onclick="closeLightbox()">×</button>
-</div>
+    <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="" class="max-w-full max-h-full rounded-lg">
+        <button class="absolute top-4 right-4 text-white text-3xl" onclick="closeLightbox()">×</button>
+    </div>
+
+    {{-- Mobile Sticky CTA --}}
+    <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 lg:hidden z-[60] shadow-[0_-5px_15px_rgba(0,0,0,0.05)] transition-transform duration-300"
+         x-data="{ show: true, lastScroll: 0 }"
+         x-show="show"
+         @scroll.window="show = (window.pageYOffset < lastScroll || window.pageYOffset < 100); lastScroll = window.pageYOffset">
+        <div class="flex justify-between items-center gap-4">
+            <div class="flex-shrink-0">
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">{{ __('From') }}</p>
+                <p class="text-xl font-black text-gold-600 leading-none">{{ $tour->formatted_price }}</p>
+            </div>
+            <a href="{{ route('booking.create', $tour->slug) }}" class="flex-1 bg-safari-dark text-white text-center py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-black/20 active:scale-95 transition-all">
+                {{ __('Book Now') }}
+            </a>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')

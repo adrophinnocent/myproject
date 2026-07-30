@@ -514,7 +514,7 @@
                 @foreach($latestPosts as $post)
                 <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                     <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col group">
-                        <div class="relative h-64 overflow-hidden">
+                        <div class="relative h-64 overflow-hidden bg-gray-100">
                             <img src="{{ $post->featured_image_url }}" width="600" height="400" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" loading="lazy" decoding="async">
                             <div class="absolute top-6 left-6 bg-gold-500 text-safari-dark text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">New Post</div>
                         </div>
