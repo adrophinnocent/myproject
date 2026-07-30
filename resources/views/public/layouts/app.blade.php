@@ -13,6 +13,12 @@
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
     <link   rel="canonical"  href="{{ url()->current() }}">
 
+    {{-- International SEO: Hreflang Tags --}}
+    @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
+        <link rel="alternate" hreflang="{{ $locale }}" href="{{ url()->current() }}?lang={{ $locale }}">
+    @endforeach
+    <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
+
     {{-- Preconnect to External Domains --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
