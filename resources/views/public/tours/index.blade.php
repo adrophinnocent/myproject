@@ -112,7 +112,6 @@
                     <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
                         <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="hover:text-gold-600 transition-colors">{{ $tour->translate('title') }}</a>
                     </h3>
-                    <div class="text-[10px] font-mono text-gray-400 mb-3 tracking-tighter">{{ $tour->slug }}.html</div>
                     <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">{{ $tour->translate('short_description') }}</p>
                     <div class="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
                         <span class="flex items-center gap-1.5">{{ $tour->duration_text }}</span>
