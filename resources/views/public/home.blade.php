@@ -446,15 +446,21 @@
             <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
         </div>
         <div class="relative group" x-data="{
-            scrollProgress: 0,
-            updateProgress() {
+            activeIndex: 0,
+            slidesCount: {{ $featuredTours->count() }},
+            scrollTo(index) {
                 const el = $refs.slider;
-                this.scrollProgress = (el.scrollLeft / (el.scrollWidth - el.clientWidth)) * 100;
+                const scrollAmount = (el.scrollWidth / this.slidesCount) * index;
+                el.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+            },
+            updateIndex() {
+                const el = $refs.slider;
+                this.activeIndex = Math.round(el.scrollLeft / (el.scrollWidth / this.slidesCount));
             }
         }">
             <div id="tours-slider"
                  x-ref="slider"
-                 @scroll="updateProgress"
+                 @scroll="updateIndex"
                  class="flex gap-6 overflow-x-auto pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @forelse($featuredTours as $tour)
                     <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
@@ -481,11 +487,13 @@
                 @endforelse
             </div>
 
-            {{-- Custom Progress Indicator --}}
-            <div class="max-w-xs mx-auto mt-4 bg-gray-100 h-1 rounded-full overflow-hidden relative">
-                <div class="absolute top-0 left-0 h-full bg-gold-500 transition-all duration-150 rounded-full"
-                     :style="`width: ${scrollProgress}%`"
-                     style="width: 0%"></div>
+            {{-- Modern Navigation Dots --}}
+            <div class="flex justify-center gap-2 mt-4">
+                <template x-for="(i, index) in Array.from({ length: slidesCount })">
+                    <button @click="scrollTo(index)"
+                            :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
+                            class="h-2 rounded-full transition-all duration-300 outline-none focus:ring-2 focus:ring-gold-500/20"></button>
+                </template>
             </div>
         </div>
         <div class="text-center mt-12"><a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">View All Tours <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
@@ -505,15 +513,21 @@
         <div class="w-16 h-1.5 bg-gold-500 mt-6 rounded-full mx-auto"></div>
     </div>
     <div class="relative max-w-6xl mx-auto" x-data="{
-        scrollProgress: 0,
-        updateProgress() {
+        activeIndex: 0,
+        slidesCount: 3,
+        scrollTo(index) {
             const el = $refs.testiSlider;
-            this.scrollProgress = (el.scrollLeft / (el.scrollWidth - el.clientWidth)) * 100;
+            const scrollAmount = (el.scrollWidth / this.slidesCount) * index;
+            el.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+        },
+        updateIndex() {
+            const el = $refs.testiSlider;
+            this.activeIndex = Math.round(el.scrollLeft / (el.scrollWidth / this.slidesCount));
         }
     }">
         <div id="testimonials-slider"
              x-ref="testiSlider"
-             @scroll="updateProgress"
+             @scroll="updateIndex"
              class="flex gap-8 overflow-x-auto pb-12 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
             @php $customTestimonials = [['name' => 'Sarah Mitchell', 'title' => 'Safari Traveler', 'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.', 'initials' => 'SA'], ['name' => 'Marco & Julia', 'title' => 'Honeymoon Couple', 'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.', 'initials' => 'MA'], ['name' => 'David Chen', 'title' => 'Mountain Climber', 'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.', 'initials' => 'DA']]; @endphp
             @foreach($customTestimonials as $t)
@@ -528,11 +542,13 @@
             @endforeach
         </div>
 
-        {{-- Custom Progress Indicator --}}
-        <div class="max-w-xs mx-auto mt-2 bg-gray-100 h-1 rounded-full overflow-hidden relative mb-8">
-            <div class="absolute top-0 left-0 h-full bg-gold-500 transition-all duration-150 rounded-full"
-                 :style="`width: ${scrollProgress}%`"
-                 style="width: 0%"></div>
+        {{-- Modern Navigation Dots --}}
+        <div class="flex justify-center gap-2 mt-2 mb-8">
+            <template x-for="(i, index) in Array.from({ length: slidesCount })">
+                <button @click="scrollTo(index)"
+                        :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
+                        class="h-2 rounded-full transition-all duration-300 outline-none"></button>
+            </template>
         </div>
 
         <div class="flex justify-center gap-4 mt-8">
