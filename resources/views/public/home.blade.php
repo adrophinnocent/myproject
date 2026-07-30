@@ -391,29 +391,37 @@
                 </div>
 
                 {{-- Features Part --}}
-                <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8 relative z-10">
+                <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 relative z-10">
                     {{-- USP 1 --}}
-                    <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Expert Local Guides</h4>
-                        <p class="text-gray-500 text-[11px] leading-snug font-light">Deep local knowledge and unmatched wildlife tracking skills.</p>
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-colors">
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Expert Local Guides') }}</h4>
+                        <p class="text-gray-600 text-xs leading-relaxed font-medium">
+                            {{ __('Our guides are born and raised in Tanzania, possessing an instinctive understanding of wildlife patterns. With over a decade of field experience, they provide deep insights into the ecosystem, ensuring every sighting is educational and ethically managed.') }}
+                        </p>
                     </div>
 
                     {{-- USP 2 --}}
-                    <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Tailor-Made Safaris</h4>
-                        <p class="text-gray-500 text-[11px] leading-snug font-light">Unique itineraries designed around your dreams and budget.</p>
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-colors">
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Tailor-Made Safaris') }}</h4>
+                        <p class="text-gray-600 text-xs leading-relaxed font-medium">
+                            {{ __('We believe no two travelers are the same. Our specialists work closely with you to craft bespoke itineraries that match your pace, interests, and budget. From private photography expeditions to family adventures, we personalize every detail.') }}
+                        </p>
                     </div>
 
                     {{-- USP 3 --}}
-                    <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">Direct Local Pricing</h4>
-                        <p class="text-gray-500 text-[11px] leading-snug font-light">Best value guaranteed by booking directly with the source.</p>
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-colors">
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Direct Local Pricing') }}</h4>
+                        <p class="text-gray-600 text-xs leading-relaxed font-medium">
+                            {{ __('By operating directly on the ground, we eliminate third-party commissions. This allows us to offer premium experiences at competitive rates while ensuring that a larger portion of your travel investment goes directly into local conservation and communities.') }}
+                        </p>
                     </div>
 
                     {{-- USP 4 --}}
-                    <div class="group/item">
-                        <h4 class="font-bold text-gray-900 text-base mb-0.5 transition-colors group-hover/item:text-gold-600 uppercase tracking-tight">24/7 Ground Support</h4>
-                        <p class="text-gray-500 text-[11px] leading-snug font-light">On-call assistance from arrival to departure for peace of mind.</p>
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-colors">
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('24/7 Ground Support') }}</h4>
+                        <p class="text-gray-600 text-xs leading-relaxed font-medium">
+                            {{ __('Your safety and comfort are our highest priorities. From the moment you land until your departure, our logistics team is available around the clock. We handle every detail, giving you the peace of mind to fully immerse yourself in the African wilderness.') }}
+                        </p>
                     </div>
                 </div>
             </div>
