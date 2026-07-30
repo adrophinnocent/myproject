@@ -95,8 +95,27 @@ class BookingController extends Controller
         try {
             $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
             Mail::to($adminEmail)->send(new AdminNewBookingNotification($booking));
+
+            // WhatsApp Notification to Admin
+            $whatsappPhone = \App\Models\Setting::get('site_phone', '255795482197');
+            $apiKey = \App\Models\Setting::get('whatsapp_api_key', ''); // We will add this to settings
+
+            if ($apiKey) {
+                $message = "🚨 *NEW BOOKING ALERT!*%0A%0A"
+                         . "*Ref:* " . $booking->booking_reference . "%0A"
+                         . "*Client:* " . $booking->first_name . " " . $booking->last_name . "%0A"
+                         . "*Tour:* " . ($booking->tour->title ?? $booking->safari->title ?? 'N/A') . "%0A"
+                         . "*Travel Date:* " . $booking->travel_date->format('d M Y') . "%0A"
+                         . "*Adults:* " . $booking->number_of_adults . "%0A"
+                         . "*Total Price:* $" . number_format($booking->total_price, 2) . "%0A%0A"
+                         . "View details: https://twinasafaris.com/admin/bookings/" . $booking->id;
+
+                $url = "https://api.callmebot.com/whatsapp.php?phone=" . preg_replace('/\D/', '', $whatsappPhone) . "&text=" . $message . "&apikey=" . $apiKey;
+
+                \Illuminate\Support\Facades\Http::get($url);
+            }
         } catch (\Exception $e) {
-            \Log::error('Admin Mail failed: ' . $e->getMessage());
+            \Log::error('Admin Notifications failed: ' . $e->getMessage());
         }
 
         // 4. Create Admin Dashboard Notification

@@ -96,7 +96,7 @@
                                         this.open = false;
                                     }
                                 }">
-                                    <label for="country" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Select Your Country') }} *</label>
+                                    <label for="country" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Nationality') }} *</label>
                                     <div class="relative">
                                         <input type="text"
                                                name="nationality"
@@ -106,7 +106,7 @@
                                                @focus="open = true"
                                                @click.away="open = false"
                                                @keydown.escape="open = false"
-                                               placeholder="{{ __('-- Choose your country or type --') }}"
+                                               placeholder="{{ __('Select your country...') }}"
                                                class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-12 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
 
                                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">

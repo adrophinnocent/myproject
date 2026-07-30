@@ -394,7 +394,7 @@
                 <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 relative z-10">
                     {{-- USP 1 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">Excellence</span>
+                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Excellence') }}</span>
                         <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Expert Local Guides') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('Our guides are born and raised in the heart of the Tanzanian wilderness, possessing an instinctive understanding of wildlife behavior and migratory patterns. With over a decade of field experience, they offer deep insights into the delicate balance of our ecosystem, ensuring every sighting is not just seen, but understood and ethically managed.') }}
@@ -403,7 +403,7 @@
 
                     {{-- USP 2 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">Bespoke</span>
+                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Bespoke') }}</span>
                         <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Tailor-Made Safaris') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('We believe no two travelers are the same, and neither should their journeys be. Our expert consultants work tirelessly with you to craft bespoke itineraries that match your specific pace, personal interests, and budget. From private photography expeditions to multi-generational family adventures, we personalize every detail to create your dream escape.') }}
@@ -412,7 +412,7 @@
 
                     {{-- USP 3 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">Value</span>
+                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Value') }}</span>
                         <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Direct Local Pricing') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('By operating directly on the ground from our headquarters in Tanzania, we eliminate unnecessary third-party commissions and middleman fees. This allows us to offer ultra-premium experiences at exceptionally competitive rates while ensuring that a larger portion of your travel investment goes directly into local conservation efforts and community upliftment.') }}
@@ -421,16 +421,16 @@
 
                     {{-- USP 4 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">Reliability</span>
+                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Reliability') }}</span>
                         <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('24/7 Ground Support') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
-                            {{ __('Your safety and comfort are our non-negotiable priorities. From the moment you step off the plane until your final departure, our dedicated logistics team is available around the clock. We handle every complex detail, from flight transfers to medical contingencies, giving you the absolute peace of mind to fully immerse yourself in the majestic beauty of the African wilderness.') }}
+                            {{ __('Your safety and comfort are our non-negotiable priorities. From the moment you step off the plane until your final departure, our dedicated logistics team is available around the clock. We handle every detail, from flight transfers to medical contingencies, giving you the absolute peace of mind to fully immerse yourself in the majestic beauty of the African wilderness.') }}
                         </p>
                     </div>
 
                     {{-- USP 5 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">Ethics</span>
+                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Ethics') }}</span>
                         <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Sustainable Travel') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('We are deeply committed to preserving the wild spaces we call home. Our operations follow strict low-impact guidelines, supporting eco-friendly lodges and plastic-free initiatives. By choosing us, you become a partner in protecting Tanzania’s natural heritage for future generations, ensuring that the wild remains wild.') }}
@@ -439,7 +439,7 @@
 
                     {{-- USP 6 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
-                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">Heritage</span>
+                        <span class="text-[10px] font-black text-gold-500 uppercase tracking-[0.3em] mb-2 block">{{ __('Heritage') }}</span>
                         <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Authentic Connections') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('Beyond the wildlife, we connect you with the vibrant soul of Tanzania. Through respectful and meaningful cultural exchanges with local tribes and communities, we offer a rare glimpse into the traditions and history of our land. Experience the true warmth of African hospitality that stays with you long after you return home.') }}
