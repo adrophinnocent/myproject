@@ -51,10 +51,10 @@
                                 </span>
                             </div>
                             <h3 class="font-display text-3xl font-black text-white leading-tight group-hover:text-gold-400 transition-colors mb-2">
-                                {{ $album->name }}
+                                {{ $album->translate('name') }}
                             </h3>
                             <p class="text-white/70 text-sm font-medium line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-                                {{ $album->description ?? __('Explore this collection of moments.') }}
+                                {{ $album->translate('description') ?? __('Explore this collection of moments.') }}
                             </p>
 
                             <div class="mt-6 flex items-center gap-2 text-gold-400 font-bold text-xs uppercase tracking-widest group-hover:gap-4 transition-all">

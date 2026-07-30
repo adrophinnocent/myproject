@@ -28,7 +28,7 @@
                     @endif
                     <div class="flex flex-col">
                         <span class="font-display text-2xl font-bold text-white leading-tight">{{ \App\Helpers\AssetHelper::asString($siteName) }}</span>
-                        <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">Est. 2009 · Tanzania</span>
+                        <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">{{ __('Est. 2009') }} · {{ __('Tanzania') }}</span>
                     </div>
                 </a>
                 <p class="text-gray-400 text-sm leading-relaxed">

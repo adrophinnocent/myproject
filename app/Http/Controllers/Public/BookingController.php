@@ -27,7 +27,7 @@ class BookingController extends Controller
                 ?? \App\Models\Safari::withTrashed()->where('slug', $slug)->firstOrFail();
 
         if ($tour->trashed()) {
-            return redirect()->route('tours.index')->with('error', 'This tour package is no longer available.');
+            return redirect()->route('tours.index')->with('error', __('This tour package is no longer available.'));
         }
 
         return view('public.booking.create', compact('tour'));
@@ -39,7 +39,7 @@ class BookingController extends Controller
                 ?? \App\Models\Safari::withTrashed()->where('slug', $slug)->firstOrFail();
 
         if ($tour->trashed()) {
-            return redirect()->route('tours.index')->with('error', 'This tour package is no longer available.');
+            return redirect()->route('tours.index')->with('error', __('This tour package is no longer available.'));
         }
 
         $validated = $request->validate([

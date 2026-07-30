@@ -64,7 +64,7 @@
                     <span class="text-sm">({{ $tour->review_count }} Reviews)</span>
                 </div>
                 <div class="h-4 w-px bg-white/30"></div>
-                <div class="text-sm font-medium">Safe & Certified Operator</div>
+                <div class="text-sm font-medium">{{ __('Safe & Certified Operator') }}</div>
             </div>
         </div>
     </div>

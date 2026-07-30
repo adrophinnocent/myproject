@@ -22,9 +22,9 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             {{ __('Back to Collections') }}
         </a>
-        <h1 class="font-display text-4xl md:text-7xl text-white font-black leading-tight mb-4 tracking-tighter">{{ $album->name }}</h1>
-        @if($album->description)
-            <p class="text-gray-300 max-w-3xl text-lg leading-relaxed font-light">{{ $album->description }}</p>
+        <h1 class="font-display text-4xl md:text-7xl text-white font-black leading-tight mb-4 tracking-tighter">{{ $album->translate('name') }}</h1>
+        @if($album->translate('description'))
+            <p class="text-gray-300 max-w-3xl text-lg leading-relaxed font-light">{{ $album->translate('description') }}</p>
         @endif
     </div>
 </div>
