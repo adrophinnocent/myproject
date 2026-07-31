@@ -37,6 +37,6 @@ class ReviewController extends Controller
             'is_read' => false
         ]);
 
-        return back()->with('success', 'Thank you! Your review has been submitted and is awaiting moderation.');
+        return back()->with('success', __('Thank you! Your review has been submitted and is awaiting moderation.'));
     }
 }

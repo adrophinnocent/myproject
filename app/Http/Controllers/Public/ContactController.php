@@ -47,6 +47,6 @@ class ContactController extends Controller
             'is_read' => false
         ]);
 
-        return redirect()->back()->with('success', 'Thank you for your message! We have received your inquiry and will get back to you soon.');
+        return redirect()->back()->with('success', __('Thank you for your message! We have received your inquiry and will get back to you soon.'));
     }
 }

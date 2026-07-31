@@ -50,6 +50,6 @@ class NewsletterController extends Controller
             'is_read' => false
         ]);
 
-        return back()->with('success', 'Thank you ' . $request->name . ', you have successfully joined our newsletter!');
+        return back()->with('success', __('Thank you :name, you have successfully joined our newsletter!', ['name' => $request->name]));
     }
 }

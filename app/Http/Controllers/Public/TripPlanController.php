@@ -64,6 +64,6 @@ class TripPlanController extends Controller
             \Log::error('Trip plan notification failed: ' . $e->getMessage());
         }
 
-        return back()->with('success', 'Thank you! We\'ll send you a personalized itinerary within 24 hours.');
+        return back()->with('success', __('Thank you! We\'ll send you a personalized itinerary within 24 hours.'));
     }
 }

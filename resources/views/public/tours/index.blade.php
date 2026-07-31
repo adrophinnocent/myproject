@@ -50,7 +50,7 @@
                             <option value="">{{ __('All Destinations') }}</option>
                             @foreach($destinations as $dest)
                             <option value="{{ $dest->id }}" {{ (request('destination') == $dest->id || request('tour_type') == $dest->slug) ? 'selected' : '' }}>
-                                {{ __($dest->name) }}
+                                {{ $dest->translate('name') }}
                             </option>
                             @endforeach
                         </select>
