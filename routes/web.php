@@ -54,7 +54,7 @@ Route::post('/contact', [App\Http\Controllers\Public\ContactController::class, '
 Route::get('/gallery', [App\Http\Controllers\Public\GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/gallery/{slug}', [App\Http\Controllers\Public\GalleryController::class, 'show'])->name('gallery.show');
 
-// Blog Routes
+// IMPORTANT: Blog Routes
 Route::get('/blog', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}.html', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/{slug}', function($slug) {
