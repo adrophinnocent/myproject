@@ -5,32 +5,43 @@
 @section('schema')
 <script type="application/ld+json">
 {
-  "@@context": "https://schema.org/",
-  "@@type": "TouristTrip",
-  "name": "{{ $tour->title }}",
-  "description": "{{ $tour->short_description }}",
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ $tour->translate('title') }}",
+  "description": "{{ $tour->translate('short_description') }}",
   "image": "{{ $tour->featured_image_url }}",
-  "touristType": "Wildlife",
-  "itinerary": [
-    @if(is_array($tour->itinerary))
-        @foreach($tour->itinerary as $index => $day)
-        {
-          "@@type": "City",
-          "name": "{{ $day['title'] ?? '' }}"
-        }{{ !$loop->last ? ',' : '' }}
-        @endforeach
-    @endif
-  ],
+  "brand": {
+    "@type": "Brand",
+    "name": "Twina Safaris"
+  },
   "offers": {
-    "@@type": "Offer",
+    "@type": "Offer",
     "priceCurrency": "USD",
     "price": "{{ $tour->price }}",
     "availability": "https://schema.org/InStock",
-    "url": "{{ url()->current() }}",
-    "seller": {
-      "@@type": "Organization",
-      "name": "Twina Safaris"
-    }
+    "url": "{{ url()->current() }}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ $tour->average_rating }}",
+    "reviewCount": "{{ $tour->review_count ?: 1 }}"
+  },
+  "mainEntity": {
+    "@type": "TouristTrip",
+    "name": "{{ $tour->translate('title') }}",
+    "description": "{{ $tour->translate('description') }}",
+    "touristType": "Wildlife & Adventure",
+    "itinerary": [
+      @if(is_array($tour->itinerary))
+          @foreach($tour->itinerary as $index => $day)
+          {
+            "@type": "City",
+            "name": "{{ $day['title'] ?? '' }}",
+            "description": "{{ $day['description'] ?? '' }}"
+          }{{ !$loop->last ? ',' : '' }}
+          @endforeach
+      @endif
+    ]
   }
 }
 </script>

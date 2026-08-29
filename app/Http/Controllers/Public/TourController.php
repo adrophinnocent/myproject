@@ -121,26 +121,13 @@ class TourController extends Controller
 
     public function show($type, $slug = null)
     {
-        // Handle .html suffix often found in old SEO links
-        if ($slug && str_ends_with($slug, '.html')) {
-            return redirect()->route('tours.show', [
-                'type' => $type,
-                'slug' => str_replace('.html', '', $slug)
-            ], 301);
-        }
-        if (!$slug && str_ends_with($type, '.html')) {
-             return redirect()->route('tours.show', [
-                'type' => str_replace('.html', '', $type)
-            ], 301);
-        }
-
-        // Robust handling: If only one parameter is passed, it's the slug
+        // If type is actually the slug (legacy or single param)
         if ($slug === null) {
-            $slug = $type;
-            // Try to find if it's a safari first, then tour
+            $slug = str_replace('.html', '', $type);
             $tour = \App\Models\Safari::where('slug', $slug)->first()
                     ?? Tour::where('slug', $slug)->firstOrFail();
         } else {
+            $slug = str_replace('.html', '', $slug);
             if ($type === 'safari') {
                 $tour = \App\Models\Safari::where('slug', $slug)->firstOrFail();
             } else {

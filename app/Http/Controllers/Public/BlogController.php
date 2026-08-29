@@ -16,9 +16,9 @@ class BlogController extends Controller
         return view('public.blog.index', compact('posts', 'categories'));
     }
 
-    public function show($slug)
+    public function show(BlogPost $blog)
     {
-        $post = BlogPost::where('slug', $slug)->published()->firstOrFail();
+        $post = $blog;
         $post->increment('views_count');
 
         $relatedPosts = BlogPost::where('category_id', $post->category_id)

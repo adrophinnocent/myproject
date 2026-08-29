@@ -9,34 +9,36 @@
     <title>@yield('title', \App\Models\Setting::get('seo_title', config('app.name', 'Twina Safaris')))</title>
     <meta name="description" content="@yield('meta_description', \App\Models\Setting::get('meta_description', 'Explore Africa\'s finest safari experiences with Twina Safaris.'))">
     <meta name="keywords"    content="@yield('meta_keywords', \App\Models\Setting::get('meta_keywords', 'safari, Tanzania, Africa, tours, Serengeti, Kilimanjaro, Zanzibar'))">
-    <meta name="robots"      content="index, follow">
+    <meta name="robots"      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
-    <link   rel="canonical"  href="{{ url()->current() }}">
+    <link   rel="canonical"  href="{{ str_replace('.html', '', url()->current()) }}{{ (str_contains(url()->current(), 'tours/') || str_contains(url()->current(), 'blog/')) && !str_ends_with(url()->current(), '.html') && !str_ends_with(url()->current(), '/') ? '.html' : '' }}">
 
     {{-- International SEO: Hreflang Tags --}}
     @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
-        <link rel="alternate" hreflang="{{ $locale }}" href="{{ url()->current() }}?lang={{ $locale }}">
+        <link rel="alternate" hreflang="{{ $locale }}" href="{{ url()->current() }}{{ str_contains(url()->current(), '?') ? '&' : '?' }}lang={{ $locale }}">
     @endforeach
     <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
-
-    {{-- Preconnect to External Domains --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     {{-- Favicon --}}
     @php $favicon = \App\Helpers\AssetHelper::getFaviconUrl(); @endphp
     <link rel="icon" type="image/x-icon" href="{{ $favicon }}">
     <link rel="apple-touch-icon" href="{{ $favicon }}">
-    <link rel="shortcut icon" href="{{ $favicon }}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#D4AF37">
 
     {{-- Open Graph / Facebook --}}
     <meta property="og:type"        content="website">
     <meta property="og:url"         content="{{ url()->current() }}">
+    <meta property="og:site_name"   content="Twina Safaris">
     <meta property="og:title"       content="@yield('title', \App\Models\Setting::get('seo_title', config('app.name')))">
     <meta property="og:description" content="@yield('meta_description', \App\Models\Setting::get('meta_description'))">
     <meta property="og:image"       content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta property="og:locale"      content="{{ str_replace('_', '-', app()->getLocale()) }}">
 
     {{-- Twitter --}}
     <meta property="twitter:card"    content="summary_large_image">
@@ -44,29 +46,58 @@
     <meta property="twitter:title"   content="@yield('title', config('app.name'))">
     <meta property="twitter:description" content="@yield('meta_description')">
     <meta property="twitter:image"   content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta name="twitter:site"        content="@TwinaSafaris">
 
-    {{-- Structured Data (Schema.org) --}}
+    {{-- Structured Data (Schema.org) for AI & Google --}}
     <script type="application/ld+json">
-    {
-      "{{ '@' }}context": "https://schema.org",
-      "{{ '@' }}type": "TravelAgency",
-      "name": "Twina Safaris",
-      "alternateName": "Twina Safaris Tanzania",
-      "url": "{{ url('/') }}",
-      "logo": "{{ \App\Models\Setting::get('logo') ? asset('storage/' . \App\Models\Setting::get('logo')) : asset('images/logo.png') }}",
-      "contactPoint": {
-        "{{ '@' }}type": "ContactPoint",
-        "telephone": "{{ \App\Models\Setting::get('site_phone') }}",
-        "contactType": "customer service",
-        "areaServed": "TZ",
-        "availableLanguage": ["en", "Swahili"]
-      },
-      "sameAs": [
-        "{{ \App\Models\Setting::get('facebook_url', '#') }}",
-        "{{ \App\Models\Setting::get('instagram_url', '#') }}",
-        "{{ \App\Models\Setting::get('youtube_url', '#') }}"
-      ]
-    }
+    [
+        {
+          "@context": "https://schema.org",
+          "@type": "TravelAgency",
+          "@id": "{{ url('/') }}#organization",
+          "name": "Twina Safaris",
+          "alternateName": "Twina Safaris Tanzania",
+          "url": "{{ url('/') }}",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "{{ \App\Models\Setting::get('logo') ? asset('storage/' . \App\Models\Setting::get('logo')) : asset('images/logo.png') }}"
+          },
+          "image": "{{ asset('images/og-default.jpg') }}",
+          "description": "Premium Safari and Trekking adventures in Tanzania. Expert local guides for Serengeti, Kilimanjaro, and Zanzibar.",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Moshi",
+            "addressLocality": "Kilimanjaro",
+            "addressCountry": "TZ"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "-3.3444",
+            "longitude": "37.3344"
+          },
+          "telephone": "{{ \App\Models\Setting::get('site_phone') }}",
+          "email": "info@twinasafaris.com",
+          "priceRange": "$$$",
+          "sameAs": [
+            "{{ \App\Models\Setting::get('facebook_url', '#') }}",
+            "{{ \App\Models\Setting::get('instagram_url', '#') }}",
+            "{{ \App\Models\Setting::get('youtube_url', '#') }}"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "{{ url('/') }}#website",
+          "url": "{{ url('/') }}",
+          "name": "Twina Safaris",
+          "publisher": { "@id": "{{ url('/') }}#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ url('/tours') }}?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+    ]
     </script>
 
     {{-- Analytics & Pixels --}}

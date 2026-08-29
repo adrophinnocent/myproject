@@ -1,7 +1,32 @@
 @extends('public.layouts.app')
 
-@section('title', $post->meta_title ?? $post->title . ' - Twina Safaris Blog')
+@section('title', $post->meta_title ?? $post->translate('title') . ' - Twina Safaris Blog')
 @section('meta_description', $post->meta_description ?? $post->excerpt)
+
+@section('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ $post->translate('title') }}",
+  "image": "{{ $post->featured_image_url }}",
+  "author": {
+    "@type": "Organization",
+    "name": "Twina Safaris"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Twina Safaris",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ asset('images/logo.png') }}"
+    }
+  },
+  "datePublished": "{{ $post->published_at ? $post->published_at->toIso8601String() : $post->created_at->toIso8601String() }}",
+  "description": "{{ $post->meta_description ?? $post->excerpt }}"
+}
+</script>
+@endsection
 
 @section('content')
 <article class="bg-white">

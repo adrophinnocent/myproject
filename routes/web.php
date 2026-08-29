@@ -32,8 +32,11 @@ Route::post('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingContr
 Route::get('/booking/success/{reference}', [App\Http\Controllers\Public\BookingController::class, 'success'])->name('booking.success');
 Route::get('/booking/download/{reference}', [App\Http\Controllers\Public\BookingController::class, 'downloadItinerary'])->name('booking.download');
 
-// Dynamic Tour Show Route (Robust version)
-Route::get('/tours/{type}/{slug?}', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
+// Dynamic Tour Show Route (Robust version with .html)
+Route::get('/tours/{type}/{slug}.html', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
+Route::get('/tours/{type}/{slug}', function($type, $slug) {
+    return redirect()->route('tours.show', ['type' => $type, 'slug' => $slug], 301);
+});
 
 // Tour Inquiries
 Route::post('/tours/{tour:id}/inquiry', [App\Http\Controllers\Public\InquiryController::class, 'store'])->name('tours.inquiry');
@@ -52,7 +55,10 @@ Route::get('/gallery', [App\Http\Controllers\Public\GalleryController::class, 'i
 Route::get('/gallery/{slug}', [App\Http\Controllers\Public\GalleryController::class, 'show'])->name('gallery.show');
 
 Route::get('/blog', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{blog:slug}', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/{blog:slug}.html', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/{slug}', function($slug) {
+    return redirect()->to("/blog/{$slug}.html", 301);
+});
 
 Route::get('/faqs', [App\Http\Controllers\Public\FaqController::class, 'index'])->name('faqs.index');
 

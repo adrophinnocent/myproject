@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+
+# AI Crawler Access
+User-agent: GPTBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
 Sitemap: https://twinasafaris.com/sitemap.xml
