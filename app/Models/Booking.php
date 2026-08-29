@@ -69,6 +69,11 @@ class Booking extends Model
         return $this->belongsTo(Safari::class)->withTrashed();
     }
 
+    public function tripPlan()
+    {
+        return $this->hasOne(TripPlan::class);
+    }
+
     public function getBookableItemAttribute()
     {
         return $this->tour ?? $this->safari;

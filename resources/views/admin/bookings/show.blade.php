@@ -94,6 +94,14 @@
                                 <p class="text-[10px] text-white/70 font-bold uppercase tracking-widest">Destination</p>
                                 <p class="text-white font-bold">{{ $booking->bookable_item->destination->name ?? 'Tanzania' }}</p>
                             </div>
+                            @if($booking->tripPlan)
+                                <div class="mt-4">
+                                    <a href="{{ route('admin.trip-plans.show', $booking->tripPlan->id) }}" class="inline-flex items-center gap-2 text-gold-600 font-black uppercase text-[10px] tracking-widest border border-gold-200 px-4 py-2 rounded-xl hover:bg-gold-50 transition-all">
+                                        View Linked Trip Plan Workspace
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                         <div class="flex-1 space-y-6">
                             <h4 class="text-2xl font-black text-gray-900 leading-tight tracking-tight">{{ $booking->bookable_item->title ?? 'Deleted or Missing Package' }}</h4>

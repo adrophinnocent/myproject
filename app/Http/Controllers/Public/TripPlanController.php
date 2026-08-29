@@ -24,46 +24,42 @@ class TripPlanController extends Controller
         return view('public.pages.plan-my-trip', compact('destinations', 'inspiringTours'));
     }
 
-    public function store(Request $request)
+    public function show($id)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:30',
-            'nationality' => 'nullable|string|max:100',
-            'destination_ids' => 'nullable|array',
-            'travel_style' => 'nullable|string|max:100',
-            'budget_range' => 'nullable|string|max:100',
-            'duration' => 'nullable|string|max:50',
-            'accommodation_level' => 'nullable|string|max:100',
-            'interests' => 'nullable|array',
-            'travel_date' => 'nullable|date|after:today',
-            'adults' => 'required|integer|min:1',
-            'children' => 'nullable|integer|min:0',
-            'message' => 'nullable|string|max:2000',
-        ]);
+        // For security, we might want to use a UUID or hash, but for now ID is fine for MVP
+        $tripPlan = TripPlan::findOrFail($id);
 
-        $validated['group_size'] = ($validated['adults'] ?? 1) + ($validated['children'] ?? 0);
-        $validated['status'] = 'new';
-
-        $plan = TripPlan::create($validated);
-
-        // Notify Admin
-        try {
-            $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
-            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminNewTripPlanMail($plan));
-
-            \App\Models\AdminNotification::create([
-                'type' => 'trip_plan',
-                'title' => 'New Trip Plan Request',
-                'message' => 'New request from ' . $plan->name,
-                'link' => route('admin.trip-plans.show', $plan),
-                'is_read' => false
+        // Track view
+        if ($tripPlan->status === 'sent') {
+            $tripPlan->update([
+                'status' => 'viewed',
+                'viewed_at' => now()
             ]);
-        } catch (\Exception $e) {
-            \Log::error('Trip plan notification failed: ' . $e->getMessage());
         }
 
-        return back()->with('success', __('Thank you! We\'ll send you a personalized itinerary within 24 hours.'));
+        return view('public.pages.trip-plan-view', compact('tripPlan'));
+    }
+
+    public function accept($id)
+    {
+        $tripPlan = TripPlan::findOrFail($id);
+        $tripPlan->update(['status' => 'accepted', 'accepted_at' => now()]);
+
+        return back()->with('success', 'Thank you! You have accepted the trip plan. Our team will contact you shortly to finalize the booking.');
+    }
+
+    public function requestChanges(Request $request, $id)
+    {
+        $request->validate(['message' => 'required|string']);
+
+        $tripPlan = TripPlan::findOrFail($id);
+        $tripPlan->update(['status' => 'changes_requested']);
+
+        $tripPlan->messages()->create([
+            'sender_type' => 'customer',
+            'message' => $request->message,
+        ]);
+
+        return back()->with('success', 'Your request for changes has been sent. We will update the plan and get back to you.');
     }
 }

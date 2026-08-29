@@ -177,7 +177,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'destroy' => 'admin.trip-plans.destroy',
     ]);
 
-    Route::patch('/trip-plans/{tripPlan}/update-status', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'updateStatus'])->name('admin.trip-plans.update-status');
+    Route::prefix('trip-plans/{tripPlan}')->group(function() {
+        Route::patch('/update-status', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'updateStatus'])->name('admin.trip-plans.update-status');
+        Route::post('/save-itinerary', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'saveItinerary'])->name('admin.trip-plans.save-itinerary');
+        Route::post('/save-pricing', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'savePricing'])->name('admin.trip-plans.save-pricing');
+        Route::post('/send-message', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'sendMessage'])->name('admin.trip-plans.send-message');
+        Route::post('/convert-to-booking', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'convertToBooking'])->name('admin.trip-plans.convert-to-booking');
+    });
 
     Route::match(['get', 'patch'], '/reviews/{review}/approve', [App\Http\Controllers\Admin\ReviewAdminController::class, 'approve'])->name('admin.reviews.approve');
     Route::resource('/reviews', App\Http\Controllers\Admin\ReviewAdminController::class)->names([
