@@ -128,7 +128,7 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-900 text-sm uppercase tracking-widest mb-1">{{ __('Email') }}</h4>
-                        <a href="mailto:info@twinasafaris.com" class="text-gray-700 font-bold hover:text-gold-600 transition-colors">info@twinasafaris.com</a>
+                        <a href="https://twinasafaris.com" class="text-gray-700 font-bold hover:text-gold-600 transition-colors">twinasafaris.com</a>
                         <p class="text-gray-400 text-xs mt-1">{{ __('We reply within 24 hours') }}</p>
                     </div>
                 </div>

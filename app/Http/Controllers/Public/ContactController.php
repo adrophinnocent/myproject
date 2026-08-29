@@ -32,7 +32,7 @@ class ContactController extends Controller
         $contact = Contact::create($validated);
 
         // 1. Send contact notification to admin
-        $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
+        $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris.com');
         Mail::to($adminEmail)->send(new ContactNotification($validated));
 
         // 2. Send automatic acknowledgment to customer

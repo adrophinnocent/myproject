@@ -37,7 +37,7 @@ class AiChatController extends Controller
         - Company: Twina Safaris. Known for boutique, private, and highly personalized experiences.
         - Tone: Professional, warm, inviting, and luxury-focused. Use 'Jambo!' for greetings.
         " . $formattedFacts . "
-        - Contact: Site WhatsApp (+255 795 482 197), Email (info@twinasafaris.com).
+        - Contact: Site WhatsApp (+255 795 482 197), Email (twinasafaris.com).
 
         INSTRUCTIONS:
         1. Answer based on facts above and your general knowledge of Tanzania tourism.

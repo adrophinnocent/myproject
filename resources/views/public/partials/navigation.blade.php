@@ -1,7 +1,7 @@
 @php
      $siteName = \App\Models\Setting::get('site_name','Twinasafaris');
      $phone    = \App\Models\Setting::get('site_phone','+255 795 482 197');
-     $email    = \App\Models\Setting::get('site_email','info@twinasafaris.com');
+     $email    = \App\Models\Setting::get('site_email','twinasafaris.com');
      $logo     = \App\Models\Setting::get('logo');
 
      // Categories with custom descriptions for the Mega Menu

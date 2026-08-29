@@ -78,7 +78,7 @@
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} Twina Safaris Tanzania. All rights reserved.</p>
-            <p>Moshi, Kilimanjaro | +255 754 000 000 | info@twinasafaris.com</p>
+            <p>Moshi, Kilimanjaro | +255 754 000 000 | twinasafaris.com</p>
             <div class="social-links">
                 <a href="{{ \App\Models\Setting::get('facebook_url', '#') }}">Facebook</a>
                 <a href="{{ \App\Models\Setting::get('instagram_url', '#') }}">Instagram</a>

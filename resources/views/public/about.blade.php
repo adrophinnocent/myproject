@@ -102,8 +102,8 @@
                     <a href="https://wa.me/255795482197" class="px-8 py-4 bg-safari-dark text-white text-xs font-black uppercase tracking-[0.2em] rounded-full shadow-xl hover:bg-black transition-all">
                         {{ __('Chat on WhatsApp') }}
                     </a>
-                    <a href="mailto:info@twinasafaris.com" class="px-8 py-4 border-2 border-gold-500 text-gold-600 text-xs font-black uppercase tracking-[0.2em] rounded-full hover:bg-gold-500 hover:text-white transition-all">
-                        {{ __('Send an Email') }}
+                    <a href="https://twinasafaris.com" class="px-8 py-4 border-2 border-gold-500 text-gold-600 text-xs font-black uppercase tracking-[0.2em] rounded-full hover:bg-gold-500 hover:text-white transition-all">
+                        twinasafaris.com
                     </a>
                 </div>
             </div>

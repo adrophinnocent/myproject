@@ -71,7 +71,7 @@
 
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Site Email</label>
-            <input type="email" name="site_email" value="{{ \App\Models\Setting::get('site_email', 'info@twinasafaris.com') }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+            <input type="email" name="site_email" value="{{ \App\Models\Setting::get('site_email', 'twinasafaris.com') }}" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
         </div>
 
         <div class="mb-6">

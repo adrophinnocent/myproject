@@ -27,7 +27,7 @@ class InquiryController extends Controller
         $inquiry->save();
 
         // 1. Send notification to admin
-        $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
+        $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris.com');
         Mail::to($adminEmail)->send(new TourInquiryMail($inquiry));
 
         // 2. Create Admin Dashboard Notification

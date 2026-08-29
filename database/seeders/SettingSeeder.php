@@ -11,7 +11,7 @@ class SettingSeeder extends Seeder
     {
         $settings = [
             'site_name' => 'Twina Safaris',
-            'site_email' => 'info@twinasafaris.com',
+            'site_email' => 'twinasafaris.com',
             'site_phone' => '+255 795 482 197',
             'site_whatsapp' => '255795482197',
             'hero_title' => 'Explore Tanzania',

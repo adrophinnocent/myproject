@@ -124,10 +124,10 @@
         <div class="email-footer">
             <p>&copy; {{ date('Y') }} Twina Safaris. All rights reserved.</p>
             <p>
-                <a href="{{ route('home') }}">Visit Website</a> | 
+                <a href="{{ route('home') }}">Visit Website</a> |
                 <a href="{{ route('contact.index') }}">Contact Us</a>
             </p>
-            <p>{{ \App\Models\Setting::get('site_phone', '+255 754 000 000') }} | {{ \App\Models\Setting::get('site_email', 'info@twinasafaris.com') }}</p>
+            <p>{{ \App\Models\Setting::get('site_phone', '+255 754 000 000') }} | {{ \App\Models\Setting::get('site_email', 'twinasafaris.com') }}</p>
         </div>
     </div>
 </body>

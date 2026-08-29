@@ -93,7 +93,7 @@ class BookingController extends Controller
 
         // 3. Send Admin Alert
         try {
-            $adminEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com');
+            $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris.com');
             Mail::to($adminEmail)->send(new AdminNewBookingNotification($booking));
 
             // WhatsApp Notification to Admin
