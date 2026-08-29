@@ -110,20 +110,25 @@
                     <div class="space-y-6">
                         @php
                             $rawItinerary = $campaign->translate('itinerary');
-                            // Split by "DAY X:" pattern to handle poorly formatted text
+                            // Split by "DAY X:" pattern
                             $dayBlocks = preg_split('/(DAY\s+\d+:)/i', $rawItinerary, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
                             $formattedDays = [];
                             for ($i = 0; $i < count($dayBlocks); $i += 2) {
                                 $header = trim($dayBlocks[$i] ?? '');
                                 $content = trim($dayBlocks[$i+1] ?? '');
+
+                                // Clean up the content if it starts with the same header (case insensitive)
+                                $cleanHeader = rtrim($header, ':');
+                                $content = preg_replace('/^' . preg_quote($cleanHeader, '/') . ':?\s*/i', '', $content);
+
                                 if ($header && $content) {
                                     $formattedDays[] = ['title' => $header, 'desc' => $content];
                                 }
                             }
 
                             // Fallback if the regex didn't find anything
-                            if (empty($formattedDays)) {
+                            if (empty($formattedDays) && !empty($rawItinerary)) {
                                 $days = explode("\n\n", trim($rawItinerary));
                                 foreach($days as $index => $day) {
                                     $parts = explode("\n", $day, 2);

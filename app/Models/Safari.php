@@ -17,6 +17,8 @@ class Safari extends Model
 
     protected $slugSource = 'title';
 
+    protected $appends = ['featured_image_url', 'formatted_price', 'duration_text', 'item_type'];
+
     protected $fillable = [
         'category_id', 'destination_id', 'title', 'slug', 'short_description', 'description',
         'price', 'price_note', 'duration_days', 'duration_nights', 'group_size_min', 'group_size_max',
@@ -86,7 +88,10 @@ class Safari extends Model
 
     public function getDurationTextAttribute(): string
     {
-        return "{$this->duration_days} Days / " . ($this->duration_nights ?: ($this->duration_days - 1)) . " Nights";
+        return __(':days Days / :nights Nights', [
+            'days' => $this->duration_days,
+            'nights' => $this->duration_nights ?: ($this->duration_days - 1)
+        ]);
     }
 
     public function getRouteKeyName(): string

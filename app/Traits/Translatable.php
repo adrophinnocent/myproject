@@ -14,28 +14,33 @@ trait Translatable
      */
     public function translate(string $field, ?string $locale = null): mixed
     {
-        $locale = $locale ?? App::getLocale();
-        $defaultLocale = config('app.locale', 'en');
+        try {
+            $locale = $locale ?? App::getLocale();
+            $defaultLocale = config('app.locale', 'en');
 
-        // If requested locale is the default, return original attribute
-        if ($locale === $defaultLocale) {
+            // If requested locale is the default, return original attribute
+            if ($locale === $defaultLocale) {
+                return $this->{$field};
+            }
+
+            // Use the translations relationship (polymorphic OR dedicated)
+            $translationRelation = $this->translations();
+            $relatedModel = $translationRelation->getRelated();
+
+            if ($relatedModel instanceof Translation) {
+                // Polymorphic style (like BlogPost)
+                $translation = $translationRelation->where('locale', $locale)
+                    ->where('field', $field)
+                    ->first();
+                return $translation ? $translation->text : $this->{$field};
+            } else {
+                // Dedicated table style (like Tour)
+                $translation = $translationRelation->where('locale', $locale)->first();
+                return ($translation && !empty($translation->{$field})) ? $translation->{$field} : $this->{$field};
+            }
+        } catch (\Throwable $e) {
+            // Fallback to default field if anything fails (e.g. missing table)
             return $this->{$field};
-        }
-
-        // Use the translations relationship (polymorphic OR dedicated)
-        $translationRelation = $this->translations();
-        $relatedModel = $translationRelation->getRelated();
-
-        if ($relatedModel instanceof Translation) {
-            // Polymorphic style (like BlogPost)
-            $translation = $translationRelation->where('locale', $locale)
-                ->where('field', $field)
-                ->first();
-            return $translation ? $translation->text : $this->{$field};
-        } else {
-            // Dedicated table style (like Tour)
-            $translation = $translationRelation->where('locale', $locale)->first();
-            return ($translation && !empty($translation->{$field})) ? $translation->{$field} : $this->{$field};
         }
     }
 

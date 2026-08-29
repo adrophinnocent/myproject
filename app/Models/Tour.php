@@ -14,6 +14,8 @@ class Tour extends Model
 
     protected $slugSource = 'title';
 
+    protected $appends = ['featured_image_url', 'formatted_price', 'duration_text', 'item_type'];
+
     protected $fillable = [
         'title', 'slug', 'category_id', 'destination_id',
         'short_description', 'description', 'highlights',
@@ -145,7 +147,10 @@ class Tour extends Model
 
     public function getDurationTextAttribute(): string
     {
-        return "{$this->duration_days} Days / {$this->duration_nights} Nights";
+        return __(':days Days / :nights Nights', [
+            'days' => $this->duration_days,
+            'nights' => $this->duration_nights
+        ]);
     }
 
     public function getAverageRatingAttribute(): float

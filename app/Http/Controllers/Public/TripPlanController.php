@@ -12,10 +12,10 @@ class TripPlanController extends Controller
 {
     public function index()
     {
-        $destinations = Destination::where('is_active', true)->orderBy('name')->get();
+        $destinations = Destination::active()->get();
 
-        $inspiringTours = Tour::where('is_published', true)
-            ->where('is_featured', true)
+        $inspiringTours = Tour::published()
+            ->featured()
             ->with(['destination', 'category'])
             ->latest()
             ->take(3)
