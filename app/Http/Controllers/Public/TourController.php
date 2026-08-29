@@ -121,19 +121,15 @@ class TourController extends Controller
 
     public function show($type, $slug = null)
     {
-        // If type is actually the slug (legacy or single param)
+        // If slug is null, it means we only got one parameter (e.g. /tours/serengeti.html)
         if ($slug === null) {
             $slug = str_replace('.html', '', $type);
-            $tour = \App\Models\Safari::where('slug', $slug)->first()
-                    ?? Tour::where('slug', $slug)->firstOrFail();
         } else {
             $slug = str_replace('.html', '', $slug);
-            if ($type === 'safari') {
-                $tour = \App\Models\Safari::where('slug', $slug)->firstOrFail();
-            } else {
-                $tour = Tour::where('slug', $slug)->firstOrFail();
-            }
         }
+
+        $tour = \App\Models\Safari::where('slug', $slug)->first()
+                ?? Tour::where('slug', $slug)->firstOrFail();
 
         $tour->load(['category', 'destination', 'images', 'translations', 'reviews' => function($q) {
             $q->where('is_approved', true)->latest();
