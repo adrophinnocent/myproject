@@ -22,7 +22,7 @@
     @endphp
     <title>Trip Itinerary - {{ $title }}</title>
     <style>
-        @page { margin: 0; }
+        @@page { margin: 0; }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             color: #1a1209;

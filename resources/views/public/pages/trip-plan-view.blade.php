@@ -195,7 +195,7 @@
                         </form>
 
                         <div x-data="{ open: false }">
-                            <button @click="open = !open" class="w-full bg-white border-2 border-gray-100 text-gray-500 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-gold-500 hover:text-gold-600 transition-all">
+                            <button @@click="open = !open" class="w-full bg-white border-2 border-gray-100 text-gray-500 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-gold-500 hover:text-gold-600 transition-all">
                                 Request Changes
                             </button>
 

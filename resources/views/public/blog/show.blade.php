@@ -6,19 +6,19 @@
 @section('schema')
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
+  "@@context": "https://schema.org",
+  "@@type": "BlogPosting",
   "headline": "{{ $post->translate('title') }}",
   "image": "{{ $post->featured_image_url }}",
   "author": {
-    "@type": "Organization",
+    "@@type": "Organization",
     "name": "Twina Safaris"
   },
   "publisher": {
-    "@type": "Organization",
+    "@@type": "Organization",
     "name": "Twina Safaris",
     "logo": {
-      "@type": "ImageObject",
+      "@@type": "ImageObject",
       "url": "{{ asset('images/logo.png') }}"
     }
   },
@@ -97,7 +97,7 @@
                 </div>
 
                 {{-- Related Posts --}}
-                @if($relatedPosts->count() > 0)
+                @if(isset($relatedPosts) && $relatedPosts->count() > 0)
                 <div>
                     <h3 class="font-display text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                         {{ __('More Stories') }}
