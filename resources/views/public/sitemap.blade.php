@@ -27,7 +27,7 @@
     @foreach ($tours as $tour)
         @if($tour->slug)
         <url>
-            <loc>{{ route('tours.show', ['type' => 'tour', 'slug' => $tour->slug]) }}</loc>
+            <loc>{{ url('/tours/tour/' . $tour->slug . '.html') }}</loc>
             <lastmod>{{ $tour->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.9</priority>
@@ -39,7 +39,7 @@
     @foreach ($safaris as $safari)
         @if($safari->slug)
         <url>
-            <loc>{{ route('tours.show', ['type' => 'safari', 'slug' => $safari->slug]) }}</loc>
+            <loc>{{ url('/tours/safari/' . $safari->slug . '.html') }}</loc>
             <lastmod>{{ $safari->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.9</priority>
@@ -50,7 +50,7 @@
     {{-- Blogs --}}
     @foreach ($blogs as $blog)
         <url>
-            <loc>{{ route('blog.show', $blog->slug) }}</loc>
+            <loc>{{ url('/blog/' . $blog->slug . '.html') }}</loc>
             <lastmod>{{ $blog->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.7</priority>

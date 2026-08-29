@@ -34,14 +34,29 @@ Route::get('/booking/download/{reference}', [App\Http\Controllers\Public\Booking
 
 // Dynamic Tour Show Route (Robust version with .html)
 Route::get('/tours/{type}/{slug}.html', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
-
-// Blog Route with .html
-Route::get('/blog/{slug}.html', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');
-
-// Redirects
 Route::get('/tours/{type}/{slug}', function($type, $slug) {
     return redirect()->to("/tours/{$type}/{$slug}.html", 301);
 });
+
+// Tour Inquiries
+Route::post('/tours/{tour:id}/inquiry', [App\Http\Controllers\Public\InquiryController::class, 'store'])->name('tours.inquiry');
+
+// Public AI Assistant
+Route::post('/ai-assistant/chat', [App\Http\Controllers\Public\AiChatController::class, 'sendMessage'])->name('ai-assistant.chat');
+
+Route::get('/about', function () {
+    return view('public.about');
+})->name('about');
+
+Route::get('/contact', [App\Http\Controllers\Public\ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [App\Http\Controllers\Public\ContactController::class, 'send'])->name('contact.send');
+
+Route::get('/gallery', [App\Http\Controllers\Public\GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/{slug}', [App\Http\Controllers\Public\GalleryController::class, 'show'])->name('gallery.show');
+
+// Blog Routes
+Route::get('/blog', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}.html', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/{slug}', function($slug) {
     if (str_ends_with($slug, '.html')) return abort(404);
     return redirect()->to("/blog/{$slug}.html", 301);
