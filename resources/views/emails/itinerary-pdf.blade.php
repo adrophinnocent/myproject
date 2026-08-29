@@ -2,7 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Trip Itinerary - {{ (string)($booking->bookable_item->title ?? 'Safari') }}</title>
+    @php
+        $title = $booking ? ($booking->bookable_item->title ?? 'Safari') : ($tripPlan->trip_title ?? 'Your Safari');
+        $clientName = $booking ? ($booking->first_name . ' ' . $booking->last_name) : $tripPlan->name;
+        $date = $booking ? $booking->travel_date : $tripPlan->travel_date;
+        $duration = $booking ? ($booking->bookable_item->duration_text ?? 'Custom') : ($tripPlan->duration ?: 'Custom');
+        $ref = $booking ? $booking->booking_reference : 'TP-' . $tripPlan->id;
+
+        // Itinerary logic
+        if ($booking) {
+            $rawItinerary = $booking->bookable_item->itinerary ?? [];
+        } else {
+            $rawItinerary = $tripPlan->itinerary_data ?? [];
+        }
+
+        if (is_string($rawItinerary)) {
+            $rawItinerary = json_decode($rawItinerary, true);
+        }
+    @endphp
+    <title>Trip Itinerary - {{ $title }}</title>
     <style>
         @page { margin: 0; }
         body {
@@ -32,7 +50,7 @@
         .ov-label { font-size: 9px; font-weight: 900; color: #D4AF37; text-transform: uppercase; margin-bottom: 5px; }
         .ov-value { font-size: 12px; font-weight: bold; color: #1a1209; }
 
-        /* Daily Timeline - Restored */
+        /* Daily Timeline */
         .day-block { margin-bottom: 40px; position: relative; padding-left: 60px; page-break-inside: avoid; }
         .day-block:before { content: ""; position: absolute; left: 19px; top: 35px; bottom: -35px; width: 2px; background: #D4AF37; opacity: 0.3; }
         .day-block:last-child:before { display: none; }
@@ -53,24 +71,21 @@
         }
 
         .day-card { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid #e5e5e5; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .day-title { font-size: 20px; font-weight: 900; color: #0a0703; margin: 0 0 10px 0; }
-        .day-description { font-size: 12px; color: #444; line-height: 1.6; margin-bottom: 20px; }
+        .day-title { font-size: 18px; font-weight: 900; color: #0a0703; margin: 0 0 10px 0; text-transform: uppercase; }
+        .day-description { font-size: 12px; color: #444; line-height: 1.6; margin-bottom: 15px; }
 
         .logistics-grid { display: table; width: 100%; border-top: 1px solid #f0f0f0; padding-top: 15px; }
         .log-col { display: table-cell; width: 33.33%; font-size: 11px; }
         .log-label { font-weight: 900; color: #D4AF37; text-transform: uppercase; font-size: 8px; margin-bottom: 2px; }
         .log-value { font-weight: bold; color: #1a1209; }
 
-        /* Footer - Redesigned like Invoice */
+        /* Footer */
         .footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            margin-top: 50px;
             background-color: #0a0703;
-            padding: 40px 0;
+            padding: 30px;
             text-align: center;
-            box-sizing: border-box;
+            border-radius: 20px;
         }
         .footer-brand { font-size: 16px; font-weight: 900; color: #D4AF37; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
         .footer-contact { font-size: 10px; color: #94a3b8; font-weight: bold; }
@@ -82,7 +97,6 @@
         <div class="header">
             @php
                 $logo = \App\Models\Setting::get('logo');
-                // Use storage_path directly to avoid public_path/symlink issues during PDF generation
                 $logoPath = $logo ? storage_path('app/public/' . $logo) : null;
             @endphp
             @if($logoPath && file_exists($logoPath))
@@ -94,61 +108,64 @@
         </div>
 
         <div class="itinerary-title-block">
-            <h1 class="main-title">TRIP<br>ITINERARY</h1>
-            <div class="sub-title">{{ $booking->bookable_item->title }}</div>
+            <h1 class="main-title">EXPEDITION<br>PLAN</h1>
+            <div class="sub-title">{{ $title }}</div>
         </div>
 
         <table class="overview-grid">
             <tr>
                 <td>
-                    <div class="ov-label">Traveler</div>
-                    <div class="ov-value">{{ $booking->first_name }} {{ $booking->last_name }}</div>
+                    <div class="ov-label">Client</div>
+                    <div class="ov-value">{{ $clientName }}</div>
                 </td>
                 <td>
                     <div class="ov-label">Travel Date</div>
-                    <div class="ov-value">{{ \Carbon\Carbon::parse($booking->travel_date)->format('d M, Y') }}</div>
+                    <div class="ov-value">{{ $date ? \Carbon\Carbon::parse($date)->format('d M, Y') : 'TBD' }}</div>
                 </td>
                 <td>
                     <div class="ov-label">Duration</div>
-                    <div class="ov-value">{{ $booking->bookable_item->duration_text }}</div>
+                    <div class="ov-value">{{ $duration }}</div>
                 </td>
                 <td>
                     <div class="ov-label">Reference</div>
-                    <div class="ov-value">#{{ $booking->booking_reference }}</div>
+                    <div class="ov-value">#{{ $ref }}</div>
                 </td>
             </tr>
         </table>
 
-        @php
-            $itinerary = $booking->bookable_item->itinerary ?? [];
-            if (is_string($itinerary)) {
-                $itinerary = json_decode($itinerary, true);
-            }
-        @endphp
-
-        @if(!empty($itinerary) && is_array($itinerary))
-            @foreach($itinerary as $index => $item)
+        @if(!empty($rawItinerary) && is_array($rawItinerary))
+            @foreach($rawItinerary as $index => $item)
                 @php $item = (array)$item; @endphp
                 <div class="day-block">
-                    <div class="day-badge">{{ $loop->iteration }}</div>
+                    <div class="day-badge">{{ $item['day'] ?? $loop->iteration }}</div>
                     <div class="day-card">
-                        <h3 class="day-title">{{ $item['title'] ?? 'Day ' . ($index+1) }}</h3>
-                        <div class="day-description">{{ $item['description'] ?? 'Prepare for an incredible day exploring the beauty of Tanzania.' }}</div>
+                        <h3 class="day-title">{{ $item['title'] ?? 'Adventure Day' }}</h3>
+                        <div class="day-description">
+                            {{ $item['desc'] ?? ($item['description'] ?? 'Prepare for an incredible day exploring the beauty of Tanzania.') }}
+                        </div>
 
+                        @if(isset($item['accommodation']) || isset($item['meals']))
                         <div class="logistics-grid">
+                            @if(isset($item['accommodation']))
                             <div class="log-col">
                                 <div class="log-label">Stay</div>
-                                <div class="log-value">{{ $item['accommodation'] ?? 'Safari Camp' }}</div>
+                                <div class="log-value">{{ $item['accommodation'] }}</div>
                             </div>
+                            @endif
+                            @if(isset($item['meals']))
                             <div class="log-col">
                                 <div class="log-label">Meals</div>
-                                <div class="log-value">{{ $item['meals'] ?? 'B, L, D' }}</div>
+                                <div class="log-value">{{ is_array($item['meals']) ? implode(', ', $item['meals']) : $item['meals'] }}</div>
                             </div>
+                            @endif
+                            @if(isset($item['activities']))
                             <div class="log-col">
-                                <div class="log-label">Main Activity</div>
-                                <div class="log-value">{{ is_array($item['activities'] ?? null) ? $item['activities'][0] : ($item['activities'] ?? 'Game Drive') }}</div>
+                                <div class="log-label">Highlight</div>
+                                <div class="log-value">{{ is_array($item['activities']) ? $item['activities'][0] : $item['activities'] }}</div>
                             </div>
+                            @endif
                         </div>
+                        @endif
                     </div>
                 </div>
             @endforeach
@@ -157,7 +174,7 @@
         <div class="footer">
             <div class="footer-brand">TWINA SAFARIS TANZANIA</div>
             <div class="footer-contact">
-                {{ \App\Models\Setting::get('address', 'Moshi, Kilimanjaro') }}
+                {{ \App\Models\Setting::get('address', 'Moshi, Tanzania') }}
                 <span class="bullet">•</span>
                 www.twinasafaris.com
                 <span class="bullet">•</span>

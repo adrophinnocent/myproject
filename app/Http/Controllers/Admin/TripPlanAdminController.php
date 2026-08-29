@@ -114,10 +114,11 @@ class TripPlanAdminController extends Controller
             return back()->with('error', 'Trip plan must be accepted before converting to booking.');
         }
 
-        // Create actual booking
+        // Create actual booking linked to this trip plan
         $booking = \App\Models\Booking::create([
+            'trip_plan_id' => $tripPlan->id,
             'first_name' => explode(' ', $tripPlan->name)[0],
-            'last_name' => explode(' ', $tripPlan->name)[1] ?? '',
+            'last_name' => str_contains($tripPlan->name, ' ') ? explode(' ', $tripPlan->name, 2)[1] : '',
             'email' => $tripPlan->email,
             'phone' => $tripPlan->phone,
             'nationality' => $tripPlan->nationality,
@@ -127,7 +128,7 @@ class TripPlanAdminController extends Controller
             'total_price' => $tripPlan->total_price,
             'status' => 'pending',
             'payment_status' => 'unpaid',
-            'notes' => "Converted from Trip Plan #{$tripPlan->id}",
+            'notes' => "Converted from Custom Trip Plan #{$tripPlan->id}",
         ]);
 
         $tripPlan->update([

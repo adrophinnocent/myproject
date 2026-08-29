@@ -65,6 +65,7 @@ Route::get('/faqs', [App\Http\Controllers\Public\FaqController::class, 'index'])
 Route::get('/trip-plan', [App\Http\Controllers\Public\TripPlanController::class, 'index'])->name('trip-plan.index');
 Route::post('/trip-plan', [App\Http\Controllers\Public\TripPlanController::class, 'store'])->name('trip-plan.store');
 Route::get('/trip-plan/{id}', [App\Http\Controllers\Public\TripPlanController::class, 'show'])->name('trip-plan.show');
+Route::get('/trip-plan/{id}/download', [App\Http\Controllers\Public\TripPlanController::class, 'downloadPdf'])->name('trip-plan.download');
 Route::post('/trip-plan/{id}/accept', [App\Http\Controllers\Public\TripPlanController::class, 'accept'])->name('trip-plan.accept');
 Route::post('/trip-plan/{id}/changes', [App\Http\Controllers\Public\TripPlanController::class, 'requestChanges'])->name('trip-plan.changes');
 

@@ -9,4 +9,7 @@ Allow: /
 User-agent: Googlebot
 Allow: /
 
+User-agent: AdsBot-Google
+Allow: /
+
 Sitemap: https://twinasafaris.com/sitemap.xml

@@ -76,7 +76,23 @@ class Booking extends Model
 
     public function getBookableItemAttribute()
     {
-        return $this->tour ?? $this->safari;
+        if ($this->tour) return $this->tour;
+        if ($this->safari) return $this->safari;
+
+        // Handle custom trip plan as a virtual "Tour" object
+        if ($this->tripPlan) {
+            return (object) [
+                'title' => $this->tripPlan->trip_title ?: 'Custom Safari: ' . $this->tripPlan->name,
+                'featured_image_url' => asset('images/banners/hero_fallback.webp'),
+                'duration_text' => $this->tripPlan->duration ?: 'Custom Duration',
+                'formatted_price' => '$' . number_format($this->tripPlan->total_price, 0),
+                'category' => (object) ['name' => 'Custom Trip'],
+                'destination' => (object) ['name' => 'Tanzania'],
+                'item_type' => 'custom'
+            ];
+        }
+
+        return null;
     }
 
     public function getFullNameAttribute(): string

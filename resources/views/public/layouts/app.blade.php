@@ -179,13 +179,13 @@
 
     @yield('styles')
 </head>
-<body class="bg-white text-gray-900 font-body">
+<body class="bg-white text-gray-900 font-body" itemscope itemtype="https://schema.org/WebPage">
 
     <!-- Navigation -->
     @include('public.partials.navigation')
 
     <!-- Main Content -->
-    <main id="main-content">
+    <main id="main-content" itemprop="mainContentOfPage">
         @yield('content')
     </main>
 

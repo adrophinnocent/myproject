@@ -7,14 +7,16 @@ use Illuminate\Support\Facades\Storage;
 
 class PdfService
 {
-    public function generateItinerary($booking)
+    public function generateItinerary($model)
     {
-        $fileName = 'itinerary-' . $booking->booking_reference . '.pdf';
-        $path = 'temp/' . $fileName;
+        $reference = $model instanceof \App\Models\Booking ? $model->booking_reference : 'TP-' . $model->id;
+        $fileName = 'itinerary-' . $reference . '.pdf';
 
-        $pdf = Pdf::loadView('emails.itinerary-pdf', compact('booking'));
+        $pdf = Pdf::loadView('emails.itinerary-pdf', [
+            'booking' => $model instanceof \App\Models\Booking ? $model : null,
+            'tripPlan' => $model instanceof \App\Models\TripPlan ? $model : null
+        ]);
 
-        // Use standard filesystem to avoid issues with custom disks on shared hosting
         $storageDir = storage_path('app/public/temp');
         if (!file_exists($storageDir)) {
             mkdir($storageDir, 0755, true);

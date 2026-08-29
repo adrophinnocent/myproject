@@ -6,10 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use App\Models\TripPlan;
 use App\Models\Tour;
+use App\Services\PdfService;
 use Illuminate\Http\Request;
 
 class TripPlanController extends Controller
 {
+    protected $pdfService;
+
+    public function __construct(PdfService $pdfService)
+    {
+        $this->pdfService = $pdfService;
+    }
+
     public function index()
     {
         $destinations = Destination::active()->get();
@@ -38,6 +46,19 @@ class TripPlanController extends Controller
         }
 
         return view('public.pages.trip-plan-view', compact('tripPlan'));
+    }
+
+    public function downloadPdf($id)
+    {
+        $tripPlan = TripPlan::findOrFail($id);
+
+        try {
+            $pdfPath = $this->pdfService->generateItinerary($tripPlan);
+            return response()->download($pdfPath, 'Itinerary-TP' . $tripPlan->id . '.pdf');
+        } catch (\Exception $e) {
+            \Log::error('Trip Plan PDF Download failed: ' . $e->getMessage());
+            return back()->with('error', 'Sorry, we could not generate the PDF at this moment.');
+        }
     }
 
     public function accept($id)
