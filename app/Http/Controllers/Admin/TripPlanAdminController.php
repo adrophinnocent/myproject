@@ -82,16 +82,16 @@ class TripPlanAdminController extends Controller
             'currency' => 'required|string|size:3',
         ]);
 
-        $groupSize = $tripPlan->group_size ?: ($tripPlan->adults + $tripPlan->children);
-        $totalBase = $validated['price_per_person'] * $groupSize;
-        $totalPrice = $totalBase - ($validated['discount_amount'] ?? 0) + ($validated['tax_amount'] ?? 0);
+        $groupSize = (int) ($tripPlan->group_size ?: ($tripPlan->adults + $tripPlan->children));
+        $totalBase = (float) $validated['price_per_person'] * $groupSize;
+        $totalPrice = $totalBase - (float) ($validated['discount_amount'] ?? 0) + (float) ($validated['tax_amount'] ?? 0);
 
         $validated['total_price'] = $totalPrice;
-        $validated['balance_amount'] = $totalPrice - ($validated['deposit_amount'] ?? 0);
+        $validated['balance_amount'] = $totalPrice - (float) ($validated['deposit_amount'] ?? 0);
 
         $tripPlan->update($validated);
 
-        return back()->with('success', 'Pricing updated.');
+        return back()->with('success', 'Pricing updated and quotation calculated.');
     }
 
     public function sendMessage(Request $request, TripPlan $tripPlan)
