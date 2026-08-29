@@ -54,13 +54,13 @@ Route::post('/contact', [App\Http\Controllers\Public\ContactController::class, '
 Route::get('/gallery', [App\Http\Controllers\Public\GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/gallery/{slug}', [App\Http\Controllers\Public\GalleryController::class, 'show'])->name('gallery.show');
 
-// IMPORTANT: Blog Routes
+// Blog Routes
 Route::get('/blog', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}.html', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/{slug}', function($slug) {
     if (str_ends_with($slug, '.html')) return abort(404);
     return redirect()->to("/blog/{$slug}.html", 301);
-});
+})->name('blog.redirect');
 
 Route::get('/faqs', [App\Http\Controllers\Public\FaqController::class, 'index'])->name('faqs.index');
 

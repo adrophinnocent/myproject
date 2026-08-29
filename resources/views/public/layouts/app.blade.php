@@ -11,13 +11,25 @@
     <meta name="keywords"    content="@yield('meta_keywords', \App\Models\Setting::get('meta_keywords', 'safari, Tanzania, Africa, tours, Serengeti, Kilimanjaro, Zanzibar'))">
     <meta name="robots"      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
-    <link   rel="canonical"  href="{{ str_replace('.html', '', url()->current()) }}{{ (str_contains(url()->current(), 'tours/') || str_contains(url()->current(), 'blog/')) && !str_ends_with(url()->current(), '.html') && !str_ends_with(url()->current(), '/') ? '.html' : '' }}">
+
+    @php
+        $currentUrl = url()->current();
+        $isBlogOrTour = str_contains($currentUrl, 'tours/') || str_contains($currentUrl, 'blog/');
+        $hasHtml = str_ends_with($currentUrl, '.html');
+        $hasSlash = str_ends_with($currentUrl, '/');
+        $canonical = str_replace('.html', '', $currentUrl);
+        if ($isBlogOrTour && !$hasHtml && !$hasSlash) {
+            $canonical .= '.html';
+        }
+    @endphp
+    <link rel="canonical" href="{{ $canonical }}">
 
     {{-- International SEO: Hreflang Tags --}}
     @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
         <link rel="alternate" hreflang="{{ $locale }}" href="{{ url()->current() }}{{ str_contains(url()->current(), '?') ? '&' : '?' }}lang={{ $locale }}">
     @endforeach
     <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
+
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="dns-prefetch" href="https://connect.facebook.net">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
@@ -52,26 +64,26 @@
     <script type="application/ld+json">
     [
         {
-          "@context": "https://schema.org",
-          "@type": "TravelAgency",
-          "@id": "{{ url('/') }}#organization",
+          "@@context": "https://schema.org",
+          "@@type": "TravelAgency",
+          "@@id": "{{ url('/') }}#organization",
           "name": "Twina Safaris",
           "alternateName": "Twina Safaris Tanzania",
           "url": "{{ url('/') }}",
           "logo": {
-            "@type": "ImageObject",
+            "@@type": "ImageObject",
             "url": "{{ \App\Models\Setting::get('logo') ? asset('storage/' . \App\Models\Setting::get('logo')) : asset('images/logo.png') }}"
           },
           "image": "{{ asset('images/og-default.jpg') }}",
           "description": "Premium Safari and Trekking adventures in Tanzania. Expert local guides for Serengeti, Kilimanjaro, and Zanzibar.",
           "address": {
-            "@type": "PostalAddress",
+            "@@type": "PostalAddress",
             "streetAddress": "Moshi",
             "addressLocality": "Kilimanjaro",
             "addressCountry": "TZ"
           },
           "geo": {
-            "@type": "GeoCoordinates",
+            "@@type": "GeoCoordinates",
             "latitude": "-3.3444",
             "longitude": "37.3344"
           },
@@ -85,14 +97,14 @@
           ]
         },
         {
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "@id": "{{ url('/') }}#website",
+          "@@context": "https://schema.org",
+          "@@type": "WebSite",
+          "@@id": "{{ url('/') }}#website",
           "url": "{{ url('/') }}",
           "name": "Twina Safaris",
-          "publisher": { "@id": "{{ url('/') }}#organization" },
+          "publisher": { "@@id": "{{ url('/') }}#organization" },
           "potentialAction": {
-            "@type": "SearchAction",
+            "@@type": "SearchAction",
             "target": "{{ url('/tours') }}?search={search_term_string}",
             "query-input": "required name=search_term_string"
           }
@@ -207,7 +219,7 @@
             // Scroll to bottom
             this.$nextTick(() => {
                 const el = document.getElementById('ai-chat-messages');
-                el.scrollTop = el.scrollHeight;
+                if (el) el.scrollTop = el.scrollHeight;
             });
 
             try {
@@ -231,7 +243,7 @@
                 this.isLoading = false;
                 this.$nextTick(() => {
                     const el = document.getElementById('ai-chat-messages');
-                    el.scrollTop = el.scrollHeight;
+                    if (el) el.scrollTop = el.scrollHeight;
                 });
             }
         }
@@ -259,7 +271,7 @@
                             <p class="text-xs text-white/80">{{ __('Expert Safari Guide') }}</p>
                         </div>
                     </div>
-                    <button @click="isAiOpen = false" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+                    <button @@click="isAiOpen = false" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -290,7 +302,7 @@
                 </div>
             </div>
             <div class="p-4 border-t border-gray-100 bg-white shadow-[0_-5px_15px_rgba(0,0,0,0.02)]">
-                <form @submit.prevent="sendMessage()" class="flex gap-2">
+                <form @@submit.prevent="sendMessage()" class="flex gap-2">
                     <input type="text"
                            x-model="userInput"
                            :disabled="isLoading"
@@ -308,7 +320,7 @@
         </div>
 
         <!-- AI Chat Button -->
-        <button @click="isAiOpen = !isAiOpen; isChatOpen = false"
+        <button @@click="isAiOpen = !isAiOpen; isChatOpen = false"
                 class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xl flex items-center justify-center hover:scale-110 transition-all ring-4 ring-white/50">
             <svg x-show="!isAiOpen" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z"></path>

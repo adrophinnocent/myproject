@@ -4,7 +4,7 @@
 
 {{-- ========== SEASON STATUS INDICATOR STYLES ========== --}}
 <style>
-    @keyframes alert-blink {
+    @@keyframes alert-blink {
         0%, 100% { opacity: 1; box-shadow: 0 0 15px currentColor, 0 0 30px currentColor; }
         50% { opacity: 0.3; box-shadow: 0 0 0 currentColor; }
     }
@@ -31,14 +31,14 @@
 <section class="relative h-screen bg-safari-dark overflow-hidden flex flex-col"
          x-data="{
             activeSlide: 0,
-            slidesCount: {{ $sliders->count() > 0 ? $sliders->count() : 1 }},
+            slidesCount: {{ (isset($sliders) && $sliders->count() > 0) ? $sliders->count() : 1 }},
             next() { this.activeSlide = (this.activeSlide + 1) % this.slidesCount }
          }"
          x-init="if(slidesCount > 1) setInterval(() => next(), 8000)">
 
     <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-black/40 z-10"></div>
-        @if($sliders && $sliders->count() > 0)
+        @if(isset($sliders) && $sliders->count() > 0)
             @foreach($sliders as $index => $slide)
                 <div x-show="activeSlide === {{ $index }}"
                      x-transition:enter="transition ease-out duration-1000"
@@ -61,7 +61,7 @@
 
     <div class="relative z-20 flex-grow flex flex-col items-center justify-center text-center px-4 pt-20">
         <div class="w-full max-w-5xl">
-            @if($sliders && $sliders->count() > 0)
+            @if(isset($sliders) && $sliders->count() > 0)
                 @foreach($sliders as $index => $slide)
                     <div x-show="activeSlide === {{ $index }}" x-cloak
                          x-transition:enter="transition ease-out duration-1000"
@@ -211,7 +211,7 @@
 </section>
 
 {{-- ========== 2. FEATURED PACKAGE (KILIMANJARO DYNAMIC) ========== --}}
-@if($heroTour)
+@if(isset($heroTour) && $heroTour)
 <section class="py-24 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
@@ -287,7 +287,7 @@
                 <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100" x-data="{ openItinerary: false }">
                     <div class="flex items-center justify-between mb-10">
                         <h2 class="font-display text-3xl font-black text-[#e64a19] uppercase tracking-tight">{{ __('Route summary') }}</h2>
-                        <button @click="openItinerary = !openItinerary" class="text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 transition-colors flex items-center gap-1.5">
+                        <button @@click="openItinerary = !openItinerary" class="text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 transition-colors flex items-center gap-1.5">
                             <span x-text="openItinerary ? '{{ __('Hide Details') }}' : '{{ __('View Day-by-Day') }}'"></span>
                             <svg class="w-3 h-3 transition-transform duration-300" :class="openItinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                         </button>
@@ -434,6 +434,7 @@
 </section>
 
 {{-- ========== 4. FEATURED TOURS ========== --}}
+@if(isset($featuredTours) && $featuredTours->count() > 0)
 <section class="py-24 bg-white" x-data="{
     scrollBy(distance) {
         const slider = document.getElementById('tours-slider');
@@ -464,9 +465,9 @@
         }">
             <div id="tours-slider"
                  x-ref="slider"
-                 @scroll="updateIndex"
+                 @@scroll="updateIndex"
                  class="flex gap-6 overflow-x-auto pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
-                @forelse($featuredTours as $tour)
+                @foreach($featuredTours as $tour)
                     <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
                             <div class="relative h-56 bg-gray-100">
@@ -486,15 +487,13 @@
                             </div>
                         </div>
                     </div>
-                @empty
-                    <div class="w-full text-center py-10 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200"><h3 class="text-lg font-bold text-gray-500 uppercase tracking-widest">Tours Coming Soon</h3></div>
-                @endforelse
+                @endforeach
             </div>
 
             {{-- Modern Navigation Dots --}}
             <div class="flex justify-center gap-2 mt-4">
                 <template x-for="(i, index) in Array.from({ length: slidesCount })">
-                    <button @click="scrollTo(index)"
+                    <button @@click="scrollTo(index)"
                             :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
                             class="h-2 rounded-full transition-all duration-300 outline-none focus:ring-2 focus:ring-gold-500/20"></button>
                 </template>
@@ -503,6 +502,7 @@
         <div class="text-center mt-12"><a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">View All Tours <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
     </div>
 </section>
+@endif
 
 {{-- ========== 5. GUEST STORIES ========== --}}
 <section class="py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100" x-data="{
@@ -531,7 +531,7 @@
     }">
         <div id="testimonials-slider"
              x-ref="testiSlider"
-             @scroll="updateIndex"
+             @@scroll="updateIndex"
              class="flex gap-8 overflow-x-auto pb-12 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
             @php $customTestimonials = [['name' => 'Sarah Mitchell', 'title' => 'Safari Traveler', 'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.', 'initials' => 'SA'], ['name' => 'Marco & Julia', 'title' => 'Honeymoon Couple', 'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.', 'initials' => 'MA'], ['name' => 'David Chen', 'title' => 'Mountain Climber', 'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.', 'initials' => 'DA']]; @endphp
             @foreach($customTestimonials as $t)
@@ -549,15 +549,15 @@
         {{-- Modern Navigation Dots --}}
         <div class="flex justify-center gap-2 mt-2 mb-8">
             <template x-for="(i, index) in Array.from({ length: slidesCount })">
-                <button @click="scrollTo(index)"
+                <button @@click="scrollTo(index)"
                         :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
                         class="h-2 rounded-full transition-all duration-300 outline-none"></button>
             </template>
         </div>
 
         <div class="flex justify-center gap-4 mt-8">
-            <button @click="const el = $refs.testiSlider; el.scrollBy({ left: -400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-            <button @click="const el = $refs.testiSlider; el.scrollBy({ left: 400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+            <button @@click="const el = $refs.testiSlider; el.scrollBy({ left: -400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+            <button @@click="const el = $refs.testiSlider; el.scrollBy({ left: 400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
         </div>
     </div>
 </section>
@@ -587,7 +587,7 @@
         }">
             <div id="blog-slider"
                  x-ref="blogSlider"
-                 @scroll="updateIndex"
+                 @@scroll="updateIndex"
                  class="flex gap-8 overflow-x-auto pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
                 @foreach($latestPosts as $post)
                 <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
@@ -609,7 +609,7 @@
             {{-- Modern Navigation Dots --}}
             <div class="flex justify-center gap-2 mt-4">
                 <template x-for="(i, index) in Array.from({ length: slidesCount })">
-                    <button @click="scrollTo(index)"
+                    <button @@click="scrollTo(index)"
                             :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
                             class="h-2 rounded-full transition-all duration-300 outline-none"></button>
                 </template>
