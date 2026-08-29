@@ -5,29 +5,29 @@
 @section('schema')
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org/",
-  "@type": "Product",
+  "@@context": "https://schema.org/",
+  "@@type": "Product",
   "name": "{{ $tour->translate('title') }}",
   "description": "{{ $tour->translate('short_description') }}",
   "image": "{{ $tour->featured_image_url }}",
   "brand": {
-    "@type": "Brand",
+    "@@type": "Brand",
     "name": "Twina Safaris"
   },
   "offers": {
-    "@type": "Offer",
+    "@@type": "Offer",
     "priceCurrency": "USD",
     "price": "{{ $tour->price }}",
     "availability": "https://schema.org/InStock",
     "url": "{{ url()->current() }}"
   },
   "aggregateRating": {
-    "@type": "AggregateRating",
+    "@@type": "AggregateRating",
     "ratingValue": "{{ $tour->average_rating }}",
     "reviewCount": "{{ $tour->review_count ?: 1 }}"
   },
   "mainEntity": {
-    "@type": "TouristTrip",
+    "@@type": "TouristTrip",
     "name": "{{ $tour->translate('title') }}",
     "description": "{{ $tour->translate('description') }}",
     "touristType": "Wildlife & Adventure",
@@ -35,7 +35,7 @@
       @if(is_array($tour->itinerary))
           @foreach($tour->itinerary as $index => $day)
           {
-            "@type": "City",
+            "@@type": "City",
             "name": "{{ $day['title'] ?? '' }}",
             "description": "{{ $day['description'] ?? '' }}"
           }{{ !$loop->last ? ',' : '' }}
@@ -332,7 +332,7 @@
                 <div class="space-y-3">
                     @foreach($faqs as $index => $faq)
                     <div x-data="{ open: false }" class="border border-gray-200 rounded-xl overflow-hidden">
-                        <button @click="open = !open"
+                        <button @@click="open = !open"
                                 class="w-full text-left px-6 py-4 font-semibold text-gray-800 text-sm flex items-center justify-between hover:bg-gray-50 transition-colors">
                             {{ $faq['question'] ?? '' }}
                             <svg :class="open ? 'rotate-180' : ''" class="w-5 h-5 text-gold-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -360,7 +360,7 @@
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <template x-for="(p, index) in points" :key="index">
-                            <button @click="activePoint = index"
+                            <button @@click="activePoint = index"
                                     :class="activePoint === index ? 'bg-safari-dark text-white shadow-lg scale-105' : 'bg-white text-gray-400 border-gray-200 hover:text-gold-600'"
                                     class="px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border outline-none flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full" :class="activePoint === index ? 'bg-gold-500' : 'bg-gray-200'"></span>
@@ -604,7 +604,7 @@
     <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 lg:hidden z-[60] shadow-[0_-5px_15px_rgba(0,0,0,0.05)] transition-transform duration-300"
          x-data="{ show: true, lastScroll: 0 }"
          x-show="show"
-         @scroll.window="show = (window.pageYOffset < lastScroll || window.pageYOffset < 100); lastScroll = window.pageYOffset">
+         @@scroll.window="show = (window.pageYOffset < lastScroll || window.pageYOffset < 100); lastScroll = window.pageYOffset">
         <div class="flex justify-between items-center gap-4">
             <div class="flex-shrink-0">
                 <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">{{ __('From') }}</p>
