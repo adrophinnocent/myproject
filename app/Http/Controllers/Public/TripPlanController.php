@@ -26,10 +26,38 @@ class TripPlanController extends Controller
             ->featured()
             ->with(['destination', 'category'])
             ->latest()
+            ->get()
             ->take(3)
-            ->get();
+            ->map(function($t) { $t->item_type = 'tour'; return $t; });
 
         return view('public.pages.plan-my-trip', compact('destinations', 'inspiringTours'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'nationality' => 'required|string|max:100',
+            'destination_ids' => 'nullable|array',
+            'travel_style' => 'nullable|string',
+            'budget_range' => 'nullable|string',
+            'duration' => 'nullable|string',
+            'accommodation_level' => 'nullable|string',
+            'interests' => 'nullable|array',
+            'travel_date' => 'nullable|date',
+            'adults' => 'required|integer|min:1',
+            'children' => 'nullable|integer|min:0',
+            'message' => 'nullable|string',
+        ]);
+
+        $validated['status'] = TripPlan::STATUS_NEW;
+        $validated['group_size'] = (int)$validated['adults'] + (int)($validated['children'] ?? 0);
+
+        TripPlan::create($validated);
+
+        return back()->with('success', 'Your trip request has been received! Our experts will contact you shortly.');
     }
 
     public function show($id)
