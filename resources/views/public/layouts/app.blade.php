@@ -26,10 +26,12 @@
 
     {{-- International SEO: Hreflang Tags --}}
     @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
-        <link rel="alternate" hreflang="{{ $locale }}" href="{{ url()->current() }}{{ str_contains(url()->current(), '?') ? '&' : '?' }}lang={{ $locale }}">
+        <link rel="alternate" hreflang="{{ $locale }}" href="{{ url()->current() }}?lang={{ $locale }}">
     @endforeach
     <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="dns-prefetch" href="https://connect.facebook.net">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
@@ -80,6 +82,8 @@
             "@@type": "PostalAddress",
             "streetAddress": "Moshi",
             "addressLocality": "Kilimanjaro",
+            "addressRegion": "Kilimanjaro",
+            "postalCode": "25101",
             "addressCountry": "TZ"
           },
           "geo": {
@@ -94,7 +98,14 @@
             "{{ \App\Models\Setting::get('facebook_url', '#') }}",
             "{{ \App\Models\Setting::get('instagram_url', '#') }}",
             "{{ \App\Models\Setting::get('youtube_url', '#') }}"
-          ]
+          ],
+          "contactPoint": {
+            "@@type": "ContactPoint",
+            "telephone": "{{ \App\Models\Setting::get('site_phone') }}",
+            "contactType": "customer service",
+            "areaServed": "Worldwide",
+            "availableLanguage": ["English", "German", "French", "Spanish"]
+          }
         },
         {
           "@@context": "https://schema.org",

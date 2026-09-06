@@ -12,7 +12,8 @@
   "image": "{{ $post->featured_image_url }}",
   "author": {
     "@@type": "Organization",
-    "name": "Twina Safaris"
+    "name": "Twina Safaris",
+    "url": "{{ url('/') }}"
   },
   "publisher": {
     "@@type": "Organization",
@@ -23,13 +24,22 @@
     }
   },
   "datePublished": "{{ $post->published_at ? $post->published_at->toIso8601String() : $post->created_at->toIso8601String() }}",
-  "description": "{{ $post->meta_description ?? $post->excerpt }}"
+  "dateModified": "{{ $post->updated_at->toIso8601String() }}",
+  "description": "{{ $post->meta_description ?? $post->excerpt }}",
+  "mainEntityOfPage": {
+    "@@type": "WebPage",
+    "@@id": "{{ url()->current() }}"
+  }
 }
 </script>
 @endsection
 
 @section('content')
-<article class="bg-white">
+<article class="bg-white" itemscope itemtype="https://schema.org/BlogPosting">
+    <meta itemprop="headline" content="{{ $post->translate('title') }}">
+    <meta itemprop="datePublished" content="{{ $post->published_at }}">
+    <meta itemprop="author" content="Twina Safaris">
+
     {{-- Post Hero --}}
     <header class="relative h-[60vh] min-h-[400px]">
         <img src="{{ $post->featured_image_url }}" alt="{{ $post->translate('title') }}" class="w-full h-full object-cover">
@@ -37,13 +47,13 @@
         <div class="absolute inset-0 flex items-end">
             <div class="max-w-4xl mx-auto px-4 pb-12 w-full">
                 <div class="flex items-center gap-3 text-gold-400 text-xs font-bold uppercase tracking-widest mb-6">
-                    <a href="{{ route('blog.index', ['category' => $post->category->slug ?? '']) }}" class="hover:text-white transition-colors">
+                    <span class="bg-gold-500/20 px-3 py-1 rounded-full border border-gold-500/30">
                         {{ __($post->category->name ?? 'Safari Journal') }}
-                    </a>
+                    </span>
                     <span class="text-white/30">•</span>
-                    <span class="text-white/80">{{ $post->reading_time }}</span>
+                    <span class="text-white/80">{{ $post->reading_time }} {{ __('min read') }}</span>
                 </div>
-                <h1 class="font-display text-4xl md:text-6xl text-white font-bold leading-tight drop-shadow-lg">{{ $post->translate('title') }}</h1>
+                <h1 class="font-display text-4xl md:text-7xl text-white font-bold leading-tight drop-shadow-lg">{{ $post->translate('title') }}</h1>
             </div>
         </div>
     </header>
@@ -54,7 +64,7 @@
             <div class="lg:col-span-8">
                 <div class="prose prose-lg prose-gold max-w-none text-gray-700 leading-relaxed
                             prose-headings:font-display prose-headings:font-bold prose-headings:text-gray-900
-                            prose-p:mb-6 prose-img:rounded-3xl prose-img:shadow-xl">
+                            prose-p:mb-6 prose-img:rounded-3xl prose-img:shadow-xl" itemprop="articleBody">
                     {!! $post->translate('content') !!}
                 </div>
 
@@ -86,31 +96,30 @@
 
             {{-- Sidebar --}}
             <aside class="lg:col-span-4 space-y-12">
-                {{-- Book a Safari --}}
-                <div class="bg-safari-dark rounded-3xl p-8 text-white text-center relative overflow-hidden shadow-2xl">
+                <div class="bg-safari-dark rounded-[2.5rem] p-10 text-white text-center relative overflow-hidden shadow-2xl">
                     <div class="relative z-10">
-                        <h3 class="font-display text-2xl font-bold mb-4">{{ __('Inspired by this story?') }}</h3>
-                        <p class="text-white/60 mb-8 leading-relaxed">{{ __('Let us take you to the places mentioned in this article with a custom-tailored safari experience.') }}</p>
-                        <a href="{{ route('trip-plan.index') }}" class="btn-gold w-full block py-4 rounded-xl font-bold">{{ __('Start Planning') }}</a>
+                        <h3 class="font-display text-3xl font-bold mb-4">{{ __('Ready for Adventure?') }}</h3>
+                        <p class="text-white/60 mb-10 leading-relaxed text-sm">{{ __('We can customize a safari experience based on the insights in this article.') }}</p>
+                        <a href="{{ route('trip-plan.index') }}" class="btn-gold w-full block py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg">{{ __('Start Planning') }}</a>
                     </div>
                     <div class="absolute -top-10 -left-10 w-40 h-40 bg-gold-500/10 rounded-full blur-3xl"></div>
                 </div>
 
-                {{-- Related Posts --}}
                 @if(isset($relatedPosts) && $relatedPosts->count() > 0)
                 <div>
-                    <h3 class="font-display text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                        {{ __('More Stories') }}
+                    <h3 class="font-display text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                        {{ __('More to Read') }}
                         <div class="h-px flex-1 bg-gray-100"></div>
                     </h3>
-                    <div class="space-y-6">
+                    <div class="space-y-8">
                         @foreach($relatedPosts as $rel)
-                        <a href="{{ route('blog.show', $rel->slug) }}" class="flex gap-4 group">
-                            <div class="w-24 h-20 shrink-0 rounded-xl overflow-hidden">
-                                <img src="{{ $rel->featured_image_url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $rel->translate('title') }}">
+                        <a href="{{ route('blog.show', $rel->slug) }}" class="flex gap-5 group">
+                            <div class="w-24 h-24 shrink-0 rounded-2xl overflow-hidden shadow-sm">
+                                <img src="{{ $rel->featured_image_url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ $rel->translate('title') }}" loading="lazy">
                             </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-sm leading-snug group-hover:text-gold-600 transition-colors line-clamp-2">{{ $rel->translate('title') }}</h4>
+                            <div class="flex flex-col justify-center">
+                                <h4 class="font-bold text-gray-900 text-sm leading-tight group-hover:text-gold-600 transition-colors line-clamp-2 mb-1">{{ $rel->translate('title') }}</h4>
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ $rel->published_at ? $rel->published_at->format('M d, Y') : '' }}</span>
                             </div>
                         </a>
                         @endforeach
@@ -123,14 +132,15 @@
 </article>
 
 {{-- Newsletter Section --}}
-<section class="bg-gray-50 py-20">
+<section class="bg-[#fcfaf7] py-24 border-t border-gray-100">
     <div class="max-w-4xl mx-auto px-4 text-center">
-        <h2 class="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{ __('Stay updated with wild stories') }}</h2>
-        <p class="text-gray-600 mb-10 max-w-xl mx-auto">{{ __('Join our community of travelers and receive expert tips and inspiration for your next Tanzanian journey.') }}</p>
-        <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+        <span class="text-gold-600 text-xs font-black uppercase tracking-[0.4em] mb-4 block">Newsletter</span>
+        <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-900 mb-6">{{ __('Never miss a story') }}</h2>
+        <p class="text-gray-500 mb-12 max-w-xl mx-auto text-lg">{{ __('Get the latest safari tips, wildlife news, and exclusive offers delivered to your inbox.') }}</p>
+        <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
             @csrf
-            <input type="email" name="email" placeholder="{{ __('Enter your email') }}" class="flex-1 bg-white border border-gray-200 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
-            <button class="btn-gold px-8 py-4 rounded-xl font-bold whitespace-nowrap">{{ __('Join Now') }}</button>
+            <input type="email" name="email" required placeholder="{{ __('Email address') }}" class="flex-1 bg-white border border-gray-200 rounded-2xl px-6 py-5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all shadow-sm">
+            <button class="btn-gold px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl">{{ __('Subscribe') }}</button>
         </form>
     </div>
 </section>
