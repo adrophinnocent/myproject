@@ -13,14 +13,16 @@
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
 
     @php
-        $currentUrl = url()->current();
-        // Force non-www and ensure .html for tours/blog
-        $currentUrl = str_replace('://www.', '://', $currentUrl);
+        // Ensure we always use the primary domain for SEO tags
+        $baseUrl = 'https://twinasafaris.com';
+        $path = request()->getPathInfo();
+        $fullUrl = rtrim($baseUrl, '/') . $path;
 
-        if ((str_contains($currentUrl, '/tours/') || str_contains($currentUrl, '/blog/')) && !str_ends_with($currentUrl, '.html')) {
-            $basePageUrl = $currentUrl . '.html';
+        // Force .html for tours and blog if not present
+        if ((str_contains($path, '/tours/') || str_contains($path, '/blog/')) && !str_ends_with($path, '.html')) {
+            $basePageUrl = $fullUrl . '.html';
         } else {
-            $basePageUrl = $currentUrl;
+            $basePageUrl = $fullUrl;
         }
     @endphp
     <link rel="canonical" href="{{ $basePageUrl }}">
