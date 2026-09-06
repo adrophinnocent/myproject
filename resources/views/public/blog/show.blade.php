@@ -13,14 +13,14 @@
   "author": {
     "@@type": "Organization",
     "name": "Twina Safaris",
-    "url": "{{ url('/') }}"
+    "url": "https://twinasafaris.com/"
   },
   "publisher": {
     "@@type": "Organization",
     "name": "Twina Safaris",
     "logo": {
       "@@type": "ImageObject",
-      "url": "{{ asset('images/logo.png') }}"
+      "url": "https://twinasafaris.com/images/logo.png"
     }
   },
   "datePublished": "{{ $post->published_at ? $post->published_at->toIso8601String() : $post->created_at->toIso8601String() }}",
@@ -28,7 +28,7 @@
   "description": "{{ $post->meta_description ?? $post->excerpt }}",
   "mainEntityOfPage": {
     "@@type": "WebPage",
-    "@@id": "{{ url()->current() }}"
+    "@@id": "{{ str_replace('://www.', '://', url()->current()) . (str_ends_with(url()->current(), '.html') ? '' : '.html') }}"
   }
 }
 </script>

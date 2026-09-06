@@ -60,7 +60,7 @@
     {{-- Destinations --}}
     @foreach ($destinations as $dest)
         <url>
-            <loc>{{ route('tours.index', ['destination' => $dest->id]) }}</loc>
+            <loc>{{ "https://twinasafaris.com/tours?destination=" . $dest->id }}</loc>
             <changefreq>weekly</changefreq>
             <priority>0.6</priority>
         </url>

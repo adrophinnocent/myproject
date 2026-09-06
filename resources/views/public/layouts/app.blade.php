@@ -14,23 +14,22 @@
 
     @php
         $currentUrl = url()->current();
-        // Remove www if present for canonical and consistency
+        // Force non-www and ensure .html for tours/blog
         $currentUrl = str_replace('://www.', '://', $currentUrl);
 
-        // Force Canonical to include .html for tours and blog to match the actual URL structure
         if ((str_contains($currentUrl, '/tours/') || str_contains($currentUrl, '/blog/')) && !str_ends_with($currentUrl, '.html')) {
-            $canonical = $currentUrl . '.html';
+            $basePageUrl = $currentUrl . '.html';
         } else {
-            $canonical = $currentUrl;
+            $basePageUrl = $currentUrl;
         }
     @endphp
-    <link rel="canonical" href="{{ $canonical }}">
+    <link rel="canonical" href="{{ $basePageUrl }}">
 
     {{-- International SEO: Hreflang Tags --}}
     @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
-        <link rel="alternate" hreflang="{{ $locale }}" href="{{ url()->current() }}?lang={{ $locale }}">
+        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $basePageUrl }}?lang={{ $locale }}">
     @endforeach
-    <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="x-default" href="{{ $basePageUrl }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +48,7 @@
 
     {{-- Open Graph / Facebook --}}
     <meta property="og:type"        content="website">
-    <meta property="og:url"         content="{{ url()->current() }}">
+    <meta property="og:url"         content="{{ str_replace('://www.', '://', url()->current()) }}">
     <meta property="og:site_name"   content="Twina Safaris">
     <meta property="og:title"       content="@yield('title', \App\Models\Setting::get('seo_title', config('app.name')))">
     <meta property="og:description" content="@yield('meta_description', \App\Models\Setting::get('meta_description'))">
@@ -58,7 +57,7 @@
 
     {{-- Twitter --}}
     <meta property="twitter:card"    content="summary_large_image">
-    <meta property="twitter:url"     content="{{ url()->current() }}">
+    <meta property="twitter:url"     content="{{ str_replace('://www.', '://', url()->current()) }}">
     <meta property="twitter:title"   content="@yield('title', config('app.name'))">
     <meta property="twitter:description" content="@yield('meta_description')">
     <meta property="twitter:image"   content="@yield('og_image', asset('images/og-default.jpg'))">

@@ -19,7 +19,7 @@
     "priceCurrency": "USD",
     "price": "{{ $tour->price }}",
     "availability": "https://schema.org/InStock",
-    "url": "{{ url()->current() }}",
+    "url": "{{ str_replace('://www.', '://', url()->current()) . (str_ends_with(url()->current(), '.html') ? '' : '.html') }}",
     "priceValidUntil": "{{ now()->addMonths(6)->format('Y-m-d') }}"
   },
   "aggregateRating": {
