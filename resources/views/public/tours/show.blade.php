@@ -266,7 +266,7 @@
                 @endif
             </div>
 
-            <div id="reviews" class="pt-10 border-t border-gray-100">
+            <div id="reviews" class="pt-10 border-t border-gray-100 mb-12">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="font-display text-3xl font-bold text-gray-900">{{ __('Guest Reviews') }}</h2>
                     <button onclick="document.getElementById('review-form-container').classList.toggle('hidden')" class="btn-outline-gold px-6 py-3 rounded-full text-sm font-bold transition-all">
@@ -301,6 +301,29 @@
                     @endforelse
                 </div>
             </div>
+
+            @php $faqs = $tour->translate('faqs'); @endphp
+            @if(!empty($faqs) && is_array($faqs))
+            <div class="pt-10 border-t border-gray-100">
+                <h2 class="font-display text-3xl font-bold text-gray-900 mb-8">{{ __('Frequently Asked Questions') }}</h2>
+                <div class="space-y-4">
+                    @foreach($faqs as $index => $faq)
+                    <div x-data="{ open: false }" class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+                        <button @@click="open = !open"
+                                class="w-full text-left px-6 py-5 font-bold text-gray-800 flex items-center justify-between hover:bg-gray-100 transition-all">
+                            <span>{{ $faq['question'] ?? '' }}</span>
+                            <svg :class="open ? 'rotate-180' : ''" class="w-5 h-5 text-gold-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div class="px-6 pb-6 text-gray-600 leading-relaxed">
+                                {!! $faq['answer'] ?? '' !!}
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
 
         <aside class="lg:w-80 flex-shrink-0">
