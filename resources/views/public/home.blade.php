@@ -190,20 +190,20 @@
 }">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(500, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">500+</div>
                 <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Happy Travelers') }}</p>
             </div>
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(150, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">150+</div>
                 <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Safari Packages') }}</p>
             </div>
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(10, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>+</div>
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">10+</div>
                 <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Years Experience') }}</p>
             </div>
-            <div class="text-center group" x-data="{ current: 0, triggered: false }" x-intersect="if(!triggered) { triggered = true; startCount(100, 2000, (val) => current = val) }">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500"><span x-text="current">0</span>%</div>
+            <div class="text-center group">
+                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">100%</div>
                 <p class="text-[9px] md:text-[10px] text-gray-400 font-black uppercase tracking-[0.4em]">{{ __('Safety Record') }}</p>
             </div>
         </div>

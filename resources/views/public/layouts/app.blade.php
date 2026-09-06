@@ -215,11 +215,15 @@
 
     <!-- Floating WhatsApp & AI Chat -->
     <div x-data="{
+        showWidgets: false,
         isChatOpen: false,
         isAiOpen: false,
         messages: [],
         userInput: '',
         isLoading: false,
+        init() {
+            setTimeout(() => { this.showWidgets = true; }, 3000);
+        },
         async sendMessage() {
             if (!this.userInput.trim() || this.isLoading) return;
 
@@ -259,7 +263,10 @@
                 });
             }
         }
-    }" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+    }"
+    x-show="showWidgets"
+    x-cloak
+    class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
         <!-- AI Chat Widget -->
         <div x-show="isAiOpen"
              x-cloak
