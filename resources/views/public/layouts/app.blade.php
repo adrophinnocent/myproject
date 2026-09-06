@@ -14,12 +14,11 @@
 
     @php
         $currentUrl = url()->current();
-        $isBlogOrTour = str_contains($currentUrl, 'tours/') || str_contains($currentUrl, 'blog/');
-        $hasHtml = str_ends_with($currentUrl, '.html');
-        $hasSlash = str_ends_with($currentUrl, '/');
-        $canonical = str_replace('.html', '', $currentUrl);
-        if ($isBlogOrTour && !$hasHtml && !$hasSlash) {
-            $canonical .= '.html';
+        // Force Canonical to include .html for tours and blog to match the actual URL structure
+        if ((str_contains($currentUrl, '/tours/') || str_contains($currentUrl, '/blog/')) && !str_ends_with($currentUrl, '.html')) {
+            $canonical = $currentUrl . '.html';
+        } else {
+            $canonical = $currentUrl;
         }
     @endphp
     <link rel="canonical" href="{{ $canonical }}">
