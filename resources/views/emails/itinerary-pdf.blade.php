@@ -176,7 +176,7 @@
             <div class="footer-contact">
                 {{ \App\Models\Setting::get('address', 'Moshi, Tanzania') }}
                 <span class="bullet">•</span>
-                www.twinasafaris.com
+                twinasafaris.com
                 <span class="bullet">•</span>
                 {{ \App\Models\Setting::get('site_phone', '+255 795 482 197') }}
             </div>

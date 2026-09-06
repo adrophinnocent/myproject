@@ -2,23 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     {{-- Static Pages --}}
     <url>
-        <loc>{{ url('/') }}</loc>
+        <loc>https://twinasafaris.com/</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>{{ route('about') }}</loc>
+        <loc>https://twinasafaris.com/about</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>{{ route('contact.index') }}</loc>
+        <loc>https://twinasafaris.com/contact</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>{{ route('tours.index') }}</loc>
+        <loc>https://twinasafaris.com/tours</loc>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
@@ -27,7 +27,7 @@
     @foreach ($tours as $tour)
         @if($tour->slug)
         <url>
-            <loc>{{ url('/tours/tour/' . $tour->slug . '.html') }}</loc>
+            <loc>{{ "https://twinasafaris.com/tours/tour/" . $tour->slug . ".html" }}</loc>
             <lastmod>{{ $tour->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.9</priority>
@@ -39,7 +39,7 @@
     @foreach ($safaris as $safari)
         @if($safari->slug)
         <url>
-            <loc>{{ url('/tours/safari/' . $safari->slug . '.html') }}</loc>
+            <loc>{{ "https://twinasafaris.com/tours/safari/" . $safari->slug . ".html" }}</loc>
             <lastmod>{{ $safari->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.9</priority>
@@ -50,7 +50,7 @@
     {{-- Blogs --}}
     @foreach ($blogs as $blog)
         <url>
-            <loc>{{ url('/blog/' . $blog->slug . '.html') }}</loc>
+            <loc>{{ "https://twinasafaris.com/blog/" . $blog->slug . ".html" }}</loc>
             <lastmod>{{ $blog->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.7</priority>

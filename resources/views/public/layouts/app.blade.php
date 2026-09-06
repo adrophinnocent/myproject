@@ -14,6 +14,9 @@
 
     @php
         $currentUrl = url()->current();
+        // Remove www if present for canonical and consistency
+        $currentUrl = str_replace('://www.', '://', $currentUrl);
+
         // Force Canonical to include .html for tours and blog to match the actual URL structure
         if ((str_contains($currentUrl, '/tours/') || str_contains($currentUrl, '/blog/')) && !str_ends_with($currentUrl, '.html')) {
             $canonical = $currentUrl . '.html';
@@ -67,10 +70,10 @@
         {
           "@@context": "https://schema.org",
           "@@type": "TravelAgency",
-          "@@id": "{{ url('/') }}#organization",
+          "@@id": "https://twinasafaris.com/#organization",
           "name": "Twina Safaris",
           "alternateName": "Twina Safaris Tanzania",
-          "url": "{{ url('/') }}",
+          "url": "https://twinasafaris.com/",
           "logo": {
             "@@type": "ImageObject",
             "url": "{{ \App\Models\Setting::get('logo') ? asset('storage/' . \App\Models\Setting::get('logo')) : asset('images/logo.png') }}"
@@ -109,13 +112,13 @@
         {
           "@@context": "https://schema.org",
           "@@type": "WebSite",
-          "@@id": "{{ url('/') }}#website",
-          "url": "{{ url('/') }}",
+          "@@id": "https://twinasafaris.com/#website",
+          "url": "https://twinasafaris.com/",
           "name": "Twina Safaris",
-          "publisher": { "@@id": "{{ url('/') }}#organization" },
+          "publisher": { "@@id": "https://twinasafaris.com/#organization" },
           "potentialAction": {
             "@@type": "SearchAction",
-            "target": "{{ url('/tours') }}?search={search_term_string}",
+            "target": "https://twinasafaris.com/tours?search={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         }
