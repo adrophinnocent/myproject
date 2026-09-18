@@ -267,7 +267,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                @php $packingList = $tour->translate('packing_list'); @endphp
+                @php $packingList = $tour->translate('what_to_bring'); @endphp
                 @if(!empty($packingList) && is_array($packingList))
                 <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6">
                     <h3 class="font-bold text-blue-800 mb-4 flex items-center gap-2">
@@ -282,7 +282,7 @@
                 </div>
                 @endif
 
-                @php $essentialInfo = $tour->translate('essential_info'); @endphp
+                @php $essentialInfo = $tour->translate('good_to_know'); @endphp
                 @if(!empty($essentialInfo))
                 <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
                     <h3 class="font-bold text-amber-800 mb-4 flex items-center gap-2">
