@@ -266,6 +266,36 @@
                 @endif
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                @php $packingList = $tour->translate('packing_list'); @endphp
+                @if(!empty($packingList) && is_array($packingList))
+                <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+                    <h3 class="font-bold text-blue-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        {{ __("What to Bring") }}
+                    </h3>
+                    <ul class="space-y-2">
+                        @foreach($packingList as $item)
+                        <li class="text-blue-700 text-sm font-medium">• {{ is_array($item) ? implode(', ', $item) : __($item) }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                @php $essentialInfo = $tour->translate('essential_info'); @endphp
+                @if(!empty($essentialInfo))
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+                    <h3 class="font-bold text-amber-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        {{ __("Good to Know") }}
+                    </h3>
+                    <div class="text-amber-700 text-sm leading-relaxed">
+                        {!! is_array($essentialInfo) ? implode('<br>', $essentialInfo) : __($essentialInfo) !!}
+                    </div>
+                </div>
+                @endif
+            </div>
+
             <div id="reviews" class="pt-10 border-t border-gray-100 mb-12">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="font-display text-3xl font-bold text-gray-900">{{ __('Guest Reviews') }}</h2>
