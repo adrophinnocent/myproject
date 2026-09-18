@@ -54,7 +54,7 @@
     <meta property="og:site_name"   content="Twina Safaris">
     <meta property="og:title"       content="@yield('title', \App\Models\Setting::get('seo_title', config('app.name')))">
     <meta property="og:description" content="@yield('meta_description', \App\Models\Setting::get('meta_description'))">
-    <meta property="og:image"       content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta property="og:image"       content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">
     <meta property="og:locale"      content="{{ str_replace('_', '-', app()->getLocale()) }}">
 
     {{-- Twitter --}}
@@ -62,7 +62,7 @@
     <meta property="twitter:url"     content="{{ str_replace('://www.', '://', url()->current()) }}">
     <meta property="twitter:title"   content="@yield('title', config('app.name'))">
     <meta property="twitter:description" content="@yield('meta_description')">
-    <meta property="twitter:image"   content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta property="twitter:image"   content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">
     <meta name="twitter:site"        content="@TwinaSafaris">
 
     {{-- Structured Data (Schema.org) for AI & Google --}}
@@ -77,9 +77,9 @@
           "url": "https://twinasafaris.com/",
           "logo": {
             "@@type": "ImageObject",
-            "url": "{{ \App\Models\Setting::get('logo') ? asset('storage/' . \App\Models\Setting::get('logo')) : asset('images/logo.png') }}"
+            "url": "{{ \App\Helpers\AssetHelper::getLogoUrl() }}"
           },
-          "image": "{{ asset('images/og-default.jpg') }}",
+          "image": "{{ \App\Helpers\AssetHelper::getOgImageUrl() }}",
           "description": "Premium Safari and Trekking adventures in Tanzania. Expert local guides for Serengeti, Kilimanjaro, and Zanzibar.",
           "address": {
             "@@type": "PostalAddress",

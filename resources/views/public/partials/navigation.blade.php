@@ -40,9 +40,9 @@
                     <span class="font-bold">{{ $phone }}</span>
                 </a>
                 <span class="text-gray-700">|</span>
-                <a href="mailto:twinasafaris@gmail.com" class="flex items-center gap-2 hover:text-gold-400 transition-colors">
+                <a href="mailto:{{ $email }}" class="flex items-center gap-2 hover:text-gold-400 transition-colors">
                     <svg class="w-3.5 h-3.5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    <span class="font-bold">twinasafaris@gmail.com</span>
+                    <span class="font-bold">{{ $email }}</span>
                 </a>
             </div>
             <span class="text-gray-600">|</span>
@@ -225,11 +225,11 @@
                         </span>
                         <span class="font-bold">{{ $phone }}</span>
                     </a>
-                    <a href="mailto:twinasafaris@gmail.com" class="flex items-center gap-3 text-gray-400 text-sm hover:text-gold-400 transition-colors">
+                    <a href="mailto:{{ $email }}" class="flex items-center gap-3 text-gray-400 text-sm hover:text-gold-400 transition-colors">
                         <span class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-lg text-gold-500">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         </span>
-                        <span class="font-bold">twinasafaris@gmail.com</span>
+                        <span class="font-bold">{{ $email }}</span>
                     </a>
                 </div>
             </div>

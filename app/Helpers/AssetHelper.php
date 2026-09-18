@@ -64,6 +64,34 @@ class AssetHelper
     }
 
     /**
+     * Get Open Graph Image URL.
+     */
+    public static function getOgImageUrl($default = null)
+    {
+        try {
+            // 1. Check Admin Setting for specific OG image
+            $settingValue = \App\Models\Setting::get('og_image');
+            if ($settingValue && is_string($settingValue)) {
+                return asset('storage/' . $settingValue);
+            }
+
+            // 2. Check if og-default.jpg exists
+            if (file_exists(public_path('images/og-default.jpg'))) {
+                return asset('images/og-default.jpg');
+            }
+
+            // 3. Fallback to a high-quality safari image if available
+            if (file_exists(public_path('images/big-five/lion.webp'))) {
+                return asset('images/big-five/lion.webp');
+            }
+        } catch (\Throwable $e) {
+            Log::error("AssetHelper OG Image Error: " . $e->getMessage());
+        }
+
+        return $default ?: self::getLogoUrl();
+    }
+
+    /**
      * Get Logo URL.
      */
     public static function getLogoUrl($type = 'logo')

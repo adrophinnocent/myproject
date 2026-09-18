@@ -109,7 +109,7 @@
                     </li>
                     <li class="flex items-center gap-3 text-gray-500 group">
                         <svg class="w-4 h-4 text-gold-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        <a href="mailto:twinasafaris@gmail.com" class="hover:text-gold-400 transition-colors">twinasafaris@gmail.com</a>
+                        <a href="mailto:{{ $siteEmail }}" class="hover:text-gold-400 transition-colors">{{ $siteEmail }}</a>
                     </li>
                     <li class="flex items-center gap-3 text-white font-bold group animate-phone-breathe">
                         <svg class="w-4 h-4 text-gold-500 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.17 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
