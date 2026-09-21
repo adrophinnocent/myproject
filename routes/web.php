@@ -54,12 +54,22 @@ Route::post('/contact', [App\Http\Controllers\Public\ContactController::class, '
 Route::get('/gallery', [App\Http\Controllers\Public\GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/gallery/{slug}', [App\Http\Controllers\Public\GalleryController::class, 'show'])->name('gallery.show');
 
+// Dynamic Tour Show Route (Robust version with .html)
+Route::get('/tours/{type}/{slug}.html', [App\Http\Controllers\Public\TourController::class, 'show'])->name('tours.show');
+Route::get('/tours/{type}/{slug}', function($type, $slug) {
+    $queryString = request()->getQueryString();
+    $url = "/tours/{$type}/{$slug}.html" . ($queryString ? '?' . $queryString : '');
+    return redirect()->to($url, 301);
+});
+
 // Blog Routes
 Route::get('/blog', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}.html', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/{slug}', function($slug) {
     if (str_ends_with($slug, '.html')) return abort(404);
-    return redirect()->to("/blog/{$slug}.html", 301);
+    $queryString = request()->getQueryString();
+    $url = "/blog/{$slug}.html" . ($queryString ? '?' . $queryString : '');
+    return redirect()->to($url, 301);
 })->name('blog.redirect');
 
 Route::get('/faqs', [App\Http\Controllers\Public\FaqController::class, 'index'])->name('faqs.index');
