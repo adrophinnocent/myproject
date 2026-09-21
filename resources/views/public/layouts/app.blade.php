@@ -16,28 +16,34 @@
         $baseUrl = 'https://twinasafaris.com';
         $path = request()->getPathInfo();
 
-        // Ensure .html is only added to the canonical path for specific detail routes
+        // 1. Ensure .html is only on detail pages
         if ((str_contains($path, '/tours/tour/') || str_contains($path, '/blog/')) && !str_ends_with($path, '.html')) {
             $path .= '.html';
         }
 
+        // 2. Build full canonical with domain
         $canonical = $baseUrl . $path;
 
-        // Include lang parameter in canonical to support indexing of translated pages
+        // 3. IMPORTANT: Include 'lang' in canonical so Google indexes each language separately
         if (request()->has('lang')) {
             $canonical .= '?lang=' . request()->get('lang');
+        }
+
+        // 4. Handle other important filters like destination for sitemap consistency
+        if (!request()->has('lang') && request()->has('destination')) {
+            $canonical .= '?destination=' . request()->get('destination');
         }
     @endphp
     <link rel="canonical" href="{{ $canonical }}">
 
-    {{-- Meta Robots: Prevent indexing of utility pages --}}
-    @if(str_contains(request()->url(), '/book') || str_contains(request()->url(), '/trip-plan/'))
+    {{-- Meta Robots: Noindex for booking and private pages to clean up Search Console --}}
+    @if(str_contains(request()->url(), '/book') || str_contains(request()->url(), '/trip-plan/') || str_contains(request()->url(), '/login'))
         <meta name="robots" content="noindex, nofollow">
     @else
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     @endif
 
-    {{-- International SEO: Hreflang Tags --}}
+    {{-- International SEO: Hreflang Tags - Always pointing to non-www --}}
     @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
         <link rel="alternate" hreflang="{{ $locale }}" href="{{ $baseUrl . $path }}?lang={{ $locale }}">
     @endforeach
