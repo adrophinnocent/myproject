@@ -13,25 +13,35 @@
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
 
     @php
-        // Ensure we always use the primary domain for SEO tags
         $baseUrl = 'https://twinasafaris.com';
         $path = request()->getPathInfo();
-        $fullUrl = rtrim($baseUrl, '/') . $path;
 
-        // Force .html for tours and blog if not present
-        if ((str_contains($path, '/tours/') || str_contains($path, '/blog/')) && !str_ends_with($path, '.html')) {
-            $basePageUrl = $fullUrl . '.html';
-        } else {
-            $basePageUrl = $fullUrl;
+        // Ensure .html is only added to the canonical path for specific detail routes
+        if ((str_contains($path, '/tours/tour/') || str_contains($path, '/blog/')) && !str_ends_with($path, '.html')) {
+            $path .= '.html';
+        }
+
+        $canonical = $baseUrl . $path;
+
+        // Include lang parameter in canonical to support indexing of translated pages
+        if (request()->has('lang')) {
+            $canonical .= '?lang=' . request()->get('lang');
         }
     @endphp
-    <link rel="canonical" href="{{ $basePageUrl }}">
+    <link rel="canonical" href="{{ $canonical }}">
+
+    {{-- Meta Robots: Prevent indexing of utility pages --}}
+    @if(str_contains(request()->url(), '/book') || str_contains(request()->url(), '/trip-plan/'))
+        <meta name="robots" content="noindex, nofollow">
+    @else
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    @endif
 
     {{-- International SEO: Hreflang Tags --}}
     @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
-        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $basePageUrl }}?lang={{ $locale }}">
+        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $baseUrl . $path }}?lang={{ $locale }}">
     @endforeach
-    <link rel="alternate" hreflang="x-default" href="{{ $basePageUrl }}">
+    <link rel="alternate" hreflang="x-default" href="{{ $baseUrl . $path }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
