@@ -194,10 +194,10 @@ function mediaPicker() {
 
         selectItem(item) {
             console.log('Selecting item:', item);
-            // Set the value of the target input (either path or ID)
             const targetEl = document.getElementById(this.targetId);
+            const urlVal = item.url ? item.url : (item.path && (item.path.startsWith('http') || item.path.startsWith('/')) ? item.path : '/storage/' + item.path);
             if (targetEl) {
-                targetEl.value = item.path;
+                targetEl.value = urlVal;
                 // Important for Alpine.js or other listeners
                 targetEl.dispatchEvent(new Event('input', { bubbles: true }));
                 targetEl.dispatchEvent(new Event('change', { bubbles: true }));
@@ -209,7 +209,7 @@ function mediaPicker() {
             const previewEl = document.getElementById(this.previewId);
             if (previewEl) {
                 if (item.type === 'image') {
-                    previewEl.src = item.url;
+                    previewEl.src = urlVal;
                     previewEl.classList.remove('hidden');
                 }
             } else {
