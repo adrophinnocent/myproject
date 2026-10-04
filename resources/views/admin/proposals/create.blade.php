@@ -587,11 +587,58 @@
     </div>
 </form>
 
+@php
+    $defaultItinerary = [
+        [
+            'title' => 'Day 1: Arrival at Kilimanjaro & Safari Briefing',
+            'destination' => 'Arusha',
+            'starting_point' => 'JRO Airport',
+            'ending_point' => 'Arusha Planet Lodge',
+            'route' => 'JRO Airport → Arusha',
+            'description' => 'Upon arrival at Kilimanjaro International Airport (JRO), you will be met by your private Twina Safaris driver guide and transferred to your lodge in Arusha.',
+            'activities' => 'Airport transfer, safari briefing',
+            'optional_activities' => '',
+            'driving_time' => '50 km / 1 hr',
+            'meals' => 'Dinner',
+            'accommodation_property' => 'Arusha Planet Lodge',
+            'room_type' => 'Standard Room',
+            'cover_image' => 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
+            'gallery_images' => []
+        ],
+        [
+            'title' => 'Day 2: Tarangire National Park Game Drive',
+            'destination' => 'Tarangire',
+            'starting_point' => 'Arusha',
+            'ending_point' => 'Tarangire Safari Lodge',
+            'route' => 'Arusha → Tarangire',
+            'description' => 'After breakfast, drive to Tarangire National Park, famous for its massive elephant herds and iconic baobab trees. Enjoy a full day game drive with a picnic lunch.',
+            'activities' => 'Game drive, wildlife viewing, picnic lunch',
+            'optional_activities' => '',
+            'driving_time' => '120 km / 2.5 hrs',
+            'meals' => 'Breakfast, Lunch, Dinner',
+            'accommodation_property' => 'Tarangire Safari Lodge',
+            'room_type' => 'Luxury Tent',
+            'cover_image' => 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80',
+            'gallery_images' => []
+        ]
+    ];
+
+    if ($selectedProposalTemplate && is_array($selectedProposalTemplate->itinerary) && count($selectedProposalTemplate->itinerary) > 0) {
+        $initialItinerary = $selectedProposalTemplate->itinerary;
+    } elseif ($selectedTour && is_array($selectedTour->itinerary) && count($selectedTour->itinerary) > 0) {
+        $initialItinerary = $selectedTour->itinerary;
+    } else {
+        $initialItinerary = $defaultItinerary;
+    }
+
+    $itineraryData = old('itinerary', $initialItinerary);
+@endphp
+
 <script>
 function proposalBuilderForm() {
     return {
         currency: 'USD',
-        durationDays: {{ old('duration_days', $selectedInquiry ? $selectedInquiry->duration_days : ($selectedTour ? $selectedTour->duration_days : 7)) }},
+        durationDays: {{ old('duration_days', $selectedInquiry ? $selectedInquiry->duration_days : ($selectedProposalTemplate ? $selectedProposalTemplate->duration_days : ($selectedTour ? $selectedTour->duration_days : 7))) }},
         adults: {{ old('adults', $selectedInquiry ? $selectedInquiry->adults : 2) }},
         children: {{ old('children', $selectedInquiry ? $selectedInquiry->children : 0) }},
         subtotalPrice: {{ old('subtotal_price', 3500) }},
@@ -609,40 +656,7 @@ function proposalBuilderForm() {
             government: 0,
             other: 0
         },
-        days: @json(old('itinerary', $selectedTour && is_array($selectedTour->itinerary) ? $selectedTour->itinerary : [
-            [
-                'title' => 'Day 1: Arrival at Kilimanjaro & Safari Briefing',
-                'destination' => 'Arusha',
-                'starting_point' => 'JRO Airport',
-                'ending_point' => 'Arusha Planet Lodge',
-                'route' => 'JRO Airport → Arusha',
-                'description' => 'Upon arrival at Kilimanjaro International Airport (JRO), you will be met by your private Twina Safaris driver guide and transferred to your lodge in Arusha.',
-                'activities' => 'Airport transfer, safari briefing',
-                'optional_activities' => '',
-                'driving_time' => '50 km / 1 hr',
-                'meals' => 'Dinner',
-                'accommodation_property' => 'Arusha Planet Lodge',
-                'room_type' => 'Standard Room',
-                'cover_image' => 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
-                'gallery_images' => []
-            ],
-            [
-                'title' => 'Day 2: Tarangire National Park Game Drive',
-                'destination' => 'Tarangire',
-                'starting_point' => 'Arusha',
-                'ending_point' => 'Tarangire Safari Lodge',
-                'route' => 'Arusha → Tarangire',
-                'description' => 'After breakfast, drive to Tarangire National Park, famous for its massive elephant herds and iconic baobab trees. Enjoy a full day game drive with a picnic lunch.',
-                'activities' => 'Game drive, wildlife viewing, picnic lunch',
-                'optional_activities' => '',
-                'driving_time' => '120 km / 2.5 hrs',
-                'meals' => 'Breakfast, Lunch, Dinner',
-                'accommodation_property' => 'Tarangire Safari Lodge',
-                'room_type' => 'Luxury Tent',
-                'cover_image' => 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80',
-                'gallery_images' => []
-            ]
-        ])),
+        days: @json($itineraryData),
         addDay() {
             this.days.push({
                 title: 'Day ' + (this.days.length + 1) + ': ',

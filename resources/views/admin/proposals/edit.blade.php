@@ -330,6 +330,14 @@
     </div>
 </form>
 
+@php
+    $defaultEditItinerary = [
+        ['title' => 'Day 1', 'description' => '', 'accommodation' => '', 'meals' => '', 'activities' => '', 'image' => '']
+    ];
+    $initialEditItinerary = is_array($proposal->itinerary) && count($proposal->itinerary) > 0 ? $proposal->itinerary : $defaultEditItinerary;
+    $editItineraryData = old('itinerary', $initialEditItinerary);
+@endphp
+
 <script>
 function proposalEditForm() {
     return {
@@ -345,9 +353,7 @@ function proposalEditForm() {
             activities: {{ old('internal_costing.activities_costs', $costing['activities_costs'] ?? 0) }},
             other: {{ old('internal_costing.other_expenses', $costing['other_expenses'] ?? 0) }}
         },
-        days: @json(old('itinerary', is_array($proposal->itinerary) && count($proposal->itinerary) > 0 ? $proposal->itinerary : [
-            ['title' => 'Day 1', 'description' => '', 'accommodation' => '', 'meals' => '', 'activities' => '', 'image' => '']
-        ])),
+        days: @json($editItineraryData),
         addDay() {
             this.days.push({
                 title: 'Day ' + (this.days.length + 1) + ': ',
