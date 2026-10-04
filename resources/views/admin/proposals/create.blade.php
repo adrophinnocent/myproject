@@ -24,48 +24,174 @@
 </div>
 @endif
 
-{{-- Quick Template Loaders --}}
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    {{-- Complete Proposal Template --}}
-    <div class="neo-card p-6 border-l-4 border-amber-500">
-        <h3 class="text-xs font-black uppercase text-gray-700 tracking-wider mb-2">Load Complete Itinerary Template</h3>
-        <p class="text-xs text-gray-500 mb-4">Select a pre-built proposal template (e.g. 7 Days Tanzania Comfort) to populate all days, accommodations, and pricing.</p>
-        <form action="{{ route('admin.proposals.create') }}" method="GET" class="flex items-center gap-3">
-            @if($selectedInquiry)<input type="hidden" name="inquiry_id" value="{{ $selectedInquiry->id }}">@endif
-            <select name="template_id" class="flex-1 bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 focus:outline-none">
-                <option value="">-- Select Itinerary Template --</option>
-                @foreach($proposalTemplates as $pt)
-                    <option value="{{ $pt->id }}" {{ (request('template_id') == $pt->id || ($selectedProposalTemplate && $selectedProposalTemplate->id == $pt->id)) ? 'selected' : '' }}>
-                        {{ $pt->title }} ({{ $pt->duration_days }} Days)
-                    </option>
-                @endforeach
-            </select>
-            <button type="submit" class="px-4 py-2 neo-btn bg-amber-500 text-white font-black text-xs uppercase rounded-xl hover:bg-amber-600">
-                Load Template
-            </button>
-        </form>
+{{-- START METHOD SELECTION HEADER --}}
+<div class="neo-card p-6 mb-8 border-2 border-amber-300/80 bg-amber-50/30">
+    <div class="mb-4">
+        <h3 class="text-sm font-black uppercase text-gray-900 tracking-wider">How would you like to start?</h3>
+        <p class="text-xs text-gray-600 mt-0.5">Choose your starting workflow below. Each option populates the proposal builder accordingly.</p>
     </div>
 
-    {{-- Tour Clone --}}
-    <div class="neo-card p-6 border-l-4 border-blue-500">
-        <h3 class="text-xs font-black uppercase text-gray-700 tracking-wider mb-2">Clone Public Tour</h3>
-        <p class="text-xs text-gray-500 mb-4">Select an existing public tour to pre-fill standard marketing itinerary and inclusions.</p>
-        <form action="{{ route('admin.proposals.create') }}" method="GET" class="flex items-center gap-3">
-            @if($selectedInquiry)<input type="hidden" name="inquiry_id" value="{{ $selectedInquiry->id }}">@endif
-            <select name="tour_id" class="flex-1 bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 focus:outline-none">
-                <option value="">-- Select Public Tour --</option>
-                @foreach($tours as $tour)
-                    <option value="{{ $tour->id }}" {{ (request('tour_id') == $tour->id || ($selectedTour && $selectedTour->id == $tour->id)) ? 'selected' : '' }}>
-                        {{ $tour->title }} ({{ $tour->duration_days }} Days)
-                    </option>
-                @endforeach
-            </select>
-            <button type="submit" class="px-4 py-2 neo-btn bg-blue-600 text-white font-black text-xs uppercase rounded-xl hover:bg-blue-700">
-                Clone Tour
-            </button>
-        </form>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {{-- Option 1: Start from Scratch --}}
+        <div class="p-5 bg-white rounded-2xl border-2 transition-all {{ $startType === 'scratch' ? 'border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'border-gray-200 hover:border-gray-300' }}">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-black uppercase tracking-wider text-amber-700">Option 1</span>
+                @if($startType === 'scratch')
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-black uppercase rounded-full">Selected</span>
+                @endif
+            </div>
+            <h4 class="text-sm font-black text-gray-900 mb-1">Start from Scratch</h4>
+            <p class="text-[11px] text-gray-500 leading-relaxed mb-4">Create a completely empty proposal. Nothing will be automatically copied. Build every detail from scratch.</p>
+
+            <a href="{{ route('admin.proposals.create', array_merge(request()->only(['inquiry_id']), ['start_type' => 'scratch'])) }}"
+               class="inline-block w-full text-center px-4 py-2.5 rounded-xl text-xs font-black uppercase transition-all {{ $startType === 'scratch' ? 'bg-amber-500 text-white shadow' : 'bg-gray-100 hover:bg-gray-200 text-gray-800' }}">
+                Start from Scratch
+            </a>
+        </div>
+
+        {{-- Option 2: Use Proposal Template --}}
+        <div class="p-5 bg-white rounded-2xl border-2 transition-all {{ $startType === 'template' ? 'border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'border-gray-200 hover:border-gray-300' }}">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-black uppercase tracking-wider text-amber-700">Option 2</span>
+                @if($startType === 'template')
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-black uppercase rounded-full">Active</span>
+                @endif
+            </div>
+            <h4 class="text-sm font-black text-gray-900 mb-1">Use Proposal Template</h4>
+            <p class="text-[11px] text-gray-500 leading-relaxed mb-3">Start with a reusable itinerary template (e.g. 7 Days Tanzania Comfort) and customize it for this client.</p>
+
+            <form action="{{ route('admin.proposals.create') }}" method="GET" class="space-y-2">
+                @if($selectedInquiry)<input type="hidden" name="inquiry_id" value="{{ $selectedInquiry->id }}">@endif
+                <input type="hidden" name="start_type" value="template">
+                <select name="template_id" required class="w-full bg-slate-50 border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none">
+                    <option value="">-- Select Proposal Template --</option>
+                    @foreach($proposalTemplates as $pt)
+                        <option value="{{ $pt->id }}" {{ ($selectedProposalTemplate && $selectedProposalTemplate->id == $pt->id) ? 'selected' : '' }}>
+                            {{ $pt->title }} ({{ $pt->duration_days }} Days)
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs uppercase rounded-xl transition-all shadow">
+                    Load Template
+                </button>
+            </form>
+        </div>
+
+        {{-- Option 3: Start from Public Tour --}}
+        <div class="p-5 bg-white rounded-2xl border-2 transition-all {{ $startType === 'tour' ? 'border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'border-gray-200 hover:border-gray-300' }}">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-black uppercase tracking-wider text-amber-700">Option 3</span>
+                @if($startType === 'tour')
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-black uppercase rounded-full">Active</span>
+                @endif
+            </div>
+            <h4 class="text-sm font-black text-gray-900 mb-1">Start from Public Tour</h4>
+            <p class="text-[11px] text-gray-500 leading-relaxed mb-3">Use an existing website tour as the starting point for a personalized client proposal.</p>
+
+            <form action="{{ route('admin.proposals.create') }}" method="GET" class="space-y-2">
+                @if($selectedInquiry)<input type="hidden" name="inquiry_id" value="{{ $selectedInquiry->id }}">@endif
+                <input type="hidden" name="start_type" value="tour">
+                <select name="tour_id" required class="w-full bg-slate-50 border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none">
+                    <option value="">-- Select Public Tour --</option>
+                    @foreach($tours as $tour)
+                        <option value="{{ $tour->id }}" {{ ($selectedTour && $selectedTour->id == $tour->id) ? 'selected' : '' }}>
+                            {{ $tour->title }} ({{ $tour->duration_days }} Days)
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit" class="w-full px-4 py-2 bg-[#052010] hover:bg-[#08331a] text-[#D4AF37] border border-[#D4AF37]/30 font-black text-xs uppercase rounded-xl transition-all shadow">
+                    Create Proposal from Tour
+                </button>
+            </form>
+        </div>
     </div>
 </div>
+
+{{-- PHP PRE-CALCULATION FOR INITIAL BUILDER STATE --}}
+@php
+    if ($startType === 'template' && $selectedProposalTemplate) {
+        $initTitle = $selectedProposalTemplate->title;
+        $initSubtitle = $selectedProposalTemplate->subtitle ?: '';
+        $initWelcome = "Dear " . ($selectedInquiry ? $selectedInquiry->full_name : "Valued Guest") . ",\n\nThank you for contacting Twina Safaris! We are delighted to present your custom itinerary proposal based on our " . $selectedProposalTemplate->title . ".";
+        $initDurationDays = $selectedProposalTemplate->duration_days;
+        $initDurationNights = $selectedProposalTemplate->duration_nights;
+        $initStartLocation = $selectedProposalTemplate->start_location ?: 'Arusha';
+        $initEndLocation = $selectedProposalTemplate->end_location ?: 'Arusha';
+        $initSafariStyle = $selectedProposalTemplate->safari_style ?: 'Private 4x4 Safari';
+        $initAccommodationLevel = $selectedProposalTemplate->accommodation_level ?: 'Comfort';
+        $initItinerary = $selectedProposalTemplate->structured_itinerary;
+        $initAccommodations = $selectedProposalTemplate->structured_accommodations;
+        $initInclusions = implode("\n", $selectedProposalTemplate->structured_inclusions);
+        $initExclusions = implode("\n", $selectedProposalTemplate->structured_exclusions);
+        $initTotalPrice = (float) $selectedProposalTemplate->default_total_price;
+        $initSubtotalPrice = (float) $selectedProposalTemplate->default_total_price;
+        $initAdultPrice = (float) ($selectedProposalTemplate->default_adult_price ?: ($selectedProposalTemplate->default_total_price / 2));
+        $initChildPrice = (float) ($selectedProposalTemplate->default_child_price ?: 0);
+        $initDepositPercentage = (float) ($selectedProposalTemplate->default_deposit_percentage ?: 30);
+        $initDepositRequired = round(($initTotalPrice * $initDepositPercentage) / 100, 2);
+        $initCosting = $selectedProposalTemplate->internal_costing ?? [];
+    } elseif ($startType === 'tour' && $selectedTour) {
+        $initTitle = $selectedTour->title;
+        $initSubtitle = $selectedTour->duration_text . ' · ' . ($selectedTour->tour_type ?: 'Public Tour');
+        $initWelcome = "Dear " . ($selectedInquiry ? $selectedInquiry->full_name : "Valued Guest") . ",\n\nThank you for choosing Twina Safaris! Below is our personalized itinerary proposal for " . $selectedTour->title . ".";
+        $initDurationDays = $selectedTour->duration_days;
+        $initDurationNights = $selectedTour->duration_nights;
+        $initStartLocation = $selectedTour->departure_location ?: 'Arusha';
+        $initEndLocation = 'Arusha';
+        $initSafariStyle = $selectedTour->tour_type ?: 'Private Safari';
+        $initAccommodationLevel = $selectedTour->accommodation_type ?: 'Comfort';
+        $initItinerary = is_array($selectedTour->itinerary) ? $selectedTour->itinerary : [];
+        $initAccommodations = [];
+        $initInclusions = is_array($selectedTour->inclusions) ? implode("\n", $selectedTour->inclusions) : '';
+        $initExclusions = is_array($selectedTour->exclusions) ? implode("\n", $selectedTour->exclusions) : '';
+        $initTotalPrice = (float) $selectedTour->price;
+        $initSubtotalPrice = (float) $selectedTour->price;
+        $initAdultPrice = (float) $selectedTour->price;
+        $initChildPrice = (float) ($selectedTour->child_price ?: 0);
+        $initDepositPercentage = 30.0;
+        $initDepositRequired = round(($initTotalPrice * 0.3), 2);
+        $initCosting = [];
+    } else { // Scratch
+        $initTitle = $selectedInquiry ? ($selectedInquiry->duration_days . ' Days Custom Safari') : '';
+        $initSubtitle = $selectedInquiry ? ($selectedInquiry->adults . ' Adults · ' . ($selectedInquiry->travel_style ?: 'Private Safari')) : '';
+        $initWelcome = $selectedInquiry ? ("Dear " . $selectedInquiry->full_name . ",\n\nThank you for contacting Twina Safaris! Below is your custom safari itinerary proposal.") : '';
+        $initDurationDays = $selectedInquiry ? $selectedInquiry->duration_days : 1;
+        $initDurationNights = 0;
+        $initStartLocation = 'Arusha';
+        $initEndLocation = 'Arusha';
+        $initSafariStyle = 'Private 4x4 Safari';
+        $initAccommodationLevel = 'Comfort';
+        $initItinerary = [
+            [
+                'day' => 1,
+                'title' => 'Day 1: ',
+                'destination' => '',
+                'starting_point' => '',
+                'ending_point' => '',
+                'route' => '',
+                'description' => '',
+                'activities' => '',
+                'optional_activities' => '',
+                'driving_time' => '',
+                'meals' => '',
+                'accommodation_property' => '',
+                'room_type' => '',
+                'cover_image' => '',
+                'gallery_images' => []
+            ]
+        ];
+        $initAccommodations = [];
+        $initInclusions = '';
+        $initExclusions = '';
+        $initTotalPrice = 0.00;
+        $initSubtotalPrice = 0.00;
+        $initAdultPrice = 0.00;
+        $initChildPrice = 0.00;
+        $initDepositPercentage = 30.0;
+        $initDepositRequired = 0.00;
+        $initCosting = [];
+    }
+@endphp
 
 <form action="{{ route('admin.proposals.store') }}" method="POST" x-data="proposalBuilderForm()">
     @csrf
@@ -74,7 +200,11 @@
         <input type="hidden" name="custom_safari_inquiry_id" value="{{ $selectedInquiry->id }}">
     @endif
 
-    {{-- SECTION 1: CLIENT DETAILS --}}
+    @if($selectedTour)
+        <input type="hidden" name="tour_id" value="{{ $selectedTour->id }}">
+    @endif
+
+    {{-- SECTION 1: CLIENT DETAILS (NEVER COPIED FROM TEMPLATE) --}}
     <div class="neo-card p-6 mb-8">
         <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
             <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs">1</span>
@@ -118,14 +248,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Proposal Title *</label>
-                <input type="text" name="title" value="{{ old('title', $selectedProposalTemplate ? $selectedProposalTemplate->title : ($selectedInquiry ? $selectedInquiry->duration_days . ' Days Custom ' . ($selectedInquiry->trip_type ?: 'Tanzania Safari') : ($selectedTour ? $selectedTour->title : ''))) }}" required
-                       placeholder="e.g. 7 Days Tanzania Safari"
+                <input type="text" name="title" value="{{ old('title', $initTitle) }}" required
+                       placeholder="e.g. 7 Days Tanzania Comfort Safari"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Subtitle</label>
-                <input type="text" name="subtitle" value="{{ old('subtitle', $selectedInquiry ? $selectedInquiry->adults . ' Adults · ' . ($selectedInquiry->travel_style ?: 'Private Safari') . ' · ' . ($selectedInquiry->accommodation_preference ?: 'Comfort') : '') }}"
+                <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Subtitle / Tagline</label>
+                <input type="text" name="subtitle" value="{{ old('subtitle', $initSubtitle) }}"
                        placeholder="e.g. 2 Adults · Private Safari · Comfort"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
             </div>
@@ -133,7 +263,7 @@
             <div class="md:col-span-2">
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Personal Welcome Message</label>
                 <textarea name="welcome_message" rows="3"
-                          class="w-full bg-white border border-gray-300 rounded-xl p-4 text-xs font-medium focus:ring-2 focus:ring-amber-500/20 outline-none">@if($selectedInquiry)Dear {{ $selectedInquiry->full_name }}, Thank you for contacting Twina Safaris! We are excited to present your personalized {{ $selectedInquiry->duration_days }}-day {{ $selectedInquiry->trip_type ?: 'Tanzania Safari' }} itinerary. @else{{ old('welcome_message') }}@endif</textarea>
+                          class="w-full bg-white border border-gray-300 rounded-xl p-4 text-xs font-medium focus:ring-2 focus:ring-amber-500/20 outline-none">{{ old('welcome_message', $initWelcome) }}</textarea>
             </div>
 
             <div>
@@ -150,13 +280,13 @@
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Duration (Days) *</label>
-                <input type="number" name="duration_days" x-model="durationDays" required min="1"
+                <input type="number" name="duration_days" x-model.number="durationDays" required min="1"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Nights</label>
-                <input type="number" name="duration_nights" value="{{ old('duration_nights', $selectedProposalTemplate ? $selectedProposalTemplate->duration_nights : ($selectedTour ? $selectedTour->duration_nights : 6)) }}" min="0"
+                <input type="number" name="duration_nights" value="{{ old('duration_nights', $initDurationNights) }}" min="0"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
             </div>
 
@@ -174,30 +304,30 @@
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Start Location</label>
-                <input type="text" name="start_location" value="{{ old('start_location', 'Moshi / Arusha') }}"
+                <input type="text" name="start_location" value="{{ old('start_location', $initStartLocation) }}"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">End Location</label>
-                <input type="text" name="end_location" value="{{ old('end_location', 'Arusha / Zanzibar') }}"
+                <input type="text" name="end_location" value="{{ old('end_location', $initEndLocation) }}"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Safari Style</label>
-                <input type="text" name="safari_style" value="{{ old('safari_style', $selectedInquiry ? $selectedInquiry->travel_style : 'Private 4x4 Safari') }}"
+                <input type="text" name="safari_style" value="{{ old('safari_style', $initSafariStyle) }}"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Accommodation Level</label>
                 <select name="accommodation_level" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-amber-500/20 outline-none">
-                    <option value="Budget">Budget</option>
-                    <option value="Standard">Standard</option>
-                    <option value="Comfort" selected>Comfort / Mid-Range</option>
-                    <option value="Luxury">Luxury</option>
-                    <option value="Premium">Premium / Super Luxury</option>
+                    <option value="Budget" {{ $initAccommodationLevel === 'Budget' ? 'selected' : '' }}>Budget</option>
+                    <option value="Standard" {{ $initAccommodationLevel === 'Standard' ? 'selected' : '' }}>Standard</option>
+                    <option value="Comfort" {{ $initAccommodationLevel === 'Comfort' ? 'selected' : '' }}>Comfort / Mid-Range</option>
+                    <option value="Luxury" {{ $initAccommodationLevel === 'Luxury' ? 'selected' : '' }}>Luxury</option>
+                    <option value="Premium" {{ $initAccommodationLevel === 'Premium' ? 'selected' : '' }}>Premium</option>
                 </select>
             </div>
         </div>
@@ -215,7 +345,6 @@
             </div>
 
             <div class="flex items-center gap-3">
-                {{-- Insert Day Template Dropdown --}}
                 <select @change="insertDayTemplate($event.target.value); $event.target.value=''" class="bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 outline-none">
                     <option value="">+ Insert Day Template...</option>
                     @foreach($dayTemplates as $dt)
@@ -247,7 +376,6 @@
                         </div>
                     </div>
 
-                    {{-- Day Basic Info --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div class="md:col-span-2">
                             <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Day Title *</label>
@@ -280,7 +408,6 @@
                         </div>
                     </div>
 
-                    {{-- Description & Experience --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div class="md:col-span-2">
                             <label class="block text-[11px] font-bold text-gray-700 uppercase mb-1">Main Description *</label>
@@ -301,7 +428,6 @@
                         </div>
                     </div>
 
-                    {{-- Travel Info & Accommodation --}}
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200/80 mb-4">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Driving Time / Distance</label>
@@ -328,7 +454,6 @@
                         </div>
                     </div>
 
-                    {{-- DAY MEDIA SECTION (MANDATORY DAY-SPECIFIC IMAGES) --}}
                     <div class="p-4 bg-amber-50/40 rounded-xl border border-amber-200">
                         <h4 class="text-[11px] font-black text-amber-900 uppercase tracking-wider mb-2 flex items-center gap-2">
                             <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -390,11 +515,9 @@
 
     {{-- SECTION 4: ACCOMMODATION SUMMARY TABLE --}}
     <div class="neo-card p-6 mb-8" x-data="{
-        accommodations: [
-            { property_name: 'Tarangire Safari Lodge', location: 'Tarangire', category: 'Comfort', room_type: 'Luxury Tent', nights: 1, meal_plan: 'Full Board', description: '', image: '', website_url: '' }
-        ],
+        accommodations: @json(old('accommodations', $initAccommodations)),
         addAcc() { this.accommodations.push({ property_name: '', location: '', category: 'Comfort', room_type: '', nights: 1, meal_plan: 'Full Board', description: '', image: '', website_url: '' }); },
-        removeAcc(i) { if(this.accommodations.length > 1) this.accommodations.splice(i, 1); }
+        removeAcc(i) { if(this.accommodations.length > 0) this.accommodations.splice(i, 1); }
     }">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
@@ -409,7 +532,7 @@
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b">
                         <span class="text-xs font-black text-slate-800" x-text="'Property #' + (aIndex + 1)"></span>
-                        <button type="button" @click="removeAcc(aIndex)" x-show="accommodations.length > 1" class="text-rose-600 text-xs font-bold">Remove</button>
+                        <button type="button" @click="removeAcc(aIndex)" class="text-rose-600 text-xs font-bold">Remove</button>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
@@ -451,13 +574,13 @@
             <div>
                 <label class="block text-xs font-bold text-emerald-700 uppercase mb-2">What is Included (One per line)</label>
                 <textarea name="inclusions" rows="8"
-                          class="w-full bg-white border border-emerald-300 rounded-xl p-4 text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 outline-none">@if($selectedTour && is_array($selectedTour->inclusions)){{ implode("\n", $selectedTour->inclusions) }}@else{{ old('inclusions', "All national park entry fees\nPrivate 4x4 Safari Land Cruiser with pop-up roof\nProfessional English-speaking driver/guide\nFull board accommodation on safari\nAll meals as specified in the itinerary\nUnlimited bottled drinking water in vehicle") }}@endif</textarea>
+                          class="w-full bg-white border border-emerald-300 rounded-xl p-4 text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 outline-none">{{ old('inclusions', $initInclusions) }}</textarea>
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-rose-700 uppercase mb-2">What is Excluded (One per line)</label>
                 <textarea name="exclusions" rows="8"
-                          class="w-full bg-white border border-rose-300 rounded-xl p-4 text-xs font-medium focus:ring-2 focus:ring-rose-500/20 outline-none">@if($selectedTour && is_array($selectedTour->exclusions)){{ implode("\n", $selectedTour->exclusions) }}@else{{ old('exclusions', "International flights & visas\nTravel & medical insurance\nTips for driver/guide & lodge staff\nPersonal items & laundry\nOptional experiences (e.g. Balloon Safari)") }}@endif</textarea>
+                          class="w-full bg-white border border-rose-300 rounded-xl p-4 text-xs font-medium focus:ring-2 focus:ring-rose-500/20 outline-none">{{ old('exclusions', $initExclusions) }}</textarea>
             </div>
         </div>
     </div>
@@ -504,14 +627,14 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Adult Price (Per Person)</label>
-                <input type="number" step="0.01" name="adult_price" value="{{ old('adult_price', 1600) }}"
+                <input type="number" step="0.01" name="adult_price" x-model.number="adultPrice"
                        placeholder="e.g. 1600.00"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold outline-none">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Child Price (Per Person)</label>
-                <input type="number" step="0.01" name="child_price" value="{{ old('child_price') }}"
+                <input type="number" step="0.01" name="child_price" x-model.number="childPrice"
                        placeholder="e.g. 800.00"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold outline-none">
             </div>
@@ -525,7 +648,7 @@
 
             <div>
                 <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Deposit Required</label>
-                <input type="number" step="0.01" name="deposit_required" value="{{ old('deposit_required', 1000) }}"
+                <input type="number" step="0.01" name="deposit_required" x-model.number="depositRequired"
                        placeholder="e.g. 1000.00"
                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-bold outline-none">
             </div>
@@ -533,15 +656,15 @@
     </div>
 
     {{-- SECTION 7: GRANULAR INTERNAL COSTING ENGINE (ADMIN ONLY) --}}
-    <div class="neo-card p-6 mb-8 border-2 border-indigo-200 bg-indigo-50/20">
+    <div class="neo-card p-6 mb-8 border-2 border-emerald-900/20 bg-[#f4fdf7]">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h3 class="text-sm font-black text-indigo-950 uppercase tracking-widest flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs">7</span>
+                <h3 class="text-sm font-black text-[#052010] uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-[#052010] text-[#D4AF37] flex items-center justify-center text-xs">7</span>
                     Internal Costing Engine
                     <span class="bg-rose-100 text-rose-800 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">ADMIN ONLY</span>
                 </h3>
-                <p class="text-[11px] text-indigo-700 font-bold mt-1">Private cost breakdown for profit margin analysis. Strictly hidden from client.</p>
+                <p class="text-[11px] text-emerald-800 font-bold mt-1">Private cost breakdown for profit margin analysis. Strictly hidden from client.</p>
             </div>
         </div>
 
@@ -588,101 +711,56 @@
             </div>
         </div>
 
-        {{-- Profit Summary Box --}}
-        <div class="p-4 bg-indigo-900 text-white rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+        <div class="p-4 bg-[#052010] text-white rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center border border-[#D4AF37]/30">
             <div>
-                <div class="text-[10px] font-bold uppercase text-indigo-300">Total Internal Cost</div>
+                <div class="text-[10px] font-bold uppercase text-amber-200/80">Total Internal Cost</div>
                 <div class="text-lg font-black" x-text="currency + ' ' + totalCost.toFixed(2)"></div>
             </div>
             <div>
-                <div class="text-[10px] font-bold uppercase text-indigo-300">Net Profit</div>
+                <div class="text-[10px] font-bold uppercase text-amber-200/80">Net Profit</div>
                 <div class="text-lg font-black text-emerald-400" x-text="currency + ' ' + profit.toFixed(2)"></div>
             </div>
             <div>
-                <div class="text-[10px] font-bold uppercase text-indigo-300">Profit Margin</div>
-                <div class="text-lg font-black text-amber-400" x-text="profitMargin.toFixed(2) + '%'"></div>
+                <div class="text-[10px] font-bold uppercase text-amber-200/80">Profit Margin</div>
+                <div class="text-lg font-black text-[#D4AF37]" x-text="profitMargin.toFixed(2) + '%'"></div>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-4">
         <a href="{{ route('admin.proposals.index') }}" class="px-6 py-3 neo-btn text-xs font-bold text-gray-600 uppercase">Cancel</a>
-        <button type="submit" class="px-8 py-3 bg-amber-500 text-white rounded-xl font-black text-xs uppercase shadow-lg hover:bg-amber-600 transition-all">
+        <button type="submit" class="px-8 py-3 bg-[#052010] hover:bg-[#08331a] text-[#D4AF37] border border-[#D4AF37]/40 rounded-xl font-black text-xs uppercase shadow-lg transition-all">
             Save & Publish Proposal
         </button>
     </div>
 </form>
 
-@php
-    $defaultItinerary = [
-        [
-            'title' => 'Day 1: Arrival at Kilimanjaro & Safari Briefing',
-            'destination' => 'Arusha',
-            'starting_point' => 'JRO Airport',
-            'ending_point' => 'Arusha Planet Lodge',
-            'route' => 'JRO Airport → Arusha',
-            'description' => 'Upon arrival at Kilimanjaro International Airport (JRO), you will be met by your private Twina Safaris driver guide and transferred to your lodge in Arusha.',
-            'activities' => 'Airport transfer, safari briefing',
-            'optional_activities' => '',
-            'driving_time' => '50 km / 1 hr',
-            'meals' => 'Dinner',
-            'accommodation_property' => 'Arusha Planet Lodge',
-            'room_type' => 'Standard Room',
-            'cover_image' => 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
-            'gallery_images' => []
-        ],
-        [
-            'title' => 'Day 2: Tarangire National Park Game Drive',
-            'destination' => 'Tarangire',
-            'starting_point' => 'Arusha',
-            'ending_point' => 'Tarangire Safari Lodge',
-            'route' => 'Arusha → Tarangire',
-            'description' => 'After breakfast, drive to Tarangire National Park, famous for its massive elephant herds and iconic baobab trees. Enjoy a full day game drive with a picnic lunch.',
-            'activities' => 'Game drive, wildlife viewing, picnic lunch',
-            'optional_activities' => '',
-            'driving_time' => '120 km / 2.5 hrs',
-            'meals' => 'Breakfast, Lunch, Dinner',
-            'accommodation_property' => 'Tarangire Safari Lodge',
-            'room_type' => 'Luxury Tent',
-            'cover_image' => 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80',
-            'gallery_images' => []
-        ]
-    ];
-
-    if ($selectedProposalTemplate && is_array($selectedProposalTemplate->itinerary) && count($selectedProposalTemplate->itinerary) > 0) {
-        $initialItinerary = $selectedProposalTemplate->itinerary;
-    } elseif ($selectedTour && is_array($selectedTour->itinerary) && count($selectedTour->itinerary) > 0) {
-        $initialItinerary = $selectedTour->itinerary;
-    } else {
-        $initialItinerary = $defaultItinerary;
-    }
-
-    $itineraryData = old('itinerary', $initialItinerary);
-@endphp
-
 <script>
 function proposalBuilderForm() {
     return {
         currency: 'USD',
-        durationDays: {{ old('duration_days', $selectedInquiry ? $selectedInquiry->duration_days : ($selectedProposalTemplate ? $selectedProposalTemplate->duration_days : ($selectedTour ? $selectedTour->duration_days : 7))) }},
+        durationDays: {{ old('duration_days', $initDurationDays) }},
         adults: {{ old('adults', $selectedInquiry ? $selectedInquiry->adults : 2) }},
         children: {{ old('children', $selectedInquiry ? $selectedInquiry->children : 0) }},
-        subtotalPrice: {{ old('subtotal_price', 3500) }},
-        discountAmount: {{ old('discount_amount', 300) }},
-        totalPrice: {{ old('total_price', 3200) }},
+        subtotalPrice: {{ old('subtotal_price', $initSubtotalPrice) }},
+        discountAmount: {{ old('discount_amount', 0) }},
+        totalPrice: {{ old('total_price', $initTotalPrice) }},
+        adultPrice: {{ old('adult_price', $initAdultPrice) }},
+        childPrice: {{ old('child_price', $initChildPrice) }},
+        depositRequired: {{ old('deposit_required', $initDepositRequired) }},
         costs: {
-            accommodation: 1200,
-            park: 650,
-            vehicle: 400,
-            guide: 200,
-            meals: 0,
-            transfers: 0,
-            flights: 0,
-            activities: 0,
-            government: 0,
-            other: 0
+            accommodation: {{ $initCosting['accommodation_cost'] ?? 0 }},
+            park: {{ $initCosting['park_fees'] ?? 0 }},
+            vehicle: {{ $initCosting['vehicle_cost'] ?? 0 }},
+            guide: {{ $initCosting['guide_cost'] ?? 0 }},
+            meals: {{ $initCosting['meals_cost'] ?? 0 }},
+            transfers: {{ $initCosting['transfers_cost'] ?? 0 }},
+            flights: {{ $initCosting['flights_cost'] ?? 0 }},
+            activities: {{ $initCosting['activities_cost'] ?? 0 }},
+            government: {{ $initCosting['government_fees'] ?? 0 }},
+            other: {{ $initCosting['other_costs'] ?? 0 }}
         },
-        days: @json($itineraryData),
+        days: @json(old('itinerary', $initItinerary)),
         addDay() {
             this.days.push({
                 title: 'Day ' + (this.days.length + 1) + ': ',

@@ -111,7 +111,7 @@
             "longitude": "37.3344"
           },
           "telephone": "{{ \App\Models\Setting::get('site_phone') }}",
-          "email": "twinasafaris.com",
+          "email": "twinasafaris@gmail.com",
           "priceRange": "$$$",
           "sameAs": [
             "{{ \App\Models\Setting::get('facebook_url', '#') }}",

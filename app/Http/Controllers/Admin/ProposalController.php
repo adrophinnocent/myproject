@@ -42,26 +42,31 @@ class ProposalController extends Controller
     public function create(Request $request)
     {
         $tours = Tour::published()->orderBy('title')->get();
-        $proposalTemplates = ProposalTemplate::orderBy('title')->get();
+        $proposalTemplates = ProposalTemplate::where('status', 'active')->orderBy('title')->get();
         $dayTemplates = ProposalDayTemplate::orderBy('title')->get();
 
         $selectedTour = null;
         $selectedInquiry = null;
         $selectedProposalTemplate = null;
+        $startType = $request->input('start_type');
 
-        if ($request->filled('tour_id')) {
+        if ($request->filled('template_id')) {
+            $selectedProposalTemplate = ProposalTemplate::with(['days', 'templateAccommodations', 'templateInclusions', 'templateExclusions', 'templatePrice'])->find($request->template_id);
+            $startType = 'template';
+        } elseif ($request->filled('tour_id')) {
             $selectedTour = Tour::find($request->tour_id);
+            $startType = 'tour';
+        } else {
+            if (!$startType) {
+                $startType = 'scratch';
+            }
         }
 
         if ($request->filled('inquiry_id')) {
             $selectedInquiry = CustomSafariInquiry::find($request->inquiry_id);
         }
 
-        if ($request->filled('template_id')) {
-            $selectedProposalTemplate = ProposalTemplate::find($request->template_id);
-        }
-
-        return view('admin.proposals.create', compact('tours', 'proposalTemplates', 'dayTemplates', 'selectedTour', 'selectedInquiry', 'selectedProposalTemplate'));
+        return view('admin.proposals.create', compact('tours', 'proposalTemplates', 'dayTemplates', 'selectedTour', 'selectedInquiry', 'selectedProposalTemplate', 'startType'));
     }
 
     public function store(Request $request)
@@ -365,7 +370,9 @@ class ProposalController extends Controller
 
     public function downloadPdf(Proposal $proposal)
     {
-        $pdf = Pdf::loadView('proposals.pdf', compact('proposal'));
+        $pdf = Pdf::loadView('proposals.pdf', compact('proposal'))
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('isHtml5ParserEnabled', true);
         $filename = 'Safari-Proposal-' . $proposal->full_reference . '-' . Str::slug($proposal->client_name) . '.pdf';
 
         return $pdf->download($filename);

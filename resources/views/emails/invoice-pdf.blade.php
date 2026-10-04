@@ -151,7 +151,7 @@
             <div class="footer-contact">
                 {{ \App\Models\Setting::get('address', 'Moshi, Kilimanjaro') }}
                 <span class="bullet">•</span>
-                twinasafaris.com
+                twinasafaris@gmail.com
                 <span class="bullet">•</span>
                 {{ \App\Models\Setting::get('site_phone', '+255 795 482 197') }}
             </div>

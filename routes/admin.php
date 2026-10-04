@@ -206,8 +206,19 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/proposal-day-templates', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'getDayTemplates'])->name('admin.day-templates.index');
     Route::post('/proposal-day-templates', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'storeDayTemplate'])->name('admin.day-templates.store');
     Route::delete('/proposal-day-templates/{dayTemplate}', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'destroyDayTemplate'])->name('admin.day-templates.destroy');
-    Route::get('/proposal-templates', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'getProposalTemplates'])->name('admin.proposal-templates.index');
-    Route::delete('/proposal-templates/{template}', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'destroyProposalTemplate'])->name('admin.proposal-templates.destroy');
+
+    Route::resource('/proposal-templates', App\Http\Controllers\Admin\ProposalTemplateController::class)->names([
+        'index' => 'admin.proposal-templates.index',
+        'create' => 'admin.proposal-templates.create',
+        'store' => 'admin.proposal-templates.store',
+        'show' => 'admin.proposal-templates.show',
+        'edit' => 'admin.proposal-templates.edit',
+        'update' => 'admin.proposal-templates.update',
+        'destroy' => 'admin.proposal-templates.destroy',
+    ]);
+    Route::post('/proposal-templates/{template}/duplicate', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'duplicate'])->name('admin.proposal-templates.duplicate');
+    Route::post('/proposal-templates/{template}/archive', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'archive'])->name('admin.proposal-templates.archive');
+    Route::get('/proposal-templates/{template}/use', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'useTemplate'])->name('admin.proposal-templates.use');
 
     Route::prefix('trip-plans/{tripPlan}')->group(function() {
         Route::patch('/update-status', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'updateStatus'])->name('admin.trip-plans.update-status');

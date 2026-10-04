@@ -39,7 +39,9 @@ class ClientProposalMail extends Mailable
 
     public function attachments(): array
     {
-        $pdf = Pdf::loadView('proposals.pdf', ['proposal' => $this->proposal]);
+        $pdf = Pdf::loadView('proposals.pdf', ['proposal' => $this->proposal])
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('isHtml5ParserEnabled', true);
 
         return [
             Attachment::fromData(fn () => $pdf->output(), 'Safari-Proposal-' . Str::slug($this->proposal->client_name) . '.pdf')

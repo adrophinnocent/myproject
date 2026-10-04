@@ -85,7 +85,7 @@ class BookingTest extends TestCase
 
         // 7. Assert notification email is sent to the Admin
         Mail::assertSent(AdminNewBookingNotification::class, function ($mail) use ($booking) {
-            return $mail->hasTo('twinasafaris.com') && // Default settings email
+            return $mail->hasTo('twinasafaris@gmail.com') && // Default settings email
                    $mail->booking->id === $booking->id;
         });
 

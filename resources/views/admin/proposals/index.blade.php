@@ -7,24 +7,24 @@
 <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
     <div>
         <h2 class="text-2xl font-black text-gray-900 tracking-tight">Client Safari Proposals</h2>
-        <p class="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-1">Create and manage personalized client itineraries & pricing</p>
+        <p class="text-gray-500 font-bold uppercase text-[10px] tracking-widest mt-1">Manage personalized client itineraries, pricing & proposal links</p>
     </div>
 
     <div class="flex items-center gap-4 flex-wrap">
-        <a href="{{ route('admin.proposals.create') }}" class="px-5 py-3 neo-btn text-xs font-black uppercase text-amber-600 flex items-center gap-2 hover:text-amber-700">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        <a href="{{ route('admin.proposals.create') }}" class="px-5 py-3 bg-[#052010] hover:bg-[#08331a] text-[#D4AF37] border border-[#D4AF37]/40 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all">
+            <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
             Create Proposal
         </a>
     </div>
 </div>
 
 {{-- Filters --}}
-<div class="mb-6 neo-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="mb-6 neo-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-emerald-900/10">
     <form action="{{ route('admin.proposals.index') }}" method="GET" class="flex-1 flex flex-col md:flex-row gap-4">
         <div class="relative flex-1">
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Search by client name, email, or proposal title..."
-                   class="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-amber-500/20">
+                   class="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-900/20">
             <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
@@ -47,25 +47,25 @@
 </div>
 
 {{-- Proposals Table --}}
-<div class="neo-card overflow-hidden">
+<div class="neo-card overflow-hidden border border-emerald-900/10">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
-            <thead class="bg-gray-900/5 border-b border-gray-200/50">
+            <thead class="bg-[#052010] text-[#D4AF37]">
                 <tr>
-                    <th class="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Client</th>
-                    <th class="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Proposal Title</th>
-                    <th class="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Travel Dates & Group</th>
-                    <th class="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Selling Price</th>
-                    <th class="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Profit & Margin</th>
-                    <th class="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Status</th>
-                    <th class="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest text-right">Actions</th>
+                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Client</th>
+                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Proposal Title</th>
+                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Travel Dates & Group</th>
+                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Selling Price</th>
+                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Profit & Margin</th>
+                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest">Status</th>
+                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-gray-200/60">
                 @forelse($proposals as $proposal)
-                <tr class="hover:bg-white/40 transition-colors">
+                <tr class="hover:bg-emerald-50/30 transition-colors">
                     <td class="px-6 py-4">
-                        <div class="font-bold text-gray-900 text-xs">{{ $proposal->client_name }}</div>
+                        <div class="font-black text-gray-900 text-xs">{{ $proposal->client_name }}</div>
                         <div class="text-[11px] text-gray-500">{{ $proposal->client_email }}</div>
                         @if($proposal->client_phone)
                             <div class="text-[10px] text-gray-400">{{ $proposal->client_phone }}</div>
@@ -73,10 +73,10 @@
                     </td>
                     <td class="px-6 py-4">
                         <div class="inline-flex items-center gap-1.5 mb-1">
-                            <span class="px-2 py-0.5 bg-gray-900 text-amber-400 rounded text-[10px] font-black uppercase tracking-wider">{{ $proposal->full_reference }}</span>
+                            <span class="px-2 py-0.5 bg-[#052010] text-[#D4AF37] rounded text-[10px] font-black uppercase tracking-wider">{{ $proposal->full_reference }}</span>
                         </div>
                         <div class="font-bold text-gray-900 text-xs line-clamp-1 max-w-[220px]">{{ $proposal->title }}</div>
-                        <div class="text-[10px] text-amber-600 font-bold uppercase mt-0.5">{{ $proposal->duration_days }} Days</div>
+                        <div class="text-[10px] text-emerald-800 font-bold uppercase mt-0.5">{{ $proposal->duration_days }} Days</div>
                     </td>
                     <td class="px-6 py-4">
                         <div class="text-xs font-bold text-gray-800">
@@ -90,14 +90,14 @@
                         <div class="text-[10px] text-gray-500">{{ $proposal->total_travelers }} Traveler(s) ({{ $proposal->adults }}A, {{ $proposal->children }}C)</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="font-black text-xs text-amber-600">{{ $proposal->formatted_total_price }}</div>
+                        <div class="font-black text-xs text-[#052010]">{{ $proposal->formatted_total_price }}</div>
                         @if($proposal->deposit_required)
                             <div class="text-[10px] text-gray-500">Dep: {{ $proposal->formatted_deposit_required }}</div>
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-xs font-bold text-emerald-600">+{{ $proposal->currency_symbol }}{{ number_format($proposal->calculated_profit, 2) }}</div>
-                        <div class="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-0.5">
+                        <div class="text-xs font-bold text-emerald-700">+{{ $proposal->currency_symbol }}{{ number_format($proposal->calculated_profit, 2) }}</div>
+                        <div class="text-[10px] font-black text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-full inline-block mt-0.5">
                             {{ $proposal->calculated_profit_margin }}% Margin
                         </div>
                     </td>
@@ -111,9 +111,9 @@
                             {{-- Secure Copy Link --}}
                             <button @click="navigator.clipboard.writeText('{{ $proposal->public_url }}'); copied = true; setTimeout(() => copied = false, 2000)"
                                     title="Copy Secure Client Link"
-                                    class="p-2 neo-btn text-gray-600 hover:text-amber-600 relative">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-                                <span x-show="copied" x-cloak class="absolute -top-8 right-0 bg-gray-900 text-white text-[9px] px-2 py-1 rounded shadow">Copied!</span>
+                                    class="p-2 neo-btn text-gray-600 hover:text-emerald-800 relative">
+                                <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 005.656-5.656l-1.1 1.1"/></svg>
+                                <span x-show="copied" x-cloak class="absolute -top-8 right-0 bg-[#052010] text-[#D4AF37] text-[9px] px-2 py-1 rounded shadow">Copied!</span>
                             </button>
 
                             {{-- Open WhatsApp --}}
@@ -121,13 +121,13 @@
                                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.105 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
                             </a>
 
-                            {{-- View Details --}}
-                            <a href="{{ route('admin.proposals.show', $proposal) }}" class="p-2 neo-btn text-gray-600 hover:text-blue-600" title="View Proposal Workspace">
+                            {{-- View Workspace --}}
+                            <a href="{{ route('admin.proposals.show', $proposal) }}" class="p-2 neo-btn text-gray-600 hover:text-[#052010]" title="View Proposal Workspace">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             </a>
 
                             {{-- Edit Proposal --}}
-                            <a href="{{ route('admin.proposals.edit', $proposal) }}" class="p-2 neo-btn text-gray-600 hover:text-amber-600" title="Edit Proposal">
+                            <a href="{{ route('admin.proposals.edit', $proposal) }}" class="p-2 neo-btn text-gray-600 hover:text-emerald-800" title="Edit Proposal">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             </a>
 
@@ -145,7 +145,7 @@
                 @empty
                 <tr>
                     <td colspan="7" class="px-6 py-12 text-center text-gray-500 font-bold text-xs">
-                        No proposals found. <a href="{{ route('admin.proposals.create') }}" class="text-amber-600 underline">Create one now</a>
+                        No proposals found. <a href="{{ route('admin.proposals.create') }}" class="text-[#052010] font-black underline">Create one now</a>
                     </td>
                 </tr>
                 @endforelse

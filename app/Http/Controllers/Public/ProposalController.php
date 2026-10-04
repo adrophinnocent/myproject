@@ -107,7 +107,9 @@ class ProposalController extends Controller
     {
         $proposal = Proposal::where('token', $token)->firstOrFail();
 
-        $pdf = Pdf::loadView('proposals.pdf', compact('proposal'));
+        $pdf = Pdf::loadView('proposals.pdf', compact('proposal'))
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('isHtml5ParserEnabled', true);
         $filename = 'Safari-Proposal-' . Str::slug($proposal->client_name) . '.pdf';
 
         return $pdf->download($filename);

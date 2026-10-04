@@ -307,10 +307,10 @@ class Proposal extends Model
     {
         return match ($this->status) {
             self::STATUS_DRAFT => 'bg-gray-100 text-gray-800 border-gray-300',
-            self::STATUS_SENT => 'bg-blue-100 text-blue-800 border-blue-300',
-            self::STATUS_VIEWED => 'bg-purple-100 text-purple-800 border-purple-300',
-            self::STATUS_ACCEPTED => 'bg-emerald-100 text-emerald-800 border-emerald-300',
-            self::STATUS_CHANGES_REQUESTED => 'bg-amber-100 text-amber-800 border-amber-300',
+            self::STATUS_SENT => 'bg-emerald-50 text-emerald-900 border-emerald-300',
+            self::STATUS_VIEWED => 'bg-[#052010] text-[#D4AF37] border-[#D4AF37]/40',
+            self::STATUS_ACCEPTED => 'bg-emerald-100 text-emerald-900 border-emerald-400 font-extrabold',
+            self::STATUS_CHANGES_REQUESTED => 'bg-amber-100 text-amber-900 border-amber-300',
             self::STATUS_DECLINED => 'bg-rose-100 text-rose-800 border-rose-300',
             self::STATUS_EXPIRED => 'bg-neutral-100 text-neutral-600 border-neutral-300',
             default => 'bg-gray-100 text-gray-800 border-gray-300',

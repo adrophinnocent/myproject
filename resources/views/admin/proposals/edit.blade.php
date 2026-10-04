@@ -270,11 +270,11 @@
     @php
         $costing = $proposal->internal_costing ?? [];
     @endphp
-    <div class="neo-card p-6 mb-8 border-2 border-indigo-200 bg-indigo-50/20">
+    <div class="neo-card p-6 mb-8 border-2 border-emerald-900/20 bg-[#f4fdf7]">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h3 class="text-sm font-black text-indigo-950 uppercase tracking-widest flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs">6</span>
+                <h3 class="text-sm font-black text-[#052010] uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-[#052010] text-[#D4AF37] flex items-center justify-center text-xs">6</span>
                     Internal Costing & Profit Margin
                     <span class="bg-rose-100 text-rose-800 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">ADMIN ONLY</span>
                 </h3>
@@ -326,25 +326,25 @@
         </div>
 
         {{-- Profit Summary Box --}}
-        <div class="p-4 bg-indigo-900 text-white rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+        <div class="p-4 bg-[#052010] text-white rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center border border-[#D4AF37]/30">
             <div>
-                <div class="text-[10px] font-bold uppercase text-indigo-300">Total Internal Cost</div>
+                <div class="text-[10px] font-bold uppercase text-amber-200/80">Total Internal Cost</div>
                 <div class="text-lg font-black" x-text="currency + ' ' + totalCost.toFixed(2)"></div>
             </div>
             <div>
-                <div class="text-[10px] font-bold uppercase text-indigo-300">Expected Profit</div>
+                <div class="text-[10px] font-bold uppercase text-amber-200/80">Expected Profit</div>
                 <div class="text-lg font-black text-emerald-400" x-text="currency + ' ' + profit.toFixed(2)"></div>
             </div>
             <div>
-                <div class="text-[10px] font-bold uppercase text-indigo-300">Profit Margin</div>
-                <div class="text-lg font-black text-amber-400" x-text="profitMargin.toFixed(2) + '%'"></div>
+                <div class="text-[10px] font-bold uppercase text-amber-200/80">Profit Margin</div>
+                <div class="text-lg font-black text-[#D4AF37]" x-text="profitMargin.toFixed(2) + '%'"></div>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-4">
         <a href="{{ route('admin.proposals.show', $proposal) }}" class="px-6 py-3 neo-btn text-xs font-bold text-gray-600 uppercase">Cancel</a>
-        <button type="submit" class="px-8 py-3 bg-amber-500 text-white rounded-xl font-black text-xs uppercase shadow-lg hover:bg-amber-600 transition-all">
+        <button type="submit" class="px-8 py-3 bg-[#052010] hover:bg-[#08331a] text-[#D4AF37] border border-[#D4AF37]/40 rounded-xl font-black text-xs uppercase shadow-lg transition-all">
             Update Proposal
         </button>
     </div>
