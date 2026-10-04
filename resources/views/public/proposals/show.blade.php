@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Twina Safaris — {{ $proposal->title }} | Private Proposal</title>
+    <title>Twina Safaris — {{ $proposal->title }} | Safari Proposal</title>
 
     {{-- Favicon --}}
     @if(\App\Models\Setting::get('favicon'))
@@ -20,76 +20,28 @@
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         [x-cloak] { display: none !important; }
         :root {
-            --clr-forest: #052010;
-            --clr-forest-mid: #0b381c;
-            --clr-gold: #D4AF37;
-            --clr-gold-light: #fbbf24;
-            --clr-bg-light: #f4fdf7;
+            --clr-safari: #0d2818;
+            --clr-gold: #b8920d;
+            --clr-bg: #f8f7f4;
         }
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--clr-bg-light);
-            color: #0a1f10;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8f7f4;
+            color: #1c1917;
         }
         .font-serif-title, .font-display {
             font-family: 'Cormorant Garamond', Georgia, serif;
-        }
-        .bg-twina-forest {
-            background-color: #052010;
-        }
-        .bg-twina-card {
-            background-color: #0b381c;
-        }
-        .text-twina-gold {
-            color: #D4AF37;
-        }
-        .border-twina-gold {
-            border-color: rgba(212, 175, 55, 0.3);
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, #D4AF37 0%, #f59e0b 100%);
-            color: #052010;
-            font-weight: 800;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
-        }
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5);
-            background: linear-gradient(135deg, #f59e0b 0%, #D4AF37 100%);
-        }
-        .btn-outline-gold {
-            border: 2px solid #D4AF37;
-            color: #D4AF37;
-            background: transparent;
-            font-weight: 800;
-            transition: all 0.3s ease;
-        }
-        .btn-outline-gold:hover {
-            background: #D4AF37;
-            color: #052010;
-        }
-        .btn-forest {
-            background-color: #052010;
-            color: #ffffff;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            font-weight: 800;
-            transition: all 0.3s ease;
-        }
-        .btn-forest:hover {
-            background-color: #0d3d20;
-            border-color: #D4AF37;
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen pb-28" x-data="{
+<body class="min-h-screen pb-28 text-stone-900" x-data="{
     acceptModal: false,
     changesModal: false,
     lightboxImg: null,
@@ -104,33 +56,25 @@
     }
 }">
 
-    {{-- TOP BRAND NAVIGATION BAR --}}
-    <header class="bg-twina-forest border-b border-twina-gold/40 text-white sticky top-0 z-40 backdrop-blur-lg bg-opacity-95 shadow-xl">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="{{ route('home') }}" class="flex items-center gap-2 group">
-                    <span class="text-xl md:text-2xl font-black tracking-widest font-serif-title text-twina-gold group-hover:text-amber-300 transition-colors">
-                        TWINA SAFARIS
-                    </span>
-                </a>
-                <div class="hidden md:flex items-center gap-2 pl-4 border-l border-twina-gold/30 text-xs font-bold text-amber-200/80 uppercase tracking-widest">
-                    <span>Client Proposal</span>
-                    <span class="text-twina-gold">&bull;</span>
-                    <span class="text-twina-gold font-mono">{{ $proposal->full_reference }}</span>
-                </div>
-            </div>
+    {{-- TOP BRAND HEADER --}}
+    <header class="bg-[#0d2818] border-b border-stone-800 text-white sticky top-0 z-40 backdrop-blur-md bg-opacity-95 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <a href="{{ route('home') }}" class="flex items-center gap-3">
+                <span class="text-xl md:text-2xl font-bold tracking-wider font-serif-title text-[#d4af37]">
+                    TWINA SAFARIS
+                </span>
+            </a>
 
             <div class="flex items-center gap-3">
                 <a href="{{ $proposal->whatsapp_message_url }}" target="_blank"
-                   class="px-4 py-2.5 bg-emerald-700/30 hover:bg-emerald-700/50 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 shadow-sm">
+                   class="px-3.5 py-2 bg-emerald-800/40 hover:bg-emerald-800/60 text-emerald-300 border border-emerald-600/30 rounded-lg text-xs font-semibold transition-all flex items-center gap-2">
                     <svg class="w-4 h-4 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.105 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                    <span class="hidden sm:inline">Contact Twina Safaris</span>
-                    <span class="sm:hidden">Contact</span>
+                    <span class="hidden sm:inline">Contact Twina</span>
                 </a>
                 <a href="{{ route('proposal.pdf', $proposal->token) }}"
-                   class="px-4 py-2.5 btn-outline-gold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                   class="px-3.5 py-2 border border-[#d4af37]/60 hover:bg-[#d4af37] hover:text-[#0d2818] text-[#d4af37] rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    <span>Download PDF</span>
+                    <span>PDF</span>
                 </a>
             </div>
         </div>
@@ -138,262 +82,174 @@
 
     {{-- FLASH NOTIFICATIONS --}}
     @if(session('success'))
-    <div class="max-w-7xl mx-auto px-4 mt-6">
-        <div class="bg-emerald-900/10 border-2 border-emerald-600 text-emerald-900 p-4 rounded-2xl flex items-center gap-3 shadow-sm">
-            <svg class="w-6 h-6 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <div class="text-xs font-bold">{!! session('success') !!}</div>
+    <div class="max-w-6xl mx-auto px-4 mt-6">
+        <div class="bg-emerald-50 border border-emerald-300 text-emerald-900 p-4 rounded-xl flex items-center gap-3 shadow-xs">
+            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div class="text-xs font-semibold">{!! session('success') !!}</div>
         </div>
     </div>
     @endif
 
-    {{-- COVER / HERO SECTION --}}
-    <section class="relative bg-twina-forest text-white overflow-hidden py-14 md:py-24 border-b border-twina-gold/40">
-        @php
-            $heroCover = 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1920&q=80';
-            if(is_array($proposal->itinerary) && count($proposal->itinerary) > 0 && !empty($proposal->itinerary[0]['cover_image'])) {
-                $heroCover = $proposal->itinerary[0]['cover_image'];
-            }
-        @endphp
-
-        <div class="absolute inset-0 z-0 opacity-35 bg-cover bg-center transition-all duration-700" style="background-image: url('{{ $heroCover }}')"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#052010] via-[#052010]/85 to-[#052010]/60 z-10"></div>
-
-        <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {{-- PROPOSAL HERO HEADER --}}
+    <section class="bg-[#0d2818] text-white py-12 md:py-16 border-b border-stone-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div class="space-y-4 max-w-3xl">
-                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 bg-twina-gold/15 border border-twina-gold/40 rounded-full text-twina-gold text-xs font-extrabold uppercase tracking-widest backdrop-blur-md">
-                        <span class="w-2 h-2 rounded-full bg-twina-gold animate-pulse"></span>
-                        <span>Twina Safaris &bull; Private Proposal {{ $proposal->full_reference }}</span>
+                <div class="space-y-3 max-w-3xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-[#d4af37]/10 border border-[#d4af37]/30 rounded-full text-[#d4af37] text-xs font-semibold tracking-wider">
+                        <span>Private Safari Proposal &bull; Ref: {{ $proposal->full_reference }}</span>
                     </div>
 
-                    <p class="text-twina-gold font-display text-lg md:text-2xl font-semibold italic tracking-wide">
-                        Your Personalized Tanzania Safari
-                    </p>
-
-                    <h1 class="text-3xl sm:text-4xl md:text-6xl font-black font-serif-title text-white leading-tight tracking-tight drop-shadow-lg">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold font-serif-title text-white leading-tight">
                         {{ $proposal->title }}
                     </h1>
 
                     @if($proposal->subtitle)
-                        <p class="text-amber-200/90 font-medium text-sm md:text-base leading-relaxed">{{ $proposal->subtitle }}</p>
+                        <p class="text-stone-300 text-sm md:text-base font-normal">{{ $proposal->subtitle }}</p>
                     @endif
 
-                    <div class="pt-2 flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-twina-gold/20 border border-twina-gold/40 flex items-center justify-center text-twina-gold font-serif-title font-bold text-lg">
-                            {{ strtoupper(substr($proposal->client_name, 0, 1)) }}
-                        </div>
-                        <div>
-                            <span class="text-[11px] font-bold text-amber-200/70 uppercase tracking-widest block">Exclusively Prepared For</span>
-                            <span class="text-sm md:text-base font-black text-white">{{ $proposal->client_name }}</span>
-                        </div>
+                    <div class="pt-2 text-xs text-stone-300">
+                        Prepared for <strong class="text-white font-semibold">{{ $proposal->client_name }}</strong>
                     </div>
                 </div>
 
-                {{-- Quick Investment Card --}}
-                <div class="bg-[#0b381c]/90 border border-twina-gold/40 backdrop-blur-xl rounded-3xl p-6 text-left md:text-right shadow-2xl shrink-0 min-w-[280px]">
-                    <div class="text-[10px] uppercase font-black text-twina-gold tracking-widest mb-1">YOUR SAFARI INVESTMENT</div>
-                    <div class="text-3xl md:text-4xl font-black text-white font-serif-title">{{ $proposal->formatted_total_price }}</div>
-                    <div class="text-xs text-amber-100/90 font-medium mt-1">
-                        For {{ $proposal->adults }} Adult(s) @if($proposal->children > 0) & {{ $proposal->children }} Child(ren) @endif
+                {{-- Price Summary Box --}}
+                <div class="bg-[#143d22] border border-stone-700/80 rounded-2xl p-5 shrink-0 text-left md:text-right">
+                    <div class="text-[10px] uppercase font-bold text-[#d4af37] tracking-wider mb-0.5">Total Safari Investment</div>
+                    <div class="text-3xl font-bold text-white font-serif-title">{{ $proposal->formatted_total_price }}</div>
+                    <div class="text-xs text-stone-300 mt-1">
+                        {{ $proposal->adults }} Adult(s) @if($proposal->children > 0) & {{ $proposal->children }} Child(ren) @endif
                     </div>
-                    @if($proposal->adult_price)
-                        <div class="text-[11px] text-twina-gold/90 font-bold mt-2 pt-2 border-t border-twina-gold/20">
-                            {{ $proposal->currency_symbol }}{{ number_format($proposal->adult_price, 2) }} per adult
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- MAIN PROPOSAL CONTENT --}}
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    {{-- MAIN CONTENT --}}
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8">
 
-        {{-- ROUTE BANNER --}}
-        <div class="bg-twina-forest text-white rounded-3xl p-5 md:p-6 mb-8 border border-twina-gold/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-twina-gold/20 border border-twina-gold/40 text-twina-gold flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                </div>
-                <div>
-                    <div class="text-[10px] font-black uppercase text-twina-gold tracking-widest">Your Tailored Safari Route</div>
-                    <div class="text-sm md:text-base font-black text-white mt-0.5">{{ $proposal->route_chain }}</div>
-                </div>
+        {{-- ROUTE BAR --}}
+        <div class="bg-white rounded-2xl p-5 mb-8 border border-stone-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <div class="text-[10px] font-bold uppercase text-stone-500 tracking-wider">Safari Route</div>
+                <div class="text-sm font-bold text-stone-900 mt-0.5">{{ $proposal->route_chain }}</div>
             </div>
-
-            <div class="text-xs font-bold text-amber-200 bg-twina-gold/15 border border-twina-gold/40 px-4 py-2 rounded-xl self-start sm:self-auto">
-                Quotation Valid Until: <strong class="text-twina-gold">{{ $proposal->valid_until ? $proposal->valid_until->format('d M Y') : now()->addDays(30)->format('d M Y') }}</strong>
+            <div class="text-xs text-stone-600 bg-stone-100 border border-stone-200 px-3.5 py-1.5 rounded-lg self-start sm:self-auto font-medium">
+                Valid Until: <strong class="text-stone-900">{{ $proposal->valid_until ? $proposal->valid_until->format('d M Y') : now()->addDays(30)->format('d M Y') }}</strong>
             </div>
         </div>
 
-        {{-- TRIP OVERVIEW CARDS --}}
+        {{-- OVERVIEW GRID CARDS --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            <div class="bg-white p-5 rounded-3xl border border-emerald-900/10 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-900/10 text-[#052010] flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6 text-[#1a9b50]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </div>
-                <div>
-                    <div class="text-[10px] font-black uppercase text-emerald-900/60 tracking-wider">Travel Dates</div>
-                    <div class="text-xs font-black text-[#052010] mt-0.5">
-                        @if($proposal->start_date)
-                            {{ $proposal->start_date->format('M d, Y') }}
-                            @if($proposal->end_date) - {{ $proposal->end_date->format('M d, Y') }} @endif
-                        @else
-                            Flexible Dates
-                        @endif
-                    </div>
+            <div class="bg-white p-4 rounded-xl border border-stone-200/80 shadow-xs">
+                <div class="text-[10px] font-bold uppercase text-stone-400 tracking-wider">Travel Dates</div>
+                <div class="text-xs font-bold text-stone-900 mt-1">
+                    @if($proposal->start_date)
+                        {{ $proposal->start_date->format('M d, Y') }}
+                        @if($proposal->end_date) - {{ $proposal->end_date->format('M d, Y') }} @endif
+                    @else
+                        Flexible Dates
+                    @endif
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-3xl border border-emerald-900/10 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-900/10 text-[#052010] flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6 text-[#1a9b50]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <div>
-                    <div class="text-[10px] font-black uppercase text-emerald-900/60 tracking-wider">Duration</div>
-                    <div class="text-xs font-black text-[#052010] mt-0.5">{{ $proposal->duration_days }} Days / {{ $proposal->duration_nights }} Nights</div>
-                </div>
+            <div class="bg-white p-4 rounded-xl border border-stone-200/80 shadow-xs">
+                <div class="text-[10px] font-bold uppercase text-stone-400 tracking-wider">Duration</div>
+                <div class="text-xs font-bold text-stone-900 mt-1">{{ $proposal->duration_days }} Days / {{ $proposal->duration_nights }} Nights</div>
             </div>
 
-            <div class="bg-white p-5 rounded-3xl border border-emerald-900/10 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-900/10 text-[#052010] flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6 text-[#1a9b50]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                </div>
-                <div>
-                    <div class="text-[10px] font-black uppercase text-emerald-900/60 tracking-wider">Travelers</div>
-                    <div class="text-xs font-black text-[#052010] mt-0.5">{{ $proposal->adults }} Adult(s) @if($proposal->children > 0), {{ $proposal->children }} Child(ren) @endif</div>
-                </div>
+            <div class="bg-white p-4 rounded-xl border border-stone-200/80 shadow-xs">
+                <div class="text-[10px] font-bold uppercase text-stone-400 tracking-wider">Travelers</div>
+                <div class="text-xs font-bold text-stone-900 mt-1">{{ $proposal->adults }} Adult(s) @if($proposal->children > 0), {{ $proposal->children }} Child(ren) @endif</div>
             </div>
 
-            <div class="bg-white p-5 rounded-3xl border border-emerald-900/10 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-                    <svg class="w-6 h-6 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                </div>
-                <div>
-                    <div class="text-[10px] font-black uppercase text-emerald-900/60 tracking-wider">Accommodation Level</div>
-                    <div class="text-xs font-black uppercase text-[#D4AF37] mt-0.5">
-                        {{ $proposal->accommodation_level ?: 'Luxury Comfort' }}
-                    </div>
-                </div>
+            <div class="bg-white p-4 rounded-xl border border-stone-200/80 shadow-xs">
+                <div class="text-[10px] font-bold uppercase text-stone-400 tracking-wider">Safari Comfort</div>
+                <div class="text-xs font-bold text-stone-900 mt-1 uppercase">{{ $proposal->accommodation_level ?: 'Comfort' }}</div>
             </div>
         </div>
 
-        {{-- SAFARI HIGHLIGHTS SUMMARY --}}
-        @if(is_array($proposal->highlights) && count($proposal->highlights) > 0)
-        <div class="mb-10 bg-white rounded-3xl p-6 md:p-8 border border-emerald-900/10 shadow-sm">
-            <h3 class="text-xs font-black text-emerald-900/60 uppercase tracking-widest mb-4 font-serif-title">Key Safari Highlights & Experiences</h3>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                @foreach($proposal->highlights as $highlight)
-                <div class="bg-[#f4fdf7] border border-emerald-900/10 rounded-2xl p-3 text-center flex flex-col items-center justify-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-twina-gold/20 text-[#052010] flex items-center justify-center">
-                        <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                    <span class="text-xs font-bold text-[#052010]">{{ $highlight }}</span>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
-
-        {{-- WELCOME NOTE FROM SAFARI CONSULTANT --}}
+        {{-- WELCOME MESSAGE --}}
         @if($proposal->welcome_message)
-        <div class="bg-twina-forest text-white rounded-3xl p-6 md:p-8 mb-10 border border-twina-gold/40 shadow-xl relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 opacity-10 text-twina-gold">
-                <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-            </div>
-            <div class="relative z-10">
-                <span class="text-xs font-black text-twina-gold uppercase tracking-widest font-serif-title block mb-2">Message from Your Twina Safaris Consultant</span>
-                <p class="text-amber-100/90 text-sm md:text-base leading-relaxed italic font-serif-title text-lg md:text-xl">
-                    "{{ $proposal->welcome_message }}"
-                </p>
-            </div>
+        <div class="bg-white rounded-2xl p-6 mb-10 border border-stone-200 border-l-4 border-l-[#d4af37] shadow-xs">
+            <div class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Message from Safari Consultant</div>
+            <p class="text-stone-800 text-sm md:text-base leading-relaxed italic font-serif-title">
+                "{{ $proposal->welcome_message }}"
+            </p>
         </div>
         @endif
 
-        {{-- ============================================================ --}}
-        {{-- SEQUENTIAL ACCORDION PROPOSAL SECTIONS (1 -> 2 -> 3 -> 4) --}}
-        {{-- ============================================================ --}}
-        <div class="space-y-8">
+        {{-- SEQUENTIAL ACCORDION SECTIONS (1 -> 2 -> 3 -> 4) --}}
+        <div class="space-y-6">
 
-            {{-- SECTION 1: 1. SAFARI ITINERARY --}}
-            <div class="bg-white rounded-3xl border-2 border-emerald-900/10 shadow-sm overflow-hidden transition-all duration-300">
+            {{-- SECTION 1: ITINERARY --}}
+            <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
                 <button @click="toggleSection('itinerary')"
-                        class="w-full p-5 md:p-6 bg-[#052010] text-[#D4AF37] text-left flex items-center justify-between group cursor-pointer border-b border-twina-gold/30">
-                    <div class="flex items-center gap-4">
-                        <span class="w-10 h-10 rounded-2xl bg-twina-gold text-[#052010] font-black text-base flex items-center justify-center shrink-0 shadow-md">
+                        class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
                             1
                         </span>
-                        <div>
-                            <span class="text-[10px] font-black uppercase tracking-widest block text-twina-gold/80">Section 1</span>
-                            <h2 class="text-base md:text-xl font-black font-serif-title tracking-wide text-white">1. Day-by-Day Safari Itinerary</h2>
-                        </div>
+                        <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">1. Day-by-Day Safari Itinerary</h2>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span x-show="sections.itinerary" class="text-[10px] md:text-xs font-black uppercase text-twina-gold bg-twina-gold/15 px-3 py-1 rounded-full border border-twina-gold/30">Open</span>
-                        <span x-show="!sections.itinerary" class="text-[10px] md:text-xs font-black uppercase text-amber-200/60 bg-white/5 px-3 py-1 rounded-full border border-white/10">Closed</span>
-                        <div class="w-8 h-8 rounded-xl bg-twina-gold/20 text-twina-gold flex items-center justify-center">
-                            <svg class="w-5 h-5 transition-transform duration-300" :class="sections.itinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                    </div>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.itinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.itinerary" x-collapse x-cloak class="p-6 md:p-8 space-y-8 bg-[#f4fdf7]/50">
+                <div x-show="sections.itinerary" x-collapse x-cloak class="p-5 md:p-8 space-y-8 bg-[#faf9f6]">
                     @if(is_array($proposal->itinerary) && count($proposal->itinerary) > 0)
                         <div class="space-y-8">
                             @foreach($proposal->itinerary as $day)
-                            <div class="bg-white rounded-3xl p-6 md:p-8 border border-emerald-900/10 shadow-sm">
+                            <div class="bg-white rounded-xl p-5 md:p-7 border border-stone-200/80 shadow-xs">
                                 {{-- Day Header --}}
-                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6 pb-4 border-b border-emerald-900/10">
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-5 pb-3 border-b border-stone-100">
                                     <div>
-                                        <span class="text-xs font-black text-twina-gold uppercase tracking-widest block mb-0.5">
+                                        <span class="text-xs font-bold text-[#b8920d] uppercase tracking-wider block mb-0.5">
                                             DAY {{ sprintf('%02d', $day['day'] ?? $loop->iteration) }}
                                         </span>
-                                        <h3 class="text-2xl md:text-3xl font-black font-serif-title text-[#052010]">
+                                        <h3 class="text-xl md:text-2xl font-bold font-serif-title text-stone-900">
                                             {{ $day['title'] ?? '' }}
                                         </h3>
                                     </div>
                                     @if(!empty($day['destination']))
-                                        <span class="px-4 py-1.5 bg-[#f4fdf7] text-[#052010] border border-emerald-900/20 rounded-full text-xs font-black uppercase tracking-wider self-start md:self-auto">
+                                        <span class="px-3 py-1 bg-stone-100 text-stone-800 border border-stone-200 rounded-md text-xs font-semibold self-start md:self-auto">
                                             {{ $day['destination'] }}
                                         </span>
                                     @endif
                                 </div>
 
-                                {{-- Day Cover Image --}}
+                                {{-- Framed Image Container (As requested in User Image Format) --}}
                                 @if(!empty($day['cover_image']))
-                                <div class="mb-6 rounded-3xl overflow-hidden max-h-[420px] bg-[#052010] shadow-md relative group cursor-pointer border border-twina-gold/20"
-                                     @click="lightboxImg = '{{ $day['cover_image'] }}'">
-                                    <img src="{{ $day['cover_image'] }}" alt="{{ $day['title'] ?? '' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <div class="p-3 bg-[#f5f4f0] border border-stone-200/80 rounded-2xl mb-6 shadow-xs">
+                                    <img src="{{ $day['cover_image'] }}" alt="{{ $day['title'] ?? '' }}" class="w-full h-auto max-h-[480px] object-cover rounded-xl">
                                 </div>
                                 @endif
 
-                                {{-- Narrative --}}
+                                {{-- Narrative Description --}}
                                 @if(!empty($day['description']))
-                                <div class="prose max-w-none text-emerald-950 text-sm md:text-base leading-relaxed mb-6 font-normal whitespace-pre-line">
+                                <div class="text-stone-700 text-sm md:text-base leading-relaxed mb-6 font-normal whitespace-pre-line">
                                     {{ $day['description'] }}
                                 </div>
                                 @endif
 
-                                {{-- Meta Info --}}
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-[#f4fdf7] rounded-2xl border border-emerald-900/10">
+                                {{-- Day Details --}}
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-stone-50 rounded-xl border border-stone-200/70 text-xs">
                                     @if(!empty($day['activities']))
                                     <div>
-                                        <div class="text-[10px] font-black uppercase text-emerald-900/60 tracking-wider">Activities</div>
-                                        <div class="text-xs font-bold text-[#052010] mt-0.5">{{ $day['activities'] }}</div>
+                                        <div class="font-bold text-stone-400 uppercase text-[10px]">Activities</div>
+                                        <div class="font-semibold text-stone-800 mt-0.5">{{ $day['activities'] }}</div>
                                     </div>
                                     @endif
 
                                     @if(!empty($day['accommodation_property']))
                                     <div>
-                                        <div class="text-[10px] font-black uppercase text-emerald-900/60 tracking-wider">Lodge / Camp</div>
-                                        <div class="text-xs font-bold text-[#052010] mt-0.5">{{ $day['accommodation_property'] }} @if(!empty($day['room_type'])) ({{ $day['room_type'] }}) @endif</div>
+                                        <div class="font-bold text-stone-400 uppercase text-[10px]">Lodge / Camp</div>
+                                        <div class="font-semibold text-stone-800 mt-0.5">{{ $day['accommodation_property'] }} @if(!empty($day['room_type'])) ({{ $day['room_type'] }}) @endif</div>
                                     </div>
                                     @endif
 
                                     @if(!empty($day['meals']))
                                     <div>
-                                        <div class="text-[10px] font-black uppercase text-emerald-900/60 tracking-wider">Meals Included</div>
-                                        <div class="text-xs font-bold text-[#052010] mt-0.5">{{ $day['meals'] }}</div>
+                                        <div class="font-bold text-stone-400 uppercase text-[10px]">Meals Included</div>
+                                        <div class="font-semibold text-stone-800 mt-0.5">{{ $day['meals'] }}</div>
                                     </div>
                                     @endif
                                 </div>
@@ -404,90 +260,70 @@
                 </div>
             </div>
 
-            {{-- SECTION 2: 2. ACCOMMODATION SUMMARY --}}
-            <div class="bg-white rounded-3xl border-2 border-emerald-900/10 shadow-sm overflow-hidden transition-all duration-300">
+            {{-- SECTION 2: ACCOMMODATIONS --}}
+            <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
                 <button @click="toggleSection('accommodations')"
-                        class="w-full p-5 md:p-6 bg-[#052010] text-[#D4AF37] text-left flex items-center justify-between group cursor-pointer border-b border-twina-gold/30">
-                    <div class="flex items-center gap-4">
-                        <span class="w-10 h-10 rounded-2xl bg-twina-gold text-[#052010] font-black text-base flex items-center justify-center shrink-0 shadow-md">
+                        class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
                             2
                         </span>
-                        <div>
-                            <span class="text-[10px] font-black uppercase tracking-widest block text-twina-gold/80">Section 2</span>
-                            <h2 class="text-base md:text-xl font-black font-serif-title tracking-wide text-white">2. Accommodation Summary</h2>
-                        </div>
+                        <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">2. Accommodation Summary</h2>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span x-show="sections.accommodations" class="text-[10px] md:text-xs font-black uppercase text-twina-gold bg-twina-gold/15 px-3 py-1 rounded-full border border-twina-gold/30">Open</span>
-                        <span x-show="!sections.accommodations" class="text-[10px] md:text-xs font-black uppercase text-amber-200/60 bg-white/5 px-3 py-1 rounded-full border border-white/10">Closed</span>
-                        <div class="w-8 h-8 rounded-xl bg-twina-gold/20 text-twina-gold flex items-center justify-center">
-                            <svg class="w-5 h-5 transition-transform duration-300" :class="sections.accommodations ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                    </div>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.accommodations ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.accommodations" x-collapse x-cloak class="p-6 md:p-8 bg-[#f4fdf7]/50">
+                <div x-show="sections.accommodations" x-collapse x-cloak class="p-5 md:p-8 bg-[#faf9f6]">
                     @if(is_array($proposal->accommodations) && count($proposal->accommodations) > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             @foreach($proposal->accommodations as $acc)
-                            <div class="bg-white rounded-3xl p-6 border border-emerald-900/10 shadow-sm flex flex-col justify-between">
-                                <div>
-                                    <div class="flex items-center justify-between gap-2 mb-3">
-                                        <span class="px-3 py-1 bg-[#f4fdf7] text-[#052010] border border-emerald-900/20 rounded-full text-[10px] font-black uppercase tracking-wider">
-                                            {{ $acc['category'] ?? 'Luxury Safari Comfort' }}
-                                        </span>
-                                        <span class="text-xs font-bold text-emerald-900/60">{{ $acc['location'] ?? '' }}</span>
-                                    </div>
-                                    <h4 class="text-xl font-black font-serif-title text-[#052010]">{{ $acc['property_name'] ?? 'Safari Lodge' }}</h4>
-                                    <p class="text-xs text-emerald-950 mt-1 font-medium">{{ $acc['room_type'] ?? '' }} &bull; {{ $acc['meal_plan'] ?? 'Full Board' }}</p>
+                            <div class="bg-white rounded-xl p-5 border border-stone-200/80 shadow-xs">
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <span class="px-2.5 py-0.5 bg-stone-100 text-stone-800 border border-stone-200 rounded text-[10px] font-semibold uppercase">
+                                        {{ $acc['category'] ?? 'Comfort' }}
+                                    </span>
+                                    <span class="text-xs font-medium text-stone-500">{{ $acc['location'] ?? '' }}</span>
                                 </div>
+                                <h4 class="text-lg font-bold font-serif-title text-stone-900">{{ $acc['property_name'] ?? 'Safari Lodge' }}</h4>
+                                <p class="text-xs text-stone-600 mt-1 font-medium">{{ $acc['room_type'] ?? '' }} &bull; {{ $acc['meal_plan'] ?? 'Full Board' }}</p>
                             </div>
                             @endforeach
                         </div>
                     @else
-                        <div class="bg-white rounded-3xl p-8 text-center text-emerald-900/60 font-bold text-xs">
-                            Accommodations feature handpicked safari lodges and authentic luxury tented camps as detailed in each day's itinerary.
+                        <div class="bg-white rounded-xl p-6 text-center text-stone-500 font-medium text-xs">
+                            Accommodations feature handpicked safari lodges and tented camps as detailed in each day's itinerary.
                         </div>
                     @endif
                 </div>
             </div>
 
-            {{-- SECTION 3: 3. INCLUSIONS & INVESTMENT --}}
-            <div class="bg-white rounded-3xl border-2 border-emerald-900/10 shadow-sm overflow-hidden transition-all duration-300">
+            {{-- SECTION 3: INCLUSIONS & PRICING --}}
+            <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
                 <button @click="toggleSection('pricing')"
-                        class="w-full p-5 md:p-6 bg-[#052010] text-[#D4AF37] text-left flex items-center justify-between group cursor-pointer border-b border-twina-gold/30">
-                    <div class="flex items-center gap-4">
-                        <span class="w-10 h-10 rounded-2xl bg-twina-gold text-[#052010] font-black text-base flex items-center justify-center shrink-0 shadow-md">
+                        class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
                             3
                         </span>
-                        <div>
-                            <span class="text-[10px] font-black uppercase tracking-widest block text-twina-gold/80">Section 3</span>
-                            <h2 class="text-base md:text-xl font-black font-serif-title tracking-wide text-white">3. Inclusions & Safari Investment</h2>
-                        </div>
+                        <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">3. Inclusions & Safari Investment</h2>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span x-show="sections.pricing" class="text-[10px] md:text-xs font-black uppercase text-twina-gold bg-twina-gold/15 px-3 py-1 rounded-full border border-twina-gold/30">Open</span>
-                        <span x-show="!sections.pricing" class="text-[10px] md:text-xs font-black uppercase text-amber-200/60 bg-white/5 px-3 py-1 rounded-full border border-white/10">Closed</span>
-                        <div class="w-8 h-8 rounded-xl bg-twina-gold/20 text-twina-gold flex items-center justify-center">
-                            <svg class="w-5 h-5 transition-transform duration-300" :class="sections.pricing ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                    </div>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.pricing ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.pricing" x-collapse x-cloak class="p-6 md:p-8 space-y-8 bg-[#f4fdf7]/50">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {{-- Inclusions --}}
-                        <div class="bg-white p-6 md:p-8 rounded-3xl border border-emerald-900/10 shadow-sm">
-                            <h3 class="text-lg font-black font-serif-title text-[#052010] uppercase tracking-wider mb-6 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-[#1a9b50]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                What Is Included in Your Safari
+                <div x-show="sections.pricing" x-collapse x-cloak class="p-5 md:p-8 space-y-6 bg-[#faf9f6]">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Included --}}
+                        <div class="bg-white p-6 rounded-xl border border-stone-200/80 shadow-xs">
+                            <h3 class="text-base font-bold font-serif-title text-[#0d2818] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                What Is Included
                             </h3>
 
-                            <ul class="space-y-3">
+                            <ul class="space-y-2.5 text-xs text-stone-800">
                                 @if(is_array($proposal->inclusions) && count($proposal->inclusions) > 0)
                                     @foreach($proposal->inclusions as $inc)
-                                    <li class="flex items-start gap-3 text-xs md:text-sm font-medium text-[#052010]">
-                                        <svg class="w-5 h-5 text-[#1a9b50] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                    <li class="flex items-start gap-2.5">
+                                        <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                         <span>{{ $inc }}</span>
                                     </li>
                                     @endforeach
@@ -495,18 +331,18 @@
                             </ul>
                         </div>
 
-                        {{-- Exclusions --}}
-                        <div class="bg-white p-6 md:p-8 rounded-3xl border border-emerald-900/10 shadow-sm">
-                            <h3 class="text-lg font-black font-serif-title text-rose-900 uppercase tracking-wider mb-6 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                        {{-- Excluded --}}
+                        <div class="bg-white p-6 rounded-xl border border-stone-200/80 shadow-xs">
+                            <h3 class="text-base font-bold font-serif-title text-rose-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                 What Is Excluded
                             </h3>
 
-                            <ul class="space-y-3">
+                            <ul class="space-y-2.5 text-xs text-stone-700">
                                 @if(is_array($proposal->exclusions) && count($proposal->exclusions) > 0)
                                     @foreach($proposal->exclusions as $exc)
-                                    <li class="flex items-start gap-3 text-xs md:text-sm font-medium text-slate-700">
-                                        <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <li class="flex items-start gap-2.5">
+                                        <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                         <span>{{ $exc }}</span>
                                     </li>
                                     @endforeach
@@ -515,146 +351,86 @@
                         </div>
                     </div>
 
-                    {{-- Optional Extras --}}
-                    @if(is_array($proposal->optional_extras) && count($proposal->optional_extras) > 0)
-                    <div class="bg-[#f4fdf7] border border-emerald-900/10 p-6 md:p-8 rounded-3xl">
-                        <h3 class="text-lg font-black font-serif-title text-[#052010] uppercase tracking-wider mb-2">Optional Experiences & Add-ons</h3>
-                        <p class="text-xs text-emerald-950 mb-6 font-medium">You can request to add any of these optional activities to your safari package.</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            @foreach($proposal->optional_extras as $extra)
-                            <div class="bg-white p-4 rounded-2xl border border-emerald-900/10 flex items-center justify-between">
-                                <div>
-                                    <div class="text-xs font-black text-[#052010]">{{ $extra['name'] ?? '' }}</div>
-                                    <div class="text-[11px] text-emerald-900/60">{{ $extra['description'] ?? '' }}</div>
-                                </div>
-                                <div class="text-xs font-black text-twina-gold shrink-0 ml-3">
-                                    {{ $proposal->currency_symbol }}{{ number_format($extra['price'] ?? 0, 2) }}
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif
+                    {{-- Price Summary Box --}}
+                    <div class="bg-[#0d2818] text-white p-6 md:p-8 rounded-2xl shadow-sm border border-stone-800">
+                        <div class="text-[10px] uppercase font-bold text-[#d4af37] tracking-wider mb-0.5">Investment Breakdown</div>
+                        <h3 class="text-xl font-bold font-serif-title text-white mb-6">Price Summary</h3>
 
-                    {{-- PRICING SUMMARY CARD --}}
-                    <div class="bg-twina-forest text-white p-6 md:p-10 rounded-3xl shadow-2xl border border-twina-gold/40">
-                        <div class="text-xs font-black uppercase text-twina-gold tracking-widest mb-1">YOUR SAFARI INVESTMENT</div>
-                        <h3 class="text-2xl font-black font-serif-title text-white mb-8">Personalized Safari Price Summary</h3>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8 border-b border-twina-gold/20 text-xs font-medium">
-                            <div class="space-y-3">
-                                <div class="flex justify-between"><span class="text-amber-100/70">Adult Guests:</span><span class="font-bold text-white">{{ $proposal->adults }} Adults @if($proposal->adult_price) ({{ $proposal->currency_symbol }}{{ number_format($proposal->adult_price, 2) }} / adult) @endif</span></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-stone-700/80 text-xs">
+                            <div class="space-y-2.5">
+                                <div class="flex justify-between"><span class="text-stone-300">Adult Guests:</span><span class="font-semibold text-white">{{ $proposal->adults }} Adults @if($proposal->adult_price) ({{ $proposal->currency_symbol }}{{ number_format($proposal->adult_price, 2) }} / adult) @endif</span></div>
                                 @if($proposal->children > 0)
-                                    <div class="flex justify-between"><span class="text-amber-100/70">Child Guests:</span><span class="font-bold text-white">{{ $proposal->children }} Children @if($proposal->child_price) ({{ $proposal->currency_symbol }}{{ number_format($proposal->child_price, 2) }} / child) @endif</span></div>
+                                    <div class="flex justify-between"><span class="text-stone-300">Child Guests:</span><span class="font-semibold text-white">{{ $proposal->children }} Children @if($proposal->child_price) ({{ $proposal->currency_symbol }}{{ number_format($proposal->child_price, 2) }} / child) @endif</span></div>
                                 @endif
                                 @if($proposal->subtotal_price && $proposal->discount_amount > 0)
-                                    <div class="flex justify-between"><span class="text-amber-100/70">Standard Price:</span><span class="font-bold line-through text-amber-200/50">{{ $proposal->currency_symbol }}{{ number_format($proposal->subtotal_price, 2) }}</span></div>
-                                    <div class="flex justify-between"><span class="text-emerald-400 font-bold">Special Savings:</span><span class="font-bold text-emerald-400">-{{ $proposal->currency_symbol }}{{ number_format($proposal->discount_amount, 2) }}</span></div>
+                                    <div class="flex justify-between"><span class="text-stone-300">Standard Price:</span><span class="line-through text-stone-400">{{ $proposal->currency_symbol }}{{ number_format($proposal->subtotal_price, 2) }}</span></div>
+                                    <div class="flex justify-between"><span class="text-emerald-400">Savings Discount:</span><span class="font-bold text-emerald-400">-{{ $proposal->currency_symbol }}{{ number_format($proposal->discount_amount, 2) }}</span></div>
                                 @endif
                             </div>
 
-                            <div class="text-left md:text-right space-y-2">
-                                <div class="text-[10px] uppercase font-black text-twina-gold tracking-widest">FINAL INVESTMENT TOTAL</div>
-                                <div class="text-4xl md:text-5xl font-black text-white font-serif-title">{{ $proposal->formatted_total_price }}</div>
+                            <div class="text-left md:text-right space-y-1">
+                                <div class="text-[10px] uppercase font-bold text-[#d4af37] tracking-wider">Total Investment</div>
+                                <div class="text-3xl font-bold text-white font-serif-title">{{ $proposal->formatted_total_price }}</div>
                             </div>
                         </div>
 
-                        {{-- Payment Schedule Breakdown --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 text-xs">
-                            <div class="bg-[#0b381c] p-5 rounded-2xl border border-twina-gold/30">
-                                <div class="text-[10px] uppercase font-black text-twina-gold tracking-wider">Deposit Required ({{ $proposal->deposit_percentage ?? 30 }}%)</div>
-                                <div class="text-2xl font-black text-white mt-1">{{ $proposal->formatted_deposit_required }}</div>
-                                <div class="text-[10px] text-amber-100/70 mt-1">Due to confirm booking</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs">
+                            <div class="bg-[#143d22] p-4 rounded-xl border border-stone-700/60">
+                                <div class="text-[10px] uppercase font-bold text-[#d4af37]">Deposit Required ({{ $proposal->deposit_percentage ?? 30 }}%)</div>
+                                <div class="text-xl font-bold text-white mt-1">{{ $proposal->formatted_deposit_required }}</div>
                             </div>
 
-                            <div class="bg-[#0b381c] p-5 rounded-2xl border border-twina-gold/30">
-                                <div class="text-[10px] uppercase font-black text-twina-gold tracking-wider">Remaining Balance</div>
-                                <div class="text-2xl font-black text-white mt-1">{{ $proposal->formatted_balance_amount }}</div>
-                                <div class="text-[10px] text-amber-100/70 mt-1">
-                                    Due: {{ $proposal->balance_due_date ? $proposal->balance_due_date->format('M d, Y') : '30 days prior to travel' }}
-                                </div>
+                            <div class="bg-[#143d22] p-4 rounded-xl border border-stone-700/60">
+                                <div class="text-[10px] uppercase font-bold text-[#d4af37]">Remaining Balance</div>
+                                <div class="text-xl font-bold text-white mt-1">{{ $proposal->formatted_balance_amount }}</div>
                             </div>
 
-                            <div class="bg-[#0b381c] p-5 rounded-2xl border border-twina-gold/30">
-                                <div class="text-[10px] uppercase font-black text-twina-gold tracking-wider">Quotation Validity</div>
-                                <div class="text-sm font-black text-amber-300 mt-2">
+                            <div class="bg-[#143d22] p-4 rounded-xl border border-stone-700/60">
+                                <div class="text-[10px] uppercase font-bold text-[#d4af37]">Quotation Validity</div>
+                                <div class="text-sm font-bold text-stone-200 mt-1">
                                     Valid Until {{ $proposal->valid_until ? $proposal->valid_until->format('d M Y') : now()->addDays(30)->format('d M Y') }}
                                 </div>
-                                <div class="text-[10px] text-amber-100/70 mt-1">Subject to lodge availability</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- SECTION 4: 4. PAYMENT & TERMS --}}
-            <div class="bg-white rounded-3xl border-2 border-emerald-900/10 shadow-sm overflow-hidden transition-all duration-300">
+            {{-- SECTION 4: PAYMENT TERMS --}}
+            <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
                 <button @click="toggleSection('terms')"
-                        class="w-full p-5 md:p-6 bg-[#052010] text-[#D4AF37] text-left flex items-center justify-between group cursor-pointer border-b border-twina-gold/30">
-                    <div class="flex items-center gap-4">
-                        <span class="w-10 h-10 rounded-2xl bg-twina-gold text-[#052010] font-black text-base flex items-center justify-center shrink-0 shadow-md">
+                        class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
                             4
                         </span>
-                        <div>
-                            <span class="text-[10px] font-black uppercase tracking-widest block text-twina-gold/80">Section 4</span>
-                            <h2 class="text-base md:text-xl font-black font-serif-title tracking-wide text-white">4. Payment Terms & Cancellation Policy</h2>
-                        </div>
+                        <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">4. Payment Terms & Policy</h2>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span x-show="sections.terms" class="text-[10px] md:text-xs font-black uppercase text-twina-gold bg-twina-gold/15 px-3 py-1 rounded-full border border-twina-gold/30">Open</span>
-                        <span x-show="!sections.terms" class="text-[10px] md:text-xs font-black uppercase text-amber-200/60 bg-white/5 px-3 py-1 rounded-full border border-white/10">Closed</span>
-                        <div class="w-8 h-8 rounded-xl bg-twina-gold/20 text-twina-gold flex items-center justify-center">
-                            <svg class="w-5 h-5 transition-transform duration-300" :class="sections.terms ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                    </div>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.terms ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.terms" x-collapse x-cloak class="p-6 md:p-8 space-y-8 bg-[#f4fdf7]/50">
-                    <div class="bg-white p-6 md:p-8 rounded-3xl border border-emerald-900/10 shadow-sm space-y-8">
+                <div x-show="sections.terms" x-collapse x-cloak class="p-5 md:p-8 bg-[#faf9f6]">
+                    <div class="bg-white p-6 rounded-xl border border-stone-200/80 shadow-xs space-y-6">
                         <div>
-                            <h3 class="text-lg font-black font-serif-title text-[#052010] uppercase tracking-wider mb-3">Payment Terms & Methods</h3>
-                            <p class="text-sm text-emerald-950 leading-relaxed whitespace-pre-line font-medium mb-4">
-                                {{ $proposal->payment_terms ?: "A deposit of 30% is required upon booking confirmation. The remaining balance is payable 30 days prior to your arrival date. We accept Bank Wire Transfers and major Credit/Debit Cards." }}
+                            <h3 class="text-sm font-bold font-serif-title text-stone-900 uppercase tracking-wider mb-2">Payment Terms</h3>
+                            <p class="text-xs md:text-sm text-stone-700 leading-relaxed font-normal">
+                                {{ $proposal->payment_terms ?: "A deposit of 30% is required upon booking confirmation. The remaining balance is payable 30 days prior to your arrival date. We accept Bank Wire Transfers and major Credit Cards." }}
                             </p>
-
-                            @if($proposal->payment_methods)
-                                <div class="p-4 bg-[#f4fdf7] rounded-2xl border border-emerald-900/10 text-xs font-medium text-[#052010]">
-                                    <strong>Accepted Payment Methods:</strong> {{ $proposal->payment_methods }}
-                                </div>
-                            @endif
-
-                            @if($proposal->payment_instructions)
-                                <div class="mt-3 p-4 bg-twina-forest/5 rounded-2xl border border-twina-gold/30 text-xs font-medium text-[#052010]">
-                                    <strong>Payment Instructions:</strong> {{ $proposal->payment_instructions }}
-                                </div>
-                            @endif
                         </div>
 
-                        <div class="border-t border-emerald-900/10 pt-6">
-                            <h3 class="text-lg font-black font-serif-title text-[#052010] uppercase tracking-wider mb-3">Cancellation & Refund Policy</h3>
-                            <p class="text-sm text-emerald-950 leading-relaxed whitespace-pre-line font-medium">
-                                {{ $proposal->cancellation_policy ?: "Cancellations made 60+ days before travel are subject to standard processing and lodge cancellation fees." }}
-                            </p>
-                            @if($proposal->refund_policy)
-                                <p class="text-xs text-emerald-900/70 mt-2 font-medium">
-                                    <strong>Refund terms:</strong> {{ $proposal->refund_policy }}
-                                </p>
-                            @endif
-                        </div>
-
-                        <div class="border-t border-emerald-900/10 pt-6">
-                            <h3 class="text-lg font-black font-serif-title text-[#052010] uppercase tracking-wider mb-3">Price Validity Notice</h3>
-                            <p class="text-xs text-emerald-900/70 italic font-medium">
-                                "This quotation is valid until {{ $proposal->valid_until ? $proposal->valid_until->format('d F Y') : now()->addDays(30)->format('d F Y') }} and is subject to availability of safari accommodations and park permits."
+                        <div class="border-t border-stone-100 pt-5">
+                            <h3 class="text-sm font-bold font-serif-title text-stone-900 uppercase tracking-wider mb-2">Cancellation Policy</h3>
+                            <p class="text-xs md:text-sm text-stone-700 leading-relaxed font-normal">
+                                {{ $proposal->cancellation_policy ?: "Cancellations made 60+ days before travel are subject to standard lodge and handling cancellation fees." }}
                             </p>
                         </div>
                     </div>
 
                     <div class="flex justify-end pt-4">
                         <button @click="acceptModal = true"
-                                class="w-full sm:w-auto px-10 py-4 btn-gold rounded-2xl text-xs uppercase tracking-wider shadow-2xl flex items-center justify-center gap-3">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                            <span>Accept Proposal Now</span>
+                                class="w-full sm:w-auto px-8 py-3.5 bg-[#0d2818] hover:bg-[#143d22] text-[#d4af37] border border-[#d4af37]/60 rounded-xl text-xs uppercase font-bold tracking-wider shadow-md transition-all flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span>Accept Proposal</span>
                         </button>
                     </div>
                 </div>
@@ -664,33 +440,33 @@
     </main>
 
     {{-- BOTTOM STICKY ACTION BAR --}}
-    <div class="fixed bottom-0 inset-x-0 bg-twina-forest/95 backdrop-blur-md border-t border-twina-gold/40 py-4 px-4 sm:px-6 z-40 text-white shadow-2xl">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="fixed bottom-0 inset-x-0 bg-[#0d2818] border-t border-stone-800 py-3.5 px-4 sm:px-6 z-40 text-white shadow-lg">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
             <div class="text-center sm:text-left">
-                <div class="text-[10px] uppercase font-black text-twina-gold tracking-widest">YOUR SAFARI INVESTMENT</div>
-                <div class="text-2xl font-black font-serif-title text-white">{{ $proposal->formatted_total_price }}</div>
+                <div class="text-[10px] uppercase font-bold text-[#d4af37] tracking-wider">Total Investment</div>
+                <div class="text-xl font-bold font-serif-title text-white">{{ $proposal->formatted_total_price }}</div>
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto">
                 <a href="{{ $proposal->whatsapp_message_url }}" target="_blank"
-                   class="px-4 py-3 bg-emerald-700/30 hover:bg-emerald-700/50 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                   class="px-4 py-2.5 bg-emerald-800/40 hover:bg-emerald-800/60 text-emerald-300 border border-emerald-600/30 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <svg class="w-4 h-4 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.105 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                    <span>Contact Twina Safaris</span>
+                    <span>Contact Twina</span>
                 </a>
 
                 <button @click="changesModal = true"
-                        class="flex-1 sm:flex-none px-5 py-3 btn-forest rounded-xl text-xs uppercase tracking-wider">
+                        class="flex-1 sm:flex-none px-4 py-2.5 bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 rounded-lg text-xs font-bold uppercase tracking-wider">
                     Request Changes
                 </button>
 
                 @if($proposal->status === \App\Models\Proposal::STATUS_ACCEPTED)
-                    <div class="flex-1 sm:flex-none px-6 py-3 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                        <span>Proposal Accepted</span>
+                    <div class="flex-1 sm:flex-none px-5 py-2.5 bg-emerald-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                        <span>Accepted</span>
                     </div>
                 @else
                     <button @click="acceptModal = true"
-                            class="flex-1 sm:flex-none px-6 py-3 btn-gold rounded-xl text-xs uppercase tracking-wider shadow-lg">
+                            class="flex-1 sm:flex-none px-6 py-2.5 bg-[#d4af37] hover:bg-[#b8920d] text-[#0d2818] rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm transition-all">
                         Accept Proposal
                     </button>
                 @endif
@@ -698,39 +474,34 @@
         </div>
     </div>
 
-    {{-- LIGHTBOX MODAL --}}
-    <div x-show="lightboxImg" x-cloak class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" @click="lightboxImg = null">
-        <img :src="lightboxImg" class="max-w-full max-h-full rounded-2xl shadow-2xl border border-twina-gold/40">
-    </div>
-
     {{-- ACCEPT PROPOSAL MODAL --}}
-    <div x-show="acceptModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div @click.away="acceptModal = false" class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 text-[#052010] shadow-2xl border border-emerald-900/10 relative">
-            <button @click="acceptModal = false" class="absolute top-5 right-5 text-emerald-900/40 hover:text-[#052010]">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <div x-show="acceptModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
+        <div @click.away="acceptModal = false" class="bg-white rounded-2xl max-w-lg w-full p-6 text-stone-900 shadow-xl border border-stone-200 relative">
+            <button @click="acceptModal = false" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
-            <h3 class="text-2xl font-black font-serif-title text-[#052010] mb-2">Accept Safari Proposal</h3>
-            <p class="text-xs text-emerald-900/70 mb-6">Confirm your acceptance for <strong>{{ $proposal->title }}</strong> ({{ $proposal->formatted_total_price }}).</p>
+            <h3 class="text-xl font-bold font-serif-title text-stone-900 mb-1">Accept Safari Proposal</h3>
+            <p class="text-xs text-stone-500 mb-5">Confirm your acceptance for <strong>{{ $proposal->title }}</strong> ({{ $proposal->formatted_total_price }}).</p>
 
             <form action="{{ route('proposal.accept', $proposal->token) }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-xs font-bold uppercase text-[#052010] mb-1">Your Full Name (Electronic Signature) *</label>
+                    <label class="block text-xs font-bold uppercase text-stone-700 mb-1">Your Full Name (Electronic Signature) *</label>
                     <input type="text" name="signature_name" required value="{{ $proposal->client_name }}"
-                           class="w-full bg-[#f4fdf7] border border-emerald-900/20 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-twina-gold">
+                           class="w-full bg-stone-50 border border-stone-300 rounded-lg px-3.5 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-[#052010] mb-1">Additional Notes (Optional)</label>
+                    <label class="block text-xs font-bold uppercase text-stone-700 mb-1">Additional Notes (Optional)</label>
                     <textarea name="client_notes" rows="3"
-                              class="w-full bg-[#f4fdf7] border border-emerald-900/20 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-twina-gold"></textarea>
+                              class="w-full bg-stone-50 border border-stone-300 rounded-lg p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#d4af37]"></textarea>
                 </div>
 
-                <div class="pt-4 flex items-center justify-end gap-3">
-                    <button type="button" @click="acceptModal = false" class="px-5 py-2.5 text-xs font-bold uppercase text-emerald-900/60">Cancel</button>
-                    <button type="submit" class="px-6 py-3 btn-gold text-xs uppercase rounded-xl shadow">
-                        Confirm & Accept Safari
+                <div class="pt-3 flex items-center justify-end gap-3">
+                    <button type="button" @click="acceptModal = false" class="px-4 py-2 text-xs font-bold uppercase text-stone-500">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-[#0d2818] text-[#d4af37] border border-[#d4af37]/60 text-xs uppercase font-bold rounded-lg shadow-xs">
+                        Confirm & Accept
                     </button>
                 </div>
             </form>
@@ -738,27 +509,27 @@
     </div>
 
     {{-- REQUEST CHANGES MODAL --}}
-    <div x-show="changesModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div @click.away="changesModal = false" class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 text-[#052010] shadow-2xl border border-emerald-900/10 relative">
-            <button @click="changesModal = false" class="absolute top-5 right-5 text-emerald-900/40 hover:text-[#052010]">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <div x-show="changesModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
+        <div @click.away="changesModal = false" class="bg-white rounded-2xl max-w-lg w-full p-6 text-stone-900 shadow-xl border border-stone-200 relative">
+            <button @click="changesModal = false" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
-            <h3 class="text-2xl font-black font-serif-title text-[#052010] mb-2">Request Changes</h3>
-            <p class="text-xs text-emerald-900/70 mb-6">Let us know what adjustments or customization you'd like on this safari itinerary.</p>
+            <h3 class="text-xl font-bold font-serif-title text-stone-900 mb-1">Request Changes</h3>
+            <p class="text-xs text-stone-500 mb-5">Let us know what adjustments you would like made to this itinerary.</p>
 
             <form action="{{ route('proposal.changes', $proposal->token) }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-xs font-bold uppercase text-[#052010] mb-1">What would you like us to change? *</label>
-                    <textarea name="feedback" rows="5" required
-                              class="w-full bg-[#f4fdf7] border border-emerald-900/20 rounded-xl p-4 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-twina-gold"></textarea>
+                    <label class="block text-xs font-bold uppercase text-stone-700 mb-1">What would you like us to change? *</label>
+                    <textarea name="feedback" rows="4" required
+                              class="w-full bg-stone-50 border border-stone-300 rounded-lg p-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#d4af37]"></textarea>
                 </div>
 
-                <div class="pt-4 flex items-center justify-end gap-3">
-                    <button type="button" @click="changesModal = false" class="px-5 py-2.5 text-xs font-bold uppercase text-emerald-900/60">Cancel</button>
-                    <button type="submit" class="px-6 py-3 btn-forest rounded-xl shadow text-xs uppercase">
-                        Submit Change Request
+                <div class="pt-3 flex items-center justify-end gap-3">
+                    <button type="button" @click="changesModal = false" class="px-4 py-2 text-xs font-bold uppercase text-stone-500">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-[#0d2818] text-white text-xs font-bold uppercase rounded-lg shadow-xs">
+                        Submit Request
                     </button>
                 </div>
             </form>
