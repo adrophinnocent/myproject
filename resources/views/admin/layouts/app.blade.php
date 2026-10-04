@@ -18,11 +18,15 @@
         [x-cloak] { display: none !important; }
         input, textarea, select { color: #1a1a1a !important; background-color: #ffffff !important; }
         label { color: #374151 !important; }
-        :root { --neo-bg: #e0e5ec; --neo-shadow-dark: #a3b1c6; --neo-shadow-light: #ffffff; }
-        .neo-base { background-color: var(--neo-bg) !important; }
-        .neo-card { background: var(--neo-bg); border-radius: 20px; box-shadow: 9px 9px 16px var(--neo-shadow-dark), -9px -9px 16px var(--neo-shadow-light); border: none !important; }
-        .neo-btn { background: var(--neo-bg); border-radius: 12px; box-shadow: 5px 5px 10px var(--neo-shadow-dark), -5px -5px 10px var(--neo-shadow-light); transition: all 0.2s ease; }
-        .neo-btn:active { box-shadow: inset 5px 5px 10px var(--neo-shadow-dark), inset -5px -5px 10px var(--neo-shadow-light); transform: scale(0.98); }
+        :root { --admin-bg: #f8fafc; }
+        .neo-base { background-color: var(--admin-bg) !important; }
+        .neo-card { background: #ffffff !important; border-radius: 12px !important; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04) !important; border: 1px solid #e2e8f0 !important; }
+        .neo-card-sm { background: #ffffff !important; border-radius: 8px !important; border: 1px solid #e2e8f0 !important; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
+        .neo-btn { background: #ffffff !important; border-radius: 8px !important; border: 1px solid #cbd5e1 !important; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; transition: all 0.15s ease !important; }
+        .neo-btn:hover { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
+        .neo-btn:active { transform: scale(0.98); background-color: #f1f5f9 !important; }
+        .neo-inset { background-color: #f1f5f9 !important; border-radius: 8px !important; border: 1px solid #e2e8f0 !important; box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
+        .neo-btn-active { background-color: #fef3c7 !important; border-color: #f59e0b !important; color: #b45309 !important; box-shadow: none !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -59,6 +63,8 @@
                         ['route' => 'admin.categories.index', 'label' => 'Categories', 'icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2'],
                         ['route' => 'admin.destinations.index', 'label' => 'Destinations', 'icon' => 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'],
                         ['route' => 'admin.bookings.index', 'label' => 'Bookings', 'icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
+                        ['route' => 'admin.proposals.index', 'label' => 'Client Proposals', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+                        ['route' => 'admin.custom-inquiries.index', 'label' => 'Custom Inquiries', 'icon' => 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z'],
                         ['route' => 'admin.gallery.index', 'label' => 'Gallery', 'icon' => 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16'],
                         ['route' => 'admin.testimonials.index', 'label' => 'Testimonials', 'icon' => 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'],
                         ['route' => 'admin.trip-plans.index', 'label' => 'Trip Plans', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],

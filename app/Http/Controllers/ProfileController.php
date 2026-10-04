@@ -16,8 +16,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $proposals = \App\Models\Proposal::where('client_email', $request->user()->email)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('profile.edit', [
             'user' => $request->user(),
+            'proposals' => $proposals,
         ]);
     }
 

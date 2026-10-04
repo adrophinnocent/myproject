@@ -177,6 +177,38 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'destroy' => 'admin.trip-plans.destroy',
     ]);
 
+    Route::resource('/custom-inquiries', App\Http\Controllers\Admin\CustomSafariInquiryController::class)->names([
+        'index' => 'admin.custom-inquiries.index',
+        'create' => 'admin.custom-inquiries.create',
+        'store' => 'admin.custom-inquiries.store',
+        'show' => 'admin.custom-inquiries.show',
+        'edit' => 'admin.custom-inquiries.edit',
+        'update' => 'admin.custom-inquiries.update',
+        'destroy' => 'admin.custom-inquiries.destroy',
+    ]);
+    Route::post('/custom-inquiries/{inquiry}/convert', [App\Http\Controllers\Admin\CustomSafariInquiryController::class, 'convertToProposal'])->name('admin.custom-inquiries.convert');
+
+    Route::resource('/proposals', App\Http\Controllers\Admin\ProposalController::class)->names([
+        'index' => 'admin.proposals.index',
+        'create' => 'admin.proposals.create',
+        'store' => 'admin.proposals.store',
+        'show' => 'admin.proposals.show',
+        'edit' => 'admin.proposals.edit',
+        'update' => 'admin.proposals.update',
+        'destroy' => 'admin.proposals.destroy',
+    ]);
+    Route::post('/proposals/{proposal}/send', [App\Http\Controllers\Admin\ProposalController::class, 'send'])->name('admin.proposals.send');
+    Route::get('/proposals/{proposal}/download-pdf', [App\Http\Controllers\Admin\ProposalController::class, 'downloadPdf'])->name('admin.proposals.download-pdf');
+    Route::post('/proposals/{proposal}/duplicate-version', [App\Http\Controllers\Admin\ProposalController::class, 'duplicateVersion'])->name('admin.proposals.duplicate-version');
+    Route::post('/proposals/{proposal}/save-as-template', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'saveProposalAsTemplate'])->name('admin.proposals.save-as-template');
+
+    // Day Templates & Complete Proposal Templates
+    Route::get('/proposal-day-templates', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'getDayTemplates'])->name('admin.day-templates.index');
+    Route::post('/proposal-day-templates', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'storeDayTemplate'])->name('admin.day-templates.store');
+    Route::delete('/proposal-day-templates/{dayTemplate}', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'destroyDayTemplate'])->name('admin.day-templates.destroy');
+    Route::get('/proposal-templates', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'getProposalTemplates'])->name('admin.proposal-templates.index');
+    Route::delete('/proposal-templates/{template}', [App\Http\Controllers\Admin\ProposalTemplateController::class, 'destroyProposalTemplate'])->name('admin.proposal-templates.destroy');
+
     Route::prefix('trip-plans/{tripPlan}')->group(function() {
         Route::patch('/update-status', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'updateStatus'])->name('admin.trip-plans.update-status');
         Route::post('/save-itinerary', [App\Http\Controllers\Admin\TripPlanAdminController::class, 'saveItinerary'])->name('admin.trip-plans.save-itinerary');

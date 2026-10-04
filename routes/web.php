@@ -74,6 +74,10 @@ Route::get('/blog/{slug}', function($slug) {
 
 Route::get('/faqs', [App\Http\Controllers\Public\FaqController::class, 'index'])->name('faqs.index');
 
+// Request a Custom Safari Public Form
+Route::get('/custom-safari', [App\Http\Controllers\Public\CustomSafariController::class, 'create'])->name('custom-safari.create');
+Route::post('/custom-safari', [App\Http\Controllers\Public\CustomSafariController::class, 'store'])->name('custom-safari.store');
+
 Route::get('/trip-plan', [App\Http\Controllers\Public\TripPlanController::class, 'index'])->name('trip-plan.index');
 Route::post('/trip-plan', [App\Http\Controllers\Public\TripPlanController::class, 'store'])->name('trip-plan.store');
 Route::get('/trip-plan/{id}', [App\Http\Controllers\Public\TripPlanController::class, 'show'])->name('trip-plan.show');
@@ -93,6 +97,12 @@ Route::get('/sitemap.xml', [App\Http\Controllers\Public\SitemapController::class
 
 // Reviews
 Route::post('/reviews', [App\Http\Controllers\Public\ReviewController::class, 'store'])->name('reviews.store');
+
+// Client Safari Proposal Routes
+Route::get('/proposal/{token}', [App\Http\Controllers\Public\ProposalController::class, 'show'])->name('proposal.show');
+Route::post('/proposal/{token}/accept', [App\Http\Controllers\Public\ProposalController::class, 'accept'])->name('proposal.accept');
+Route::post('/proposal/{token}/changes', [App\Http\Controllers\Public\ProposalController::class, 'requestChanges'])->name('proposal.changes');
+Route::get('/proposal/{token}/pdf', [App\Http\Controllers\Public\ProposalController::class, 'downloadPdf'])->name('proposal.pdf');
 
 // Include Admin routes
 require __DIR__.'/admin.php';
