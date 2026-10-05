@@ -42,7 +42,8 @@ class ProposalController extends Controller
             ]);
         }
 
-        return view('public.proposals.show', compact('proposal'));
+        return response()->view('public.proposals.show', compact('proposal'))
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     }
 
     public function accept(Request $request, $token)
@@ -112,6 +113,10 @@ class ProposalController extends Controller
             ->setOption('isHtml5ParserEnabled', true);
         $filename = 'Safari-Proposal-' . Str::slug($proposal->client_name) . '.pdf';
 
-        return $pdf->download($filename);
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'X-Robots-Tag' => 'noindex, nofollow, noarchive',
+        ]);
     }
 }

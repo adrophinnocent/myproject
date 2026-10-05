@@ -154,6 +154,7 @@
                 </div>
 
                 <a href="{{ route('tours.index', ['view'=>'destinations']) }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg">{{ __('Destinations') }}</a>
+                <a href="{{ route('itineraries.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('itineraries.*')?'text-gold-400':'' }}">{{ __('Itineraries') }}</a>
                 <a href="{{ route('gallery.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('gallery.*')?'text-gold-400':'' }}">{{ __('Gallery') }}</a>
                 <a href="{{ route('blog.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('blog.*')?'text-gold-400':'' }}">{{ __('Blog') }}</a>
                 <a href="{{ route('contact.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('contact.*')?'text-gold-400':'' }}">{{ __('Contact') }}</a>

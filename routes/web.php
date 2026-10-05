@@ -25,6 +25,14 @@ Route::get('/lang/{locale}', function ($locale) {
 
 // Public Routes
 Route::get('/tours', [App\Http\Controllers\Public\TourController::class, 'index'])->name('tours.index');
+Route::get('/itineraries', [App\Http\Controllers\Public\TourController::class, 'index'])->name('itineraries.index');
+Route::get('/itineraries/{slug}.html', [App\Http\Controllers\Public\TourController::class, 'showItinerary'])->name('itineraries.show');
+Route::get('/itineraries/{slug}', function($slug) {
+    if (str_ends_with($slug, '.html')) return abort(404);
+    $queryString = request()->getQueryString();
+    $url = "/itineraries/{$slug}.html" . ($queryString ? '?' . $queryString : '');
+    return redirect()->to($url, 301);
+});
 
 // Public Booking Routes
 Route::get('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'create'])->name('booking.create');
@@ -99,10 +107,12 @@ Route::get('/sitemap.xml', [App\Http\Controllers\Public\SitemapController::class
 Route::post('/reviews', [App\Http\Controllers\Public\ReviewController::class, 'store'])->name('reviews.store');
 
 // Client Safari Proposal Routes
-Route::get('/proposal/{token}', [App\Http\Controllers\Public\ProposalController::class, 'show'])->name('proposal.show');
-Route::post('/proposal/{token}/accept', [App\Http\Controllers\Public\ProposalController::class, 'accept'])->name('proposal.accept');
-Route::post('/proposal/{token}/changes', [App\Http\Controllers\Public\ProposalController::class, 'requestChanges'])->name('proposal.changes');
-Route::get('/proposal/{token}/pdf', [App\Http\Controllers\Public\ProposalController::class, 'downloadPdf'])->name('proposal.pdf');
+Route::middleware('throttle:30,1')->group(function () {
+    Route::get('/proposal/{token}', [App\Http\Controllers\Public\ProposalController::class, 'show'])->name('proposal.show');
+    Route::post('/proposal/{token}/accept', [App\Http\Controllers\Public\ProposalController::class, 'accept'])->name('proposal.accept');
+    Route::post('/proposal/{token}/changes', [App\Http\Controllers\Public\ProposalController::class, 'requestChanges'])->name('proposal.changes');
+    Route::get('/proposal/{token}/pdf', [App\Http\Controllers\Public\ProposalController::class, 'downloadPdf'])->name('proposal.pdf');
+});
 
 // Include Admin routes
 require __DIR__.'/admin.php';

@@ -37,7 +37,7 @@
     <link rel="canonical" href="{{ $canonical }}">
 
     {{-- Meta Robots: Noindex for booking and private pages to clean up Search Console --}}
-    @if(str_contains(request()->url(), '/book') || str_contains(request()->url(), '/trip-plan/') || str_contains(request()->url(), '/login'))
+    @if(str_contains(request()->url(), '/book') || str_contains(request()->url(), '/trip-plan/') || str_contains(request()->url(), '/login') || str_contains(request()->url(), '/proposal/'))
         <meta name="robots" content="noindex, nofollow">
     @else
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -210,7 +210,8 @@
 
     <style>
         [x-cloak] { display: none !important; }
-        .nav-scrolled { background: rgba(10, 7, 3, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 175, 55, 0.1); shadow: 0 4px 30px rgba(0,0,0,0.3); }
+        .nav-transparent { background: linear-gradient(180deg, rgba(10, 7, 3, 0.85) 0%, rgba(10, 7, 3, 0.3) 70%, transparent 100%); transition: all 0.4s ease; }
+        .nav-scrolled { background: rgba(10, 7, 3, 0.96) !important; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transition: all 0.4s ease; }
         .btn-gold { background: linear-gradient(135deg,#D4AF37,#b8920d); color:#1a1209; transition: all 0.3s; }
         .btn-gold:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(212,175,55,0.4); }
         .btn-outline-gold { border:2px solid #D4AF37; color:#D4AF37; transition: all 0.3s; }

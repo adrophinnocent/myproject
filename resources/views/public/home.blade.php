@@ -433,73 +433,76 @@
     </div>
 </section>
 
-{{-- ========== 4. FEATURED TOURS ========== --}}
+{{-- ========== 4. FEATURED TOURS (SPECIALIST 4-COLUMN CARD GRID) ========== --}}
 @if(isset($featuredTours) && $featuredTours->count() > 0)
-<section class="py-24 bg-white" x-data="{
-    scrollBy(distance) {
-        const slider = document.getElementById('tours-slider');
-        if (slider) { slider.scrollBy({ left: distance, behavior: 'smooth' }); }
-    }
-}">
+<section class="py-16 md:py-20 bg-stone-100/70 border-t border-stone-200/80">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
-            <span class="text-gold-600 text-sm font-semibold uppercase tracking-[0.3em] mb-3 block">Handpicked Experiences</span>
-            <h2 class="font-display text-4xl md:text-6xl font-black text-gray-900 mb-6">Featured Safari Tours</h2>
-            <p class="text-gray-500 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light">
-                Discover our curated collection of <span class="text-gold-600 font-bold">extraordinary journeys</span>. From the vast plains of the Serengeti to the hidden gems of the Ngorongoro Crater, each tour is designed to immerse you in the raw beauty and majestic wildlife of Tanzania.
+        <div class="text-center mb-10 md:mb-14">
+            <span class="text-gold-600 text-xs font-black uppercase tracking-[0.3em] mb-2 block">Handpicked Journeys</span>
+            <h2 class="font-display text-3xl md:text-5xl font-black text-gray-900 mb-3">Featured Safari Packages</h2>
+            <p class="text-gray-600 text-sm md:text-base max-w-2xl mx-auto font-normal">
+                Explore our top-rated Tanzania safari itineraries and Kilimanjaro trekking packages crafted by local experts.
             </p>
-            <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
+            <div class="w-16 h-1 bg-gold-500 mt-5 rounded-full mx-auto"></div>
         </div>
-        <div class="relative group" x-data="{
-            activeIndex: 0,
-            slidesCount: {{ $featuredTours->count() }},
-            scrollTo(index) {
-                const el = $refs.slider;
-                const scrollAmount = (el.scrollWidth / this.slidesCount) * index;
-                el.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-            },
-            updateIndex() {
-                const el = $refs.slider;
-                this.activeIndex = Math.round(el.scrollLeft / (el.scrollWidth / this.slidesCount));
-            }
-        }">
-            <div id="tours-slider"
-                 x-ref="slider"
-                 @@scroll="updateIndex"
-                 class="flex gap-6 overflow-x-auto pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
-                @foreach($featuredTours as $tour)
-                    <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-                        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl transition-all h-full">
-                            <div class="relative h-56 bg-gray-100">
-                                <img src="{{ $tour->featured_image_url }}" width="600" height="400" alt="{{ \App\Helpers\AssetHelper::asString($tour->title) }}" class="w-full h-full object-cover" loading="lazy" decoding="async">
-                            </div>
-                            <div class="p-6 flex flex-col justify-between h-[calc(100%-14rem)]">
-                                <div class="flex items-center gap-3 text-gray-600 text-xs mb-3 font-semibold"><span>{{ $tour->duration_text }}</span> • <span>{{ $tour->destination->name ?? 'Tanzania' }}</span></div>
-                                <h3 class="font-display text-xl font-semibold text-gray-900 mb-1"><a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="hover:text-gold-600">{{ \App\Helpers\AssetHelper::asString($tour->title) }}</a></h3>
-                                <p class="text-gray-700 text-sm mb-5 line-clamp-2 leading-relaxed">{{ $tour->short_description }}</p>
-                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-                                    <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('tours.show', ['type' => $tour->item_type, 'slug' => $tour->slug]) }}" class="px-4 py-2 border border-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-gray-50 transition-colors">Details</a>
-                                        <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
 
-            {{-- Modern Navigation Dots --}}
-            <div class="flex justify-center gap-2 mt-4">
-                <template x-for="(i, index) in Array.from({ length: slidesCount })">
-                    <button @@click="scrollTo(index)"
-                            :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
-                            class="h-2 rounded-full transition-all duration-300 outline-none focus:ring-2 focus:ring-gold-500/20"></button>
-                </template>
-            </div>
+        {{-- 4 Columns Specialist Cards Grid --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-4">
+            @foreach($featuredTours as $tour)
+                @php
+                    $rawTitle = $tour->translate('title') ?: $tour->title;
+                    $titleStr = \App\Helpers\AssetHelper::asString($rawTitle);
+
+                    $rawDesc = $tour->translate('short_description') ?: $tour->short_description;
+                    $descStr = \App\Helpers\AssetHelper::asString($rawDesc);
+                @endphp
+                <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug]) }}"
+                   class="group relative block w-full rounded-md md:rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-56 sm:h-60 md:h-64 bg-stone-900 border border-stone-800/50">
+
+                    {{-- Background Cover Image with Zoom Effect --}}
+                    <img src="{{ $tour->featured_image_url }}"
+                         alt="{{ $titleStr }}"
+                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                         loading="lazy" decoding="async">
+
+                    {{-- Dark Overlay Gradient for Readable Text --}}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:from-black/90 transition-all pointer-events-none"></div>
+
+                    {{-- Price Tag Badge at TOP RIGHT --}}
+                    <div class="absolute top-2.5 right-2.5 z-10">
+                        <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-[10px] sm:text-[11px] px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
+                            From ${{ number_format($tour->price) }} USD*
+                        </span>
+                    </div>
+
+                    {{-- Centered Text Content (Title & Subtitle) --}}
+                    <div class="absolute inset-x-0 bottom-0 top-0 p-4 pb-5 flex flex-col justify-end items-center text-center z-10 pointer-events-none">
+                        <h3 class="font-black text-white text-xs sm:text-sm md:text-base leading-tight uppercase tracking-tight group-hover:text-amber-300 transition-colors drop-shadow-md max-w-[88%]">
+                            {{ $titleStr }}
+                        </h3>
+                        @if($descStr)
+                        <p class="text-stone-200 text-[11px] sm:text-xs font-normal leading-snug line-clamp-2 max-w-[92%] mt-1 drop-shadow-xs">
+                            {{ $descStr }}
+                        </p>
+                        @endif
+                    </div>
+
+                    {{-- White Circle Arrow Button at Bottom Right --}}
+                    <div class="absolute bottom-2.5 right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </div>
+                </a>
+            @endforeach
         </div>
-        <div class="text-center mt-12"><a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 group">View All Tours <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
+
+        <div class="text-center mt-12">
+            <a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest inline-flex items-center gap-2 group shadow-lg">
+                View All Packages
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+        </div>
     </div>
 </section>
 @endif

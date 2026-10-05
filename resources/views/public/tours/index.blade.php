@@ -91,53 +91,62 @@
         </aside>
 
         <div class="flex-1">
-            <div class="mb-8">
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                @forelse($tours as $tour)
+                    @php
+                        $rawTitle = $tour->translate('title') ?: $tour->title;
+                        $titleStr = \App\Helpers\AssetHelper::asString($rawTitle);
 
-            @forelse($tours as $tour)
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow mb-6 overflow-hidden flex flex-col md:flex-row">
-                <div class="md:w-64 flex-shrink-0 img-zoom h-56 md:h-auto bg-gray-100">
-                    <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->translate('title') }}"
-                         class="w-full h-full object-cover" loading="lazy" decoding="async">
-                </div>
-                <div class="flex-1 p-6">
-                    <div class="flex items-start justify-between mb-2">
-                        <div class="flex flex-wrap gap-2">
-                            @if($tour->category)<span class="px-3 py-1 bg-gold-50 text-gold-600 text-xs font-medium rounded-full">{{ __($tour->category->name) }}</span>@endif
-                            @if($tour->destination)<span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">{{ __($tour->destination->name) }}</span>@endif
-                            <span class="px-3 py-1 bg-gray-100 text-gray-500 text-xs rounded-full capitalize">{{ __($tour->difficulty_level) }}</span>
+                        $rawDesc = $tour->translate('short_description') ?: $tour->short_description;
+                        $descStr = \App\Helpers\AssetHelper::asString($rawDesc);
+                    @endphp
+                    <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}"
+                       class="group relative block w-full rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-64 bg-stone-900 border border-stone-800/50">
+
+                        {{-- Background Cover Image with Zoom Effect --}}
+                        <img src="{{ $tour->featured_image_url }}"
+                             alt="{{ $titleStr }}"
+                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                             loading="lazy" decoding="async">
+
+                        {{-- Dark Overlay Gradient for Readable Text --}}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:from-black/90 transition-all pointer-events-none"></div>
+
+                        {{-- Price Tag Badge at TOP RIGHT --}}
+                        <div class="absolute top-2.5 right-2.5 z-10">
+                            <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-xs px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
+                                From ${{ number_format($tour->price) }} USD*
+                            </span>
                         </div>
-                        @if($tour->is_featured)<span class="text-gold-500 text-sm">⭐ {{ __('Featured') }}</span>@endif
-                    </div>
-                    <h3 class="font-display text-xl font-semibold text-gray-900 mb-1">
-                        <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="hover:text-gold-600 transition-colors">{{ $tour->translate('title') }}</a>
-                    </h3>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">{{ $tour->translate('short_description') }}</p>
-                    <div class="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
-                        <span class="flex items-center gap-1.5">{{ $tour->duration_text }}</span>
-                        <span class="flex items-center gap-1.5">{{ $tour->group_size_min ?? '1' }}-{{ $tour->group_size_max ?? '12' }} {{ __('People') }}</span>
-                        @if($tour->departure_location)<span class="flex items-center gap-1.5">{{ __($tour->departure_location) }}</span>@endif
-                    </div>
-                    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                        <div>
-                            <div class="text-2xl font-display font-bold text-gold-600">{{ $tour->formatted_price }}</div>
-                            <div class="text-xs text-gray-400">{{ __($tour->price_note ?? 'per person') }}</div>
+
+                        {{-- Centered Text Content (Title & Subtitle) --}}
+                        <div class="absolute inset-x-0 bottom-0 top-0 p-4 pb-5 flex flex-col justify-end items-center text-center z-10 pointer-events-none">
+                            <h3 class="font-black text-white text-sm md:text-base leading-tight uppercase tracking-tight group-hover:text-amber-300 transition-colors drop-shadow-md max-w-[90%]">
+                                {{ $titleStr }}
+                            </h3>
+                            @if($descStr)
+                            <p class="text-stone-200 text-xs font-normal leading-snug line-clamp-2 max-w-[92%] mt-1 drop-shadow-xs">
+                                {{ $descStr }}
+                            </p>
+                            @endif
                         </div>
-                        <div class="flex gap-3">
-                            <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}" class="btn-outline-gold px-5 py-2.5 rounded-full text-sm font-semibold">{{ __('View Details') }}</a>
-                            <a href="{{ route('booking.create', $tour->slug ?? 'default') }}" class="btn-gold px-5 py-2.5 rounded-full text-sm font-semibold">{{ __('Book Now') }}</a>
+
+                        {{-- White Circle Arrow Button at Bottom Right --}}
+                        <div class="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
+                            <svg class="w-4 h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
                         </div>
+                    </a>
+                @empty
+                    <div class="col-span-full text-center py-24 bg-gray-50 rounded-2xl">
+                        <div class="text-6xl mb-4">🦁</div>
+                        <h3 class="font-display text-xl text-gray-700 mb-2">{{ __('No Tours Found') }}</h3>
+                        <p class="text-gray-400 text-sm mb-6">{{ __('Try adjusting your filters or search term.') }}</p>
+                        <a href="{{ route('tours.index') }}" class="btn-gold px-6 py-3 rounded-full text-sm font-semibold">{{ __('Clear Filters') }}</a>
                     </div>
-                </div>
+                @endforelse
             </div>
-            @empty
-            <div class="text-center py-24 bg-gray-50 rounded-2xl">
-                <div class="text-6xl mb-4">🦁</div>
-                <h3 class="font-display text-xl text-gray-700 mb-2">{{ __('No Tours Found') }}</h3>
-                <p class="text-gray-400 text-sm mb-6">{{ __('Try adjusting your filters or search term.') }}</p>
-                <a href="{{ route('tours.index') }}" class="btn-gold px-6 py-3 rounded-full text-sm font-semibold">{{ __('Clear Filters') }}</a>
-            </div>
-            @endforelse
 
             @if($tours->hasPages())
             <div class="mt-10">

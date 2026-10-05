@@ -32,9 +32,9 @@ class HomeController extends Controller
         // Ensure we always have a collection, even if empty
         if (!$featuredItems) $featuredItems = collect();
 
-        // If we have fewer than 3 featured items, fill with regular published items
-        if ($featuredItems->count() < 3) {
-            $needed = 3 - $featuredItems->count();
+        // Fill up to 8 items so we have 2 complete 4-card rows on home page
+        if ($featuredItems->count() < 8) {
+            $needed = 8 - $featuredItems->count();
 
             $extraTours = Tour::published()
                 ->whereNotIn('id', $featuredItems->where('item_type', 'tour')->pluck('id'))
@@ -46,8 +46,8 @@ class HomeController extends Controller
 
             $featuredItems = $featuredItems->concat($extraTours);
 
-            if ($featuredItems->count() < 3) {
-                $needed = 3 - $featuredItems->count();
+            if ($featuredItems->count() < 8) {
+                $needed = 8 - $featuredItems->count();
                 $extraSafaris = \App\Models\Safari::published()
                     ->whereNotIn('id', $featuredItems->where('item_type', 'safari')->pluck('id'))
                     ->with(['category', 'destination'])
@@ -59,7 +59,7 @@ class HomeController extends Controller
             }
         }
 
-        $featuredTours = $featuredItems->take(6);
+        $featuredTours = $featuredItems->take(8);
 
         $allPublishedTours = Tour::published()->count() + \App\Models\Safari::published()->count();
 

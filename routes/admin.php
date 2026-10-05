@@ -17,7 +17,7 @@ Route::get('/admin/login', function() {
 
 Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])->name('admin.login');
 
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin')->group(function () {
     // Priority Routes (Moved Bookings here)
     Route::resource('/bookings', App\Http\Controllers\Admin\BookingController::class)->names([
         'index' => 'admin.bookings.index',

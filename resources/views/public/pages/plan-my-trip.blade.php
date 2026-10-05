@@ -207,29 +207,53 @@
 
         {{-- Show some featured packages if available --}}
         @if(isset($inspiringTours) && $inspiringTours->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
                 @foreach($inspiringTours as $tour)
-                    <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
-                        <div class="relative h-64 overflow-hidden">
-                            <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->translate('title') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    @php
+                        $rawTitle = $tour->translate('title') ?: $tour->title;
+                        $titleStr = \App\Helpers\AssetHelper::asString($rawTitle);
+
+                        $rawDesc = $tour->translate('short_description') ?: $tour->short_description;
+                        $descStr = \App\Helpers\AssetHelper::asString($rawDesc);
+                    @endphp
+                    <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}"
+                       class="group relative block w-full rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-64 bg-stone-900 border border-stone-800/50">
+
+                        {{-- Background Cover Image with Zoom Effect --}}
+                        <img src="{{ $tour->featured_image_url }}"
+                             alt="{{ $titleStr }}"
+                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                             loading="lazy" decoding="async">
+
+                        {{-- Dark Overlay Gradient for Readable Text --}}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:from-black/90 transition-all pointer-events-none"></div>
+
+                        {{-- Price Tag Badge at TOP RIGHT --}}
+                        <div class="absolute top-2.5 right-2.5 z-10">
+                            <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-xs px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
+                                From ${{ number_format($tour->price) }} USD*
+                            </span>
                         </div>
-                        <div class="p-8">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="px-3 py-1 bg-gold-50 text-gold-600 text-[10px] font-black uppercase tracking-widest rounded-full">{{ $tour->duration_text }}</span>
-                                <span class="text-gray-400 text-xs font-bold">{{ $tour->destination?->translate('name') ?? __('Tanzania') }}</span>
-                            </div>
-                            <h3 class="font-display text-xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors">
-                                <a href="{{ route('tours.show', ['type' => 'tour', 'slug' => $tour->slug]) }}">{{ $tour->translate('title') }}</a>
+
+                        {{-- Centered Text Content (Title & Subtitle) --}}
+                        <div class="absolute inset-x-0 bottom-0 top-0 p-4 pb-5 flex flex-col justify-end items-center text-center z-10 pointer-events-none">
+                            <h3 class="font-black text-white text-sm md:text-base leading-tight uppercase tracking-tight group-hover:text-amber-300 transition-colors drop-shadow-md max-w-[90%]">
+                                {{ $titleStr }}
                             </h3>
-                            <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-50">
-                                <div class="text-2xl font-display font-black text-safari-dark">{{ $tour->formatted_price }}</div>
-                                <a href="{{ route('tours.show', ['type' => 'tour', 'slug' => $tour->slug]) }}" class="w-12 h-12 rounded-full bg-safari-dark flex items-center justify-center text-white hover:bg-gold-500 transition-all shadow-lg">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                                </a>
-                            </div>
+                            @if($descStr)
+                            <p class="text-stone-200 text-xs font-normal leading-snug line-clamp-2 max-w-[92%] mt-1 drop-shadow-xs">
+                                {{ $descStr }}
+                            </p>
+                            @endif
                         </div>
-                    </div>
+
+                        {{-- White Circle Arrow Button at Bottom Right --}}
+                        <div class="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
+                            <svg class="w-4 h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </div>
+                    </a>
                 @endforeach
             </div>
         @endif

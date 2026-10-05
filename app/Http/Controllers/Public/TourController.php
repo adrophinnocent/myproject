@@ -147,4 +147,28 @@ class TourController extends Controller
 
         return view('public.tours.show', compact('tour', 'relatedTours'));
     }
+
+    public function showItinerary($slug)
+    {
+        $cleanSlug = str_replace('.html', '', $slug);
+
+        $tour = \App\Models\Safari::where('slug', $cleanSlug)->first()
+                ?? Tour::where('slug', $cleanSlug)->firstOrFail();
+
+        $tour->load(['category', 'destination', 'images', 'translations', 'reviews' => function($q) {
+            $q->where('is_approved', true)->latest();
+        }]);
+
+        $relatedTours = Tour::where('is_published', true)
+            ->where('id', '!=', $tour->id)
+            ->where(function ($q) use ($tour) {
+                $q->where('category_id', $tour->category_id)
+                    ->orWhere('destination_id', $tour->destination_id);
+            })
+            ->with(['translations'])
+            ->take(4)
+            ->get();
+
+        return view('public.tours.show', compact('tour', 'relatedTours'));
+    }
 }

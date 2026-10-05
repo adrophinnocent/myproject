@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
 
+# Private client proposals
+Disallow: /proposal/
+
 # Sitemap
 Sitemap: https://twinasafaris.com/sitemap.xml
