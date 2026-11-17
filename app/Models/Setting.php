@@ -15,6 +15,10 @@ class Setting extends Model
     public static function get($key, $default = null)
     {
         try {
+            if ($key === 'site_email') {
+                return 'twinasafaris@gmail.com';
+            }
+
             return Cache::remember('setting_' . $key, 3600, function() use ($key, $default) {
                 $setting = self::where('key', $key)->first();
                 return $setting ? $setting->value : $default;
