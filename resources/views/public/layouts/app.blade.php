@@ -196,7 +196,7 @@
         theme: {
             extend: {
                 colors: {
-                    gold: { 50:'#fdfbf0',100:'#faf3cc',200:'#f4e48a',300:'#eccf4a',400:'#e3b81a',500:'#D4AF37',600:'#b8920d',700:'#8f6e0a',800:'#704f0f',900:'#5a3f12' },
+                    gold: { 50:'#fdfbf0',100:'#faf3cc',200:'#f4e48a',300:'#eccf4a',400:'#e3b81a',500:'#D4AF37',600:'#8A6D0B',700:'#704f0f',800:'#5a3f12',900:'#3d2a0b' },
                     safari: { dark:'#0a0703',mid:'#1a1209',light:'#8B6914' },
                 },
                 fontFamily: {
@@ -212,10 +212,11 @@
         [x-cloak] { display: none !important; }
         .nav-transparent { background: linear-gradient(180deg, rgba(10, 7, 3, 0.85) 0%, rgba(10, 7, 3, 0.3) 70%, transparent 100%); transition: all 0.4s ease; }
         .nav-scrolled { background: rgba(10, 7, 3, 0.96) !important; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transition: all 0.4s ease; }
-        .btn-gold { background: linear-gradient(135deg,#D4AF37,#b8920d); color:#1a1209; transition: all 0.3s; }
+        .btn-gold { background: linear-gradient(135deg,#D4AF37,#8A6D0B); color:#1a1209; transition: all 0.3s; }
         .btn-gold:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(212,175,55,0.4); }
-        .btn-outline-gold { border:2px solid #D4AF37; color:#D4AF37; transition: all 0.3s; }
-        .btn-outline-gold:hover { background:#D4AF37; color:#ffffff; }
+        .btn-outline-gold { border:2px solid #8A6D0B; color:#8A6D0B; transition: all 0.3s; }
+        .btn-outline-gold:hover { background:#8A6D0B; color:#ffffff; }
+        .text-gold-600 { color: #8A6D0B !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
