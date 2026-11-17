@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
             $table->string('type'); // click, visit, whatsapp, conversion
             $table->string('ip_address')->nullable();
-            $table->string('user_agent')->nullable();
-            $table->string('referrer')->nullable();
+            $table->text('user_agent')->nullable();
+            $table->text('referrer')->nullable();
             $table->string('platform')->nullable(); // fb, insta, tiktok, x, wa
             $table->timestamps();
         });

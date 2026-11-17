@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class IsAdmin
 {
@@ -12,19 +13,19 @@ class IsAdmin
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->guest(route('login'));
         }
 
-        // Allow if user is marked as admin OR if user email matches admin emails
         if ($user->is_admin || in_array(strtolower($user->email), ['twinasafaris@gmail.com', 'admin@tourism.com', 'info@twinasafaris.com'])) {
-            if (!$user->is_admin) {
+            if (! $user->is_admin) {
                 $user->update(['is_admin' => true]);
             }
             return $next($request);
         }
 
-        // If user is not admin, abort with 403
-        abort(403, 'Unauthorized access to admin area.');
+        Log::warning("Forbidden 403 access to {$request->path()} by User ID: {$user->id}, Email: {$user->email}, IP: {$request->ip()}");
+
+        abort(403, 'Restricted Territory: You don\'t have necessary admin permits.');
     }
 }
