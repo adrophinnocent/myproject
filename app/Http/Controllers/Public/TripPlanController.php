@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use App\Models\TripPlan;
 use App\Models\Tour;
+use App\Models\Setting;
 use App\Services\PdfService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TripPlanController extends Controller
 {
@@ -55,7 +57,14 @@ class TripPlanController extends Controller
         $validated['status'] = TripPlan::STATUS_NEW;
         $validated['group_size'] = (int)$validated['adults'] + (int)($validated['children'] ?? 0);
 
-        TripPlan::create($validated);
+        $plan = TripPlan::create($validated);
+
+        try {
+            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            Mail::to($adminEmail)->send(new \App\Mail\AdminNewTripPlanMail($plan));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send trip plan admin mail: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Your trip request has been received! Our experts will contact you shortly.');
     }

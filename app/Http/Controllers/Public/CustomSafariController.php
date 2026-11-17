@@ -68,6 +68,18 @@ class CustomSafariController extends Controller
             'is_read' => false,
         ]);
 
+        try {
+            $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\TourInquiryMail(
+                $inquiry->full_name,
+                $inquiry->email,
+                $inquiry->phone,
+                "Custom Safari Request: {$inquiry->duration_days} Days {$inquiry->trip_type}\n\nAdults: {$inquiry->adults}\nChildren: {$inquiry->children}\nDuration: {$inquiry->duration_days} days\nSpecial Requests: {$inquiry->special_requests}"
+            ));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send custom safari email notification: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Thank you! Your custom safari request has been submitted. One of our lead travel consultants will prepare a personalized itinerary proposal for you.');
     }
 }
