@@ -19,8 +19,15 @@ class AdminUserSeeder extends Seeder
                 'is_admin' => true,
             ]
         );
-        $this->command->info('Admin user created!');
-        $this->command->info('Email: admin@tourism.com');
-        $this->command->info('Password: password123');
+
+        User::firstOrCreate(
+            ['email' => 'twinasafaris@gmail.com'],
+            [
+                'name' => 'Twina Safaris Admin',
+                'password' => Hash::make('TwinaSafaris2025!'),
+                'email_verified_at' => now(),
+                'is_admin' => true,
+            ]
+        );
     }
 }
