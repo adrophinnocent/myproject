@@ -1,8 +1,23 @@
 User-agent: *
 Allow: /
+Allow: /tours
+Allow: /blog
+Allow: /destinations
+Allow: /about
+Allow: /contact
+Allow: /faqs
+Allow: /gallery
+Allow: /custom-safari
 
-# Private client proposals
+# Disallow Private, Auth, Session & Workspace Routes
+Disallow: /admin/
+Disallow: /book/
+Disallow: /login
+Disallow: /register
 Disallow: /proposal/
+Disallow: /trip-plan/
+Disallow: /lang/
+Disallow: /currency/
 
 # Sitemap
 Sitemap: https://twinasafaris.com/sitemap.xml

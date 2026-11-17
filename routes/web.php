@@ -58,6 +58,14 @@ Route::get('/about', function () {
 
 Route::get('/destinations', [App\Http\Controllers\Public\DestinationController::class, 'index'])->name('destinations.index');
 
+Route::get('/privacy-policy', function () {
+    return view('public.privacy');
+})->name('privacy.index');
+
+Route::get('/terms-of-service', function () {
+    return view('public.terms');
+})->name('terms.index');
+
 Route::get('/contact', [App\Http\Controllers\Public\ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [App\Http\Controllers\Public\ContactController::class, 'send'])->name('contact.send');
 

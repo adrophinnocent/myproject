@@ -20,9 +20,16 @@ class SecurityHeaders
             $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
             $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
-            // Content Security Policy (CSP)
-            // Note: We allow inline styles for Alpine.js and Tailwind CDN for now.
-            $response->headers->set('Content-Security-Policy', "upgrade-insecure-requests; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://www.googletagmanager.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com;");
+            // Content Security Policy (CSP) with Google reCAPTCHA, Analytics & GTM
+            $csp = "upgrade-insecure-requests; "
+                 . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://www.googletagmanager.com https://connect.facebook.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; "
+                 . "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://www.google.com/maps/ https://www.youtube.com/ https://youtube.com/; "
+                 . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
+                 . "font-src 'self' https://fonts.gstatic.com data:; "
+                 . "img-src 'self' data: https: blob:; "
+                 . "connect-src 'self' https://www.google-analytics.com https://www.google.com/recaptcha/ https://stats.g.doubleclick.net;";
+
+            $response->headers->set('Content-Security-Policy', $csp);
 
             // HSTS (Strict Transport Security)
             if ($request->isSecure()) {

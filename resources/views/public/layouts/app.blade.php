@@ -377,6 +377,27 @@
         </a>
     </div>
 
+    {{-- GDPR Cookie Consent Banner --}}
+    <div x-data="{ accepted: localStorage.getItem('cookieConsent') === 'accepted' }"
+         x-show="!accepted" x-cloak x-transition
+         class="fixed bottom-4 left-4 right-4 md:left-6 md:right-auto md:max-w-md bg-[#0a0703] border border-gold-500/30 text-white p-5 rounded-2xl shadow-2xl z-50 flex flex-col gap-3">
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-gold-500/20 text-gold-400 flex items-center justify-center shrink-0 text-sm font-bold">🍪</div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-gold-400">Cookie & Privacy Notice</h4>
+                <p class="text-xs text-gray-300 mt-1 leading-relaxed">
+                    We use cookies to analyze traffic and optimize your safari experience. Read our <a href="{{ route('privacy.index') }}" class="underline text-gold-400 font-semibold">Privacy Policy</a>.
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 justify-end pt-1">
+            <button @click="localStorage.getItem('cookieConsent') ? null : localStorage.setItem('cookieConsent', 'accepted'); accepted = true"
+                    class="px-5 py-2 bg-gold-500 hover:bg-gold-600 text-safari-dark font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow">
+                Accept Cookies
+            </button>
+        </div>
+    </div>
+
     <!-- Footer -->
     @include('public.partials.footer')
 

@@ -104,7 +104,7 @@
                 </h4>
                 <ul class="space-y-4 text-sm">
                     <li class="flex items-start gap-3 text-gray-500 group">
-                        <svg class="w-4 h-4 text-gold-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <svg class="w-4 h-4 text-gold-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         <span>{{ __('Moshi, Kilimanjaro') }}</span>
                     </li>
                     <li class="flex items-center gap-3 text-gray-500 group">
@@ -162,9 +162,9 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="h-4 w-auto">
                 </div>
                 <span class="text-white/10 hidden md:block">|</span>
-                <a href="#" class="text-gray-600 hover:text-gold-400 transition-colors">{{ __('Privacy Policy') }}</a>
+                <a href="{{ route('privacy.index') }}" class="text-gray-600 hover:text-gold-400 transition-colors">{{ __('Privacy Policy') }}</a>
                 <span class="text-white/10 hidden md:block">|</span>
-                <a href="#" class="text-gray-600 hover:text-gold-400 transition-colors">{{ __('Terms of Service') }}</a>
+                <a href="{{ route('terms.index') }}" class="text-gray-600 hover:text-gold-400 transition-colors">{{ __('Terms of Service') }}</a>
             </div>
         </div>
     </div>
