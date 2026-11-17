@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {{-- Static Pages --}}
+    {{-- Core Static Pages (HTTPS, Non-WWW, Clean 200 OK URLs) --}}
     <url>
         <loc>https://twinasafaris.com/</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
@@ -9,21 +9,54 @@
     </url>
     <url>
         <loc>https://twinasafaris.com/about</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://twinasafaris.com/contact</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://twinasafaris.com/tours</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
+    <url>
+        <loc>https://twinasafaris.com/destinations</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://twinasafaris.com/blog</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://twinasafaris.com/faqs</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://twinasafaris.com/gallery</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://twinasafaris.com/custom-safari</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
 
-    {{-- Tours --}}
+    {{-- Tour Packages --}}
     @foreach ($tours as $tour)
         @if($tour->slug)
         <url>
@@ -47,22 +80,13 @@
         @endif
     @endforeach
 
-    {{-- Blogs --}}
+    {{-- Blog Posts --}}
     @foreach ($blogs as $blog)
         <url>
             <loc>{{ "https://twinasafaris.com/blog/" . $blog->slug . ".html" }}</loc>
             <lastmod>{{ $blog->updated_at->toAtomString() }}</lastmod>
             <changefreq>weekly</changefreq>
-            <priority>0.7</priority>
-        </url>
-    @endforeach
-
-    {{-- Destinations --}}
-    @foreach ($destinations as $dest)
-        <url>
-            <loc>{{ "https://twinasafaris.com/tours?destination=" . $dest->id }}</loc>
-            <changefreq>weekly</changefreq>
-            <priority>0.6</priority>
+            <priority>0.8</priority>
         </url>
     @endforeach
 </urlset>

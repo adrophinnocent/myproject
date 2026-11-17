@@ -42,32 +42,60 @@
 <div class="max-w-7xl mx-auto px-4 pb-24">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {{-- Posts Grid --}}
-        <div class="lg:col-span-2 space-y-12">
-            @forelse($posts as $post)
-            <article class="flex flex-col md:flex-row gap-8 group">
-                <a href="{{ route('blog.show', $post->slug) }}" class="w-full md:w-80 h-60 shrink-0 overflow-hidden rounded-2xl">
-                    <img src="{{ $post->featured_image_url }}" width="320" height="240" alt="{{ $post->translate('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
-                </a>
-                <div class="flex flex-col justify-center">
-                    <div class="flex items-center gap-3 text-gold-600 text-xs font-bold uppercase tracking-widest mb-3">
-                        <span>{{ __($post->category->name ?? 'Travel') }}</span>
-                    </div>
-                    <h2 class="font-display text-2xl font-bold text-gray-900 mb-4 hover:text-gold-600 transition-colors">
-                        <a href="{{ route('blog.show', $post->slug) }}">{{ $post->translate('title') }}</a>
-                    </h2>
-                    <p class="text-gray-600 mb-6 line-clamp-3 leading-relaxed">
-                        {{ $post->translate('excerpt') }}
-                    </p>
-                    <a href="{{ route('blog.show', $post->slug) }}" class="text-gold-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        {{ __('Read Story') }} <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        <div class="lg:col-span-2 space-y-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                @forelse($posts as $post)
+                    @php
+                        $rawTitle = $post->translate('title') ?: $post->title;
+                        $titleStr = \App\Helpers\AssetHelper::asString($rawTitle);
+
+                        $rawExcerpt = $post->translate('excerpt') ?: $post->excerpt;
+                        $excerptStr = \App\Helpers\AssetHelper::asString($rawExcerpt);
+                    @endphp
+                    <a href="{{ route('blog.show', $post->slug) }}"
+                       class="group relative block w-full rounded-md md:rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-64 bg-stone-900 border border-stone-800/50">
+
+                        {{-- Background Cover Image with Zoom Effect --}}
+                        <img src="{{ $post->featured_image_url }}"
+                             alt="{{ $titleStr }}"
+                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                             loading="lazy" decoding="async">
+
+                        {{-- Dark Overlay Gradient for Readable Text --}}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:from-black/90 transition-all pointer-events-none"></div>
+
+                        {{-- Category Badge at TOP RIGHT --}}
+                        <div class="absolute top-2.5 right-2.5 z-10">
+                            <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-xs px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
+                                {{ $post->category->name ?? 'BLOG' }}
+                            </span>
+                        </div>
+
+                        {{-- Centered Text Content (Title & Excerpt) --}}
+                        <div class="absolute inset-x-0 bottom-0 top-0 p-4 pb-5 flex flex-col justify-end items-center text-center z-10 pointer-events-none">
+                            <h3 class="font-black text-white text-sm md:text-base leading-tight uppercase tracking-tight group-hover:text-amber-300 transition-colors drop-shadow-md max-w-[90%]">
+                                {{ $titleStr }}
+                            </h3>
+                            @if($excerptStr)
+                            <p class="text-stone-200 text-xs font-normal leading-snug line-clamp-2 max-w-[92%] mt-1 drop-shadow-xs">
+                                {{ $excerptStr }}
+                            </p>
+                            @endif
+                        </div>
+
+                        {{-- White Circle Arrow Button at Bottom Right --}}
+                        <div class="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
+                            <svg class="w-4 h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </div>
                     </a>
-                </div>
-            </article>
-            @empty
-            <div class="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-                <p class="text-gray-500">{{ __('We are currently writing new stories. Check back soon!') }}</p>
+                @empty
+                    <div class="col-span-full text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+                        <p class="text-gray-500">{{ __('We are currently writing new stories. Check back soon!') }}</p>
+                    </div>
+                @endforelse
             </div>
-            @endforelse
 
             {{-- Pagination --}}
             <div class="pt-8">

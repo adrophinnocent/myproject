@@ -567,58 +567,72 @@
 
 {{-- ========== 6. SAFARI JOURNAL (BLOG) ========== --}}
 @if(isset($latestPosts) && $latestPosts->count() > 0)
-<section id="blog" class="py-24 bg-white border-t border-gray-50">
+<section id="blog" class="py-20 bg-stone-100/70 border-t border-stone-200/80">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
-            <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Safari Journal</span>
-            <h2 class="font-display text-4xl md:text-6xl font-black text-gray-900 leading-tight">Latest Stories & Insights</h2>
-            <p class="text-gray-500 text-lg mt-6 max-w-3xl mx-auto leading-relaxed font-light">Explore expert travel guides and breathtaking photography.</p>
-            <div class="w-16 h-1.5 bg-gold-500 mt-8 rounded-full mx-auto"></div>
+        <div class="text-center mb-12">
+            <span class="text-gold-600 text-xs font-black uppercase tracking-[0.3em] mb-2 block">Safari Journal</span>
+            <h2 class="font-display text-3xl md:text-5xl font-black text-gray-900 mb-3">Latest Stories & Insights</h2>
+            <p class="text-gray-600 text-sm md:text-base max-w-2xl mx-auto font-normal">Explore expert travel guides, safari tips, and breathtaking photography from Tanzania.</p>
+            <div class="w-16 h-1 bg-gold-500 mt-5 rounded-full mx-auto"></div>
         </div>
-        <div class="relative group" x-data="{
-            activeIndex: 0,
-            slidesCount: {{ $latestPosts->count() }},
-            scrollTo(index) {
-                const el = $refs.blogSlider;
-                const scrollAmount = (el.scrollWidth / this.slidesCount) * index;
-                el.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-            },
-            updateIndex() {
-                const el = $refs.blogSlider;
-                this.activeIndex = Math.round(el.scrollLeft / (el.scrollWidth / this.slidesCount));
-            }
-        }">
-            <div id="blog-slider"
-                 x-ref="blogSlider"
-                 @@scroll="updateIndex"
-                 class="flex gap-8 overflow-x-auto pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
-                @foreach($latestPosts as $post)
-                <div class="snap-start shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-                    <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col group">
-                        <div class="relative h-64 overflow-hidden bg-gray-100">
-                            <img src="{{ $post->featured_image_url }}" width="600" height="400" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" loading="lazy" decoding="async">
-                            <div class="absolute top-6 left-6 bg-gold-500 text-safari-dark text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">New Post</div>
-                        </div>
-                        <div class="p-10 flex flex-col flex-grow">
-                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold-600 transition-colors"><a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a></h3>
-                            <p class="text-gray-600 text-base line-clamp-3 mb-8 leading-relaxed font-light">{{ $post->excerpt }}</p>
-                            <div class="mt-auto pt-6 border-t border-gray-50"><a href="{{ route('blog.show', $post->slug) }}" class="text-gold-600 font-black text-sm uppercase tracking-widest flex items-center gap-3 group/link">Read Full Story <svg class="w-5 h-5 transform transition-transform group-hover/link:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
 
-            {{-- Modern Navigation Dots --}}
-            <div class="flex justify-center gap-2 mt-4">
-                <template x-for="(i, index) in Array.from({ length: slidesCount })">
-                    <button @@click="scrollTo(index)"
-                            :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
-                            class="h-2 rounded-full transition-all duration-300 outline-none"></button>
-                </template>
-            </div>
+        {{-- Specialist Cards Grid --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+            @foreach($latestPosts as $post)
+                @php
+                    $rawTitle = $post->translate('title') ?: $post->title;
+                    $titleStr = \App\Helpers\AssetHelper::asString($rawTitle);
+
+                    $rawExcerpt = $post->translate('excerpt') ?: $post->excerpt;
+                    $excerptStr = \App\Helpers\AssetHelper::asString($rawExcerpt);
+                @endphp
+                <a href="{{ route('blog.show', $post->slug) }}"
+                   class="group relative block w-full rounded-md md:rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-60 sm:h-64 bg-stone-900 border border-stone-800/50">
+
+                    {{-- Background Cover Image with Zoom Effect --}}
+                    <img src="{{ $post->featured_image_url }}"
+                         alt="{{ $titleStr }}"
+                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                         loading="lazy" decoding="async">
+
+                    {{-- Dark Overlay Gradient for Readable Text --}}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:from-black/90 transition-all pointer-events-none"></div>
+
+                    {{-- Category Badge at TOP RIGHT --}}
+                    <div class="absolute top-2.5 right-2.5 z-10">
+                        <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-[10px] sm:text-[11px] px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
+                            {{ $post->category->name ?? 'BLOG' }}
+                        </span>
+                    </div>
+
+                    {{-- Centered Text Content (Title & Excerpt) --}}
+                    <div class="absolute inset-x-0 bottom-0 top-0 p-4 pb-5 flex flex-col justify-end items-center text-center z-10 pointer-events-none">
+                        <h3 class="font-black text-white text-xs sm:text-sm md:text-base leading-tight uppercase tracking-tight group-hover:text-amber-300 transition-colors drop-shadow-md max-w-[88%]">
+                            {{ $titleStr }}
+                        </h3>
+                        @if($excerptStr)
+                        <p class="text-stone-200 text-[11px] sm:text-xs font-normal leading-snug line-clamp-2 max-w-[92%] mt-1 drop-shadow-xs">
+                            {{ $excerptStr }}
+                        </p>
+                        @endif
+                    </div>
+
+                    {{-- White Circle Arrow Button at Bottom Right --}}
+                    <div class="absolute bottom-2.5 right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </div>
+                </a>
+            @endforeach
         </div>
-        <div class="text-center mt-12"><a href="{{ route('blog.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-4">View All Stories <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a></div>
+
+        <div class="text-center mt-12">
+            <a href="{{ route('blog.index') }}" class="btn-gold px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest inline-flex items-center gap-2 group shadow-lg">
+                View All Stories
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+        </div>
     </div>
 </section>
 @endif

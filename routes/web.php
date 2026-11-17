@@ -56,6 +56,8 @@ Route::get('/about', function () {
     return view('public.about');
 })->name('about');
 
+Route::get('/destinations', [App\Http\Controllers\Public\DestinationController::class, 'index'])->name('destinations.index');
+
 Route::get('/contact', [App\Http\Controllers\Public\ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [App\Http\Controllers\Public\ContactController::class, 'send'])->name('contact.send');
 

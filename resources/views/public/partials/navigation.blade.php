@@ -153,7 +153,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('tours.index', ['view'=>'destinations']) }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg">{{ __('Destinations') }}</a>
+                <a href="{{ route('destinations.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('destinations.*')?'text-gold-400':'' }}">{{ __('Destinations') }}</a>
                 <a href="{{ url('/itineraries') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->is('itineraries*')?'text-gold-400':'' }}">{{ __('Itineraries') }}</a>
                 <a href="{{ route('gallery.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('gallery.*')?'text-gold-400':'' }}">{{ __('Gallery') }}</a>
                 <a href="{{ route('blog.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('blog.*')?'text-gold-400':'' }}">{{ __('Blog') }}</a>
@@ -207,7 +207,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('tours.index', ['view'=>'destinations']) }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">{{ __('Destinations') }}</a>
+                <a href="{{ route('destinations.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('destinations.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Destinations') }}</a>
                 <a href="{{ route('gallery.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('gallery.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Gallery') }}</a>
                 <a href="{{ route('blog.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('blog.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Blog') }}</a>
                 <a href="{{ route('contact.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('contact.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Contact') }}</a>
