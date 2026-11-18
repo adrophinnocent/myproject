@@ -904,10 +904,12 @@ function previewDayImage(input, dayKey) {
             const previewImg = document.getElementById(`day-img-preview-${dayKey}`);
             const previewContainer = document.getElementById(`day-img-preview-container-${dayKey}`);
             const removeFlag = document.getElementById(`day-remove-img-${dayKey}`);
+            const hiddenImageInput = document.getElementById(`day-img-input-${dayKey}`);
 
             if (previewImg) previewImg.src = e.target.result;
             if (previewContainer) previewContainer.classList.remove('hidden');
             if (removeFlag) removeFlag.value = "0";
+            if (hiddenImageInput) hiddenImageInput.value = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
     }
