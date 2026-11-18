@@ -474,19 +474,21 @@
             </div>
 
             @php $faqs = $tour->translate('faqs'); @endphp
-            @if(!empty($faqs) && is_array($faqs))
-            <div class="pt-10 border-t border-gray-100">
-                <h2 class="font-display text-3xl font-bold text-gray-900 mb-8">{{ __('Frequently Asked Questions') }}</h2>
-                <div class="space-y-4">
+            @if(!empty($faqs) && is_array($faqs) && count($faqs) > 0)
+            <div class="pt-8 border-t border-stone-200/80 mb-10">
+                <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d]/40 pb-3 mb-5">
+                    {{ __('Frequently Asked Questions') }}
+                </h2>
+                <div class="space-y-2.5">
                     @foreach($faqs as $index => $faq)
-                    <div x-data="{ open: false }" class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
-                        <button @@click="open = !open"
-                                class="w-full text-left px-6 py-5 font-bold text-gray-800 flex items-center justify-between hover:bg-gray-100 transition-all">
+                    <div x-data="{ open: false }" class="bg-white border border-[#f1e5cf] rounded-xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
+                        <button @click="open = !open"
+                                class="w-full text-left px-5 py-3.5 font-bold text-stone-900 text-xs sm:text-sm flex items-center justify-between hover:bg-[#fcfaf5] transition-colors cursor-pointer">
                             <span>{{ $faq['question'] ?? '' }}</span>
-                            <svg :class="open ? 'rotate-180' : ''" class="w-5 h-5 text-gold-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <span class="text-[#8A6D0B] text-base font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
                         </button>
                         <div x-show="open" x-collapse x-cloak>
-                            <div class="px-6 pb-6 text-gray-600 leading-relaxed">
+                            <div class="px-5 pb-4 pt-2 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#f1e5cf]/60 bg-[#fffdf9]">
                                 {!! $faq['answer'] ?? '' !!}
                             </div>
                         </div>

@@ -20,41 +20,28 @@
     </div>
 </section>
 
-<section class="py-20 bg-gray-50">
+<section class="py-16 bg-stone-100/60">
     <div class="max-w-4xl mx-auto px-4">
-        <div x-data="{ openFaq: null }">
-            @forelse($faqs as $faq)
-                <div class="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <button
-                        @click="openFaq = openFaq === {{ $loop->index }} ? null : {{ $loop->index }}"
-                        class="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                    >
-                        <span class="text-lg font-semibold text-safari-dark">{{ $faq->translate('question') }}</span>
-                        <div class="flex items-center justify-center w-8 h-8 rounded-full bg-gold-100 text-gold-600 transition-transform duration-200"
-                             :class="openFaq === {{ $loop->index }} ? 'rotate-180' : ''">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+        <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d]/40 pb-3 mb-5">
+            {{ __('Frequently Asked Questions') }}
+        </h2>
+        <div class="space-y-2.5">
+            @forelse($faqs as $index => $faq)
+                <div x-data="{ open: false }" class="bg-white border border-[#f1e5cf] rounded-xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
+                    <button @click="open = !open"
+                            class="w-full text-left px-5 py-3.5 font-bold text-stone-900 text-xs sm:text-sm flex items-center justify-between hover:bg-[#fcfaf5] transition-colors cursor-pointer">
+                        <span>{{ $faq->translate('question') }}</span>
+                        <span class="text-[#8A6D0B] text-base font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
                     </button>
-                    <div
-                        x-show="openFaq === {{ $loop->index }}"
-                        x-transition:enter="transition-all duration-300 ease-out"
-                        x-transition:enter-start="max-h-0 opacity-0"
-                        x-transition:enter-end="max-h-96 opacity-100"
-                        x-transition:leave="transition-all duration-200 ease-in"
-                        x-transition:leave-start="max-h-96 opacity-100"
-                        x-transition:leave-end="max-h-0 opacity-0"
-                        class="overflow-hidden"
-                    >
-                        <div class="px-6 pb-5 text-gray-600 leading-relaxed">
-                            {{ $faq->translate('answer') }}
+                    <div x-show="open" x-collapse x-cloak>
+                        <div class="px-5 pb-4 pt-2 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#f1e5cf]/60 bg-[#fffdf9]">
+                            {!! $faq->translate('answer') !!}
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="text-center py-16 bg-white rounded-xl border border-gray-200">
-                    <p class="text-gray-500 text-lg">{{ __('No FAQs available yet. Check back soon!') }}</p>
+                <div class="text-center py-16 bg-white rounded-xl border border-stone-200">
+                    <p class="text-stone-500 text-sm">{{ __('No FAQs available yet. Check back soon!') }}</p>
                 </div>
             @endforelse
         </div>
