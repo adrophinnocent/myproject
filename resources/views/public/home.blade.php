@@ -605,62 +605,88 @@
 </section>
 @endif
 
-{{-- ========== 5. GUEST STORIES ========== --}}
-<section class="py-24 bg-[#fcfaf7] overflow-hidden border-t border-gray-100" x-data="{
-    scrollBy(distance) {
-        const slider = document.getElementById('testimonials-slider');
-        if (slider) { slider.scrollBy({ left: distance, behavior: 'smooth' }); }
-    }
-}">
-    <div class="max-w-7xl mx-auto px-4 mb-16 text-center">
-        <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">Guest Stories</span>
-        <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark">What Travelers Say</h2>
-        <div class="w-16 h-1.5 bg-gold-500 mt-6 rounded-full mx-auto"></div>
-    </div>
-    <div class="relative max-w-6xl mx-auto" x-data="{
-        activeIndex: 0,
-        slidesCount: 3,
-        scrollTo(index) {
-            const el = $refs.testiSlider;
-            const scrollAmount = (el.scrollWidth / this.slidesCount) * index;
-            el.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-        },
-        updateIndex() {
-            const el = $refs.testiSlider;
-            this.activeIndex = Math.round(el.scrollLeft / (el.scrollWidth / this.slidesCount));
-        }
-    }">
-        <div id="testimonials-slider"
-             x-ref="testiSlider"
-             @@scroll="updateIndex"
-             class="flex gap-8 overflow-x-auto pb-12 px-4 snap-x snap-mandatory no-scrollbar scroll-smooth">
-            @php $customTestimonials = [['name' => 'Sarah Mitchell', 'title' => 'Safari Traveler', 'content' => 'Absolutely life-changing experience! Our guide knew every animal\'s behavior.', 'initials' => 'SA'], ['name' => 'Marco & Julia', 'title' => 'Honeymoon Couple', 'content' => 'Perfect honeymoon! Safari followed by Zanzibar beach time.', 'initials' => 'MA'], ['name' => 'David Chen', 'title' => 'Mountain Climber', 'content' => 'Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done.', 'initials' => 'DA']]; @endphp
-            @foreach($customTestimonials as $t)
-            <div class="snap-center shrink-0 w-[85vw] md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]">
-                <div class="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col relative group">
-                    <div class="absolute top-6 right-8 text-gold-100 group-hover:text-gold-200 transition-colors duration-500"><svg class="w-16 h-16 fill-current" viewBox="0 0 32 32"><path d="M10 8v8H6v6h6V8h-2zm12 0v8h-4v6h6V8h-2z"/></svg></div>
-                    <div class="flex text-gold-500 mb-8 gap-1 relative z-10">@for($i=0; $i<5; $i++) <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor</div>
-                    <p class="text-gray-700 text-lg leading-relaxed mb-10 flex-grow italic font-light relative z-10">"{{ $t['content'] }}"</p>
-                    <div class="flex items-center gap-5 pt-8 border-t border-gray-50 relative z-10"><div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-white font-black text-xl shadow-lg transform -rotate-3 group-hover:rotate-0 transition-transform duration-300">{{ $t['initials'] }}</div><div><h4 class="font-black text-safari-dark text-lg leading-tight">{{ $t['name'] }}</h4><p class="text-gold-600 text-xs font-bold uppercase tracking-widest mt-1">{{ $t['title'] }}</p></div></div>
+{{-- ========== 5. WHAT TRAVELERS SAY (CUSTOM LUXURY CARD GRID) ========== --}}
+<section class="py-10 px-4 md:px-8 bg-[#12110e] text-[#faf0d9] border-t border-white/5 relative">
+    <div class="max-w-7xl mx-auto">
+        {{-- Section Header --}}
+        <div class="flex items-baseline justify-between mb-2">
+            <h2 class="font-display text-2xl md:text-4xl font-bold text-[#faf0d9] tracking-tight">
+                {{ __('What Travelers Say') }}
+            </h2>
+            <div class="text-xs md:text-sm font-semibold text-[#e5b842] flex items-center gap-1.5 shrink-0">
+                <span class="text-[#e5b842]">★</span> 5.0 {{ __('from guest reviews') }}
+            </div>
+        </div>
+
+        {{-- Golden Divider Line --}}
+        <div class="w-full border-b border-[#d4af37]/70 mt-2 mb-6"></div>
+
+        {{-- 3-Column Card Grid --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4.5 md:gap-5">
+            @php
+                $reviewsList = [
+                    [
+                        'name' => 'Sarah Mitchell',
+                        'role' => __('Safari traveler'),
+                        'content' => __('"Absolutely life-changing experience! Our guide knew every animal\'s behavior."'),
+                        'initials' => 'SA',
+                    ],
+                    [
+                        'name' => 'Marco & Julia',
+                        'role' => __('Honeymoon couple'),
+                        'content' => __('"Perfect honeymoon! Safari followed by Zanzibar beach time."'),
+                        'initials' => 'MA',
+                    ],
+                    [
+                        'name' => 'David Chen',
+                        'role' => __('Mountain climber'),
+                        'content' => __('"Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done."'),
+                        'initials' => 'DA',
+                    ],
+                ];
+            @endphp
+
+            @foreach($reviewsList as $rev)
+            <div class="bg-[#1a1915] border border-white/10 border-l-[3px] border-l-[#d4af37] rounded-xl p-[18px] flex flex-col justify-between shadow-lg hover:border-white/20 transition-all duration-300">
+                <div>
+                    {{-- 5 Gold Stars --}}
+                    <div class="flex text-[#e5b842] gap-1 mb-3">
+                        @for($s=0; $s<5; $s++)
+                            <svg class="w-3.5 h-3.5 fill-current"><use href="#star"/></svg>
+                        @endfor
+                    </div>
+
+                    {{-- Review Content --}}
+                    <p class="text-[#e2ded6] text-[0.92rem] leading-relaxed mb-4 font-normal">
+                        {{ $rev['content'] }}
+                    </p>
+                </div>
+
+                {{-- Author Profile --}}
+                <div class="flex items-center gap-3 pt-2">
+                    <div class="w-9 h-9 rounded-full bg-[#2a2416] border border-[#d4af37]/80 flex items-center justify-center text-[#e5b842] font-bold text-xs shrink-0">
+                        {{ $rev['initials'] }}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-[#faf0d9] text-sm leading-tight block">
+                            {{ $rev['name'] }}
+                        </h4>
+                        <span class="text-[#d4af37] text-xs font-medium block mt-0.5">
+                            {{ $rev['role'] }}
+                        </span>
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
-
-        {{-- Modern Navigation Dots --}}
-        <div class="flex justify-center gap-2 mt-2 mb-8">
-            <template x-for="(i, index) in Array.from({ length: slidesCount })">
-                <button @@click="scrollTo(index)"
-                        :class="activeIndex === index ? 'w-8 bg-gold-500' : 'w-2 bg-gray-200'"
-                        class="h-2 rounded-full transition-all duration-300 outline-none"></button>
-            </template>
-        </div>
-
-        <div class="flex justify-center gap-4 mt-8">
-            <button @@click="const el = $refs.testiSlider; el.scrollBy({ left: -400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-            <button @@click="const el = $refs.testiSlider; el.scrollBy({ left: 400, behavior: 'smooth' })" class="w-12 h-12 rounded-full border-2 border-gold-200 flex items-center justify-center text-gold-600 hover:bg-gold-600 hover:text-white transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
-        </div>
     </div>
+
+    {{-- SVG Star Definition Symbol --}}
+    <svg style="display:none">
+        <symbol id="star" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </symbol>
+    </svg>
 </section>
 
 {{-- ========== 6. SAFARI JOURNAL (BLOG) ========== --}}
