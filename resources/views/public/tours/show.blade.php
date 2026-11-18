@@ -334,26 +334,6 @@
                                     </div>
                                 </div>
                             @endif
-                                                <div class="flex flex-col bg-stone-50 border border-stone-200/80 rounded-xl overflow-hidden shadow-xs hover:border-gold-500/60 transition-all">
-                                                    <div class="h-44 sm:h-52 md:h-56 overflow-hidden bg-stone-900 relative">
-                                                        <img src="{{ $imgUrl }}" alt="{{ $caption ?: ($day['title'] ?? 'Day Photo') }}"
-                                                             class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                                                             loading="lazy"
-                                                             onclick="openLightbox('{{ $imgUrl }}')">
-                                                    </div>
-                                                    @if(!empty($caption))
-                                                    <div class="p-2 bg-white border-t border-stone-200/60">
-                                                        <p class="text-[11px] font-medium text-stone-700 leading-snug">
-                                                            {{ $caption }}
-                                                        </p>
-                                                    </div>
-                                                    @endif
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
                             <div class="flex flex-wrap items-center gap-x-8 gap-y-3 mt-4 text-xs font-bold uppercase tracking-wider">
                                 @if(!empty($day['accommodation']))
                                 <div class="flex items-center gap-2 text-gray-600">
