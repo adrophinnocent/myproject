@@ -20,14 +20,15 @@ class SecurityHeaders
             $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
             $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
-            // Content Security Policy (CSP) with Google reCAPTCHA, Analytics & GTM
+            // Robust Content Security Policy (CSP) allowing all external embeds (YouTube, Vimeo, Google Maps, reCAPTCHA, OpenStreetMap, etc.)
             $csp = "upgrade-insecure-requests; "
-                 . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://www.googletagmanager.com https://connect.facebook.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.google.com/ https://www.gstatic.com/; "
-                 . "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://www.google.com/ https://www.google.com/maps/ https://www.youtube.com/ https://youtube.com/; "
-                 . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
-                 . "font-src 'self' https://fonts.gstatic.com data:; "
-                 . "img-src 'self' data: https: blob:; "
-                 . "connect-src 'self' https://www.google-analytics.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.google.com/ https://stats.g.doubleclick.net;";
+                 . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:; "
+                 . "frame-src 'self' https: http: data: blob:; "
+                 . "child-src 'self' https: http: data: blob:; "
+                 . "style-src 'self' 'unsafe-inline' https: http:; "
+                 . "font-src 'self' https: http: data:; "
+                 . "img-src 'self' data: https: http: blob:; "
+                 . "connect-src 'self' https: http: wss:;";
 
             $response->headers->set('Content-Security-Policy', $csp);
 
