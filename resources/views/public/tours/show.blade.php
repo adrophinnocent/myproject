@@ -216,16 +216,66 @@
                         @endif
                         <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
                             <h3 class="font-bold text-gray-800 mb-2">{{ __('Day') }} {{ is_numeric($index) ? $index : $loop->iteration }}: {{ $day['title'] ?? '' }}</h3>
-                            @if(!empty($day['image']))
-                                @php
-                                    $dayImgUrl = str_starts_with($day['image'], 'http') ? $day['image'] : asset('storage/' . $day['image']);
-                                @endphp
-                                <div class="my-3 rounded-xl overflow-hidden max-h-72 border border-gray-100 shadow-sm cursor-pointer" onclick="openLightbox('{{ $dayImgUrl }}')">
+                            @php
+                                $singleDayImg = $day['image'] ?? $day['cover_image'] ?? null;
+                                $dayImgUrl = null;
+                                if ($singleDayImg) {
+                                    if (str_starts_with($singleDayImg, 'http')) {
+                                        $dayImgUrl = $singleDayImg;
+                                    } elseif (str_starts_with($singleDayImg, 'storage/') || str_starts_with($singleDayImg, '/storage/')) {
+                                        $dayImgUrl = asset($singleDayImg);
+                                    } else {
+                                        $dayImgUrl = asset('storage/' . $singleDayImg);
+                                    }
+                                }
+                                $multipleDayImages = $day['images'] ?? $day['day_images'] ?? [];
+                            @endphp
+
+                            @if($dayImgUrl && empty($multipleDayImages))
+                                <div class="my-3 rounded-xl overflow-hidden max-h-80 border border-gray-100 shadow-sm cursor-pointer" onclick="openLightbox('{{ $dayImgUrl }}')">
                                     <img src="{{ $dayImgUrl }}" alt="{{ $day['title'] ?? 'Day Image' }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
                                 </div>
                             @endif
+
                             @if(!empty($day['description']))
                             <p class="text-gray-500 text-sm leading-relaxed mb-3">{{ $day['description'] ?? '' }}</p>
+                            @endif
+
+                            @if(!empty($multipleDayImages) && is_array($multipleDayImages) && count($multipleDayImages) > 0)
+                                <div class="my-4 pt-1">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                        @foreach($multipleDayImages as $imgIndex => $img)
+                                            @php
+                                                $imgUrl = is_array($img) ? ($img['url'] ?? $img['path'] ?? '') : $img;
+                                                $caption = is_array($img) ? ($img['caption'] ?? '') : '';
+                                                if (!empty($imgUrl)) {
+                                                    if (str_starts_with($imgUrl, 'http')) {
+                                                        // keeps as is
+                                                    } elseif (str_starts_with($imgUrl, 'storage/') || str_starts_with($imgUrl, '/storage/')) {
+                                                        $imgUrl = asset($imgUrl);
+                                                    } else {
+                                                        $imgUrl = asset('storage/' . $imgUrl);
+                                                    }
+                                                }
+                                            @endphp
+                                            @if(!empty($imgUrl))
+                                                <div class="flex flex-col bg-stone-50 border border-stone-200/80 rounded-xl overflow-hidden shadow-xs hover:border-gold-500/60 transition-all">
+                                                    <div class="h-32 sm:h-36 overflow-hidden bg-stone-900 relative">
+                                                        <img src="{{ $imgUrl }}" alt="Figure {{ $loop->iteration }}: {{ $caption }}"
+                                                             class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
+                                                             onclick="openLightbox('{{ $imgUrl }}')">
+                                                    </div>
+                                                    <div class="p-2 bg-white border-t border-stone-200/60">
+                                                        <p class="text-[11px] font-medium text-stone-700 leading-snug">
+                                                            <strong class="text-gold-600 font-bold">Figure {{ $loop->iteration }}.</strong>
+                                                            {{ $caption ?: ($day['title'] ?? 'Day Activity') }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
                             @endif
                             <div class="flex flex-wrap items-center gap-x-8 gap-y-3 mt-4 text-xs font-bold uppercase tracking-wider">
                                 @if(!empty($day['accommodation']))

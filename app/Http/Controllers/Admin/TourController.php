@@ -140,13 +140,106 @@ class TourController extends Controller
                 foreach ($itinerary as $dayKey => &$dayData) {
                     if (!is_array($dayData)) continue;
 
+                    // Single uploaded image file
                     if (isset($uploadedItineraryImages[$dayKey]) && $uploadedItineraryImages[$dayKey]->isValid()) {
                         $path = $uploadedItineraryImages[$dayKey]->store('tours/itinerary', 'public');
                         $dayData['image'] = $path;
+                        $dayData['cover_image'] = 'storage/' . $path;
                     } else {
-                        $dayData['image'] = $dayData['image'] ?? null;
+                        $existingImage = $dayData['image'] ?? $dayData['cover_image'] ?? null;
+
+                        // Save Base64 single image if uploaded from device
+                        if ($existingImage && str_starts_with($existingImage, 'data:image/')) {
+                            try {
+                                preg_match('/data:image\/(\w+);base64,/', $existingImage, $typeMatches);
+                                $ext = strtolower($typeMatches[1] ?? 'jpg');
+                                if ($ext === 'jpeg') $ext = 'jpg';
+
+                                $imageData = substr($existingImage, strpos($existingImage, ',') + 1);
+                                $decodedBytes = base64_decode($imageData);
+
+                                if ($decodedBytes !== false) {
+                                    $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
+                                    $directory = storage_path('app/public/tours/itinerary');
+
+                                    if (!file_exists($directory)) {
+                                        mkdir($directory, 0755, true);
+                                    }
+
+                                    file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                    $existingImage = 'tours/itinerary/' . $filename;
+                                }
+                            } catch (\Throwable $e) {
+                                \Illuminate\Support\Facades\Log::error('Failed to save tour single day base64 image: ' . $e->getMessage());
+                            }
+                        }
+
+                        $dayData['image'] = $existingImage;
+                        if ($existingImage && empty($dayData['cover_image'])) {
+                            $dayData['cover_image'] = str_starts_with($existingImage, 'http') ? $existingImage : 'storage/' . ltrim($existingImage, '/');
+                        }
                     }
+
+                    // Process multiple compact day images and captions
+                    $rawDayImages = $dayData['images_json'] ?? $dayData['images'] ?? [];
+                    if (is_string($rawDayImages)) {
+                        $decodedImgs = json_decode($rawDayImages, true);
+                        $rawDayImages = is_array($decodedImgs) ? $decodedImgs : [];
+                    }
+
+                    $processedImages = [];
+                    if (is_array($rawDayImages)) {
+                        foreach ($rawDayImages as $imgItem) {
+                            $url = is_array($imgItem) ? ($imgItem['url'] ?? $imgItem['path'] ?? '') : $imgItem;
+                            $caption = is_array($imgItem) ? ($imgItem['caption'] ?? '') : '';
+
+                            if (empty($url)) continue;
+
+                            // Save Base64 image uploaded directly from device
+                            if (str_starts_with($url, 'data:image/')) {
+                                try {
+                                    preg_match('/data:image\/(\w+);base64,/', $url, $typeMatches);
+                                    $ext = strtolower($typeMatches[1] ?? 'jpg');
+                                    if ($ext === 'jpeg') $ext = 'jpg';
+
+                                    $imageData = substr($url, strpos($url, ',') + 1);
+                                    $decodedBytes = base64_decode($imageData);
+
+                                    if ($decodedBytes !== false) {
+                                        $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
+                                        $directory = storage_path('app/public/tours/itinerary');
+
+                                        if (!file_exists($directory)) {
+                                            mkdir($directory, 0755, true);
+                                        }
+
+                                        file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                        $url = 'storage/tours/itinerary/' . $filename;
+                                    }
+                                } catch (\Throwable $e) {
+                                    \Illuminate\Support\Facades\Log::error('Failed to save tour day base64 image: ' . $e->getMessage());
+                                }
+                            }
+
+                            $processedImages[] = [
+                                'url' => $url,
+                                'caption' => trim($caption),
+                            ];
+                        }
+                    }
+
+                    // If single image exists but multiple images is empty, add single image to array for compatibility
+                    if (empty($processedImages) && !empty($dayData['image'])) {
+                        $processedImages[] = [
+                            'url' => str_starts_with($dayData['image'], 'http') ? $dayData['image'] : 'storage/' . ltrim($dayData['image'], '/'),
+                            'caption' => $dayData['title'] ?? 'Day Image',
+                        ];
+                    }
+
+                    $dayData['images'] = $processedImages;
+
                     unset($dayData['remove_image']);
+                    unset($dayData['images_json']);
                 }
                 unset($dayData);
 
@@ -328,25 +421,108 @@ class TourController extends Controller
                 foreach ($itinerary as $dayKey => &$dayData) {
                     if (!is_array($dayData)) continue;
 
-                    $existingImage = $dayData['image'] ?? null;
+                    $existingImage = $dayData['image'] ?? $dayData['cover_image'] ?? null;
 
                     if (isset($uploadedItineraryImages[$dayKey]) && $uploadedItineraryImages[$dayKey]->isValid()) {
-                        // Delete old image if replaced
-                        if ($existingImage && !str_starts_with($existingImage, 'http') && Storage::disk('public')->exists($existingImage)) {
-                            Storage::disk('public')->delete($existingImage);
-                        }
                         $path = $uploadedItineraryImages[$dayKey]->store('tours/itinerary', 'public');
                         $dayData['image'] = $path;
+                        $dayData['cover_image'] = 'storage/' . $path;
                     } elseif (!empty($dayData['remove_image']) && $dayData['remove_image'] == '1') {
-                        // Delete old image if removed
-                        if ($existingImage && !str_starts_with($existingImage, 'http') && Storage::disk('public')->exists($existingImage)) {
-                            Storage::disk('public')->delete($existingImage);
-                        }
                         $dayData['image'] = null;
+                        $dayData['cover_image'] = null;
                     } else {
-                        $dayData['image'] = $existingImage ?: null;
+                        // Save Base64 single image if uploaded from device
+                        if ($existingImage && str_starts_with($existingImage, 'data:image/')) {
+                            try {
+                                preg_match('/data:image\/(\w+);base64,/', $existingImage, $typeMatches);
+                                $ext = strtolower($typeMatches[1] ?? 'jpg');
+                                if ($ext === 'jpeg') $ext = 'jpg';
+
+                                $imageData = substr($existingImage, strpos($existingImage, ',') + 1);
+                                $decodedBytes = base64_decode($imageData);
+
+                                if ($decodedBytes !== false) {
+                                    $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
+                                    $directory = storage_path('app/public/tours/itinerary');
+
+                                    if (!file_exists($directory)) {
+                                        mkdir($directory, 0755, true);
+                                    }
+
+                                    file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                    $existingImage = 'tours/itinerary/' . $filename;
+                                }
+                            } catch (\Throwable $e) {
+                                \Illuminate\Support\Facades\Log::error('Failed to save tour single day base64 image: ' . $e->getMessage());
+                            }
+                        }
+
+                        $dayData['image'] = $existingImage;
+                        if ($existingImage && empty($dayData['cover_image'])) {
+                            $dayData['cover_image'] = str_starts_with($existingImage, 'http') ? $existingImage : 'storage/' . ltrim($existingImage, '/');
+                        }
                     }
+
+                    // Process multiple compact day images and captions
+                    $rawDayImages = $dayData['images_json'] ?? $dayData['images'] ?? [];
+                    if (is_string($rawDayImages)) {
+                        $decodedImgs = json_decode($rawDayImages, true);
+                        $rawDayImages = is_array($decodedImgs) ? $decodedImgs : [];
+                    }
+
+                    $processedImages = [];
+                    if (is_array($rawDayImages)) {
+                        foreach ($rawDayImages as $imgIndex => $imgItem) {
+                            $url = is_array($imgItem) ? ($imgItem['url'] ?? $imgItem['path'] ?? '') : $imgItem;
+                            $caption = is_array($imgItem) ? ($imgItem['caption'] ?? '') : '';
+
+                            if (empty($url)) continue;
+
+                            // Save Base64 image uploaded directly from device
+                            if (str_starts_with($url, 'data:image/')) {
+                                try {
+                                    preg_match('/data:image\/(\w+);base64,/', $url, $typeMatches);
+                                    $ext = strtolower($typeMatches[1] ?? 'jpg');
+                                    if ($ext === 'jpeg') $ext = 'jpg';
+
+                                    $imageData = substr($url, strpos($url, ',') + 1);
+                                    $decodedBytes = base64_decode($imageData);
+
+                                    if ($decodedBytes !== false) {
+                                        $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
+                                        $directory = storage_path('app/public/tours/itinerary');
+
+                                        if (!file_exists($directory)) {
+                                            mkdir($directory, 0755, true);
+                                        }
+
+                                        file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                        $url = 'storage/tours/itinerary/' . $filename;
+                                    }
+                                } catch (\Throwable $e) {
+                                    \Illuminate\Support\Facades\Log::error('Failed to save tour day base64 image: ' . $e->getMessage());
+                                }
+                            }
+
+                            $processedImages[] = [
+                                'url' => $url,
+                                'caption' => trim($caption),
+                            ];
+                        }
+                    }
+
+                    // If single image exists but multiple images is empty, add single image to array for compatibility
+                    if (empty($processedImages) && !empty($dayData['image'])) {
+                        $processedImages[] = [
+                            'url' => str_starts_with($dayData['image'], 'http') ? $dayData['image'] : 'storage/' . ltrim($dayData['image'], '/'),
+                            'caption' => $dayData['title'] ?? 'Day Image',
+                        ];
+                    }
+
+                    $dayData['images'] = $processedImages;
+
                     unset($dayData['remove_image']);
+                    unset($dayData['images_json']);
                 }
                 unset($dayData);
 
