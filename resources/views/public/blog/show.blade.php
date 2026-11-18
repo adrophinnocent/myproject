@@ -58,13 +58,105 @@
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 py-16">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+    <style>
+        .article-body {
+            color: #292524;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        .article-body p {
+            margin-bottom: 1.5rem;
+        }
+        .article-body h2 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #0d2818;
+            margin-top: 2.25rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f1f0ea;
+        }
+        @media (min-width: 768px) {
+            .article-body h2 {
+                font-size: 2.25rem;
+            }
+        }
+        .article-body h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0d2818;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .article-body ul, .article-body ol {
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        .article-body ul {
+            list-style-type: disc;
+        }
+        .article-body ol {
+            list-style-type: decimal;
+        }
+        .article-body li {
+            margin-bottom: 0.5rem;
+        }
+        .article-body blockquote {
+            border-left: 4px solid #d4af37;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            background-color: #fcfaf7;
+            font-style: italic;
+            color: #44403c;
+            border-radius: 0 0.75rem 0.75rem 0;
+        }
+        .article-body figure.image, .article-body figure, .article-body p img, .article-body img {
+            margin: 2rem auto;
+            max-width: 640px;
+            width: 100%;
+            display: block;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        .article-body figure.image {
+            background-color: #faf9f6;
+            border: 1px solid #e7e5e4;
+            padding: 0.5rem;
+            border-radius: 1.25rem;
+            text-align: center;
+        }
+        .article-body figure.image img {
+            margin: 0 auto;
+            max-height: 420px;
+            object-fit: cover;
+            border-radius: 0.875rem;
+            width: 100%;
+        }
+        .article-body figcaption {
+            margin-top: 0.625rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: #57534e;
+            font-style: italic;
+            text-align: text-center;
+            padding: 0 0.5rem 0.25rem 0.5rem;
+        }
+    </style>
+
+    <div class="max-w-7xl mx-auto px-4 py-12 md:py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
             {{-- Content --}}
             <div class="lg:col-span-8">
-                <div class="prose prose-lg prose-gold max-w-none text-gray-700 leading-relaxed
-                            prose-headings:font-display prose-headings:font-bold prose-headings:text-gray-900
-                            prose-p:mb-6 prose-img:rounded-3xl prose-img:shadow-xl" itemprop="articleBody">
+                @if($post->excerpt)
+                <div class="text-lg md:text-xl text-stone-600 font-medium italic mb-8 pb-6 border-b border-stone-200 leading-relaxed font-serif-title">
+                    "{{ $post->translate('excerpt') ?: $post->excerpt }}"
+                </div>
+                @endif
+
+                <div class="article-body max-w-none text-stone-800 leading-relaxed" itemprop="articleBody">
                     {!! $post->translate('content') !!}
                 </div>
 

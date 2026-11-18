@@ -398,42 +398,35 @@
             @php $essentialInfo = $tour->translate('good_to_know'); @endphp
             @if(!empty($essentialInfo))
             <div class="mb-12">
-                <h4 class="text-xs font-black text-[#8A6D0B] uppercase tracking-wider mb-4">{{ __("GOOD TO KNOW") }}</h4>
-                <div class="space-y-3">
+                <h3 class="font-display text-2xl md:text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
+                    {{ __("GOOD TO KNOW") }}
+                </h3>
+                <ul class="space-y-3.5 bg-white border border-[#e8dfcf] rounded-2xl p-6 md:p-8 shadow-xs">
                     @php
                         $infoList = is_array($essentialInfo) ? $essentialInfo : explode("\n", $essentialInfo);
                     @endphp
                     @foreach($infoList as $index => $infoItem)
                         @php
-                            $title = '';
-                            $content = '';
+                            $itemText = '';
                             if (is_array($infoItem)) {
-                                $title = $infoItem['title'] ?? $infoItem['question'] ?? 'Good to Know';
-                                $content = $infoItem['description'] ?? $infoItem['answer'] ?? implode('<br>', $infoItem);
-                            } else {
-                                $parts = explode(':', $infoItem, 2);
-                                if (count($parts) == 2) {
-                                    $title = trim($parts[0]);
-                                    $content = trim($parts[1]);
-                                } else {
-                                    $title = trim($infoItem);
-                                    $content = trim($infoItem);
+                                $t = $infoItem['title'] ?? $infoItem['question'] ?? '';
+                                $d = $infoItem['description'] ?? $infoItem['answer'] ?? '';
+                                $itemText = trim($t . ($t && $d ? ': ' : '') . $d);
+                                if (empty($itemText)) {
+                                    $itemText = implode(' - ', array_filter($infoItem));
                                 }
+                            } else {
+                                $itemText = trim($infoItem);
                             }
                         @endphp
-                        @if(!empty($title))
-                        <div x-data="{ open: false }" class="bg-white border border-[#f1e5cf] rounded-2xl overflow-hidden shadow-xs">
-                            <button @click="open = !open" class="w-full px-5 py-4 text-left font-bold text-stone-900 text-xs sm:text-sm flex items-center justify-between hover:bg-[#fcfaf5] transition-colors cursor-pointer">
-                                <span>{{ $title }}</span>
-                                <span class="text-[#8A6D0B] text-lg font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
-                            </button>
-                            <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#f1e5cf]/60 bg-[#fffdf9]">
-                                {!! $content !!}
-                            </div>
-                        </div>
+                        @if(!empty($itemText))
+                        <li class="flex items-start gap-3.5 text-stone-800 text-sm sm:text-base leading-relaxed font-medium">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#d4af37] shrink-0 mt-2 shadow-xs"></span>
+                            <span>{{ $itemText }}</span>
+                        </li>
                         @endif
                     @endforeach
-                </div>
+                </ul>
             </div>
             @endif
 
@@ -473,26 +466,31 @@
                 </div>
             </div>
 
+            {{-- FREQUENTLY ASKED QUESTIONS --}}
             @php $faqs = $tour->translate('faqs'); @endphp
             @if(!empty($faqs) && is_array($faqs) && count($faqs) > 0)
             <div class="pt-8 border-t border-stone-200/80 mb-10">
-                <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d]/40 pb-3 mb-5">
+                <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
                     {{ __('Frequently Asked Questions') }}
                 </h2>
-                <div class="space-y-2.5">
+                <div class="space-y-4">
                     @foreach($faqs as $index => $faq)
-                    <div x-data="{ open: false }" class="bg-white border border-[#f1e5cf] rounded-xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
-                        <button @click="open = !open"
-                                class="w-full text-left px-5 py-3.5 font-bold text-stone-900 text-xs sm:text-sm flex items-center justify-between hover:bg-[#fcfaf5] transition-colors cursor-pointer">
-                            <span>{{ $faq['question'] ?? '' }}</span>
-                            <span class="text-[#8A6D0B] text-base font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
-                        </button>
-                        <div x-show="open" x-collapse x-cloak>
-                            <div class="px-5 pb-4 pt-2 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#f1e5cf]/60 bg-[#fffdf9]">
-                                {!! $faq['answer'] ?? '' !!}
-                            </div>
+                    @php
+                        $q = is_array($faq) ? ($faq['question'] ?? $faq['title'] ?? '') : $faq;
+                        $a = is_array($faq) ? ($faq['answer'] ?? $faq['description'] ?? '') : '';
+                    @endphp
+                    @if(!empty($q))
+                    <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
+                        <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
+                            {{ $q }}
+                        </h3>
+                        @if(!empty($a))
+                        <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
+                            {!! $a !!}
                         </div>
+                        @endif
                     </div>
+                    @endif
                     @endforeach
                 </div>
             </div>

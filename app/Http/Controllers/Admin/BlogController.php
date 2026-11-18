@@ -40,7 +40,7 @@ class BlogController extends Controller
         $post->title = $request->title;
         $post->slug = $request->slug;
         $post->category_id = $request->category_id;
-        $post->content = $request->content;
+        $post->content = $this->processContentImages($request->content);
         $post->excerpt = $request->excerpt;
         $post->author_id = auth()->id();
         $post->is_published = $request->has('is_published');
@@ -77,7 +77,7 @@ class BlogController extends Controller
         $blog->title = $request->title;
         $blog->slug = $request->slug;
         $blog->category_id = $request->category_id;
-        $blog->content = $request->content;
+        $blog->content = $this->processContentImages($request->content);
         $blog->excerpt = $request->excerpt;
         $blog->is_published = $request->has('is_published');
 
@@ -99,9 +99,10 @@ class BlogController extends Controller
             foreach ($request->translations as $locale => $fields) {
                 foreach ($fields as $field => $text) {
                     if (!empty($text)) {
+                        $processedText = ($field === 'content') ? $this->processContentImages($text) : $text;
                         $blog->translations()->updateOrCreate(
                             ['locale' => $locale, 'field' => $field],
-                            ['text' => $text]
+                            ['text' => $processedText]
                         );
                     }
                 }
@@ -118,5 +119,53 @@ class BlogController extends Controller
         }
         $blog->delete();
         return redirect()->route('admin.blog.index')->with('success', 'Blog post deleted successfully');
+    }
+
+    private function processContentImages(?string $content): ?string
+    {
+        if (empty($content)) {
+            return $content;
+        }
+
+        // Process base64 embedded images in HTML content
+        if (str_contains($content, 'data:image/')) {
+            try {
+                $dom = new \DOMDocument();
+                libxml_use_internal_errors(true);
+                $dom->loadHTML(mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+                libxml_clear_errors();
+
+                $images = $dom->getElementsByTagName('img');
+                foreach ($images as $img) {
+                    $src = $img->getAttribute('src');
+                    if (str_starts_with($src, 'data:image/')) {
+                        preg_match('/data:image\/(\w+);base64,/', $src, $typeMatches);
+                        $ext = strtolower($typeMatches[1] ?? 'jpg');
+                        if ($ext === 'jpeg') $ext = 'jpg';
+
+                        $imageData = substr($src, strpos($src, ',') + 1);
+                        $decodedBytes = base64_decode($imageData);
+
+                        if ($decodedBytes !== false) {
+                            $filename = 'article_' . time() . '_' . Str::random(8) . '.' . $ext;
+                            $directory = storage_path('app/public/blog/content');
+
+                            if (!file_exists($directory)) {
+                                mkdir($directory, 0755, true);
+                            }
+
+                            file_put_contents($directory . '/' . $filename, $decodedBytes);
+                            $img->setAttribute('src', asset('storage/blog/content/' . $filename));
+                        }
+                    }
+                }
+
+                $content = $dom->saveHTML();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to process blog content images: ' . $e->getMessage());
+            }
+        }
+
+        return $content;
     }
 }

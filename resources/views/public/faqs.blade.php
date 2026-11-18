@@ -22,25 +22,21 @@
 
 <section class="py-16 bg-stone-100/60">
     <div class="max-w-4xl mx-auto px-4">
-        <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d]/40 pb-3 mb-5">
+        <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
             {{ __('Frequently Asked Questions') }}
         </h2>
-        <div class="space-y-2.5">
+        <div class="space-y-4">
             @forelse($faqs as $index => $faq)
-                <div x-data="{ open: false }" class="bg-white border border-[#f1e5cf] rounded-xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
-                    <button @click="open = !open"
-                            class="w-full text-left px-5 py-3.5 font-bold text-stone-900 text-xs sm:text-sm flex items-center justify-between hover:bg-[#fcfaf5] transition-colors cursor-pointer">
-                        <span>{{ $faq->translate('question') }}</span>
-                        <span class="text-[#8A6D0B] text-base font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
-                    </button>
-                    <div x-show="open" x-collapse x-cloak>
-                        <div class="px-5 pb-4 pt-2 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#f1e5cf]/60 bg-[#fffdf9]">
-                            {!! $faq->translate('answer') !!}
-                        </div>
+                <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
+                    <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
+                        {{ $faq->translate('question') }}
+                    </h3>
+                    <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
+                        {!! $faq->translate('answer') !!}
                     </div>
                 </div>
             @empty
-                <div class="text-center py-16 bg-white rounded-xl border border-stone-200">
+                <div class="text-center py-16 bg-white rounded-2xl border border-stone-200">
                     <p class="text-stone-500 text-sm">{{ __('No FAQs available yet. Check back soon!') }}</p>
                 </div>
             @endforelse
