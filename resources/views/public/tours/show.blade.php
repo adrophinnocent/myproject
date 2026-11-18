@@ -331,61 +331,111 @@
             </div>
             @endif
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                @php $inclusions = $tour->translate('inclusions'); @endphp
-                @if(!empty($inclusions) && is_array($inclusions))
-                <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
-                    <h3 class="font-bold text-green-800 mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg> {{ __("What's Included") }}</h3>
-                    <ul class="space-y-2">
-                        @foreach($inclusions as $item)
-                        <li class="text-green-700 text-sm font-medium">• {{ is_array($item) ? implode(', ', $item) : __($item) }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
+            {{-- WHAT'S INCLUDED & NOT INCLUDED SECTION --}}
+            @php
+                $inclusions = $tour->translate('inclusions');
+                $exclusions = $tour->translate('exclusions');
+            @endphp
+            @if((!empty($inclusions) && is_array($inclusions)) || (!empty($exclusions) && is_array($exclusions)))
+            <div class="mb-10 pt-4">
+                <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d]/40 pb-3 mb-6">
+                    {{ __("What's Included") }}
+                </h2>
 
-                @php $exclusions = $tour->translate('exclusions'); @endphp
-                @if(!empty($exclusions) && is_array($exclusions))
-                <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
-                    <h3 class="font-bold text-red-800 mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg> {{ __('Not Included') }}</h3>
-                    <ul class="space-y-2">
-                        @foreach($exclusions as $item)
-                        <li class="text-red-700 text-sm font-medium">• {{ is_array($item) ? implode(', ', $item) : __($item) }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                @php $packingList = $tour->translate('what_to_bring'); @endphp
-                @if(!empty($packingList) && is_array($packingList))
-                <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-                    <h3 class="font-bold text-blue-800 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                        {{ __("What to Bring") }}
-                    </h3>
-                    <ul class="space-y-2">
-                        @foreach($packingList as $item)
-                        <li class="text-blue-700 text-sm font-medium">• {{ is_array($item) ? implode(', ', $item) : __($item) }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
-
-                @php $essentialInfo = $tour->translate('good_to_know'); @endphp
-                @if(!empty($essentialInfo))
-                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
-                    <h3 class="font-bold text-amber-800 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        {{ __("Good to Know") }}
-                    </h3>
-                    <div class="text-amber-700 text-sm leading-relaxed">
-                        {!! is_array($essentialInfo) ? implode('<br>', $essentialInfo) : __($essentialInfo) !!}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {{-- INCLUDED CARD --}}
+                    @if(!empty($inclusions) && is_array($inclusions))
+                    <div class="bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-6 shadow-xs">
+                        <h4 class="text-xs font-black text-[#8A6D0B] uppercase tracking-wider mb-5">INCLUDED</h4>
+                        <ul class="space-y-3">
+                            @foreach($inclusions as $item)
+                            <li class="flex items-start gap-2.5 text-stone-700 text-xs sm:text-sm font-medium">
+                                <span class="text-[#8A6D0B] font-black text-sm shrink-0">✓</span>
+                                <span class="leading-snug">{{ is_array($item) ? implode(', ', $item) : __($item) }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
                     </div>
+                    @endif
+
+                    {{-- NOT INCLUDED CARD --}}
+                    @if(!empty($exclusions) && is_array($exclusions))
+                    <div class="bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-6 shadow-xs">
+                        <h4 class="text-xs font-black text-rose-800 uppercase tracking-wider mb-5">NOT INCLUDED</h4>
+                        <ul class="space-y-3">
+                            @foreach($exclusions as $item)
+                            <li class="flex items-start gap-2.5 text-stone-700 text-xs sm:text-sm font-medium">
+                                <span class="text-rose-600 font-bold text-sm shrink-0">×</span>
+                                <span class="leading-snug">{{ is_array($item) ? implode(', ', $item) : __($item) }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
                 </div>
-                @endif
             </div>
+            @endif
+
+            {{-- WHAT TO BRING SECTION --}}
+            @php $packingList = $tour->translate('what_to_bring'); @endphp
+            @if(!empty($packingList) && is_array($packingList) && count($packingList) > 0)
+            <div class="mb-10">
+                <h4 class="text-xs font-black text-[#8A6D0B] uppercase tracking-wider mb-4">{{ __("WHAT TO BRING") }}</h4>
+                <div class="flex flex-wrap gap-2.5">
+                    @foreach($packingList as $item)
+                        @php $itemStr = is_array($item) ? implode(', ', $item) : __($item); @endphp
+                        @if(!empty($itemStr))
+                        <span class="px-4 py-2 bg-[#fbf7ee] text-stone-800 border border-[#f1e5cf] rounded-full text-xs font-semibold shadow-xs">
+                            {{ $itemStr }}
+                        </span>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- GOOD TO KNOW SECTION --}}
+            @php $essentialInfo = $tour->translate('good_to_know'); @endphp
+            @if(!empty($essentialInfo))
+            <div class="mb-12">
+                <h4 class="text-xs font-black text-[#8A6D0B] uppercase tracking-wider mb-4">{{ __("GOOD TO KNOW") }}</h4>
+                <div class="space-y-3">
+                    @php
+                        $infoList = is_array($essentialInfo) ? $essentialInfo : explode("\n", $essentialInfo);
+                    @endphp
+                    @foreach($infoList as $index => $infoItem)
+                        @php
+                            $title = '';
+                            $content = '';
+                            if (is_array($infoItem)) {
+                                $title = $infoItem['title'] ?? $infoItem['question'] ?? 'Good to Know';
+                                $content = $infoItem['description'] ?? $infoItem['answer'] ?? implode('<br>', $infoItem);
+                            } else {
+                                $parts = explode(':', $infoItem, 2);
+                                if (count($parts) == 2) {
+                                    $title = trim($parts[0]);
+                                    $content = trim($parts[1]);
+                                } else {
+                                    $title = trim($infoItem);
+                                    $content = trim($infoItem);
+                                }
+                            }
+                        @endphp
+                        @if(!empty($title))
+                        <div x-data="{ open: false }" class="bg-white border border-[#f1e5cf] rounded-2xl overflow-hidden shadow-xs">
+                            <button @click="open = !open" class="w-full px-5 py-4 text-left font-bold text-stone-900 text-xs sm:text-sm flex items-center justify-between hover:bg-[#fcfaf5] transition-colors cursor-pointer">
+                                <span>{{ $title }}</span>
+                                <span class="text-[#8A6D0B] text-lg font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
+                            </button>
+                            <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#f1e5cf]/60 bg-[#fffdf9]">
+                                {!! $content !!}
+                            </div>
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             <div id="reviews" class="pt-10 border-t border-gray-100 mb-12">
                 <div class="flex items-center justify-between mb-8">
