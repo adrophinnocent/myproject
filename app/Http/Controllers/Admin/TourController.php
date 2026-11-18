@@ -160,13 +160,7 @@ class TourController extends Controller
 
                                 if ($decodedBytes !== false) {
                                     $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                    $directory = storage_path('app/public/tours/itinerary');
-
-                                    if (!file_exists($directory)) {
-                                        mkdir($directory, 0755, true);
-                                    }
-
-                                    file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                    \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
                                     $existingImage = 'tours/itinerary/' . $filename;
                                 }
                             } catch (\Throwable $e) {
@@ -207,13 +201,7 @@ class TourController extends Controller
 
                                     if ($decodedBytes !== false) {
                                         $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                        $directory = storage_path('app/public/tours/itinerary');
-
-                                        if (!file_exists($directory)) {
-                                            mkdir($directory, 0755, true);
-                                        }
-
-                                        file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                        \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
                                         $url = 'storage/tours/itinerary/' . $filename;
                                     }
                                 } catch (\Throwable $e) {
@@ -443,13 +431,7 @@ class TourController extends Controller
 
                                 if ($decodedBytes !== false) {
                                     $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                    $directory = storage_path('app/public/tours/itinerary');
-
-                                    if (!file_exists($directory)) {
-                                        mkdir($directory, 0755, true);
-                                    }
-
-                                    file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                    \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
                                     $existingImage = 'tours/itinerary/' . $filename;
                                 }
                             } catch (\Throwable $e) {
@@ -490,13 +472,7 @@ class TourController extends Controller
 
                                     if ($decodedBytes !== false) {
                                         $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                        $directory = storage_path('app/public/tours/itinerary');
-
-                                        if (!file_exists($directory)) {
-                                            mkdir($directory, 0755, true);
-                                        }
-
-                                        file_put_contents($directory . '/' . $filename, $decodedBytes);
+                                        \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
                                         $url = 'storage/tours/itinerary/' . $filename;
                                     }
                                 } catch (\Throwable $e) {

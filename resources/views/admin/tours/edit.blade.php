@@ -224,8 +224,20 @@
                                         <textarea name="itinerary[{{ $dayNum }}][description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ is_array($day['description'] ?? '') ? implode("\n", $day['description']) : ($day['description'] ?? '') }}</textarea>
                                     </div>
                                     @php
-                                        $hasImage = !empty($day['image']);
-                                        $dayImageUrl = $hasImage ? (str_starts_with($day['image'], 'http') ? $day['image'] : asset('storage/' . $day['image'])) : '';
+                                        $rawPath = $day['image'] ?? $day['cover_image'] ?? ($day['images'][0]['url'] ?? '');
+                                        if (is_array($rawPath)) { $rawPath = $rawPath['url'] ?? ''; }
+
+                                        $hasImage = !empty($rawPath);
+                                        $dayImageUrl = '';
+                                        if ($hasImage) {
+                                            if (str_starts_with($rawPath, 'http')) {
+                                                $dayImageUrl = $rawPath;
+                                            } elseif (str_starts_with($rawPath, 'storage/') || str_starts_with($rawPath, '/storage/')) {
+                                                $dayImageUrl = asset($rawPath);
+                                            } else {
+                                                $dayImageUrl = asset('storage/' . ltrim($rawPath, '/'));
+                                            }
+                                        }
                                     @endphp
                                     <div class="md:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Day Image (Optional)</label>
@@ -236,7 +248,7 @@
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                                 </button>
                                             </div>
-                                            <input type="hidden" name="itinerary[{{ $dayNum }}][image]" id="day-img-input-{{ $dayNum }}" value="{{ $day['image'] ?? '' }}">
+                                            <input type="hidden" name="itinerary[{{ $dayNum }}][image]" id="day-img-input-{{ $dayNum }}" value="{{ $rawPath }}">
                                             <input type="hidden" name="itinerary[{{ $dayNum }}][remove_image]" id="day-remove-img-{{ $dayNum }}" value="0">
                                             <div class="flex-1 w-full">
                                                 <input type="file" name="itinerary_images[{{ $dayNum }}]" id="day-file-input-{{ $dayNum }}" accept="image/*" onchange="previewDayImage(this, {{ $dayNum }})" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#D4AF37]/10 file:text-[#1a1209] hover:file:bg-[#D4AF37]/20 transition-all cursor-pointer">
