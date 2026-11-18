@@ -223,6 +223,27 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                         <textarea name="itinerary[{{ $dayNum }}][description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">{{ is_array($day['description'] ?? '') ? implode("\n", $day['description']) : ($day['description'] ?? '') }}</textarea>
                                     </div>
+                                    @php
+                                        $hasImage = !empty($day['image']);
+                                        $dayImageUrl = $hasImage ? (str_starts_with($day['image'], 'http') ? $day['image'] : asset('storage/' . $day['image'])) : '';
+                                    @endphp
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Day Image (Optional)</label>
+                                        <div class="p-3 border border-dashed border-gray-300 rounded-lg bg-white flex flex-col sm:flex-row items-center gap-4">
+                                            <div id="day-img-preview-container-{{ $dayNum }}" class="{{ $hasImage ? '' : 'hidden' }} relative w-32 h-24 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                                                <img id="day-img-preview-{{ $dayNum }}" src="{{ $dayImageUrl }}" class="w-full h-full object-cover">
+                                                <button type="button" onclick="removeDayImage({{ $dayNum }})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow transition-all" title="Remove Image">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" name="itinerary[{{ $dayNum }}][image]" id="day-img-input-{{ $dayNum }}" value="{{ $day['image'] ?? '' }}">
+                                            <input type="hidden" name="itinerary[{{ $dayNum }}][remove_image]" id="day-remove-img-{{ $dayNum }}" value="0">
+                                            <div class="flex-1 w-full">
+                                                <input type="file" name="itinerary_images[{{ $dayNum }}]" id="day-file-input-{{ $dayNum }}" accept="image/*" onchange="previewDayImage(this, {{ $dayNum }})" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#D4AF37]/10 file:text-[#1a1209] hover:file:bg-[#D4AF37]/20 transition-all cursor-pointer">
+                                                <p class="text-[11px] text-gray-400 mt-1">Upload a photo for this day (PNG, JPG, WEBP up to 10MB).</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Accommodation</label>
                                         <input type="text" name="itinerary[{{ $dayNum }}][accommodation]" value="{{ is_array($day['accommodation'] ?? '') ? implode(', ', $day['accommodation']) : ($day['accommodation'] ?? '') }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
@@ -825,6 +846,23 @@ document.getElementById('add-itinerary-day').addEventListener('click', function(
                     <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea name="itinerary[${dayCount}][description]" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]"></textarea>
                 </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Day Image (Optional)</label>
+                    <div class="p-3 border border-dashed border-gray-300 rounded-lg bg-white flex flex-col sm:flex-row items-center gap-4">
+                        <div id="day-img-preview-container-${dayCount}" class="hidden relative w-32 h-24 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                            <img id="day-img-preview-${dayCount}" src="" class="w-full h-full object-cover">
+                            <button type="button" onclick="removeDayImage(${dayCount})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow transition-all" title="Remove Image">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <input type="hidden" name="itinerary[${dayCount}][image]" id="day-img-input-${dayCount}" value="">
+                        <input type="hidden" name="itinerary[${dayCount}][remove_image]" id="day-remove-img-${dayCount}" value="0">
+                        <div class="flex-1 w-full">
+                            <input type="file" name="itinerary_images[${dayCount}]" id="day-file-input-${dayCount}" accept="image/*" onchange="previewDayImage(this, ${dayCount})" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#D4AF37]/10 file:text-[#1a1209] hover:file:bg-[#D4AF37]/20 transition-all cursor-pointer">
+                            <p class="text-[11px] text-gray-400 mt-1">Upload a photo for this day (PNG, JPG, WEBP up to 10MB).</p>
+                        </div>
+                    </div>
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Accommodation</label>
                     <input type="text" name="itinerary[${dayCount}][accommodation]" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
@@ -858,6 +896,36 @@ document.getElementById('add-itinerary-day').addEventListener('click', function(
     `;
     document.getElementById('itinerary-container').insertAdjacentHTML('beforeend', dayHtml);
 });
+
+function previewDayImage(input, dayKey) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewImg = document.getElementById(`day-img-preview-${dayKey}`);
+            const previewContainer = document.getElementById(`day-img-preview-container-${dayKey}`);
+            const removeFlag = document.getElementById(`day-remove-img-${dayKey}`);
+
+            if (previewImg) previewImg.src = e.target.result;
+            if (previewContainer) previewContainer.classList.remove('hidden');
+            if (removeFlag) removeFlag.value = "0";
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeDayImage(dayKey) {
+    const fileInput = document.getElementById(`day-file-input-${dayKey}`);
+    const hiddenImageInput = document.getElementById(`day-img-input-${dayKey}`);
+    const previewContainer = document.getElementById(`day-img-preview-container-${dayKey}`);
+    const previewImg = document.getElementById(`day-img-preview-${dayKey}`);
+    const removeFlag = document.getElementById(`day-remove-img-${dayKey}`);
+
+    if (fileInput) fileInput.value = '';
+    if (hiddenImageInput) hiddenImageInput.value = '';
+    if (previewImg) previewImg.src = '';
+    if (previewContainer) previewContainer.classList.add('hidden');
+    if (removeFlag) removeFlag.value = "1";
+}
 
 document.getElementById('itinerary-container').addEventListener('click', function(e) {
     if (e.target.classList.contains('remove-day')) {

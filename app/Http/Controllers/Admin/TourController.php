@@ -103,10 +103,11 @@ class TourController extends Controller
             'gallery_images.*' => 'nullable|image|max:10240',
             'translations' => 'nullable|array',
             'itinerary_raw' => 'nullable|string',
+            'itinerary_images.*' => 'nullable|image|max:10240',
             'pickup_locations' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw']);
+        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images']);
 
         // Handle Magic Code Itinerary & Package Data
         if ($request->filled('itinerary_raw')) {
@@ -129,6 +130,27 @@ class TourController extends Controller
             } else {
                 // Fallback to just itinerary if it's a simple array
                 $data['itinerary'] = $decoded;
+            }
+        } else {
+            // Process manual itinerary builder & image uploads
+            $itinerary = $request->input('itinerary', []);
+            if (is_array($itinerary) && count($itinerary) > 0) {
+                $uploadedItineraryImages = $request->file('itinerary_images', []);
+
+                foreach ($itinerary as $dayKey => &$dayData) {
+                    if (!is_array($dayData)) continue;
+
+                    if (isset($uploadedItineraryImages[$dayKey]) && $uploadedItineraryImages[$dayKey]->isValid()) {
+                        $path = $uploadedItineraryImages[$dayKey]->store('tours/itinerary', 'public');
+                        $dayData['image'] = $path;
+                    } else {
+                        $dayData['image'] = $dayData['image'] ?? null;
+                    }
+                    unset($dayData['remove_image']);
+                }
+                unset($dayData);
+
+                $data['itinerary'] = array_values($itinerary);
             }
         }
 
@@ -269,10 +291,11 @@ class TourController extends Controller
             'gallery_images.*' => 'nullable|image|max:10240',
             'translations' => 'nullable|array',
             'itinerary_raw' => 'nullable|string',
+            'itinerary_images.*' => 'nullable|image|max:10240',
             'pickup_locations' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw']);
+        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images']);
 
         // Handle Magic Code Itinerary & Package Data
         if ($request->filled('itinerary_raw')) {
@@ -295,6 +318,39 @@ class TourController extends Controller
             } else {
                 // Fallback to just itinerary if it's a simple array
                 $data['itinerary'] = $decoded;
+            }
+        } else {
+            // Process manual itinerary builder & image uploads
+            $itinerary = $request->input('itinerary', []);
+            if (is_array($itinerary) && count($itinerary) > 0) {
+                $uploadedItineraryImages = $request->file('itinerary_images', []);
+
+                foreach ($itinerary as $dayKey => &$dayData) {
+                    if (!is_array($dayData)) continue;
+
+                    $existingImage = $dayData['image'] ?? null;
+
+                    if (isset($uploadedItineraryImages[$dayKey]) && $uploadedItineraryImages[$dayKey]->isValid()) {
+                        // Delete old image if replaced
+                        if ($existingImage && !str_starts_with($existingImage, 'http') && Storage::disk('public')->exists($existingImage)) {
+                            Storage::disk('public')->delete($existingImage);
+                        }
+                        $path = $uploadedItineraryImages[$dayKey]->store('tours/itinerary', 'public');
+                        $dayData['image'] = $path;
+                    } elseif (!empty($dayData['remove_image']) && $dayData['remove_image'] == '1') {
+                        // Delete old image if removed
+                        if ($existingImage && !str_starts_with($existingImage, 'http') && Storage::disk('public')->exists($existingImage)) {
+                            Storage::disk('public')->delete($existingImage);
+                        }
+                        $dayData['image'] = null;
+                    } else {
+                        $dayData['image'] = $existingImage ?: null;
+                    }
+                    unset($dayData['remove_image']);
+                }
+                unset($dayData);
+
+                $data['itinerary'] = array_values($itinerary);
             }
         }
 

@@ -216,6 +216,14 @@
                         @endif
                         <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
                             <h3 class="font-bold text-gray-800 mb-2">{{ __('Day') }} {{ is_numeric($index) ? $index : $loop->iteration }}: {{ $day['title'] ?? '' }}</h3>
+                            @if(!empty($day['image']))
+                                @php
+                                    $dayImgUrl = str_starts_with($day['image'], 'http') ? $day['image'] : asset('storage/' . $day['image']);
+                                @endphp
+                                <div class="my-3 rounded-xl overflow-hidden max-h-72 border border-gray-100 shadow-sm cursor-pointer" onclick="openLightbox('{{ $dayImgUrl }}')">
+                                    <img src="{{ $dayImgUrl }}" alt="{{ $day['title'] ?? 'Day Image' }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+                                </div>
+                            @endif
                             @if(!empty($day['description']))
                             <p class="text-gray-500 text-sm leading-relaxed mb-3">{{ $day['description'] ?? '' }}</p>
                             @endif

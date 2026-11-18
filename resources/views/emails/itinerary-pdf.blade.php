@@ -140,6 +140,20 @@
                     <div class="day-badge">{{ $item['day'] ?? $loop->iteration }}</div>
                     <div class="day-card">
                         <h3 class="day-title">{{ $item['title'] ?? 'Adventure Day' }}</h3>
+                        @if(!empty($item['image']))
+                            @php
+                                $dayImgPath = str_starts_with($item['image'], 'http') ? null : storage_path('app/public/' . $item['image']);
+                            @endphp
+                            @if($dayImgPath && file_exists($dayImgPath))
+                                <div style="margin-bottom: 12px; text-align: center;">
+                                    <img src="{{ 'data:image/' . pathinfo($dayImgPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($dayImgPath)) }}" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px;">
+                                </div>
+                            @elseif(str_starts_with($item['image'] ?? '', 'http'))
+                                <div style="margin-bottom: 12px; text-align: center;">
+                                    <img src="{{ $item['image'] }}" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px;">
+                                </div>
+                            @endif
+                        @endif
                         <div class="day-description">
                             {{ $item['desc'] ?? ($item['description'] ?? 'Prepare for an incredible day exploring the beauty of Tanzania.') }}
                         </div>
