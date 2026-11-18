@@ -189,11 +189,11 @@
             @endif
 
             @php
-                $rawItinerary = $tour->translate('itinerary');
-                if (empty($rawItinerary) || !is_array($rawItinerary)) {
-                    $rawItinerary = $tour->itinerary;
+                $rawMainItinerary = $tour->itinerary ?? [];
+                $itinerary = $tour->translate('itinerary');
+                if (!is_array($itinerary) || count($itinerary) === 0) {
+                    $itinerary = is_array($rawMainItinerary) ? $rawMainItinerary : [];
                 }
-                $itinerary = is_array($rawItinerary) ? $rawItinerary : [];
             @endphp
             @if(!empty($itinerary) && count($itinerary) > 0)
             <div class="mb-12 bg-gray-200/50 rounded-3xl p-8 md:p-12 border border-gray-200">
@@ -215,6 +215,65 @@
                 <h2 class="font-display text-2xl font-semibold text-gray-900 mb-6">{{ __('Day-by-Day Details') }}</h2>
                 <div class="space-y-4">
                     @foreach($itinerary as $index => $day)
+                    @php
+                        $mainDay = is_array($rawMainItinerary) && isset($rawMainItinerary[$index]) ? $rawMainItinerary[$index] : [];
+
+                        // Gather all possible images from translated day + main tour day
+                        $allDayImages = [];
+
+                        // 1. Check array 'images' or 'day_images'
+                        $arrImgs = $day['images'] ?? $day['day_images'] ?? $mainDay['images'] ?? $mainDay['day_images'] ?? [];
+                        if (is_string($arrImgs)) {
+                            $decoded = json_decode($arrImgs, true);
+                            $arrImgs = is_array($decoded) ? $decoded : [];
+                        }
+                        if (is_array($arrImgs)) {
+                            foreach ($arrImgs as $item) {
+                                $u = is_array($item) ? ($item['url'] ?? $item['path'] ?? '') : $item;
+                                $c = is_array($item) ? ($item['caption'] ?? '') : '';
+                                if (!empty($u)) {
+                                    $allDayImages[] = ['url' => $u, 'caption' => $c];
+                                }
+                            }
+                        }
+
+                        // 2. Check 'gallery_images'
+                        $galImgs = $day['gallery_images'] ?? $mainDay['gallery_images'] ?? [];
+                        if (is_string($galImgs)) {
+                            $decodedGal = json_decode($galImgs, true);
+                            if (is_array($decodedGal)) {
+                                $galImgs = $decodedGal;
+                            } else {
+                                $galImgs = array_map('trim', explode(',', $galImgs));
+                            }
+                        }
+                        if (is_array($galImgs)) {
+                            foreach ($galImgs as $gItem) {
+                                $u = is_array($gItem) ? ($gItem['url'] ?? $gItem['path'] ?? '') : $gItem;
+                                if (!empty($u) && !collect($allDayImages)->pluck('url')->contains($u)) {
+                                    $allDayImages[] = ['url' => $u, 'caption' => ''];
+                                }
+                            }
+                        }
+
+                        // 3. Check single 'cover_image' or 'image'
+                        $singleCandidates = [
+                            $day['cover_image'] ?? null,
+                            $day['image'] ?? null,
+                            $day['day_image'] ?? null,
+                            $mainDay['cover_image'] ?? null,
+                            $mainDay['image'] ?? null,
+                            $mainDay['day_image'] ?? null,
+                        ];
+
+                        foreach ($singleCandidates as $sCandidate) {
+                            if (!empty($sCandidate) && !is_array($sCandidate)) {
+                                if (!collect($allDayImages)->pluck('url')->contains($sCandidate)) {
+                                    array_unshift($allDayImages, ['url' => $sCandidate, 'caption' => '']);
+                                }
+                            }
+                        }
+                    @endphp
                     <div class="relative pl-8">
                         <div class="absolute left-0 top-3 w-6 h-6 bg-gold-500 rounded-full flex items-center justify-center text-safari-dark text-xs font-bold">{{ is_numeric($index) ? $index : $loop->iteration }}</div>
                         @if(!$loop->last)
@@ -222,56 +281,9 @@
                         @endif
                         <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
                             <h3 class="font-bold text-gray-800 mb-2">{{ __('Day') }} {{ is_numeric($index) ? $index : $loop->iteration }}: {{ $day['title'] ?? '' }}</h3>
-                            @php
-                                // Gather all possible images from all keys
-                                $allDayImages = [];
-
-                                // 1. Check array 'images' or 'day_images'
-                                $arrImgs = $day['images'] ?? $day['day_images'] ?? [];
-                                if (is_string($arrImgs)) {
-                                    $decoded = json_decode($arrImgs, true);
-                                    $arrImgs = is_array($decoded) ? $decoded : [];
-                                }
-                                if (is_array($arrImgs)) {
-                                    foreach ($arrImgs as $item) {
-                                        $u = is_array($item) ? ($item['url'] ?? $item['path'] ?? '') : $item;
-                                        $c = is_array($item) ? ($item['caption'] ?? '') : '';
-                                        if (!empty($u)) {
-                                            $allDayImages[] = ['url' => $u, 'caption' => $c];
-                                        }
-                                    }
-                                }
-
-                                // 2. Check 'gallery_images'
-                                $galImgs = $day['gallery_images'] ?? [];
-                                if (is_string($galImgs)) {
-                                    $decodedGal = json_decode($galImgs, true);
-                                    if (is_array($decodedGal)) {
-                                        $galImgs = $decodedGal;
-                                    } else {
-                                        $galImgs = array_map('trim', explode(',', $galImgs));
-                                    }
-                                }
-                                if (is_array($galImgs)) {
-                                    foreach ($galImgs as $gItem) {
-                                        $u = is_array($gItem) ? ($gItem['url'] ?? $gItem['path'] ?? '') : $gItem;
-                                        if (!empty($u) && !collect($allDayImages)->pluck('url')->contains($u)) {
-                                            $allDayImages[] = ['url' => $u, 'caption' => ''];
-                                        }
-                                    }
-                                }
-
-                                // 3. Check single 'cover_image' or 'image'
-                                $singleImg = $day['cover_image'] ?? $day['image'] ?? null;
-                                if (!empty($singleImg) && !is_array($singleImg)) {
-                                    if (!collect($allDayImages)->pluck('url')->contains($singleImg)) {
-                                        array_unshift($allDayImages, ['url' => $singleImg, 'caption' => '']);
-                                    }
-                                }
-                            @endphp
 
                             @if(!empty($day['description']))
-                            <p class="text-gray-500 text-sm leading-relaxed mb-3">{{ $day['description'] ?? '' }}</p>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-4">{{ $day['description'] ?? '' }}</p>
                             @endif
 
                             @if(!empty($allDayImages) && count($allDayImages) > 0)
@@ -279,31 +291,37 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                         @foreach($allDayImages as $imgIndex => $img)
                                             @php
-                                                $imgUrl = $img['url'] ?? '';
-                                                $caption = $img['caption'] ?? '';
-                                                if (!empty($imgUrl)) {
-                                                    if (str_starts_with($imgUrl, 'http')) {
-                                                        // keeps as is
-                                                    } elseif (str_starts_with($imgUrl, 'storage/') || str_starts_with($imgUrl, '/storage/')) {
-                                                        $imgUrl = asset($imgUrl);
+                                                $rawUrl = trim($img['url'] ?? '');
+                                                $caption = trim($img['caption'] ?? '');
+                                                $imgUrl = '';
+                                                if (!empty($rawUrl)) {
+                                                    if (str_starts_with($rawUrl, 'http://') || str_starts_with($rawUrl, 'https://') || str_starts_with($rawUrl, 'data:image/')) {
+                                                        $imgUrl = $rawUrl;
                                                     } else {
-                                                        $imgUrl = asset('storage/' . $imgUrl);
+                                                        $cleanPath = ltrim($rawUrl, '/');
+                                                        if (str_starts_with($cleanPath, 'storage/')) {
+                                                            $imgUrl = asset($cleanPath);
+                                                        } else {
+                                                            $imgUrl = asset('storage/' . $cleanPath);
+                                                        }
                                                     }
                                                 }
                                             @endphp
                                             @if(!empty($imgUrl))
                                                 <div class="flex flex-col bg-stone-50 border border-stone-200/80 rounded-xl overflow-hidden shadow-xs hover:border-gold-500/60 transition-all">
-                                                    <div class="h-32 sm:h-36 overflow-hidden bg-stone-900 relative">
-                                                        <img src="{{ $imgUrl }}" alt="Figure {{ $loop->iteration }}: {{ $caption }}"
+                                                    <div class="h-44 sm:h-52 md:h-56 overflow-hidden bg-stone-900 relative">
+                                                        <img src="{{ $imgUrl }}" alt="{{ $caption ?: ($day['title'] ?? 'Day Photo') }}"
                                                              class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
+                                                             loading="lazy"
                                                              onclick="openLightbox('{{ $imgUrl }}')">
                                                     </div>
+                                                    @if(!empty($caption))
                                                     <div class="p-2 bg-white border-t border-stone-200/60">
                                                         <p class="text-[11px] font-medium text-stone-700 leading-snug">
-                                                            <strong class="text-gold-600 font-bold">Figure {{ $loop->iteration }}.</strong>
-                                                            {{ $caption ?: ($day['title'] ?? 'Day Activity') }}
+                                                            {{ $caption }}
                                                         </p>
                                                     </div>
+                                                    @endif
                                                 </div>
                                             @endif
                                         @endforeach

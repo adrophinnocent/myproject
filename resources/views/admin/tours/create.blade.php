@@ -179,6 +179,7 @@
         </div>
         <div id="content-itinerary" class="tab-content hidden">
             <div x-data="{ mode: 'builder' }">
+                <input type="hidden" name="itinerary_mode" :value="mode">
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex bg-gray-100 p-1 rounded-xl">
                         <button type="button" @click="mode = 'builder'" :class="mode === 'builder' ? 'bg-white shadow-sm text-amber-600' : 'text-gray-500'" class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all">Manual Builder</button>

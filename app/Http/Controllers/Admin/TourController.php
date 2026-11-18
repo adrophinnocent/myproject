@@ -109,8 +109,10 @@ class TourController extends Controller
 
         $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images']);
 
-        // Handle Magic Code Itinerary & Package Data
-        if ($request->filled('itinerary_raw')) {
+        // Handle Magic Code Itinerary & Package Data vs Manual Builder
+        $itineraryMode = $request->input('itinerary_mode', 'builder');
+
+        if ($itineraryMode === 'code' && $request->filled('itinerary_raw')) {
             $decoded = json_decode($request->itinerary_raw, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: ' . json_last_error_msg()]);
@@ -378,8 +380,10 @@ class TourController extends Controller
 
         $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images']);
 
-        // Handle Magic Code Itinerary & Package Data
-        if ($request->filled('itinerary_raw')) {
+        // Handle Magic Code Itinerary & Package Data vs Manual Builder
+        $itineraryMode = $request->input('itinerary_mode', 'builder');
+
+        if ($itineraryMode === 'code' && $request->filled('itinerary_raw')) {
             $decoded = json_decode($request->itinerary_raw, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: ' . json_last_error_msg()]);
