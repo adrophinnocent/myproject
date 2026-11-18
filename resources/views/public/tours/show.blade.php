@@ -188,8 +188,14 @@
             </div>
             @endif
 
-            @php $itinerary = $tour->translate('itinerary'); @endphp
-            @if(!empty($itinerary) && is_array($itinerary) && count($itinerary) > 0)
+            @php
+                $rawItinerary = $tour->translate('itinerary');
+                if (empty($rawItinerary) || !is_array($rawItinerary)) {
+                    $rawItinerary = $tour->itinerary;
+                }
+                $itinerary = is_array($rawItinerary) ? $rawItinerary : [];
+            @endphp
+            @if(!empty($itinerary) && count($itinerary) > 0)
             <div class="mb-12 bg-gray-200/50 rounded-3xl p-8 md:p-12 border border-gray-200">
                 <h2 class="font-display text-3xl font-black text-[#e64a19] mb-8 uppercase tracking-tight">{{ __('Itinerary Summary') }}</h2>
                 <div class="space-y-4">
@@ -217,37 +223,64 @@
                         <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
                             <h3 class="font-bold text-gray-800 mb-2">{{ __('Day') }} {{ is_numeric($index) ? $index : $loop->iteration }}: {{ $day['title'] ?? '' }}</h3>
                             @php
-                                $singleDayImg = $day['image'] ?? $day['cover_image'] ?? null;
-                                $dayImgUrl = null;
-                                if ($singleDayImg) {
-                                    if (str_starts_with($singleDayImg, 'http')) {
-                                        $dayImgUrl = $singleDayImg;
-                                    } elseif (str_starts_with($singleDayImg, 'storage/') || str_starts_with($singleDayImg, '/storage/')) {
-                                        $dayImgUrl = asset($singleDayImg);
-                                    } else {
-                                        $dayImgUrl = asset('storage/' . $singleDayImg);
+                                // Gather all possible images from all keys
+                                $allDayImages = [];
+
+                                // 1. Check array 'images' or 'day_images'
+                                $arrImgs = $day['images'] ?? $day['day_images'] ?? [];
+                                if (is_string($arrImgs)) {
+                                    $decoded = json_decode($arrImgs, true);
+                                    $arrImgs = is_array($decoded) ? $decoded : [];
+                                }
+                                if (is_array($arrImgs)) {
+                                    foreach ($arrImgs as $item) {
+                                        $u = is_array($item) ? ($item['url'] ?? $item['path'] ?? '') : $item;
+                                        $c = is_array($item) ? ($item['caption'] ?? '') : '';
+                                        if (!empty($u)) {
+                                            $allDayImages[] = ['url' => $u, 'caption' => $c];
+                                        }
                                     }
                                 }
-                                $multipleDayImages = $day['images'] ?? $day['day_images'] ?? [];
-                            @endphp
 
-                            @if($dayImgUrl && empty($multipleDayImages))
-                                <div class="my-3 rounded-xl overflow-hidden max-h-80 border border-gray-100 shadow-sm cursor-pointer" onclick="openLightbox('{{ $dayImgUrl }}')">
-                                    <img src="{{ $dayImgUrl }}" alt="{{ $day['title'] ?? 'Day Image' }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
-                                </div>
-                            @endif
+                                // 2. Check 'gallery_images'
+                                $galImgs = $day['gallery_images'] ?? [];
+                                if (is_string($galImgs)) {
+                                    $decodedGal = json_decode($galImgs, true);
+                                    if (is_array($decodedGal)) {
+                                        $galImgs = $decodedGal;
+                                    } else {
+                                        $galImgs = array_map('trim', explode(',', $galImgs));
+                                    }
+                                }
+                                if (is_array($galImgs)) {
+                                    foreach ($galImgs as $gItem) {
+                                        $u = is_array($gItem) ? ($gItem['url'] ?? $gItem['path'] ?? '') : $gItem;
+                                        if (!empty($u) && !collect($allDayImages)->pluck('url')->contains($u)) {
+                                            $allDayImages[] = ['url' => $u, 'caption' => ''];
+                                        }
+                                    }
+                                }
+
+                                // 3. Check single 'cover_image' or 'image'
+                                $singleImg = $day['cover_image'] ?? $day['image'] ?? null;
+                                if (!empty($singleImg) && !is_array($singleImg)) {
+                                    if (!collect($allDayImages)->pluck('url')->contains($singleImg)) {
+                                        array_unshift($allDayImages, ['url' => $singleImg, 'caption' => '']);
+                                    }
+                                }
+                            @endphp
 
                             @if(!empty($day['description']))
                             <p class="text-gray-500 text-sm leading-relaxed mb-3">{{ $day['description'] ?? '' }}</p>
                             @endif
 
-                            @if(!empty($multipleDayImages) && is_array($multipleDayImages) && count($multipleDayImages) > 0)
+                            @if(!empty($allDayImages) && count($allDayImages) > 0)
                                 <div class="my-4 pt-1">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                        @foreach($multipleDayImages as $imgIndex => $img)
+                                        @foreach($allDayImages as $imgIndex => $img)
                                             @php
-                                                $imgUrl = is_array($img) ? ($img['url'] ?? $img['path'] ?? '') : $img;
-                                                $caption = is_array($img) ? ($img['caption'] ?? '') : '';
+                                                $imgUrl = $img['url'] ?? '';
+                                                $caption = $img['caption'] ?? '';
                                                 if (!empty($imgUrl)) {
                                                     if (str_starts_with($imgUrl, 'http')) {
                                                         // keeps as is
