@@ -475,52 +475,52 @@
 </section>
 
 {{-- ========== 3.5 WHY CHOOSE US SECTION (COMPACT UNIFIED BOX) ========== --}}
-<section class="py-16 bg-white relative overflow-hidden">
+<section class="pt-10 pb-6 md:pt-12 md:pb-8 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="bg-[#fcfaf7] rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-2xl shadow-gold-500/5 relative overflow-hidden group">
+        <div class="bg-[#fcfaf7] rounded-[2rem] p-8 md:p-12 border border-stone-200/70 shadow-md relative overflow-hidden group">
             {{-- Decorative background accent --}}
             <div class="absolute top-0 right-0 w-64 h-64 bg-gold-500/5 rounded-full -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110"></div>
 
-            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+            <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
                 {{-- Title Part --}}
                 <div class="lg:w-1/3 text-center lg:text-left relative z-10">
                     <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-[1.1]">Why Journey <br class="hidden lg:block"> With Us?</h2>
-                    <div class="w-16 h-1.5 bg-gold-500 mt-6 mx-auto lg:mx-0 rounded-full"></div>
+                    <div class="w-16 h-1.5 bg-gold-500 mt-5 mx-auto lg:mx-0 rounded-full"></div>
                 </div>
 
                 {{-- Features Part --}}
-                <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 relative z-10">
+                <div class="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8 relative z-10">
                     {{-- USP 1 --}}
-                    <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-5 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Excellence') }}</span>
-                        <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Expert Local Guides') }}</h4>
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Expert Local Guides') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('Our guides are born and raised in the heart of the Tanzanian wilderness, possessing an instinctive understanding of wildlife behavior and migratory patterns. With over a decade of field experience, they offer deep insights into the delicate balance of our ecosystem, ensuring every sighting is not just seen, but understood and ethically managed.') }}
                         </p>
                     </div>
 
                     {{-- USP 2 --}}
-                    <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-5 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Bespoke') }}</span>
-                        <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Tailor-Made Safaris') }}</h4>
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Tailor-Made Safaris') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('We believe no two travelers are the same, and neither should their journeys be. Our expert consultants work tirelessly with you to craft bespoke itineraries that match your specific pace, personal interests, and budget. From private photography expeditions to multi-generational family adventures, we personalize every detail to create your dream escape.') }}
                         </p>
                     </div>
 
                     {{-- USP 3 --}}
-                    <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Value') }}</span>
-                        <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('Direct Local Pricing') }}</h4>
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Direct Local Pricing') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('By operating directly on the ground from our headquarters in Tanzania, we eliminate unnecessary third-party commissions and middleman fees. This allows us to offer ultra-premium experiences at exceptionally competitive rates while ensuring that a larger portion of your travel investment goes directly into local conservation efforts and community upliftment.') }}
                         </p>
                     </div>
 
                     {{-- USP 4 --}}
-                    <div class="group/item border-l-2 border-gold-500/30 pl-8 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-3xl hover:bg-white hover:shadow-xl hover:shadow-gold-500/5">
+                    <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-5 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Reliability') }}</span>
-                        <h4 class="font-black text-gray-900 text-xl mb-3 uppercase tracking-tighter">{{ __('24/7 Ground Support') }}</h4>
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('24/7 Ground Support') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('Your safety and comfort are our non-negotiable priorities. From the moment you step off the plane until your final departure, our dedicated logistics team is available around the clock. We handle every detail, from flight transfers to medical contingencies, giving you the absolute peace of mind to fully immerse yourself in the majestic beauty of the African wilderness.') }}
                         </p>
@@ -533,7 +533,7 @@
 
 {{-- ========== 4. FEATURED TOURS (SPECIALIST 4-COLUMN CARD GRID) ========== --}}
 @if(isset($featuredTours) && $featuredTours->count() > 0)
-<section class="py-16 md:py-20 bg-stone-100/70 border-t border-stone-200/80">
+<section class="pt-6 pb-12 md:pt-8 md:pb-16 bg-stone-100/70 border-t border-stone-200/80">
     <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-10 md:mb-14">
             <span class="text-gold-600 text-xs font-black uppercase tracking-[0.3em] mb-2 block">Handpicked Journeys</span>
