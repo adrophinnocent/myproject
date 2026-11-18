@@ -163,17 +163,50 @@
                                     @endif
                                 </div>
 
-                                {{-- Framed Image Container (As requested in User Image Format) --}}
-                                @if(!empty($day['cover_image']))
-                                <div class="p-3 bg-[#f5f4f0] border border-stone-200/80 rounded-2xl mb-6 shadow-xs">
-                                    <img src="{{ $day['cover_image'] }}" alt="{{ $day['title'] ?? '' }}" class="w-full h-auto max-h-[480px] object-cover rounded-xl">
-                                </div>
-                                @endif
-
                                 {{-- Narrative Description --}}
                                 @if(!empty($day['description']))
                                 <div class="text-stone-700 text-sm md:text-base leading-relaxed mb-6 font-normal whitespace-pre-line">
                                     {{ $day['description'] }}
+                                </div>
+                                @endif
+
+                                {{-- Compact Day Images & Numbered Captions (2-3 per row) --}}
+                                @php
+                                    $dayImages = $day['images'] ?? $day['day_images'] ?? [];
+                                    if (empty($dayImages) && !empty($day['cover_image'])) {
+                                        $dayImages = [['url' => $day['cover_image'], 'caption' => '']];
+                                    }
+                                @endphp
+                                @if(!empty($dayImages) && is_array($dayImages) && count($dayImages) > 0)
+                                <div class="mb-6 pt-2">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+                                        @foreach($dayImages as $imgIndex => $img)
+                                            @php
+                                                $imgUrl = is_array($img) ? ($img['url'] ?? $img['path'] ?? '') : $img;
+                                                $caption = is_array($img) ? ($img['caption'] ?? '') : '';
+                                                if (str_starts_with($imgUrl, 'storage/')) {
+                                                    $imgUrl = asset($imgUrl);
+                                                } elseif (!str_starts_with($imgUrl, 'http') && !str_starts_with($imgUrl, '/')) {
+                                                    $imgUrl = asset('storage/' . $imgUrl);
+                                                }
+                                            @endphp
+                                            @if(!empty($imgUrl))
+                                                <div class="flex flex-col bg-[#faf9f6] border border-stone-200 rounded-xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
+                                                    <div class="h-32 sm:h-36 overflow-hidden bg-stone-900 relative">
+                                                        <img src="{{ $imgUrl }}"
+                                                             alt="Figure {{ $loop->iteration }}. {{ $caption }}"
+                                                             class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
+                                                             @click="lightboxImg = '{{ $imgUrl }}'">
+                                                    </div>
+                                                    <div class="p-2.5 bg-white border-t border-stone-200/60">
+                                                        <p class="text-[11px] font-medium text-stone-700 leading-snug">
+                                                            <strong class="text-[#b8920d] font-bold">Figure {{ $loop->iteration }}.</strong>@if(!empty($caption)) {{ $caption }}@endif
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                                 @endif
 
@@ -480,6 +513,16 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    {{-- LIGHTBOX MODAL --}}
+    <div x-show="lightboxImg" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" @click.self="lightboxImg = null">
+        <div class="relative max-w-4xl w-full max-h-[90vh]">
+            <button @click="lightboxImg = null" class="absolute -top-10 right-0 text-white hover:text-[#d4af37] text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1">
+                <span>Close &times;</span>
+            </button>
+            <img :src="lightboxImg" class="w-full h-auto max-h-[85vh] object-contain rounded-xl shadow-2xl border border-stone-700">
         </div>
     </div>
 

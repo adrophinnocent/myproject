@@ -188,6 +188,8 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin'
     ]);
     Route::post('/custom-inquiries/{inquiry}/convert', [App\Http\Controllers\Admin\CustomSafariInquiryController::class, 'convertToProposal'])->name('admin.custom-inquiries.convert');
 
+    Route::post('/proposals/upload-day-image', [App\Http\Controllers\Admin\ProposalController::class, 'uploadDayImage'])->name('admin.proposals.upload-day-image');
+
     Route::resource('/proposals', App\Http\Controllers\Admin\ProposalController::class)->names([
         'index' => 'admin.proposals.index',
         'create' => 'admin.proposals.create',

@@ -378,6 +378,30 @@ class ProposalController extends Controller
         return $pdf->download($filename);
     }
 
+    public function uploadDayImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif,svg|max:12288',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+            if ($ext === 'jpeg') $ext = 'jpg';
+            $filename = 'day_' . time() . '_' . Str::random(8) . '.' . $ext;
+
+            \Illuminate\Support\Facades\Storage::disk('public')->putFileAs('proposals/days', $file, $filename);
+            $url = 'storage/proposals/days/' . $filename;
+
+            return response()->json([
+                'success' => true,
+                'url' => $url,
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No image file uploaded.'], 400);
+    }
+
     private function parseItineraryInput($rawItinerary): array
     {
         if (is_string($rawItinerary)) {
@@ -405,6 +429,51 @@ class ProposalController extends Controller
                 }
             }
 
+            // Parse day-specific compact images & captions
+            $dayImages = [];
+            $rawImages = $item['images_json'] ?? $item['images'] ?? $item['day_images'] ?? [];
+
+            if (is_string($rawImages)) {
+                $decodedImgs = json_decode($rawImages, true);
+                $rawImages = is_array($decodedImgs) ? $decodedImgs : [];
+            }
+
+            if (is_array($rawImages)) {
+                foreach ($rawImages as $imgItem) {
+                    $url = is_array($imgItem) ? ($imgItem['url'] ?? $imgItem['path'] ?? '') : $imgItem;
+                    $caption = is_array($imgItem) ? ($imgItem['caption'] ?? '') : '';
+
+                    if (empty($url)) {
+                        continue;
+                    }
+
+                    // Handle Base64 image upload from device
+                    if (str_starts_with($url, 'data:image/')) {
+                        try {
+                            preg_match('/data:image\/(\w+);base64,/', $url, $typeMatches);
+                            $ext = strtolower($typeMatches[1] ?? 'jpg');
+                            if ($ext === 'jpeg') $ext = 'jpg';
+
+                            $imageData = substr($url, strpos($url, ',') + 1);
+                            $decodedBytes = base64_decode($imageData);
+
+                            if ($decodedBytes !== false) {
+                                $filename = 'day_' . ($index + 1) . '_' . time() . '_' . Str::random(8) . '.' . $ext;
+                                \Illuminate\Support\Facades\Storage::disk('public')->put('proposals/days/' . $filename, $decodedBytes);
+                                $url = 'storage/proposals/days/' . $filename;
+                            }
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::error('Failed to save base64 day image: ' . $e->getMessage());
+                        }
+                    }
+
+                    $dayImages[] = [
+                        'url' => $url,
+                        'caption' => trim($caption),
+                    ];
+                }
+            }
+
             $parsed[] = [
                 'day' => (int) ($item['day'] ?? ($index + 1)),
                 'date' => trim($item['date'] ?? ''),
@@ -429,6 +498,7 @@ class ProposalController extends Controller
                 'meal_plan' => trim($item['meal_plan'] ?? ''),
                 'cover_image' => trim($item['cover_image'] ?? ($item['image'] ?? '')),
                 'gallery_images' => $gallery,
+                'images' => $dayImages,
             ];
         }
 

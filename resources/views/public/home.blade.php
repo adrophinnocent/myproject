@@ -322,55 +322,153 @@
 </section>
 @endif
 
-{{-- ========== 3. MOUNT KILIMANJARO (STATIC) ========== --}}
-<section class="py-24 bg-safari-dark relative overflow-hidden border-b border-white/5">
+{{-- ========== 3. MOUNT KILIMANJARO (REDESIGNED COMPACT 2-COLUMN) ========== --}}
+<section class="py-12 bg-safari-dark relative overflow-hidden border-b border-white/5">
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="800" class="w-full h-full object-cover" alt="Kilimanjaro Background" loading="lazy" decoding="async">
         <div class="absolute inset-0 bg-gradient-to-b from-safari-dark via-transparent to-safari-dark"></div>
     </div>
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="text-center mb-16">
-            <span class="inline-block text-gold-400 text-sm font-black uppercase tracking-[0.4em] mb-4">The Roof of Africa</span>
-            <h2 class="font-display text-4xl md:text-8xl font-black text-white leading-tight mb-8">
-                Conquer <span class="italic text-gold-500">Mt. Kilimanjaro</span>: The Ultimate Bucket-List Trek
-            </h2>
-        </div>
+        @php
+            $kilimanjaroTours = \App\Models\Tour::published()
+                ->where(function($q) {
+                    $q->whereHas('category', function($catQ) {
+                        $catQ->where('slug', 'like', '%kilimanjaro%');
+                    })->orWhere('tour_type', 'kilimanjaro-trekking')
+                      ->orWhere('title', 'like', '%Kilimanjaro%')
+                      ->orWhere('title', 'like', '%Machame%')
+                      ->orWhere('title', 'like', '%Marangu%')
+                      ->orWhere('title', 'like', '%Lemosho%')
+                      ->orWhere('title', 'like', '%Rongai%');
+                })->get();
 
-        <div class="max-w-4xl mx-auto text-center">
-            <p class="text-gold-400 text-xl md:text-2xl font-display italic mb-10">
-                "This is your chance to do something extraordinary. Lace up your boots, pack your determination, and let’s claim the Roof of Africa together."
-            </p>
-            <div class="flex flex-wrap justify-center gap-6 mt-10">
-                <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                    <span class="text-gold-400 font-black text-xl">5,895m</span>
-                    <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Peak Elevation</span>
-                </div>
-                <div class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                    <span class="text-gold-400 font-black text-xl">98%</span>
-                    <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest leading-tight">Success Rate</span>
-                </div>
-            </div>
-        </div>
+            $routesDef = [
+                [
+                    'key' => 'machame',
+                    'name' => __('Machame Route'),
+                    'alias' => __('Whiskey Route'),
+                    'default_days' => '7 ' . __('Days'),
+                    'default_difficulty' => __('Challenging'),
+                    'badge_color' => 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                ],
+                [
+                    'key' => 'marangu',
+                    'name' => __('Marangu Route'),
+                    'alias' => __('Coca-Cola Route'),
+                    'default_days' => '6 ' . __('Days'),
+                    'default_difficulty' => __('Moderate'),
+                    'badge_color' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+                ],
+                [
+                    'key' => 'lemosho',
+                    'name' => __('Lemosho Route'),
+                    'alias' => __('Scenic Route'),
+                    'default_days' => '8 ' . __('Days'),
+                    'default_difficulty' => __('High Success'),
+                    'badge_color' => 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                ],
+                [
+                    'key' => 'rongai',
+                    'name' => __('Rongai Route'),
+                    'alias' => __('Northern Route'),
+                    'default_days' => '7 ' . __('Days'),
+                    'default_difficulty' => __('Moderate'),
+                    'badge_color' => 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+                ],
+            ];
 
-        <div class="mt-20 bg-white/5 border border-white/5 rounded-[3rem] p-8 md:p-16 backdrop-blur-md max-w-5xl mx-auto">
-            <h3 class="font-display text-2xl font-black text-[#e64a19] mb-10 text-center uppercase tracking-widest">Route Options</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
-                @php $routes = [['n' => 'Machame', 'a' => 'Whiskey Route'], ['n' => 'Marangu', 'a' => 'Coca-Cola Route'], ['n' => 'Lemosho', 'a' => 'Scenic Route'], ['n' => 'Rongai', 'a' => 'Northern Route']]; @endphp
-                @foreach($routes as $r)
-                <div class="flex items-center gap-4 group cursor-default">
-                    <span class="text-gold-500 font-black text-xl">→</span>
-                    <div class="flex flex-col">
-                        <span class="text-white font-bold text-lg leading-tight">{{ $r['n'] }}</span>
-                        <span class="text-gray-500 text-[9px] font-black uppercase tracking-widest mt-1">{{ $r['a'] }}</span>
+            $fallbackUrl = route('tours.index', ['tour_type' => 'kilimanjaro-trekking']);
+
+            $routes = array_map(function($r) use ($kilimanjaroTours, $fallbackUrl) {
+                $matched = $kilimanjaroTours->first(function($t) use ($r) {
+                    return stripos($t->title, $r['key']) !== false || stripos($t->slug, $r['key']) !== false;
+                });
+
+                if ($matched) {
+                    $url = route('tours.show', ['type' => $matched->item_type ?? 'tour', 'slug' => $matched->slug]);
+                    $days = $matched->duration_days ? ($matched->duration_days . ' ' . __('Days')) : $r['default_days'];
+                    $difficulty = $matched->difficulty_level ? ucfirst(__($matched->difficulty_level)) : $r['default_difficulty'];
+                } else {
+                    $url = $fallbackUrl;
+                    $days = $r['default_days'];
+                    $difficulty = $r['default_difficulty'];
+                }
+
+                return array_merge($r, [
+                    'url' => $url,
+                    'days' => $days,
+                    'difficulty' => $difficulty,
+                ]);
+            }, $routesDef);
+        @endphp
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {{-- Left Column: Text, Stats, and CTA --}}
+            <div class="lg:col-span-5 flex flex-col text-left">
+                <span class="inline-block text-gold-400 text-xs md:text-sm font-black uppercase tracking-[0.4em] mb-3">
+                    {{ __('The Roof of Africa') }}
+                </span>
+                <h2 class="font-display text-3xl md:text-5xl font-black text-white leading-tight mb-4">
+                    {{ __('Conquer') }} <span class="italic text-gold-500">{{ __('Mt. Kilimanjaro') }}</span>: {{ __('The Ultimate Bucket-List Trek') }}
+                </h2>
+                <p class="text-gold-300 text-sm md:text-base font-display italic mb-6 leading-relaxed">
+                    "{{ __('This is your chance to do something extraordinary. Lace up your boots, pack your determination, and let’s claim the Roof of Africa together.') }}"
+                </p>
+
+                {{-- Stats --}}
+                <div class="flex flex-wrap items-center gap-4 mb-8">
+                    <div class="flex items-center gap-3 px-5 py-2.5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+                        <span class="text-gold-400 font-black text-lg md:text-xl">5,895m</span>
+                        <span class="text-gray-300 text-[9px] font-black uppercase tracking-widest leading-tight">{{ __('Peak Elevation') }}</span>
+                    </div>
+                    <div class="flex items-center gap-3 px-5 py-2.5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+                        <span class="text-gold-400 font-black text-lg md:text-xl">98%</span>
+                        <span class="text-gray-300 text-[9px] font-black uppercase tracking-widest leading-tight">{{ __('Success Rate') }}</span>
                     </div>
                 </div>
-                @endforeach
+
+                {{-- CTA Button --}}
+                <div>
+                    <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="btn-gold w-full sm:w-auto px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest transition-all hover:scale-105 inline-flex items-center justify-center gap-3 shadow-lg">
+                        {{ __('Explore All Packages') }}
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                </div>
             </div>
-            <div class="mt-16 text-center">
-                <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="btn-gold px-12 py-5 rounded-full text-sm font-black uppercase tracking-widest transition-all hover:scale-105 inline-flex items-center gap-4">
-                    Explore All Packages
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                </a>
+
+            {{-- Right Column: 4 Route Cards (2x2 Grid on desktop, horizontal scroll on mobile) --}}
+            <div class="lg:col-span-7">
+                <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:gap-5 scrollbar-none">
+                    @foreach($routes as $r)
+                    <a href="{{ $r['url'] }}" class="snap-start shrink-0 w-[82%] sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 hover:border-gold-500/50 rounded-2xl p-5 md:p-6 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 group flex flex-col justify-between shadow-lg">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-full border {{ $r['badge_color'] }}">
+                                    {{ $r['difficulty'] }}
+                                </span>
+                                <span class="text-xs font-bold text-gold-400 flex items-center gap-1.5 shrink-0">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    {{ $r['days'] }}
+                                </span>
+                            </div>
+                            <h3 class="text-white font-bold text-lg leading-tight group-hover:text-gold-400 transition-colors">
+                                {{ $r['name'] }}
+                            </h3>
+                            <p class="text-gray-400 text-xs font-medium tracking-wide mt-1">
+                                {{ $r['alias'] }}
+                            </p>
+                        </div>
+                        <div class="mt-5 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-gray-300 group-hover:text-white transition-colors">
+                            <span>{{ __('Explore Route') }}</span>
+                            <svg class="w-4 h-4 text-gold-400 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>

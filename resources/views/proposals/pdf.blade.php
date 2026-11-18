@@ -336,13 +336,59 @@
                 <div class="day-num">DAY {{ sprintf('%02d', $day['day'] ?? $loop->iteration) }}</div>
                 <div class="day-header">{{ $day['title'] ?? '' }}</div>
 
-                {{-- Day Cover Image in PDF --}}
-                @if(!empty($day['cover_image']))
-                    <img src="{{ $day['cover_image'] }}" class="day-image" alt="{{ $day['title'] ?? '' }}">
-                @endif
-
                 @if(!empty($day['description']))
                     <div class="day-desc">{{ $day['description'] }}</div>
+                @endif
+
+                {{-- Compact Day Multiple Images & Numbered Captions in PDF --}}
+                @php
+                    $dayImages = $day['images'] ?? $day['day_images'] ?? [];
+                    if (empty($dayImages) && !empty($day['cover_image'])) {
+                        $dayImages = [['url' => $day['cover_image'], 'caption' => '']];
+                    }
+                @endphp
+                @if(!empty($dayImages) && is_array($dayImages) && count($dayImages) > 0)
+                <div style="margin-top: 8px; margin-bottom: 10px;">
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 5px; page-break-inside: avoid;">
+                        <tr>
+                            @foreach($dayImages as $imgIndex => $img)
+                                @php
+                                    $rawUrl = is_array($img) ? ($img['url'] ?? $img['path'] ?? '') : $img;
+                                    $caption = is_array($img) ? ($img['caption'] ?? '') : '';
+
+                                    $localPath = '';
+                                    if (str_starts_with($rawUrl, 'data:image/')) {
+                                        $localPath = $rawUrl;
+                                    } elseif (str_starts_with($rawUrl, 'http://') || str_starts_with($rawUrl, 'https://')) {
+                                        $localPath = $rawUrl;
+                                    } else {
+                                        $cleanPath = ltrim(str_replace(['storage/', '/storage/'], '', $rawUrl), '/');
+                                        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($cleanPath)) {
+                                            $localPath = \Illuminate\Support\Facades\Storage::disk('public')->path($cleanPath);
+                                        } elseif (file_exists(public_path('storage/' . $cleanPath))) {
+                                            $localPath = public_path('storage/' . $cleanPath);
+                                        } elseif (file_exists(public_path($rawUrl))) {
+                                            $localPath = public_path($rawUrl);
+                                        } else {
+                                            $localPath = $rawUrl;
+                                        }
+                                    }
+                                @endphp
+                                @if(!empty($localPath))
+                                    <td style="width: 32%; vertical-align: top; background: #fdfbf7; border: 1px solid #e7e5e4; border-radius: 6px; padding: 4px;">
+                                        <img src="{{ $localPath }}" style="width: 100%; height: 85px; object-fit: cover; border-radius: 4px; display: block;">
+                                        <div style="font-size: 7.5pt; color: #374151; margin-top: 4px; line-height: 1.2;">
+                                            <strong style="color: #b8920d;">Figure {{ $loop->iteration }}.</strong>@if(!empty($caption)) {{ $caption }}@endif
+                                        </div>
+                                    </td>
+                                    @if(($loop->iteration % 3 == 0) && !$loop->last)
+                                        </tr><tr>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </tr>
+                    </table>
+                </div>
                 @endif
 
                 <div class="day-meta">
