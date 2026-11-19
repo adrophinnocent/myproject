@@ -71,32 +71,149 @@
 @endsection
 
 @section('content')
-<div class="relative h-[70vh] min-h-[500px]">
-    <img src="{{ $tour->featured_image_url }}" width="1920" height="1080" alt="{{ $tour->getTranslation('title') }} - {{ $tour->destination->name ?? 'Tanzania' }} Safari" class="w-full h-full object-cover" loading="eager">
-    <div class="hero-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-    <div class="absolute inset-0 flex items-end">
-        <div class="max-w-7xl mx-auto px-4 pb-16 w-full">
-            <div class="flex flex-wrap gap-3 mb-6">
-                @if($tour->category)
-                <span class="px-4 py-1.5 bg-gold-500 text-safari-dark text-xs font-bold rounded-full uppercase tracking-widest shadow-lg">{{ $tour->category->name }}</span>
-                @endif
-                @if($tour->destination)
-                <span class="px-4 py-1.5 bg-white/20 text-white text-xs font-bold rounded-full backdrop-blur-md border border-white/30">{{ $tour->destination->name }}</span>
-                @endif
-            </div>
-            <h1 class="font-display text-5xl md:text-7xl text-white font-bold max-w-4xl leading-tight drop-shadow-2xl">{{ $tour->getTranslation('title') }}</h1>
-            <div class="flex items-center gap-6 mt-6 text-white/90">
-                <div class="flex items-center gap-2">
-                    <span class="text-gold-400 font-bold">
-                        <svg class="w-4 h-4 inline-block mb-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        {{ $tour->average_rating }}
+{{-- TourRadar Style Light Header & Top Photo Gallery --}}
+<div class="bg-stone-50 border-b border-stone-200/80 pt-6 pb-8">
+    <div class="max-w-7xl mx-auto px-4">
+        {{-- Breadcrumbs --}}
+        <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4 font-medium overflow-x-auto whitespace-nowrap">
+            <a href="{{ route('home') }}" class="hover:text-gold-600 transition-colors">{{ __('Home') }}</a>
+            <span>›</span>
+            <a href="{{ route('tours.index') }}" class="hover:text-gold-600 transition-colors">{{ __('Tours') }}</a>
+            @if($tour->category)
+                <span>›</span>
+                <a href="{{ route('tours.index', ['category' => $tour->category->slug]) }}" class="hover:text-gold-600 transition-colors">{{ $tour->category->name }}</a>
+            @endif
+            <span>›</span>
+            <span class="text-stone-800 font-bold truncate max-w-xs">{{ $tour->getTranslation('title') }}</span>
+        </nav>
+
+        {{-- Tour Title --}}
+        <h1 class="font-display text-3xl md:text-5xl font-black text-stone-900 leading-tight mb-4">
+            {{ $tour->getTranslation('title') }}
+        </h1>
+
+        {{-- Meta Badges & Info Bar --}}
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 text-xs md:text-sm font-medium text-stone-700">
+            <div class="flex flex-wrap items-center gap-3">
+                @if($tour->is_bestseller)
+                    <span class="px-3 py-1 bg-amber-500/10 text-amber-800 border border-amber-500/30 font-bold rounded-md text-xs">
+                        ⭐ {{ __('Best Seller') }}
                     </span>
-                    <span class="text-sm">({{ $tour->review_count }} Reviews)</span>
+                @endif
+                @if($tour->category)
+                    <span class="px-3 py-1 bg-stone-200 text-stone-800 font-bold rounded-md text-xs">
+                        {{ $tour->category->name }}
+                    </span>
+                @endif
+
+                {{-- Rating --}}
+                <div class="flex items-center gap-1.5 font-bold text-stone-900">
+                    <span class="text-gold-500">★ {{ number_format($tour->average_rating, 1) }}</span>
+                    <span class="text-stone-500 font-normal">({{ $tour->review_count }} {{ __('reviews') }})</span>
                 </div>
-                <div class="h-4 w-px bg-white/30"></div>
-                <div class="text-sm font-medium">{{ __('Certified Safari Operator') }}</div>
+
+                <span class="text-stone-300">•</span>
+
+                {{-- Duration & Route --}}
+                <div class="text-stone-700 font-semibold">
+                    <span>{{ $tour->duration_text }}</span>
+                    <span class="text-stone-400 font-normal mx-1">•</span>
+                    <span>{{ __('From') }} <strong class="text-stone-900">{{ $tour->departure_location ?: 'Arusha' }}</strong> {{ __('to') }} <strong class="text-stone-900">{{ $tour->meeting_point ?: ($tour->destination->name ?? 'Kilimanjaro') }}</strong></span>
+                </div>
+            </div>
+
+            {{-- Price & Quick CTA --}}
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block leading-tight">{{ __('From') }}</span>
+                    <span class="text-2xl font-black text-amber-600 leading-none">${{ number_format($tour->price) }} <span class="text-xs font-bold text-stone-500">USD</span></span>
+                </div>
+                <a href="#booking-card" class="btn-gold px-6 py-3 rounded-xl font-black text-xs uppercase tracking-wider shadow-md">
+                    {{ __('Book Now') }}
+                </a>
             </div>
         </div>
+
+        {{-- TourRadar Style Top Photo Gallery Grid / Carousel --}}
+        @php
+            $topGallery = [];
+
+            if (!empty($tour->featured_image)) {
+                $topGallery[] = $tour->featured_image_url;
+            }
+
+            if (!empty($tour->images)) {
+                foreach ($tour->images as $gImg) {
+                    if (!empty($gImg->url) && !in_array($gImg->url, $topGallery)) {
+                        $topGallery[] = $gImg->url;
+                    }
+                }
+            }
+
+            if (!empty($tour->itinerary) && is_array($tour->itinerary)) {
+                foreach ($tour->itinerary as $d) {
+                    $dayImgs = $d['images'] ?? [];
+                    if (is_array($dayImgs)) {
+                        foreach ($dayImgs as $dImg) {
+                            $u = is_array($dImg) ? ($dImg['url'] ?? '') : $dImg;
+                            if (!empty($u)) {
+                                $fullU = str_starts_with($u, 'http') ? $u : asset(str_starts_with(ltrim($u, '/'), 'storage/') ? ltrim($u, '/') : 'storage/' . ltrim($u, '/'));
+                                if (!in_array($fullU, $topGallery)) {
+                                    $topGallery[] = $fullU;
+                                }
+                            }
+                        }
+                    }
+                    $sImg = $d['image'] ?? $d['cover_image'] ?? null;
+                    if (!empty($sImg) && !is_array($sImg)) {
+                        $fullU = str_starts_with($sImg, 'http') ? $sImg : asset(str_starts_with(ltrim($sImg, '/'), 'storage/') ? ltrim($sImg, '/') : 'storage/' . ltrim($sImg, '/'));
+                        if (!in_array($fullU, $topGallery)) {
+                            $topGallery[] = $fullU;
+                        }
+                    }
+                }
+            }
+        @endphp
+
+        @if(!empty($topGallery))
+            <div class="mt-4">
+                {{-- Desktop Grid --}}
+                <div class="hidden md:grid md:grid-cols-3 md:gap-3 rounded-2xl overflow-hidden shadow-lg border border-stone-200/80 bg-stone-900">
+                    <div class="md:col-span-2 h-80 lg:h-96 relative group cursor-pointer" onclick="openLightbox('{{ $topGallery[0] }}')">
+                        <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                            <span class="text-white text-xs font-bold bg-black/60 px-3 py-1.5 rounded-lg backdrop-blur-sm">🔍 {{ __('Click to view full photo') }}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-rows-2 gap-3 h-80 lg:h-96">
+                        @for($gIndex = 1; $gIndex <= 2; $gIndex++)
+                            @if(isset($topGallery[$gIndex]))
+                                <div class="relative group cursor-pointer overflow-hidden rounded-xl bg-stone-900" onclick="openLightbox('{{ $topGallery[$gIndex] }}')">
+                                    <img src="{{ $topGallery[$gIndex] }}" alt="Tour Photo {{ $gIndex + 1 }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                                    @if($gIndex === 2 && count($topGallery) > 3)
+                                        <div class="absolute inset-0 bg-black/50 hover:bg-black/40 transition-colors flex items-center justify-center text-white font-black text-sm uppercase tracking-wider backdrop-blur-xs">
+                                            +{{ count($topGallery) - 3 }} {{ __('More Photos') }}
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                        @endfor
+                    </div>
+                </div>
+
+                {{-- Mobile Slider --}}
+                <div class="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 no-scrollbar scroll-smooth">
+                    @foreach($topGallery as $mIndex => $mUrl)
+                        <div class="snap-start shrink-0 w-[82vw] h-60 rounded-2xl overflow-hidden bg-stone-900 border border-stone-200 shadow-md relative" onclick="openLightbox('{{ $mUrl }}')">
+                            <img src="{{ $mUrl }}" alt="Photo {{ $mIndex + 1 }}" class="w-full h-full object-cover" loading="lazy">
+                            <div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                                {{ $mIndex + 1 }} / {{ count($topGallery) }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 
