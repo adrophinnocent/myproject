@@ -72,7 +72,7 @@
 
 @section('content')
 {{-- TourRadar Style Light Header & Top Photo Gallery --}}
-<div class="bg-stone-50 border-b border-stone-200/80 pt-6 pb-8">
+<div class="bg-stone-50 border-b border-stone-200/80 pt-28 md:pt-32 pb-8">
     <div class="max-w-7xl mx-auto px-4">
         {{-- Breadcrumbs --}}
         <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4 font-medium overflow-x-auto whitespace-nowrap">
@@ -88,48 +88,46 @@
         </nav>
 
         {{-- Tour Title --}}
-        <h1 class="font-display text-3xl md:text-5xl font-black text-stone-900 leading-tight mb-4">
+        <h1 class="font-display text-3xl md:text-5xl font-bold text-stone-900 leading-tight mb-4">
             {{ $tour->getTranslation('title') }}
         </h1>
 
-        {{-- Meta Badges & Info Bar --}}
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 text-xs md:text-sm font-medium text-stone-700">
-            <div class="flex flex-wrap items-center gap-3">
-                @if($tour->is_bestseller)
-                    <span class="px-3 py-1 bg-amber-500/10 text-amber-800 border border-amber-500/30 font-bold rounded-md text-xs">
-                        ⭐ {{ __('Best Seller') }}
-                    </span>
-                @endif
+        {{-- Meta Badges & Info Bar (Matching Screenshot) --}}
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 text-xs md:text-sm font-medium text-stone-700">
+            <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
                 @if($tour->category)
-                    <span class="px-3 py-1 bg-stone-200 text-stone-800 font-bold rounded-md text-xs">
+                    <span class="px-3 py-1 bg-stone-200/80 text-stone-800 font-bold rounded-md text-xs">
                         {{ $tour->category->name }}
                     </span>
                 @endif
 
                 {{-- Rating --}}
-                <div class="flex items-center gap-1.5 font-bold text-stone-900">
-                    <span class="text-gold-500">★ {{ number_format($tour->average_rating, 1) }}</span>
+                <div class="flex items-center gap-1 font-bold text-stone-900">
+                    <span class="text-amber-500">★ {{ number_format($tour->average_rating, 1) }}</span>
                     <span class="text-stone-500 font-normal">({{ $tour->review_count }} {{ __('reviews') }})</span>
                 </div>
 
                 <span class="text-stone-300">•</span>
 
-                {{-- Duration & Route --}}
-                <div class="text-stone-700 font-semibold">
-                    <span>{{ $tour->duration_text }}</span>
-                    <span class="text-stone-400 font-normal mx-1">•</span>
-                    <span>{{ __('From') }} <strong class="text-stone-900">{{ $tour->departure_location ?: 'Arusha' }}</strong> {{ __('to') }} <strong class="text-stone-900">{{ $tour->meeting_point ?: ($tour->destination->name ?? 'Kilimanjaro') }}</strong></span>
-                </div>
+                {{-- Duration --}}
+                <span class="font-semibold text-stone-800">{{ $tour->duration_text }}</span>
+
+                <span class="text-stone-300">•</span>
+
+                {{-- Route --}}
+                <span class="text-stone-600">
+                    {{ __('From') }} <strong class="text-stone-900">{{ $tour->departure_location ?: 'Arusha' }}</strong> {{ __('to') }} <strong class="text-stone-900">{{ $tour->meeting_point ?: ($tour->destination->name ?? 'Moshi, Tanzania') }}</strong>
+                </span>
             </div>
 
-            {{-- Price & Quick CTA --}}
-            <div class="flex items-center gap-3">
+            {{-- Price Tag & Book Now Button --}}
+            <div class="flex items-center gap-4 shrink-0">
                 <div class="text-right">
-                    <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block leading-tight">{{ __('From') }}</span>
-                    <span class="text-2xl font-black text-amber-600 leading-none">${{ number_format($tour->price) }} <span class="text-xs font-bold text-stone-500">USD</span></span>
+                    <span class="text-2xl md:text-3xl font-black text-amber-600 leading-none">${{ number_format($tour->price) }}</span>
+                    <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block mt-0.5">{{ __('FROM USD') }}</span>
                 </div>
-                <a href="#booking-card" class="btn-gold px-6 py-3 rounded-xl font-black text-xs uppercase tracking-wider shadow-md">
-                    {{ __('Book Now') }}
+                <a href="#booking-card" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-8 py-3.5 rounded-2xl text-xs uppercase tracking-widest shadow-md transition-all hover:scale-105 inline-flex items-center gap-2">
+                    {{ __('BOOK NOW') }}
                 </a>
             </div>
         </div>
@@ -177,15 +175,15 @@
 
         @if(!empty($topGallery))
             <div class="mt-4">
-                {{-- Desktop Grid --}}
+                {{-- Desktop Grid: TourRadar Layout --}}
                 <div class="hidden md:grid md:grid-cols-3 md:gap-3 rounded-2xl overflow-hidden shadow-lg border border-stone-200/80 bg-stone-900">
-                    <div class="md:col-span-2 h-80 lg:h-96 relative group cursor-pointer" onclick="openLightbox('{{ $topGallery[0] }}')">
+                    <div class="md:col-span-2 h-80 lg:h-[400px] relative group cursor-pointer" onclick="openLightbox('{{ $topGallery[0] }}')">
                         <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                             <span class="text-white text-xs font-bold bg-black/60 px-3 py-1.5 rounded-lg backdrop-blur-sm">🔍 {{ __('Click to view full photo') }}</span>
                         </div>
                     </div>
-                    <div class="grid grid-rows-2 gap-3 h-80 lg:h-96">
+                    <div class="grid grid-rows-2 gap-3 h-80 lg:h-[400px]">
                         @for($gIndex = 1; $gIndex <= 2; $gIndex++)
                             @if(isset($topGallery[$gIndex]))
                                 <div class="relative group cursor-pointer overflow-hidden rounded-xl bg-stone-900" onclick="openLightbox('{{ $topGallery[$gIndex] }}')">
@@ -204,9 +202,9 @@
                 {{-- Mobile Slider --}}
                 <div class="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 no-scrollbar scroll-smooth">
                     @foreach($topGallery as $mIndex => $mUrl)
-                        <div class="snap-start shrink-0 w-[82vw] h-60 rounded-2xl overflow-hidden bg-stone-900 border border-stone-200 shadow-md relative" onclick="openLightbox('{{ $mUrl }}')">
+                        <div class="snap-start shrink-0 w-[85vw] h-64 rounded-2xl overflow-hidden bg-stone-900 border border-stone-200 shadow-md relative" onclick="openLightbox('{{ $mUrl }}')">
                             <img src="{{ $mUrl }}" alt="Photo {{ $mIndex + 1 }}" class="w-full h-full object-cover" loading="lazy">
-                            <div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                            <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-md backdrop-blur-sm">
                                 {{ $mIndex + 1 }} / {{ count($topGallery) }}
                             </div>
                         </div>
@@ -271,19 +269,6 @@
                         @endif
                     @endforeach
                 </ul>
-            </div>
-            @endif
-
-            @if(!empty($tour->images) && $tour->images->count() > 0)
-            <div class="mb-10">
-                <h2 class="font-display text-2xl font-semibold text-gray-900 mb-4">{{ __('Tour Gallery') }}</h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    @foreach($tour->images as $image)
-                    <div class="img-zoom rounded-xl overflow-hidden h-40">
-                        <img src="{{ $image->url }}" width="400" height="300" alt="{{ $image->alt_text ?? $tour->translate('title') }}" class="w-full h-full object-cover cursor-pointer" onclick="openLightbox('{{ $image->url }}')" loading="lazy">
-                    </div>
-                    @endforeach
-                </div>
             </div>
             @endif
 
