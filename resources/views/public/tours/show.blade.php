@@ -964,6 +964,31 @@
                         </div>
                     </div>
 
+                    @if(!empty($tour->extras) && is_array($tour->extras) && count($tour->extras) > 0)
+                        <div class="mb-5 p-3.5 bg-[#fcfaf5] border border-[#e8dfcf] rounded-xl text-xs">
+                            <div class="flex items-center justify-between font-bold text-stone-900 mb-1.5">
+                                <span class="flex items-center gap-1.5 text-amber-800 uppercase text-[10px] tracking-wider">
+                                    <svg class="w-3.5 h-3.5 text-[#b8920d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    Optional Extras Available
+                                </span>
+                                <span class="text-[10px] bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-black">{{ count($tour->extras) }}</span>
+                            </div>
+                            <ul class="space-y-1 text-[11px] text-stone-600">
+                                @foreach(array_slice($tour->extras, 0, 3) as $ext)
+                                    @php $exName = is_array($ext) ? ($ext['name'] ?? $ext['title'] ?? '') : $ext; @endphp
+                                    @php $exPrice = is_array($ext) ? ($ext['price'] ?? 0) : 0; @endphp
+                                    @if($exName)
+                                        <li class="flex justify-between items-center">
+                                            <span class="truncate pr-2">• {{ $exName }}</span>
+                                            <span class="font-bold text-stone-900 shrink-0">+${{ number_format($exPrice, 0) }}</span>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                            <p class="text-[9px] text-stone-400 mt-1.5 italic">Select your preferred extras during checkout</p>
+                        </div>
+                    @endif
+
                     <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold w-full block text-center py-4 rounded-2xl font-black text-sm uppercase tracking-wider shadow-md transition-all mb-6">
                         See dates & prices
                     </a>

@@ -105,9 +105,26 @@ class TourController extends Controller
             'itinerary_raw' => 'nullable|string',
             'itinerary_images.*' => 'nullable|image|max:10240',
             'pickup_locations' => 'nullable|array',
+            'extras' => 'nullable|array',
         ]);
 
         $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images']);
+
+        if ($request->has('extras') && is_array($request->extras)) {
+            $cleanExtras = [];
+            foreach ($request->extras as $item) {
+                $name = trim(is_array($item) ? ($item['name'] ?? $item['title'] ?? '') : $item);
+                if (!empty($name)) {
+                    $cleanExtras[] = [
+                        'name' => $name,
+                        'description' => trim(is_array($item) ? ($item['description'] ?? '') : ''),
+                        'price' => (float) (is_array($item) ? ($item['price'] ?? 0) : 0),
+                        'price_type' => trim(is_array($item) ? ($item['price_type'] ?? 'per_person') : 'per_person'),
+                    ];
+                }
+            }
+            $data['extras'] = $cleanExtras;
+        }
 
         // Handle Magic Code Itinerary & Package Data vs Manual Builder
         $itineraryMode = $request->input('itinerary_mode', 'builder');
@@ -376,9 +393,26 @@ class TourController extends Controller
             'itinerary_raw' => 'nullable|string',
             'itinerary_images.*' => 'nullable|image|max:10240',
             'pickup_locations' => 'nullable|array',
+            'extras' => 'nullable|array',
         ]);
 
         $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images']);
+
+        if ($request->has('extras') && is_array($request->extras)) {
+            $cleanExtras = [];
+            foreach ($request->extras as $item) {
+                $name = trim(is_array($item) ? ($item['name'] ?? $item['title'] ?? '') : $item);
+                if (!empty($name)) {
+                    $cleanExtras[] = [
+                        'name' => $name,
+                        'description' => trim(is_array($item) ? ($item['description'] ?? '') : ''),
+                        'price' => (float) (is_array($item) ? ($item['price'] ?? 0) : 0),
+                        'price_type' => trim(is_array($item) ? ($item['price_type'] ?? 'per_person') : 'per_person'),
+                    ];
+                }
+            }
+            $data['extras'] = $cleanExtras;
+        }
 
         // Handle Magic Code Itinerary & Package Data vs Manual Builder
         $itineraryMode = $request->input('itinerary_mode', 'builder');

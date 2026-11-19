@@ -33,6 +33,7 @@
                 <button type="button" onclick="showTab('experience')" id="tab-experience" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Experience</button>
                 <button type="button" onclick="showTab('itinerary')" id="tab-itinerary" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Itinerary</button>
                 <button type="button" onclick="showTab('inclusions')" id="tab-inclusions" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Inclusions/Exclusions</button>
+                <button type="button" onclick="showTab('extras')" id="tab-extras" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Optional Extras</button>
                 <button type="button" onclick="showTab('faqs')" id="tab-faqs" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">FAQs</button>
                 <button type="button" onclick="showTab('media')" id="tab-media" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Media</button>
                 <button type="button" onclick="showTab('availability')" id="tab-availability" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Availability</button>
@@ -297,6 +298,23 @@
                             <button type="button" onclick="addGoodToKnow()" class="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">+</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Optional Extras -->
+        <div id="content-extras" class="tab-content hidden">
+            <div class="p-6 bg-white border border-gray-200 rounded-xl shadow-xs">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Optional Extras</h3>
+                        <p class="text-xs text-gray-500">Add add-on services or activities (e.g., Hot Air Balloon Safari, Airport Transfer, Single Supplement) that guests can select during booking.</p>
+                    </div>
+                    <button type="button" onclick="addTourExtra()" class="px-4 py-2 bg-[#D4AF37] hover:bg-[#b8920d] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow transition-all">+ Add Extra</button>
+                </div>
+
+                <div id="extras-container" class="space-y-4">
+                    {{-- Dynamically added extras --}}
                 </div>
             </div>
         </div>
@@ -753,6 +771,45 @@ function addGoodToKnow() {
         <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
     `;
     container.appendChild(div);
+}
+
+let extraCount = 0;
+function addTourExtra(data = null) {
+    const container = document.getElementById('extras-container');
+    if (!container) return;
+
+    const name = data ? (data.name || data.title || '') : '';
+    const price = data ? (data.price || '') : '';
+    const priceType = data ? (data.price_type || 'per_person') : 'per_person';
+    const desc = data ? (data.description || '') : '';
+
+    const html = `
+        <div class="p-4 border border-gray-200 rounded-xl bg-gray-50 flex flex-col md:flex-row md:items-center gap-4 relative shadow-2xs">
+            <div class="flex-1">
+                <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Extra Name *</label>
+                <input type="text" name="extras[${extraCount}][name]" value="${name}" placeholder="e.g. Hot Air Balloon Safari" required class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:ring-1 focus:ring-amber-500">
+            </div>
+            <div class="w-full md:w-36">
+                <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Price ($) *</label>
+                <input type="number" step="0.01" name="extras[${extraCount}][price]" value="${price}" placeholder="e.g. 450" required class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:ring-1 focus:ring-amber-500">
+            </div>
+            <div class="w-full md:w-44">
+                <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Pricing Unit</label>
+                <select name="extras[${extraCount}][price_type]" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs font-bold outline-none">
+                    <option value="per_person" ${priceType === 'per_person' ? 'selected' : ''}>Per Person ($/guest)</option>
+                    <option value="per_group" ${priceType === 'per_group' ? 'selected' : ''}>Per Group / Fixed ($ total)</option>
+                </select>
+            </div>
+            <div class="flex-1">
+                <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Short Description</label>
+                <input type="text" name="extras[${extraCount}][description]" value="${desc}" placeholder="e.g. Sunrise flight over Serengeti with champagne breakfast" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-amber-500">
+            </div>
+            <button type="button" onclick="this.closest('.p-4').remove()" class="text-rose-600 hover:text-rose-800 font-bold text-xs shrink-0 self-end md:self-center">Remove</button>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+    extraCount++;
 }
 
 function updateGalleryUploadCount(input) {

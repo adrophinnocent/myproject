@@ -55,7 +55,27 @@
                     <form action="{{ route('booking.store', $tour->slug) }}" method="POST" class="p-8" x-data="{
                         adults: {{ old('number_of_adults', 1) }},
                         children: {{ old('number_of_children', 0) }},
-                        get totalGuests() { return parseInt(this.adults || 0) + parseInt(this.children || 0) }
+                        tourPrice: {{ $tour->price }},
+                        childPrice: {{ $tour->child_price ?? ($tour->price * 0.7) }},
+                        depositPct: {{ \App\Models\Setting::get('deposit_percentage', 20) }},
+                        selectedExtras: [],
+                        extrasList: {{ json_encode($tour->extras ?? []) }},
+                        get totalGuests() { return parseInt(this.adults || 0) + parseInt(this.children || 0); },
+                        get baseCost() { return (parseInt(this.adults || 0) * this.tourPrice) + (parseInt(this.children || 0) * this.childPrice); },
+                        get extrasCost() {
+                            let sum = 0;
+                            this.selectedExtras.forEach(name => {
+                                const ext = this.extrasList.find(e => (e.name || e.title) === name);
+                                if (ext) {
+                                    const price = parseFloat(ext.price || 0);
+                                    const type = ext.price_type || 'per_person';
+                                    sum += (type === 'per_person') ? (price * this.totalGuests) : price;
+                                }
+                            });
+                            return sum;
+                        },
+                        get totalPrice() { return this.baseCost + this.extrasCost; },
+                        get depositRequired() { return (this.totalPrice * this.depositPct) / 100; }
                     }">
                         @csrf
 
@@ -139,7 +159,7 @@
 
                         <div class="mb-10">
                             <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm">2</span>
+                                <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm font-bold">2</span>
                                 {{ __('Trip Details') }}
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -157,6 +177,51 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- SECTION: ADD EXTRAS --}}
+                        @if(!empty($tour->extras) && is_array($tour->extras) && count($tour->extras) > 0)
+                        <div class="mb-10">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm font-bold">+</span>
+                                {{ __('Add Extras') }}
+                            </h3>
+                            <p class="text-xs text-stone-500 mb-6 pl-11">{{ __('Enhance your trip with optional add-on activities or services. Select any extras you wish to include.') }}</p>
+
+                            <div class="space-y-4 pl-0 sm:pl-11">
+                                @foreach($tour->extras as $eIndex => $ext)
+                                    @php
+                                        $exName = is_array($ext) ? ($ext['name'] ?? $ext['title'] ?? '') : $ext;
+                                        $exDesc = is_array($ext) ? ($ext['description'] ?? '') : '';
+                                        $exPrice = is_array($ext) ? (float)($ext['price'] ?? 0) : 0;
+                                        $exType = is_array($ext) ? ($ext['price_type'] ?? 'per_person') : 'per_person';
+                                    @endphp
+                                    @if(!empty($exName))
+                                    <label class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-white border-2 border-gray-100 rounded-2xl cursor-pointer hover:border-gold-500 transition-all has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/20 group shadow-xs">
+                                        <div class="flex items-start gap-4">
+                                            <input type="checkbox"
+                                                   name="selected_extras[]"
+                                                   value="{{ $exName }}"
+                                                   x-model="selectedExtras"
+                                                   class="mt-1 w-5 h-5 text-gold-600 border-gray-300 rounded focus:ring-gold-500 cursor-pointer">
+                                            <div>
+                                                <span class="block font-bold text-stone-900 text-sm sm:text-base group-hover:text-gold-700 transition-colors">{{ $exName }}</span>
+                                                @if(!empty($exDesc))
+                                                    <span class="block text-xs text-stone-500 mt-0.5 leading-relaxed">{{ $exDesc }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="text-left sm:text-right shrink-0 pl-9 sm:pl-0">
+                                            <span class="block font-black text-stone-900 text-base sm:text-lg">${{ number_format($exPrice, 2) }}</span>
+                                            <span class="block text-[10px] font-bold text-stone-400 uppercase tracking-wider">
+                                                {{ $exType === 'per_group' ? __('per group / fixed') : __('per person') }}
+                                            </span>
+                                        </div>
+                                    </label>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
 
                         <div class="mb-10">
                             <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
@@ -291,12 +356,23 @@
                             </div>
                         </div>
 
-                        <div class="py-6">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-lg font-bold text-gray-900">{{ __('Estimated Total') }}</span>
-                                <span class="text-2xl font-display font-bold text-gold-600" id="estimated-total" x-text="'$' + (totalGuests * {{ $tour->price }}).toLocaleString()">{{ $tour->formatted_price }}</span>
+                        <div class="py-6 border-t border-b border-gray-100 space-y-3">
+                            <div class="flex justify-between items-center text-sm text-gray-600 font-medium">
+                                <span>{{ __('Base Tour Price') }}</span>
+                                <span class="font-bold text-gray-900" x-text="'$' + baseCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
                             </div>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic">* {{ __('Final price may vary based on group size and seasonal factors.') }}</p>
+                            <div x-show="selectedExtras.length > 0" class="flex justify-between items-center text-sm text-amber-800 font-medium">
+                                <span>{{ __('Selected Extras') }} (<span x-text="selectedExtras.length"></span>)</span>
+                                <span class="font-bold text-amber-800" x-text="'+$' + extrasCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-base font-bold text-gray-900">{{ __('Estimated Total') }}</span>
+                                <span class="text-2xl font-display font-bold text-gold-600" x-text="'$' + totalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})">{{ $tour->formatted_price }}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs text-stone-500 pt-1 font-medium">
+                                <span>{{ __('Deposit Required') }} (<span x-text="depositPct"></span>%)</span>
+                                <span class="font-bold text-amber-700" x-text="'$' + depositRequired.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+                            </div>
                         </div>
 
                         <div class="bg-gold-50 p-4 rounded-2xl flex items-start gap-3">

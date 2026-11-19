@@ -88,13 +88,50 @@ class BookingController extends Controller
 
         $adults = (int) $booking->number_of_adults;
         $children = (int) $booking->number_of_children;
+        $totalGuests = max(1, $adults + $children);
 
         // Base tour price per adult
         $adultPrice = (float) $tour->price;
         // Children price discount (70% of adult price if not set)
         $childPrice = (float) ($tour->child_price ?? ($tour->price * 0.7));
 
-        $totalPrice = ($adultPrice * $adults) + ($childPrice * $children);
+        $basePrice = ($adultPrice * $adults) + ($childPrice * $children);
+
+        // Process selected optional extras
+        $selectedExtras = [];
+        $extrasTotal = 0.00;
+
+        if ($request->has('selected_extras') && is_array($request->selected_extras)) {
+            $tourExtras = is_array($tour->extras) ? $tour->extras : [];
+
+            foreach ($request->selected_extras as $extraName) {
+                foreach ($tourExtras as $tExtra) {
+                    $name = is_array($tExtra) ? ($tExtra['name'] ?? $tExtra['title'] ?? '') : $tExtra;
+                    if ($name === $extraName) {
+                        $price = is_array($tExtra) ? (float) ($tExtra['price'] ?? 0) : 0;
+                        $priceType = is_array($tExtra) ? ($tExtra['price_type'] ?? 'per_person') : 'per_person';
+                        $desc = is_array($tExtra) ? ($tExtra['description'] ?? '') : '';
+
+                        $itemTotal = ($priceType === 'per_person') ? ($price * $totalGuests) : $price;
+                        $extrasTotal += $itemTotal;
+
+                        $selectedExtras[] = [
+                            'name' => $name,
+                            'price' => $price,
+                            'price_type' => $priceType,
+                            'description' => $desc,
+                            'item_total' => $itemTotal,
+                        ];
+                        break;
+                    }
+                }
+            }
+        }
+
+        $booking->selected_extras = $selectedExtras;
+        $booking->extras_total = $extrasTotal;
+
+        $totalPrice = $basePrice + $extrasTotal;
         $booking->total_price = $totalPrice;
 
         // Deposit Percentage (20%)

@@ -55,6 +55,8 @@ class Booking extends Model
         'notes',
         'admin_notes',
         'cancellation_reason',
+        'selected_extras',
+        'extras_total',
         'approved_at',
         'confirmed_at',
         'cancelled_at',
@@ -63,6 +65,8 @@ class Booking extends Model
     protected function casts(): array
     {
         return [
+            'selected_extras' => 'array',
+            'extras_total' => 'decimal:2',
             'travel_date' => 'date',
             'end_date' => 'date',
             'balance_due_date' => 'date',

@@ -28,7 +28,7 @@ class Safari extends Model
         'video_url', 'meta_keywords', 'is_published', 'is_featured', 'is_bestseller', 'is_new',
         'availability_notes', 'min_age', 'max_age', 'languages_offered', 'safari_type',
         'seasonal_pricing', 'availability_dates', 'booking_deadline_days', 'sort_order', 'views_count',
-        'location_name', 'latitude', 'longitude', 'pickup_locations', 'meeting_point'
+        'location_name', 'latitude', 'longitude', 'pickup_locations', 'meeting_point', 'extras'
     ];
 
     protected $casts = [
@@ -46,6 +46,7 @@ class Safari extends Model
         'is_bestseller' => 'boolean',
         'is_new' => 'boolean',
         'pickup_locations' => 'array',
+        'extras' => 'array',
     ];
 
     public function category(): BelongsTo

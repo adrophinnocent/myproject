@@ -63,6 +63,30 @@
                 </div>
             </div>
 
+            {{-- Selected Extras Breakdown --}}
+            @if(!empty($booking->selected_extras) && is_array($booking->selected_extras) && count($booking->selected_extras) > 0)
+            <div>
+                <h3 class="font-display text-xl font-bold text-stone-900 mb-4">{{ __('Selected Optional Extras') }}</h3>
+                <div class="bg-stone-50 rounded-2xl p-6 border border-stone-200/80 space-y-3 text-sm">
+                    @foreach($booking->selected_extras as $extra)
+                        @php
+                            $eName = $extra['name'] ?? 'Extra';
+                            $eTotal = $extra['item_total'] ?? $extra['price'] ?? 0;
+                            $eType = $extra['price_type'] ?? 'per_person';
+                        @endphp
+                        <div class="flex justify-between items-center text-stone-700">
+                            <span>• {{ $eName }} ({{ $eType === 'per_group' ? 'Fixed Group' : 'Per Person' }})</span>
+                            <span class="font-bold text-stone-900">+${{ number_format($eTotal, 2) }}</span>
+                        </div>
+                    @endforeach
+                    <div class="flex justify-between items-center text-amber-800 pt-2 border-t border-stone-200 font-bold">
+                        <span>{{ __('Extras Subtotal') }}</span>
+                        <span>+${{ number_format($booking->extras_total, 2) }}</span>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             {{-- Financial Breakdown --}}
             <div>
                 <h3 class="font-display text-xl font-bold text-stone-900 mb-4">{{ __('Financial Summary') }}</h3>
