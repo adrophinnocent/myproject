@@ -18,7 +18,12 @@ Route::get('/admin/login', function() {
 Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])->name('admin.login');
 
 Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin')->group(function () {
-    // Priority Routes (Moved Bookings here)
+    // Priority Booking System Routes
+    Route::get('/bookings/export', [App\Http\Controllers\Admin\BookingController::class, 'export'])->name('admin.bookings.export');
+    Route::post('/bookings/{booking}/approve', [App\Http\Controllers\Admin\BookingController::class, 'approve'])->name('admin.bookings.approve');
+    Route::post('/bookings/{booking}/reject', [App\Http\Controllers\Admin\BookingController::class, 'reject'])->name('admin.bookings.reject');
+    Route::post('/bookings/{booking}/record-payment', [App\Http\Controllers\Admin\BookingController::class, 'recordPayment'])->name('admin.bookings.record-payment');
+
     Route::resource('/bookings', App\Http\Controllers\Admin\BookingController::class)->names([
         'index' => 'admin.bookings.index',
         'create' => 'admin.bookings.create',

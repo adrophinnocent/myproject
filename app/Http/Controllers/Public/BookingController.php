@@ -7,10 +7,13 @@ use App\Mail\CustomerBookingConfirmation;
 use App\Mail\AdminNewBookingNotification;
 use App\Models\Booking;
 use App\Models\Tour;
+use App\Models\Safari;
 use App\Models\AdminNotification;
+use App\Models\Setting;
 use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -24,7 +27,7 @@ class BookingController extends Controller
     public function create($slug)
     {
         $tour = Tour::withTrashed()->where('slug', $slug)->first()
-                ?? \App\Models\Safari::withTrashed()->where('slug', $slug)->firstOrFail();
+                ?? Safari::withTrashed()->where('slug', $slug)->firstOrFail();
 
         if ($tour->trashed()) {
             return redirect()->route('tours.index')->with('error', __('This tour package is no longer available.'));
@@ -36,7 +39,7 @@ class BookingController extends Controller
     public function store(Request $request, $slug)
     {
         $tour = Tour::withTrashed()->where('slug', $slug)->first()
-                ?? \App\Models\Safari::withTrashed()->where('slug', $slug)->firstOrFail();
+                ?? Safari::withTrashed()->where('slug', $slug)->firstOrFail();
 
         if ($tour->trashed()) {
             return redirect()->route('tours.index')->with('error', __('This tour package is no longer available.'));
@@ -47,16 +50,31 @@ class BookingController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:255',
-            'nationality' => 'required|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
             'number_of_adults' => 'required|integer|min:1',
             'number_of_children' => 'nullable|integer|min:0',
             'travel_date' => 'required|date|after:today',
-            'special_requests' => 'nullable|string',
-            'accommodation_preference' => 'nullable|string',
-            'payment_method' => 'required|in:paypal,bank_transfer',
+            'special_requests' => 'nullable|string|max:2000',
+            'accommodation_preference' => 'nullable|string|max:255',
+            'payment_method' => 'nullable|string|max:100',
+            'currency' => 'nullable|string|in:USD,EUR,GBP,TZS',
         ]);
 
-        $booking = new Booking($validated);
+        $booking = new Booking();
+        $booking->first_name = $validated['first_name'];
+        $booking->last_name = $validated['last_name'];
+        $booking->email = $validated['email'];
+        $booking->phone = $validated['phone'];
+        $booking->country = $validated['country'] ?? $validated['nationality'] ?? 'International';
+        $booking->nationality = $validated['nationality'] ?? $validated['country'] ?? 'International';
+        $booking->number_of_adults = $validated['number_of_adults'];
+        $booking->number_of_children = $validated['number_of_children'] ?? 0;
+        $booking->travel_date = $validated['travel_date'];
+        $booking->special_requests = $validated['special_requests'] ?? null;
+        $booking->accommodation_preference = $validated['accommodation_preference'] ?? null;
+        $booking->payment_method = $validated['payment_method'] ?? 'visa_mastercard';
+        $booking->currency = $validated['currency'] ?? 'USD';
 
         if ($tour instanceof Tour) {
             $booking->tour_id = $tour->id;
@@ -64,80 +82,124 @@ class BookingController extends Controller
             $booking->safari_id = $tour->id;
         }
 
-        $booking->status = 'pending';
-        $booking->payment_status = 'unpaid';
+        // Status & Financial Calculations
+        $booking->status = Booking::STATUS_PENDING;
+        $booking->payment_status = Booking::PAYMENT_UNPAID;
 
-        // Price calculation
-        $totalGuests = $validated['number_of_adults'] + ($validated['number_of_children'] ?? 0);
-        $booking->total_price = $tour->price * $totalGuests;
+        $adults = (int) $booking->number_of_adults;
+        $children = (int) $booking->number_of_children;
+
+        // Base tour price per adult
+        $adultPrice = (float) $tour->price;
+        // Children price discount (70% of adult price if not set)
+        $childPrice = (float) ($tour->child_price ?? ($tour->price * 0.7));
+
+        $totalPrice = ($adultPrice * $adults) + ($childPrice * $children);
+        $booking->total_price = $totalPrice;
+
+        // Deposit Percentage (20%)
+        $depositPct = (float) Setting::get('deposit_percentage', 20.00);
+        $booking->deposit_percentage = $depositPct;
+        $booking->deposit_required = round(($totalPrice * $depositPct) / 100, 2);
+        $booking->deposit_paid = 0.00;
+        $booking->balance_amount = $totalPrice;
+
+        if ($booking->travel_date) {
+            $booking->balance_due_date = $booking->travel_date->copy()->subDays(60);
+        }
 
         $booking->save();
 
-        // Ensure relationships are loaded for email templates
+        // Load relationships
         $booking->load(['tour', 'safari']);
 
         // 1. Generate PDF Itinerary
         try {
             $pdfPath = $this->pdfService->generateItinerary($booking);
         } catch (\Exception $e) {
-            \Log::error('PDF Generation failed: ' . $e->getMessage());
+            Log::error('PDF Generation failed: ' . $e->getMessage());
             $pdfPath = null;
         }
 
-        // 2. Send Booking Confirmation to Customer (with PDF attachment)
+        // 2. Send Booking Confirmation email to Customer
         try {
             Mail::to($booking->email)->send(new CustomerBookingConfirmation($booking, $pdfPath));
         } catch (\Exception $e) {
-            \Log::error('Customer Mail failed: ' . $e->getMessage());
+            Log::error('Customer Mail failed: ' . $e->getMessage());
         }
 
-        // 3. Send Admin Alert
+        // 3. Send Admin Alert Notification
         try {
-            $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
+            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
             Mail::to($adminEmail)->send(new AdminNewBookingNotification($booking));
-
-            // WhatsApp Notification to Admin
-            $whatsappPhone = \App\Models\Setting::get('site_phone', '255795482197');
-            $apiKey = \App\Models\Setting::get('whatsapp_api_key', ''); // We will add this to settings
-
-            if ($apiKey) {
-                $message = "🚨 *NEW BOOKING ALERT!*%0A%0A"
-                         . "*Ref:* " . $booking->booking_reference . "%0A"
-                         . "*Client:* " . $booking->first_name . " " . $booking->last_name . "%0A"
-                         . "*Tour:* " . ($booking->tour->title ?? $booking->safari->title ?? 'N/A') . "%0A"
-                         . "*Travel Date:* " . $booking->travel_date->format('d M Y') . "%0A"
-                         . "*Adults:* " . $booking->number_of_adults . "%0A"
-                         . "*Total Price:* $" . number_format($booking->total_price, 2) . "%0A%0A"
-                         . "View details: https://twinasafaris.com/admin/bookings/" . $booking->id;
-
-                $url = "https://api.callmebot.com/whatsapp.php?phone=" . preg_replace('/\D/', '', $whatsappPhone) . "&text=" . $message . "&apikey=" . $apiKey;
-
-                \Illuminate\Support\Facades\Http::get($url);
-            }
         } catch (\Exception $e) {
-            \Log::error('Admin Notifications failed: ' . $e->getMessage());
+            Log::error('Admin Email Alert failed: ' . $e->getMessage());
         }
 
         // 4. Create Admin Dashboard Notification
         try {
             AdminNotification::create([
                 'type' => 'booking',
-                'title' => 'New Booking: ' . $booking->booking_reference,
-                'message' => 'New reservation from ' . $booking->first_name . ' for ' . ($booking->tour->title ?? $booking->safari->title ?? 'Tour'),
+                'title' => 'New Booking Request: ' . $booking->booking_reference,
+                'message' => "New safari request from {$booking->full_name} for {$booking->bookable_item->title} ({$booking->formatted_total_price})",
                 'link' => route('admin.bookings.show', $booking),
                 'is_read' => false
             ]);
         } catch (\Exception $e) {
-            \Log::error('Admin Notification failed: ' . $e->getMessage());
+            Log::error('Admin Notification DB create failed: ' . $e->getMessage());
         }
 
-        return redirect()->route('booking.success', $booking->booking_reference);
+        return redirect()->route('booking.confirmation', $booking->booking_reference)
+            ->with('success', __('Your booking request has been submitted successfully! Ref: ') . $booking->booking_reference);
+    }
+
+    public function confirmation($reference)
+    {
+        $booking = Booking::where('booking_reference', $reference)
+            ->orWhere('token', $reference)
+            ->with(['tour', 'safari', 'payments'])
+            ->firstOrFail();
+
+        return view('public.booking.confirmation', compact('booking'));
+    }
+
+    public function status($reference)
+    {
+        $booking = Booking::where('booking_reference', $reference)
+            ->orWhere('token', $reference)
+            ->with(['tour', 'safari', 'payments' => function($q) {
+                $q->latest();
+            }])
+            ->firstOrFail();
+
+        return view('public.booking.status', compact('booking'));
+    }
+
+    public function myBookings(Request $request)
+    {
+        $bookings = collect();
+        $query = trim($request->input('search', ''));
+
+        if (!empty($query)) {
+            $bookings = Booking::where('booking_reference', $query)
+                ->orWhere('email', 'like', "%{$query}%")
+                ->orWhere('token', $query)
+                ->with(['tour', 'safari'])
+                ->latest()
+                ->get();
+        }
+
+        return view('public.booking.my-bookings', compact('bookings', 'query'));
+    }
+
+    public function policies()
+    {
+        return view('public.booking.policies');
     }
 
     public function success($reference)
     {
-        $booking = Booking::where('booking_reference', $reference)->with(['tour', 'safari'])->firstOrFail();
-        return view('public.booking.success', compact('booking'));
+        return redirect()->route('booking.confirmation', $reference);
     }
 
     public function downloadItinerary($reference)
@@ -149,13 +211,12 @@ class BookingController extends Controller
                 $pdfPath = $this->pdfService->generateItinerary($booking);
                 return response()->download($pdfPath, 'Itinerary-' . $booking->booking_reference . '.pdf');
             } catch (\Exception $e) {
-                \Log::error('PDF Download failed: ' . $e->getMessage());
+                Log::error('PDF Download failed: ' . $e->getMessage());
                 return back()->with('error', 'Sorry, we could not generate the PDF at this moment. Please try again later.');
             }
         }
 
-        // Fallback: check if reference is a Tour / Safari slug
-        $tour = Tour::where('slug', $reference)->first() ?? \App\Models\Safari::where('slug', $reference)->first();
+        $tour = Tour::where('slug', $reference)->first() ?? Safari::where('slug', $reference)->first();
         if ($tour) {
             return redirect()->route('tours.download-pdf', $tour->slug);
         }

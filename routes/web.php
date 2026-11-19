@@ -34,10 +34,22 @@ Route::get('/itineraries/{slug}', function($slug) {
     return redirect()->to($url, 301);
 });
 
-// Public Booking & PDF Brochure Routes
+// Public Booking System Routes
 Route::get('/tours/{slug}/download-pdf', [App\Http\Controllers\Public\TourController::class, 'downloadPdf'])->name('tours.download-pdf');
+Route::get('/booking/{slug}', [App\Http\Controllers\Public\BookingController::class, 'create']);
 Route::get('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'create'])->name('booking.create');
 Route::post('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'store'])->name('booking.store');
+
+Route::get('/booking/confirmation/{reference}', [App\Http\Controllers\Public\BookingController::class, 'confirmation'])->name('booking.confirmation');
+Route::get('/booking/status/{reference}', [App\Http\Controllers\Public\BookingController::class, 'status'])->name('booking.status');
+Route::get('/booking/payment/{reference}', [App\Http\Controllers\Public\PaymentController::class, 'show'])->name('booking.payment');
+Route::post('/booking/payment/{reference}/process', [App\Http\Controllers\Public\PaymentController::class, 'processPayment'])->name('booking.payment.process');
+Route::post('/booking/payment/webhook', [App\Http\Controllers\Public\PaymentController::class, 'webhook'])->name('booking.payment.webhook');
+
+Route::get('/my-bookings', [App\Http\Controllers\Public\BookingController::class, 'myBookings'])->name('booking.my-bookings');
+Route::post('/my-bookings/search', [App\Http\Controllers\Public\BookingController::class, 'myBookings'])->name('booking.my-bookings.search');
+Route::get('/booking/policies', [App\Http\Controllers\Public\BookingController::class, 'policies'])->name('booking.policies');
+
 Route::get('/booking/success/{reference}', [App\Http\Controllers\Public\BookingController::class, 'success'])->name('booking.success');
 Route::get('/booking/download/{reference}', [App\Http\Controllers\Public\BookingController::class, 'downloadItinerary'])->name('booking.download');
 
