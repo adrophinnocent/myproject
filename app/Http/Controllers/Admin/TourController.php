@@ -123,7 +123,11 @@ class TourController extends Controller
                     ];
                 }
             }
-            $data['extras'] = $cleanExtras;
+            if (\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
+                $data['extras'] = $cleanExtras;
+            }
+        } elseif (!\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
+            unset($data['extras']);
         }
 
         // Handle Magic Code Itinerary & Package Data vs Manual Builder
@@ -411,7 +415,11 @@ class TourController extends Controller
                     ];
                 }
             }
-            $data['extras'] = $cleanExtras;
+            if (\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
+                $data['extras'] = $cleanExtras;
+            }
+        } elseif (!\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
+            unset($data['extras']);
         }
 
         // Handle Magic Code Itinerary & Package Data vs Manual Builder
