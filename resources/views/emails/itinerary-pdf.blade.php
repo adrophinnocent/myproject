@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     @php
-        $title = $booking ? ($booking->bookable_item->title ?? 'Safari') : ($tripPlan->trip_title ?? 'Your Safari');
-        $clientName = $booking ? ($booking->first_name . ' ' . $booking->last_name) : $tripPlan->name;
-        $date = $booking ? $booking->travel_date : $tripPlan->travel_date;
-        $duration = $booking ? ($booking->bookable_item->duration_text ?? 'Custom') : ($tripPlan->duration ?: 'Custom');
-        $ref = $booking ? $booking->booking_reference : 'TP-' . $tripPlan->id;
+        $tour = $tour ?? null;
+        $title = $tour ? $tour->title : ($booking ? ($booking->bookable_item->title ?? 'Safari') : ($tripPlan->trip_title ?? 'Your Safari'));
+        $clientName = $booking ? ($booking->first_name . ' ' . $booking->last_name) : ($tripPlan ? $tripPlan->name : 'Valued Guest');
+        $date = $booking ? $booking->travel_date : ($tripPlan ? $tripPlan->travel_date : null);
+        $duration = $tour ? ($tour->duration_text ?? 'Custom') : ($booking ? ($booking->bookable_item->duration_text ?? 'Custom') : ($tripPlan->duration ?: 'Custom'));
+        $ref = $tour ? 'TOUR-' . $tour->id : ($booking ? $booking->booking_reference : 'TP-' . ($tripPlan->id ?? '1'));
 
         // Itinerary logic
-        if ($booking) {
+        if ($tour) {
+            $rawItinerary = $tour->itinerary ?? [];
+        } elseif ($booking) {
             $rawItinerary = $booking->bookable_item->itinerary ?? [];
         } else {
             $rawItinerary = $tripPlan->itinerary_data ?? [];

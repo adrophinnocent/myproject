@@ -989,7 +989,7 @@
                     <h4 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-2">{{ __('Plan your adventure:') }}</h4>
 
                     @if(!empty($tour->itinerary))
-                        <a href="{{ route('booking.download', $tour->slug) }}" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-bold transition-all">
+                        <a href="{{ route('tours.download-pdf', $tour->slug) }}" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-bold transition-all">
                             <span class="text-amber-600 text-base">📥</span>
                             <span>{{ __('Download PDF Brochure') }}</span>
                         </a>

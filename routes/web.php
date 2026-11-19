@@ -34,7 +34,8 @@ Route::get('/itineraries/{slug}', function($slug) {
     return redirect()->to($url, 301);
 });
 
-// Public Booking Routes
+// Public Booking & PDF Brochure Routes
+Route::get('/tours/{slug}/download-pdf', [App\Http\Controllers\Public\TourController::class, 'downloadPdf'])->name('tours.download-pdf');
 Route::get('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'create'])->name('booking.create');
 Route::post('/tours/{tour:slug}/book', [App\Http\Controllers\Public\BookingController::class, 'store'])->name('booking.store');
 Route::get('/booking/success/{reference}', [App\Http\Controllers\Public\BookingController::class, 'success'])->name('booking.success');

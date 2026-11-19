@@ -171,4 +171,30 @@ class TourController extends Controller
 
         return view('public.tours.show', compact('tour', 'relatedTours'));
     }
+
+    public function downloadPdf($slug)
+    {
+        $cleanSlug = str_replace('.html', '', $slug);
+
+        $tour = \App\Models\Safari::where('slug', $cleanSlug)->first()
+                ?? Tour::where('slug', $cleanSlug)->firstOrFail();
+
+        try {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('emails.itinerary-pdf', [
+                'booking' => null,
+                'tripPlan' => null,
+                'tour' => $tour,
+            ])->setOption('isRemoteEnabled', true)->setOption('isHtml5ParserEnabled', true);
+
+            $filename = 'Tour-Brochure-' . \Illuminate\Support\Str::slug($tour->title) . '.pdf';
+
+            return response($pdf->output(), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Tour PDF Brochure Generation failed: ' . $e->getMessage());
+            return back()->with('error', 'Sorry, we could not generate the PDF brochure at this moment.');
+        }
+    }
 }

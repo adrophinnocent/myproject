@@ -142,14 +142,24 @@ class BookingController extends Controller
 
     public function downloadItinerary($reference)
     {
-        $booking = Booking::where('booking_reference', $reference)->with(['tour', 'safari'])->firstOrFail();
+        $booking = Booking::where('booking_reference', $reference)->with(['tour', 'safari'])->first();
 
-        try {
-            $pdfPath = $this->pdfService->generateItinerary($booking);
-            return response()->download($pdfPath, 'Itinerary-' . $booking->booking_reference . '.pdf');
-        } catch (\Exception $e) {
-            \Log::error('PDF Download failed: ' . $e->getMessage());
-            return back()->with('error', 'Sorry, we could not generate the PDF at this moment. Please try again later.');
+        if ($booking) {
+            try {
+                $pdfPath = $this->pdfService->generateItinerary($booking);
+                return response()->download($pdfPath, 'Itinerary-' . $booking->booking_reference . '.pdf');
+            } catch (\Exception $e) {
+                \Log::error('PDF Download failed: ' . $e->getMessage());
+                return back()->with('error', 'Sorry, we could not generate the PDF at this moment. Please try again later.');
+            }
         }
+
+        // Fallback: check if reference is a Tour / Safari slug
+        $tour = Tour::where('slug', $reference)->first() ?? \App\Models\Safari::where('slug', $reference)->first();
+        if ($tour) {
+            return redirect()->route('tours.download-pdf', $tour->slug);
+        }
+
+        abort(404);
     }
 }
