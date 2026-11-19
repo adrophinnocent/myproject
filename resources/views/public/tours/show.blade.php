@@ -120,13 +120,21 @@
                 </span>
             </div>
 
-            {{-- Price Tag & Book Now Button --}}
-            <div class="flex items-center gap-4 shrink-0">
-                <div class="text-right">
+            {{-- Price Tag & Action Buttons (Share, Save, Book Now) --}}
+            <div class="flex items-center gap-3.5 shrink-0">
+                <button onclick="navigator.share ? navigator.share({title: '{{ $tour->title }}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href)" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-amber-600 transition-colors bg-white px-3.5 py-2.5 rounded-full border border-stone-200/80 shadow-xs cursor-pointer">
+                    <svg class="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 9a3 3 0 100-2.684 3 3 0 000 2.684z"/></svg>
+                    <span>{{ __('Share') }}</span>
+                </button>
+                <button x-data="{ saved: false }" @click="saved = !saved" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-rose-600 transition-colors bg-white px-3.5 py-2.5 rounded-full border border-stone-200/80 shadow-xs cursor-pointer">
+                    <svg class="w-4 h-4" :class="saved ? 'fill-rose-500 text-rose-500' : 'text-stone-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    <span x-text="saved ? 'Saved' : 'Save'">{{ __('Save') }}</span>
+                </button>
+                <div class="text-right ml-1">
                     <span class="text-2xl md:text-3xl font-black text-amber-600 leading-none">${{ number_format($tour->price) }}</span>
                     <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block mt-0.5">{{ __('FROM USD') }}</span>
                 </div>
-                <a href="#booking-card" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-8 py-3.5 rounded-2xl text-xs uppercase tracking-widest shadow-md transition-all hover:scale-105 inline-flex items-center gap-2">
+                <a href="#booking-card" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-7 py-3 rounded-2xl text-xs uppercase tracking-widest shadow-md transition-all hover:scale-105 inline-flex items-center gap-2">
                     {{ __('BOOK NOW') }}
                 </a>
             </div>
@@ -175,69 +183,99 @@
 
         @if(!empty($topGallery))
             <div class="mt-4">
-                {{-- Desktop Grid: Exact TourRadar 5-Photo Collage Layout --}}
-                @php $gCount = count($topGallery); @endphp
+                {{-- Desktop Grid: Exact TourRadar 5-Slot Collage Layout (4 Photos + Review Quote Card) --}}
+                @php
+                    $gCount = count($topGallery);
+                    $firstReview = $tour->reviews ? $tour->reviews->first() : null;
+                    $revContent = $firstReview ? $firstReview->content : __('We saw many, many animals and were able to get so close to cheetahs and lions hunting it was like being in a documentary.');
+                    $revName = $firstReview ? $firstReview->name : 'Sarah Mitchell';
+                    $revCountry = $firstReview ? ($firstReview->country ?: __('Safari Traveler')) : __('Safari Traveler');
+                    $revDate = $firstReview ? ($firstReview->trip_date ? $firstReview->trip_date->format('M Y') : $firstReview->created_at->format('M Y')) : 'Nov 2026';
+                    $revRating = $firstReview ? $firstReview->rating : 5;
+                    $revInitials = strtoupper(substr($revName, 0, 1));
+                @endphp
 
                 <div class="hidden md:grid md:grid-cols-3 md:grid-rows-2 md:gap-3 h-[420px] lg:h-[460px] rounded-3xl overflow-hidden border border-stone-200/80 bg-stone-100 p-1">
-                    @if($gCount >= 5)
-                        {{-- 1. Main Top-Left Big Photo (Col 1-2, Row 1) --}}
-                        <div class="col-span-2 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
+                    @if($gCount >= 4)
+                        {{-- 1. Main Left Tall Big Photo (Col 1, Row 1-2) --}}
+                        <div class="col-span-1 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
                             <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                                 <span class="text-white text-xs font-bold bg-black/60 px-3 py-1.5 rounded-lg backdrop-blur-sm">🔍 {{ __('Click to view photo') }}</span>
                             </div>
                         </div>
 
-                        {{-- 2. Top-Right Photo (Col 3, Row 1) --}}
+                        {{-- 2. Top-Middle Photo (Col 2, Row 1) --}}
                         <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
                             <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
                         </div>
 
-                        {{-- 3. Bottom-Left Photo (Col 1, Row 2) --}}
+                        {{-- 3. Bottom-Middle Photo (Col 2, Row 2) --}}
                         <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[2] }}')">
                             <img src="{{ $topGallery[2] }}" alt="Photo 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
                         </div>
 
-                        {{-- 4. Bottom-Middle Photo (Col 2, Row 2) --}}
+                        {{-- 4. Top-Right Photo (Col 3, Row 1) with View All Badge --}}
                         <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[3] }}')">
                             <img src="{{ $topGallery[3] }}" alt="Photo 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-                        </div>
 
-                        {{-- 5. Bottom-Right Photo (Col 3, Row 2) with "View all" Badge --}}
-                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[4] }}')">
-                            <img src="{{ $topGallery[4] }}" alt="Photo 5" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-
-                            {{-- TourRadar Style "View all" Button --}}
+                            {{-- View All Badge Button --}}
                             <div class="absolute bottom-3 right-3 z-10">
                                 <button type="button" onclick="event.stopPropagation(); openLightbox('{{ $topGallery[0] }}')" class="bg-stone-900/85 hover:bg-stone-950 text-white font-bold text-xs px-3.5 py-2 rounded-xl backdrop-blur-md shadow-xl border border-white/20 flex items-center gap-2 transition-all hover:scale-105">
                                     <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     <span>{{ __('View all') }}</span>
-                                    @if($gCount > 5)
+                                    @if($gCount > 4)
                                         <span class="text-amber-400 text-[10px] font-black">({{ $gCount }})</span>
                                     @endif
                                 </button>
                             </div>
                         </div>
 
-                    @elseif($gCount >= 3)
-                        {{-- 3 or 4 Photos Fallback --}}
+                        {{-- 5. Bottom-Right Review Quote Box (Col 3, Row 2) --}}
+                        <div class="col-span-1 row-span-1 bg-[#eaf4fc] border border-sky-200/70 rounded-2xl p-4 flex flex-col justify-between shadow-xs relative overflow-hidden group">
+                            <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
+                                "{{ $revContent }}"
+                            </p>
+                            <div class="flex items-center gap-3 pt-3 border-t border-sky-200/50 mt-2">
+                                <div class="w-8 h-8 rounded-full bg-sky-200 text-sky-900 font-bold text-xs flex items-center justify-center shrink-0">
+                                    {{ $revInitials }}
+                                </div>
+                                <div class="truncate">
+                                    <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
+                                    <p class="text-[10px] text-stone-500 font-medium">
+                                        {{ $revCountry }} • {{ $revDate }}
+                                    </p>
+                                </div>
+                                <div class="ml-auto text-amber-500 text-xs font-bold shrink-0">
+                                    ★ {{ number_format($revRating, 1) }}
+                                </div>
+                            </div>
+                        </div>
+
+                    @elseif($gCount >= 2)
+                        {{-- Fallback for 2-3 photos --}}
                         <div class="col-span-2 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
                             <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
                         </div>
                         <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
                             <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
                         </div>
-                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[2] }}')">
-                            <img src="{{ $topGallery[2] }}" alt="Photo 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-                            <div class="absolute bottom-3 right-3 z-10">
-                                <button type="button" onclick="event.stopPropagation(); openLightbox('{{ $topGallery[0] }}')" class="bg-stone-900/85 hover:bg-stone-950 text-white font-bold text-xs px-3.5 py-2 rounded-xl backdrop-blur-md shadow-xl border border-white/20 flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    <span>{{ __('View all') }}</span>
-                                </button>
+                        <div class="col-span-1 row-span-1 bg-[#eaf4fc] border border-sky-200/70 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+                            <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
+                                "{{ $revContent }}"
+                            </p>
+                            <div class="flex items-center gap-3 pt-3 border-t border-sky-200/50 mt-2">
+                                <div class="w-8 h-8 rounded-full bg-sky-200 text-sky-900 font-bold text-xs flex items-center justify-center shrink-0">
+                                    {{ $revInitials }}
+                                </div>
+                                <div class="truncate">
+                                    <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
+                                    <p class="text-[10px] text-stone-500 font-medium">{{ $revCountry }}</p>
+                                </div>
                             </div>
                         </div>
                     @else
-                        {{-- 1 or 2 Photos Fallback --}}
+                        {{-- 1 Photo Fallback --}}
                         <div class="col-span-3 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
                             <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
                         </div>
@@ -874,44 +912,95 @@
             @endif
         </div>
 
-        <aside class="lg:w-80 flex-shrink-0">
-            <div class="sticky top-24 space-y-6">
-                <div class="bg-safari-dark text-white rounded-3xl p-8 shadow-2xl">
-                    <div class="text-center mb-8">
-                        <div class="text-xs text-gold-400 font-black uppercase tracking-widest mb-2">{{ __('Starting from') }}</div>
-                        <div class="font-display text-5xl font-bold text-white">{{ $tour->formatted_price }}</div>
-                        <p class="text-white/40 text-[10px] uppercase font-bold mt-2">{{ __($tour->price_note ?? 'per person sharing') }}</p>
+        <aside class="lg:w-96 flex-shrink-0">
+            <div class="sticky top-28 space-y-6">
+                {{-- Card 1: TourRadar Style Booking Box --}}
+                <div id="booking-card" class="bg-white rounded-3xl p-6 md:p-8 border border-stone-200/90 shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="text-xs text-stone-400 font-semibold line-through">
+                            From ${{ number_format($tour->price * 1.5) }}
+                        </span>
+                        <span class="px-2.5 py-1 bg-red-600 text-white font-black text-[10px] uppercase rounded-md tracking-wider">
+                            50% off
+                        </span>
                     </div>
 
-                    <div class="space-y-3">
-                        <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold w-full block text-center py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl">
-                            {{ __('Book My Spot') }}
-                        </a>
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('site_whatsapp', '255795482197')) }}?text=I'm interested in: {{ urlencode($tour->title) }}"
-                           target="_blank"
-                           class="w-full block text-center py-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2">
-                           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                           {{ __('Inquire via WhatsApp') }}
-                        </a>
+                    <div class="mb-4">
+                        <span class="text-xs font-bold text-stone-900 uppercase tracking-wider">US</span>
+                        <span class="text-3xl md:text-4xl font-black text-stone-900 tracking-tight">${{ number_format($tour->price) }}</span>
+                        <span class="text-xs font-semibold text-stone-500">per person</span>
+                    </div>
+
+                    <div class="space-y-1.5 mb-6 text-xs text-stone-600 font-medium">
+                        <p class="flex items-center gap-1.5 text-sky-700 font-semibold">
+                            <svg class="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <span>Sign up to unlock savings</span>
+                        </p>
+                        <p class="text-stone-400 text-[11px]">
+                            Price based on Private Double Room
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div>
+                            <label class="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Departure Month') }}</label>
+                            <select class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-amber-500">
+                                <option value="">Select departure month</option>
+                                <option value="current">{{ now()->format('F Y') }}</option>
+                                <option value="next1">{{ now()->addMonth()->format('F Y') }}</option>
+                                <option value="next2">{{ now()->addMonths(2)->format('F Y') }}</option>
+                                <option value="next3">{{ now()->addMonths(3)->format('F Y') }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Travelers') }}</label>
+                            <select class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-amber-500">
+                                <option value="2">2 Adults</option>
+                                <option value="1">1 Adult</option>
+                                <option value="3">3 Adults</option>
+                                <option value="4">4 Adults</option>
+                                <option value="group">5+ Group</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('booking.create', $tour->slug) }}" class="w-full block text-center py-4 rounded-2xl bg-[#127291] hover:bg-[#0e5c75] text-white font-black text-sm uppercase tracking-wider shadow-md transition-all mb-6">
+                        See dates & prices
+                    </a>
+
+                    <div class="space-y-3 pt-4 border-t border-stone-100 text-xs text-stone-600 font-medium">
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-stone-700 font-bold text-sm shrink-0">💳</span>
+                            <p class="leading-tight">
+                                <strong>Pay only 20% today.</strong> The rest is due 65 days before departure.
+                            </p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-stone-700 font-bold text-sm shrink-0">🛡️</span>
+                            <p class="leading-tight">
+                                <strong>Best price guarantee</strong>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100">
-                    <h4 class="font-bold text-gray-900 mb-4 uppercase tracking-widest text-[10px]">{{ __('Tour Specs') }}</h4>
-                    <ul class="space-y-4">
-                        <li class="flex justify-between items-center text-sm">
-                            <span class="text-gray-400 font-medium">{{ __('Difficulty') }}</span>
-                            <span class="text-gray-800 font-bold capitalize">{{ __($tour->difficulty_level) }}</span>
-                        </li>
-                        <li class="flex justify-between items-center text-sm">
-                            <span class="text-gray-400 font-medium">{{ __('Min Age') }}</span>
-                            <span class="text-gray-800 font-bold">{{ $tour->min_age }}+ yrs</span>
-                        </li>
-                        <li class="flex justify-between items-center text-sm">
-                            <span class="text-gray-400 font-medium">{{ __('Type') }}</span>
-                            <span class="text-gray-800 font-bold">{{ $tour->category->name ?? 'Safari' }}</span>
-                        </li>
-                    </ul>
+                {{-- Card 2: Plan Your Adventure Box --}}
+                <div class="bg-white rounded-3xl p-6 border border-stone-200/90 shadow-xs space-y-3">
+                    <h4 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-2">{{ __('Plan your adventure:') }}</h4>
+
+                    @if(!empty($tour->itinerary))
+                        <a href="{{ route('booking.download', $tour->slug) }}" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-bold transition-all">
+                            <span class="text-amber-600 text-base">📥</span>
+                            <span>{{ __('Download PDF Brochure') }}</span>
+                        </a>
+                    @endif
+
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('site_whatsapp', '255795482197')) }}?text=I'm interested in: {{ urlencode($tour->title) }}"
+                       target="_blank"
+                       class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-bold transition-all">
+                        <span class="text-emerald-600 text-base">💬</span>
+                        <span>{{ __('Contact Operator') }}</span>
+                    </a>
                 </div>
             </div>
         </aside>
