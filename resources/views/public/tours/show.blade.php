@@ -223,8 +223,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
                     {{-- 1. Operator --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-amber-500 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            ★
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
@@ -238,23 +238,23 @@
 
                     {{-- 2. Safari / Category --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            🦁
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2 1m2-1l-2-1m2 1v2.5M4 7l2-1M4 7l2 1M4 7v2.5M12 21a9 9 0 100-18 9 9 0 000 18z"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ $tour->category ? $tour->category->name : __('Safari') }}
                             </h4>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
-                                {{ __('Track iconic wildlife on unforgettable game drives') }}
+                                {{ str_contains(strtolower($tour->category->name ?? ''), 'trek') ? __('Summit Africa\'s highest peaks with expert guides') : __('Track iconic wildlife on unforgettable game drives') }}
                             </p>
                         </div>
                     </div>
 
                     {{-- 3. Group Tour / Tour Type --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            👥
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
@@ -268,8 +268,8 @@
 
                     {{-- 4. Guiding --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            🧢
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
@@ -283,38 +283,42 @@
 
                     {{-- 5. Physical Intensity / Difficulty --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            🧘
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
-                                {{ $tour->difficulty_level ? ucfirst($tour->difficulty_level) . ' Intensity' : __('Low Intensity') }}
+                                {{ $tour->difficulty_level ? ucfirst($tour->difficulty_level) . ' Intensity' : __('Moderate Intensity') }}
                             </h4>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
-                                {{ $tour->difficulty_level == 'hard' ? __('Travelers can expect strenuous physical activities and hiking') : ($tour->difficulty_level == 'moderate' ? __('Travelers can expect moderate physical activities') : __('Travelers can expect some light physical activities')) }}
+                                {{ $tour->difficulty_level == 'hard' ? __('Travelers can expect strenuous physical activities and hiking') : ($tour->difficulty_level == 'low' ? __('Travelers can expect light physical activities') : __('Travelers can expect moderate physical activities')) }}
                             </p>
                         </div>
                     </div>
 
                     {{-- 6. Languages --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            🌐
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11.8M9 21a9 9 0 100-18 9 9 0 000 18z"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ __('Guided in') }} {{ !empty($tour->languages_offered) && is_array($tour->languages_offered) ? (is_array($tour->languages_offered[0] ?? null) ? implode(', ', $tour->languages_offered[0]) : ($tour->languages_offered[0] ?? 'English')) : 'English' }}
                             </h4>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
-                                {{ !empty($tour->languages_offered) && is_array($tour->languages_offered) && count($tour->languages_offered) > 1 ? __('Other languages on request') . ': ' . implode(', ', array_slice($tour->languages_offered, 1)) : __('Other languages on request: German, French, Spanish') }}
+                                @if(!empty($tour->languages_offered) && is_array($tour->languages_offered) && count($tour->languages_offered) > 1)
+                                    {{ __('Other languages on request') }}: {{ implode(', ', array_filter(array_slice($tour->languages_offered, 1))) }}
+                                @else
+                                    {{ __('Other languages on request: German, French, Spanish') }}
+                                @endif
                             </p>
                         </div>
                     </div>
 
                     {{-- 7. Group Size --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            👨‍👩‍👧‍👦
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
@@ -328,12 +332,12 @@
 
                     {{-- 8. Age Range --}}
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
-                            ↔️
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-800 shrink-0 mt-0.5 shadow-2xs">
+                            <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
-                                {{ ($tour->min_age || $tour->max_age) ? (__('Age') . ' ' . ($tour->min_age ?: '1') . ' - ' . ($tour->max_age ?: '99')) : __('All Ages Welcome') }}
+                                {{ ($tour->min_age || $tour->max_age) ? (__('Age') . ' ' . ($tour->min_age ?: '15') . ' - ' . ($tour->max_age ?: '70')) : __('Age 15 - 70') }}
                             </h4>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 {{ __('Suitable for families, couples, and solo travelers') }}
