@@ -175,28 +175,73 @@
 
         @if(!empty($topGallery))
             <div class="mt-4">
-                {{-- Desktop Grid: TourRadar Layout --}}
-                <div class="hidden md:grid md:grid-cols-3 md:gap-3 rounded-2xl overflow-hidden shadow-lg border border-stone-200/80 bg-stone-900">
-                    <div class="md:col-span-2 h-80 lg:h-[400px] relative group cursor-pointer" onclick="openLightbox('{{ $topGallery[0] }}')">
-                        <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                            <span class="text-white text-xs font-bold bg-black/60 px-3 py-1.5 rounded-lg backdrop-blur-sm">🔍 {{ __('Click to view full photo') }}</span>
+                {{-- Desktop Grid: Exact TourRadar 5-Photo Collage Layout --}}
+                @php $gCount = count($topGallery); @endphp
+
+                <div class="hidden md:grid md:grid-cols-3 md:grid-rows-2 md:gap-3 h-[420px] lg:h-[460px] rounded-3xl overflow-hidden border border-stone-200/80 bg-stone-100 p-1">
+                    @if($gCount >= 5)
+                        {{-- 1. Main Top-Left Big Photo (Col 1-2, Row 1) --}}
+                        <div class="col-span-2 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
+                            <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                <span class="text-white text-xs font-bold bg-black/60 px-3 py-1.5 rounded-lg backdrop-blur-sm">🔍 {{ __('Click to view photo') }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="grid grid-rows-2 gap-3 h-80 lg:h-[400px]">
-                        @for($gIndex = 1; $gIndex <= 2; $gIndex++)
-                            @if(isset($topGallery[$gIndex]))
-                                <div class="relative group cursor-pointer overflow-hidden rounded-xl bg-stone-900" onclick="openLightbox('{{ $topGallery[$gIndex] }}')">
-                                    <img src="{{ $topGallery[$gIndex] }}" alt="Tour Photo {{ $gIndex + 1 }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-                                    @if($gIndex === 2 && count($topGallery) > 3)
-                                        <div class="absolute inset-0 bg-black/50 hover:bg-black/40 transition-colors flex items-center justify-center text-white font-black text-sm uppercase tracking-wider backdrop-blur-xs">
-                                            +{{ count($topGallery) - 3 }} {{ __('More Photos') }}
-                                        </div>
+
+                        {{-- 2. Top-Right Photo (Col 3, Row 1) --}}
+                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
+                            <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                        </div>
+
+                        {{-- 3. Bottom-Left Photo (Col 1, Row 2) --}}
+                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[2] }}')">
+                            <img src="{{ $topGallery[2] }}" alt="Photo 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                        </div>
+
+                        {{-- 4. Bottom-Middle Photo (Col 2, Row 2) --}}
+                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[3] }}')">
+                            <img src="{{ $topGallery[3] }}" alt="Photo 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                        </div>
+
+                        {{-- 5. Bottom-Right Photo (Col 3, Row 2) with "View all" Badge --}}
+                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[4] }}')">
+                            <img src="{{ $topGallery[4] }}" alt="Photo 5" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+
+                            {{-- TourRadar Style "View all" Button --}}
+                            <div class="absolute bottom-3 right-3 z-10">
+                                <button type="button" onclick="event.stopPropagation(); openLightbox('{{ $topGallery[0] }}')" class="bg-stone-900/85 hover:bg-stone-950 text-white font-bold text-xs px-3.5 py-2 rounded-xl backdrop-blur-md shadow-xl border border-white/20 flex items-center gap-2 transition-all hover:scale-105">
+                                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    <span>{{ __('View all') }}</span>
+                                    @if($gCount > 5)
+                                        <span class="text-amber-400 text-[10px] font-black">({{ $gCount }})</span>
                                     @endif
-                                </div>
-                            @endif
-                        @endfor
-                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                    @elseif($gCount >= 3)
+                        {{-- 3 or 4 Photos Fallback --}}
+                        <div class="col-span-2 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
+                            <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
+                        </div>
+                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
+                            <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                        </div>
+                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[2] }}')">
+                            <img src="{{ $topGallery[2] }}" alt="Photo 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                            <div class="absolute bottom-3 right-3 z-10">
+                                <button type="button" onclick="event.stopPropagation(); openLightbox('{{ $topGallery[0] }}')" class="bg-stone-900/85 hover:bg-stone-950 text-white font-bold text-xs px-3.5 py-2 rounded-xl backdrop-blur-md shadow-xl border border-white/20 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    <span>{{ __('View all') }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    @else
+                        {{-- 1 or 2 Photos Fallback --}}
+                        <div class="col-span-3 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
+                            <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Mobile Slider --}}
@@ -205,7 +250,7 @@
                         <div class="snap-start shrink-0 w-[85vw] h-64 rounded-2xl overflow-hidden bg-stone-900 border border-stone-200 shadow-md relative" onclick="openLightbox('{{ $mUrl }}')">
                             <img src="{{ $mUrl }}" alt="Photo {{ $mIndex + 1 }}" class="w-full h-full object-cover" loading="lazy">
                             <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-md backdrop-blur-sm">
-                                {{ $mIndex + 1 }} / {{ count($topGallery) }}
+                                {{ $mIndex + 1 }} / {{ $gCount }}
                             </div>
                         </div>
                     @endforeach
