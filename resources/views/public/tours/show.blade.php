@@ -700,10 +700,97 @@
             <div id="reviews" class="pt-10 border-t border-gray-100 mb-12">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="font-display text-3xl font-bold text-gray-900">{{ __('Guest Reviews') }}</h2>
-                    <button onclick="document.getElementById('review-form-container').classList.toggle('hidden')" class="btn-outline-gold px-6 py-3 rounded-full text-sm font-bold transition-all">
+                    <button onclick="document.getElementById('review-form-container').classList.toggle('hidden')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-md">
                         {{ __('Leave a Review') }}
                     </button>
                 </div>
+
+                {{-- Success Banner --}}
+                @if(session('success'))
+                    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center gap-3 shadow-xs">
+                        <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                        <p class="text-xs md:text-sm font-bold">{{ session('success') }}</p>
+                    </div>
+                @endif
+
+                {{-- Validation Errors Banner --}}
+                @if($errors->any())
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-2xl text-xs space-y-1 shadow-xs">
+                        <p class="font-bold mb-1">{{ __('Please correct the errors in your review:') }}</p>
+                        @foreach($errors->all() as $error)
+                            <p>• {{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
+                {{-- Review Form Container --}}
+                <form id="review-form-container" action="{{ route('reviews.store') }}" method="POST" class="{{ $errors->any() ? '' : 'hidden' }} bg-stone-50 border border-stone-200/80 rounded-3xl p-6 md:p-8 mb-8 shadow-sm">
+                    @csrf
+                    <input type="hidden" name="tour_id" value="{{ $tour->id }}">
+
+                    <h3 class="text-lg md:text-xl font-black text-stone-900 mb-4">{{ __('Write a Review for') }} {{ $tour->title }}</h3>
+
+                    {{-- Rating Selector --}}
+                    <div class="mb-5" x-data="{ rating: {{ old('rating', 5) }} }">
+                        <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">{{ __('Your Rating') }} *</label>
+                        <div class="flex items-center gap-2">
+                            <input type="hidden" name="rating" :value="rating">
+                            <template x-for="star in [1, 2, 3, 4, 5]">
+                                <button type="button" @click="rating = star" class="p-1 focus:outline-none transition-transform hover:scale-110">
+                                    <svg class="w-8 h-8" :class="star <= rating ? 'text-amber-500 fill-amber-500' : 'text-stone-300 fill-stone-200'" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                </button>
+                            </template>
+                            <span class="text-xs font-bold text-stone-600 ml-2" x-text="rating + ' / 5 {{ __('Stars') }}'"></span>
+                        </div>
+                    </div>
+
+                    {{-- Name & Email --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Full Name') }} *</label>
+                            <input type="text" name="name" value="{{ old('name') }}" required class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('Your Name') }}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Email Address') }} *</label>
+                            <input type="email" name="email" value="{{ old('email') }}" required class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('your@email.com') }}">
+                        </div>
+                    </div>
+
+                    {{-- Title, Country, Date --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Review Headline') }}</label>
+                            <input type="text" name="title" value="{{ old('title') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('e.g. Life-changing Experience!') }}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Country / Hometown') }}</label>
+                            <input type="text" name="country" value="{{ old('country') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('e.g. Germany') }}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Date of Travel') }}</label>
+                            <input type="date" name="trip_date" value="{{ old('trip_date') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none">
+                        </div>
+                    </div>
+
+                    {{-- Review Content --}}
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Your Review') }} *</label>
+                        <textarea name="content" rows="4" required minlength="10" class="w-full bg-white border border-stone-300 rounded-xl p-4 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('Write your experience, guide feedback, and highlights of the tour...') }}">{{ old('content') }}</textarea>
+                        <p class="text-[10px] text-stone-400 mt-1">{{ __('Minimum 10 characters') }}</p>
+                    </div>
+
+                    {{-- Buttons --}}
+                    <div class="flex items-center gap-3">
+                        <button type="submit" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-8 py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md transition-all hover:scale-105">
+                            {{ __('Submit Review') }}
+                        </button>
+                        <button type="button" onclick="document.getElementById('review-form-container').classList.add('hidden')" class="px-6 py-3.5 border border-stone-300 text-stone-600 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-stone-200/60 transition-all">
+                            {{ __('Cancel') }}
+                        </button>
+                    </div>
+                </form>
 
                 <div class="space-y-6">
                     @forelse($tour->reviews as $review)
