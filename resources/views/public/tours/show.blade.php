@@ -218,36 +218,128 @@
 <div class="max-w-7xl mx-auto px-4 py-12">
     <div class="flex flex-col lg:flex-row gap-12">
         <div class="flex-1">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white rounded-3xl p-8 mb-12 shadow-sm border border-gray-100">
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-12 h-12 bg-gold-50 rounded-2xl flex items-center justify-center text-gold-600 text-2xl mb-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{-- TourRadar Style Quick Specs Grid (Replaces old 4-box layout) --}}
+            <div class="bg-white rounded-3xl p-6 md:p-8 mb-10 shadow-sm border border-stone-200/80">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                    {{-- 1. Operator --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-amber-500 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            ★
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ __('Platinum Operator') }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                Twina Safaris • {{ __('World Adventure Tours') }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="font-bold text-gray-900 text-base">{{ $tour->duration_text }}</div>
-                    <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">{{ __('Duration') }}</div>
-                </div>
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+
+                    {{-- 2. Safari / Category --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            🦁
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ $tour->category ? $tour->category->name : __('Safari') }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                {{ __('Track iconic wildlife on unforgettable game drives') }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="font-bold text-gray-900 text-base">
-                        {{ $tour->group_size_min ?: '1' }}-{{ $tour->group_size_max ?: '12' }}
+
+                    {{-- 3. Group Tour / Tour Type --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            👥
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ $tour->tour_type ? ucfirst($tour->tour_type) . ' Tour' : __('Group Tour') }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                {{ $tour->tour_type == 'private' ? __('Private custom safari tailored for your group') : __('Join a group and forge lifelong friendships') }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">{{ __('Group Size') }}</div>
-                </div>
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+
+                    {{-- 4. Guiding --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            🧢
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ __('Fully Guided') }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                {{ $tour->assigned_guide ? __('Guided by') . ' ' . $tour->assigned_guide : __('An experienced guide will be with you for the entire tour') }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="font-bold text-gray-900 text-base">{{ __($tour->accommodation_type ?: 'Luxury') }}</div>
-                    <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">{{ __('Accommodation') }}</div>
-                </div>
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 text-2xl mb-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+
+                    {{-- 5. Physical Intensity / Difficulty --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            🧘
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ $tour->difficulty_level ? ucfirst($tour->difficulty_level) . ' Intensity' : __('Low Intensity') }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                {{ $tour->difficulty_level == 'hard' ? __('Travelers can expect strenuous physical activities and hiking') : ($tour->difficulty_level == 'moderate' ? __('Travelers can expect moderate physical activities') : __('Travelers can expect some light physical activities')) }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="font-bold text-gray-900 text-base">{{ __($tour->meeting_point ?: ($tour->departure_location ?: 'JRO Airport')) }}</div>
-                    <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">{{ __('Arrival Point') }}</div>
+
+                    {{-- 6. Languages --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            🌐
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ __('Guided in') }} {{ !empty($tour->languages_offered) && is_array($tour->languages_offered) ? (is_array($tour->languages_offered[0] ?? null) ? implode(', ', $tour->languages_offered[0]) : ($tour->languages_offered[0] ?? 'English')) : 'English' }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                {{ !empty($tour->languages_offered) && is_array($tour->languages_offered) && count($tour->languages_offered) > 1 ? __('Other languages on request') . ': ' . implode(', ', array_slice($tour->languages_offered, 1)) : __('Other languages on request: German, French, Spanish') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- 7. Group Size --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            👨‍👩‍👧‍👦
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ __('Group Size') }} {{ $tour->group_size_min ?: '2' }} - {{ $tour->group_size_max ?: '6' }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                {{ __('Small group experience for maximum wildlife immersion') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- 8. Age Range --}}
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg shrink-0 mt-0.5 shadow-xs">
+                            ↔️
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                                {{ ($tour->min_age || $tour->max_age) ? (__('Age') . ' ' . ($tour->min_age ?: '1') . ' - ' . ($tour->max_age ?: '99')) : __('All Ages Welcome') }}
+                            </h4>
+                            <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
+                                {{ __('Suitable for families, couples, and solo travelers') }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 

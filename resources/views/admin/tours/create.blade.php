@@ -139,23 +139,31 @@
         <div id="content-experience" class="tab-content hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Difficulty Level</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Physical Intensity / Difficulty</label>
                     <select name="difficulty_level" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                        <option value="">Select</option>
-                        <option value="easy" {{ old('difficulty_level') == 'easy' ? 'selected' : '' }}>Easy</option>
-                        <option value="moderate" {{ old('difficulty_level') == 'moderate' ? 'selected' : '' }}>Moderate</option>
-                        <option value="hard" {{ old('difficulty_level') == 'hard' ? 'selected' : '' }}>Hard</option>
+                        <option value="">Select Intensity</option>
+                        <option value="low" {{ old('difficulty_level') == 'low' || old('difficulty_level') == 'easy' ? 'selected' : '' }}>Low Intensity (Light Activity)</option>
+                        <option value="moderate" {{ old('difficulty_level') == 'moderate' ? 'selected' : '' }}>Moderate Intensity</option>
+                        <option value="hard" {{ old('difficulty_level') == 'hard' ? 'selected' : '' }}>High / Strenuous Intensity</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tour Type</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tour Type / Grouping</label>
                     <select name="tour_type" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
-                        <option value="">Select</option>
-                        <option value="private" {{ old('tour_type') == 'private' ? 'selected' : '' }}>Private</option>
-                        <option value="group" {{ old('tour_type') == 'group' ? 'selected' : '' }}>Group</option>
-                        <option value="luxury" {{ old('tour_type') == 'luxury' ? 'selected' : '' }}>Luxury</option>
-                        <option value="budget" {{ old('tour_type') == 'budget' ? 'selected' : '' }}>Budget</option>
+                        <option value="">Select Type</option>
+                        <option value="group" {{ old('tour_type') == 'group' ? 'selected' : '' }}>Group Tour</option>
+                        <option value="private" {{ old('tour_type') == 'private' ? 'selected' : '' }}>Private Tour</option>
+                        <option value="luxury" {{ old('tour_type') == 'luxury' ? 'selected' : '' }}>Luxury Safari</option>
+                        <option value="budget" {{ old('tour_type') == 'budget' ? 'selected' : '' }}>Budget Safari</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Group Size</label>
+                    <input type="number" name="group_size_min" value="{{ old('group_size_min', 2) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" placeholder="e.g. 2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Group Size</label>
+                    <input type="number" name="group_size_max" value="{{ old('group_size_max', 6) }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" placeholder="e.g. 6">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Accommodation Type</label>
