@@ -439,18 +439,47 @@
                 }
             @endphp
             @if(!empty($itinerary) && count($itinerary) > 0)
-            <div class="mb-12 bg-gray-200/50 rounded-3xl p-8 md:p-12 border border-gray-200">
-                <h2 class="font-display text-3xl font-black text-[#e64a19] mb-8 uppercase tracking-tight">{{ __('Itinerary Summary') }}</h2>
-                <div class="space-y-4">
-                    @foreach($itinerary as $index => $day)
-                    <div class="flex items-start gap-4">
-                        <span class="text-[#e64a19] font-black text-xl leading-none">→</span>
-                        <p class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
-                            <span class="text-gray-900">{{ __('Day') }} {{ is_numeric($index) ? $index : $loop->iteration }}:</span>
-                            {{ $day['title'] ?? '' }}
-                        </p>
+            {{-- Collapsible Dropdown Itinerary Summary --}}
+            <div class="mb-10 bg-stone-50 border border-stone-200/80 rounded-3xl overflow-hidden shadow-xs transition-all" x-data="{ open: true }">
+                {{-- Dropdown Header / Toggle Button --}}
+                <button type="button" @click="open = !open" class="w-full flex items-center justify-between p-6 md:p-8 text-left bg-stone-100/80 hover:bg-stone-100 transition-colors focus:outline-none">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 font-black text-lg shrink-0">
+                            📋
+                        </div>
+                        <div>
+                            <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 uppercase tracking-tight leading-tight">
+                                {{ __('Itinerary Summary') }}
+                            </h2>
+                            <p class="text-xs text-stone-500 font-medium mt-0.5">
+                                {{ count($itinerary) }} {{ __('Days Overview') }} • {{ __('Click to') }} <span x-text="open ? '{{ __('collapse') }}' : '{{ __('expand') }}'"></span>
+                            </p>
+                        </div>
                     </div>
-                    @endforeach
+                    <div class="w-10 h-10 rounded-full bg-white border border-stone-200 flex items-center justify-center text-stone-700 font-bold transition-transform duration-300 shadow-xs" :class="open ? 'rotate-180 bg-amber-500 text-stone-950 border-amber-500' : ''">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </button>
+
+                {{-- Dropdown Body Content --}}
+                <div x-show="open" x-collapse class="p-6 md:p-8 pt-4 border-t border-stone-200/60 bg-white">
+                    <div class="space-y-3">
+                        @foreach($itinerary as $index => $day)
+                        <div class="flex items-start gap-4 p-3.5 rounded-2xl bg-stone-50/80 border border-stone-200/60 hover:border-amber-500/40 transition-colors">
+                            <span class="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+                                {{ is_numeric($index) ? $index : $loop->iteration }}
+                            </span>
+                            <div class="pt-0.5">
+                                <p class="text-stone-900 font-bold text-sm md:text-base leading-snug">
+                                    <span class="text-amber-600 font-black uppercase text-[10px] tracking-wider block mb-0.5">{{ __('Day') }} {{ is_numeric($index) ? $index : $loop->iteration }}</span>
+                                    {{ $day['title'] ?? '' }}
+                                </p>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
