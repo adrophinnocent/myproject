@@ -232,12 +232,12 @@
                         </div>
 
                         {{-- 5. Bottom-Right Review Quote Box (Col 3, Row 2) --}}
-                        <div class="col-span-1 row-span-1 bg-[#eaf4fc] border border-sky-200/70 rounded-2xl p-4 flex flex-col justify-between shadow-xs relative overflow-hidden group">
+                        <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs relative overflow-hidden group">
                             <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
                                 "{{ $revContent }}"
                             </p>
-                            <div class="flex items-center gap-3 pt-3 border-t border-sky-200/50 mt-2">
-                                <div class="w-8 h-8 rounded-full bg-sky-200 text-sky-900 font-bold text-xs flex items-center justify-center shrink-0">
+                            <div class="flex items-center gap-3 pt-3 border-t border-[#f3e8d3] mt-2">
+                                <div class="w-8 h-8 rounded-full bg-[#f4e8d3] text-[#8A6D0B] font-black text-xs flex items-center justify-center shrink-0">
                                     {{ $revInitials }}
                                 </div>
                                 <div class="truncate">
@@ -246,7 +246,7 @@
                                         {{ $revCountry }} • {{ $revDate }}
                                     </p>
                                 </div>
-                                <div class="ml-auto text-amber-500 text-xs font-bold shrink-0">
+                                <div class="ml-auto text-[#8A6D0B] text-xs font-bold shrink-0">
                                     ★ {{ number_format($revRating, 1) }}
                                 </div>
                             </div>
@@ -260,12 +260,12 @@
                         <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
                             <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
                         </div>
-                        <div class="col-span-1 row-span-1 bg-[#eaf4fc] border border-sky-200/70 rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+                        <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs">
                             <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
                                 "{{ $revContent }}"
                             </p>
-                            <div class="flex items-center gap-3 pt-3 border-t border-sky-200/50 mt-2">
-                                <div class="w-8 h-8 rounded-full bg-sky-200 text-sky-900 font-bold text-xs flex items-center justify-center shrink-0">
+                            <div class="flex items-center gap-3 pt-3 border-t border-[#f3e8d3] mt-2">
+                                <div class="w-8 h-8 rounded-full bg-[#f4e8d3] text-[#8A6D0B] font-black text-xs flex items-center justify-center shrink-0">
                                     {{ $revInitials }}
                                 </div>
                                 <div class="truncate">
@@ -932,8 +932,8 @@
                     </div>
 
                     <div class="space-y-1.5 mb-6 text-xs text-stone-600 font-medium">
-                        <p class="flex items-center gap-1.5 text-sky-700 font-semibold">
-                            <svg class="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <p class="flex items-center gap-1.5 text-amber-800 font-semibold">
+                            <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             <span>Sign up to unlock savings</span>
                         </p>
                         <p class="text-stone-400 text-[11px]">
@@ -964,7 +964,7 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('booking.create', $tour->slug) }}" class="w-full block text-center py-4 rounded-2xl bg-[#127291] hover:bg-[#0e5c75] text-white font-black text-sm uppercase tracking-wider shadow-md transition-all mb-6">
+                    <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold w-full block text-center py-4 rounded-2xl font-black text-sm uppercase tracking-wider shadow-md transition-all mb-6">
                         See dates & prices
                     </a>
 
