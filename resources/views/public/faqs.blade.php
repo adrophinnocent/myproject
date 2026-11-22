@@ -25,13 +25,14 @@
         <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
             {{ __('Frequently Asked Questions') }}
         </h2>
-        <div class="space-y-4">
+        <div class="space-y-3">
             @forelse($faqs as $index => $faq)
-                <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
-                    <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
-                        {{ $faq->translate('question') }}
-                    </h3>
-                    <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
+                <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
+                    <button type="button" @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50 transition-colors">
+                        <span>{{ $faq->translate('question') }}</span>
+                        <span class="text-[#8A6D0B] text-xl font-bold ml-2 shrink-0 transition-transform duration-200" :class="open ? 'rotate-45' : ''">+</span>
+                    </button>
+                    <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
                         {!! $faq->translate('answer') !!}
                     </div>
                 </div>
