@@ -884,11 +884,20 @@
             {{-- FREQUENTLY ASKED QUESTIONS --}}
             @php
                 $faqs = $tour->translate('faqs');
+                $publishedFaqs = $publishedFaqs ?? \App\Models\Faq::where('is_active', true)
+                    ->where(function($q) use ($tour) {
+                        if ($tour instanceof \App\Models\Tour) {
+                            $q->where('tour_id', $tour->id);
+                        }
+                        if (!empty($tour->destination_id)) {
+                            $q->orWhere('destination_id', $tour->destination_id);
+                        }
+                    })->orderBy('order')->get();
                 $aiQuestions = \Illuminate\Support\Facades\Schema::hasTable('search_questions')
                     ? \App\Models\SearchQuestion::with('answer')->where('status', 'published')->where('tour_id', $tour->id)->get()
                     : collect();
             @endphp
-            @if((!empty($faqs) && is_array($faqs) && count($faqs) > 0) || $aiQuestions->count() > 0)
+            @if((!empty($faqs) && is_array($faqs) && count($faqs) > 0) || ($publishedFaqs && $publishedFaqs->count() > 0) || $aiQuestions->count() > 0)
             <div class="pt-8 border-t border-stone-200/80 mb-10">
                 <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
                     {{ __('Frequently Asked Questions') }}
@@ -912,6 +921,27 @@
                             @endif
                         </div>
                         @endif
+                        @endforeach
+                    @endif
+
+                    @if(isset($publishedFaqs) && $publishedFaqs->count() > 0)
+                        @foreach($publishedFaqs as $dbFaq)
+                        <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
+                            <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-2">
+                                @if($dbFaq->is_verified_traveler)
+                                    <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">✨ Verified Traveler Answer</span>
+                                @endif
+                                @if($dbFaq->primary_keyword)
+                                    <span class="px-2.5 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $dbFaq->primary_keyword }}</span>
+                                @endif
+                            </div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
+                                {{ $dbFaq->translate('question') }}
+                            </h3>
+                            <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
+                                {!! $dbFaq->translate('answer') !!}
+                            </div>
+                        </div>
                         @endforeach
                     @endif
 

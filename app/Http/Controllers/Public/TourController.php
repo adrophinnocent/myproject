@@ -145,7 +145,22 @@ class TourController extends Controller
             ->take(4)
             ->get();
 
-        return view('public.tours.show', compact('tour', 'relatedTours'));
+        $publishedFaqs = \App\Models\Faq::where('is_active', true)
+            ->where(function($q) use ($tour) {
+                if ($tour instanceof Tour) {
+                    $q->where('tour_id', $tour->id);
+                }
+                if (!empty($tour->destination_id)) {
+                    $q->orWhere('destination_id', $tour->destination_id);
+                }
+                if (!empty($tour->category_id)) {
+                    $q->orWhere('category_id', $tour->category_id);
+                }
+            })
+            ->orderBy('order')
+            ->get();
+
+        return view('public.tours.show', compact('tour', 'relatedTours', 'publishedFaqs'));
     }
 
     public function showItinerary($slug)
@@ -169,7 +184,22 @@ class TourController extends Controller
             ->take(4)
             ->get();
 
-        return view('public.tours.show', compact('tour', 'relatedTours'));
+        $publishedFaqs = \App\Models\Faq::where('is_active', true)
+            ->where(function($q) use ($tour) {
+                if ($tour instanceof Tour) {
+                    $q->where('tour_id', $tour->id);
+                }
+                if (!empty($tour->destination_id)) {
+                    $q->orWhere('destination_id', $tour->destination_id);
+                }
+                if (!empty($tour->category_id)) {
+                    $q->orWhere('category_id', $tour->category_id);
+                }
+            })
+            ->orderBy('order')
+            ->get();
+
+        return view('public.tours.show', compact('tour', 'relatedTours', 'publishedFaqs'));
     }
 
     public function downloadPdf($slug)

@@ -1,54 +1,96 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Manage FAQs')
-@section('page-title', 'Manage FAQs')
+@section('title', 'Published Q&A & FAQs')
+@section('page-title', 'Published Q&A & Search Intelligence')
 
 @section('content')
-<div class="flex justify-end mb-6">
-    <a href="{{ route('admin.faqs.create') }}" class="bg-[#D4AF37] hover:bg-[#b8920d] text-[#1a1209] font-semibold px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        Add New FAQ
-    </a>
-</div>
+<div class="space-y-6">
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <table class="w-full">
-        <thead class="bg-gray-50 border-b border-gray-200">
-            <tr>
-                <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
-                <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Question</th>
-                <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-            @forelse($faqs as $faq)
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 text-sm text-gray-600">{{ $faq->order }}</td>
-                <td class="px-6 py-4">
-                    <div class="text-sm font-medium text-gray-900">{{ $faq->question }}</div>
-                    <div class="text-xs text-gray-500 truncate max-w-md">{{ Str::limit($faq->answer, 100) }}</div>
-                </td>
-                <td class="px-6 py-4">
-                    <span class="px-2 py-1 text-xs rounded-full {{ $faq->is_active ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
-                        {{ $faq->is_active ? 'Active' : 'Inactive' }}
-                    </span>
-                </td>
-                <td class="px-6 py-4 text-right text-sm font-medium">
-                    <a href="{{ route('admin.faqs.edit', $faq) }}" class="text-[#D4AF37] hover:text-[#b8920d] mr-3">Edit</a>
-                    <form method="POST" action="{{ route('admin.faqs.destroy', $faq) }}" class="inline-block" onsubmit="return confirm('Are you sure?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="4" class="px-6 py-10 text-center text-gray-500">No FAQs found. Add your first FAQ!</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="font-serif font-bold text-2xl text-stone-900">Published Q&A Knowledge Base</h2>
+            <p class="text-xs text-stone-500 mt-0.5">Manage published Q&A items linked to tour packages, Google Rich Snippets, and AI search engines.</p>
+        </div>
+        <a href="{{ route('admin.faqs.create') }}" class="btn-gold px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-wider shadow-md inline-flex items-center gap-2">
+            <span>+ Add New Q&A</span>
+        </a>
+    </div>
+
+    @if(session('success'))
+        <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold flex items-center gap-2">
+            <span>✓ {{ session('success') }}</span>
+        </div>
+    @endif
+
+    <div class="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-stone-700">
+                <thead class="bg-stone-50 border-b border-stone-200 text-stone-500 uppercase font-black text-[10px] tracking-wider">
+                    <tr>
+                        <th class="px-6 py-4">Linked Target / Tour</th>
+                        <th class="px-6 py-4">Question & Answer</th>
+                        <th class="px-6 py-4">Keyword Tag</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    @forelse($faqs as $faq)
+                    <tr class="hover:bg-stone-50/50 transition-colors">
+                        <td class="px-6 py-4">
+                            @if($faq->tour)
+                                <span class="font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200/60 block truncate max-w-xs">
+                                    ⛺ {{ $faq->tour->title }}
+                                </span>
+                            @elseif($faq->destination)
+                                <span class="font-bold text-sky-800 bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200/60 block truncate max-w-xs">
+                                    📍 {{ $faq->destination->name }}
+                                </span>
+                            @else
+                                <span class="font-bold text-stone-600 bg-stone-100 px-2.5 py-1 rounded-md block">
+                                    🌍 General FAQ
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-stone-900 text-sm mb-1">{{ $faq->question }}</div>
+                            <div class="text-stone-500 line-clamp-2 max-w-xl">{!! strip_tags($faq->answer) !!}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            @if($faq->primary_keyword)
+                                <span class="px-2.5 py-1 bg-stone-100 text-stone-800 rounded-full font-bold text-[10px]">
+                                    🏷️ {{ $faq->primary_keyword }}
+                                </span>
+                            @else
+                                <span class="text-stone-400 text-[10px] italic">No tag</span>
+                            @endif
+                            @if($faq->is_verified_traveler)
+                                <span class="block mt-1 text-[9px] font-bold text-amber-700">✨ Verified Answer</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {{ $faq->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-500' }}">
+                                {{ $faq->is_active ? 'Published' : 'Draft' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('admin.faqs.edit', $faq) }}" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-lg transition-colors">Edit</a>
+                                <form method="POST" action="{{ route('admin.faqs.destroy', $faq) }}" onsubmit="return confirm('Delete Q&A?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="px-3 py-1.5 text-rose-600 hover:bg-rose-50 rounded-lg font-bold">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="py-16 text-center text-stone-400 italic">No published Q&A items yet. Click "+ Add New Q&A" to create one.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endsection
