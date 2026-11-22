@@ -881,7 +881,7 @@
                 </div>
             </div>
 
-            {{-- FREQUENTLY ASKED QUESTIONS --}}
+            {{-- FREQUENTLY ASKED QUESTIONS (Visual Compact Display + Behind-the-Scenes AI Indexing) --}}
             @php
                 $faqs = $tour->translate('faqs');
                 $publishedFaqs = $publishedFaqs ?? \App\Models\Faq::where('is_active', true)
@@ -893,76 +893,104 @@
                             $q->orWhere('destination_id', $tour->destination_id);
                         }
                     })->orderBy('order')->get();
-                $aiQuestions = \Illuminate\Support\Facades\Schema::hasTable('search_questions')
-                    ? \App\Models\SearchQuestion::with('answer')->where('status', 'published')->where('tour_id', $tour->id)->get()
-                    : collect();
+
+                // Combine all visual FAQ items
+                $allVisualFaqs = [];
+
+                if (!empty($faqs) && is_array($faqs)) {
+                    foreach ($faqs as $f) {
+                        $q = is_array($f) ? ($f['question'] ?? $f['title'] ?? '') : $f;
+                        $a = is_array($f) ? ($f['answer'] ?? $f['description'] ?? '') : '';
+                        if (!empty($q) && !empty($a)) {
+                            $allVisualFaqs[] = [
+                                'question' => $q,
+                                'answer' => $a,
+                                'badge' => null,
+                                'keyword' => null
+                            ];
+                        }
+                    }
+                }
+
+                if (isset($publishedFaqs) && $publishedFaqs->count() > 0) {
+                    foreach ($publishedFaqs as $dbFaq) {
+                        $allVisualFaqs[] = [
+                            'question' => $dbFaq->translate('question'),
+                            'answer' => $dbFaq->translate('answer'),
+                            'badge' => $dbFaq->is_verified_traveler ? '✨ Verified Traveler Answer' : null,
+                            'keyword' => $dbFaq->primary_keyword ?: null
+                        ];
+                    }
+                }
+
+                $visibleFaqs = array_slice($allVisualFaqs, 0, 4);
+                $hiddenFaqs = array_slice($allVisualFaqs, 4);
             @endphp
-            @if((!empty($faqs) && is_array($faqs) && count($faqs) > 0) || ($publishedFaqs && $publishedFaqs->count() > 0) || $aiQuestions->count() > 0)
-            <div class="pt-8 border-t border-stone-200/80 mb-10">
+
+            @if(count($allVisualFaqs) > 0)
+            <div class="pt-8 border-t border-stone-200/80 mb-10" x-data="{ showMore: false }">
                 <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
                     {{ __('Frequently Asked Questions') }}
                 </h2>
-                <div class="space-y-4">
-                    @if(!empty($faqs) && is_array($faqs))
-                        @foreach($faqs as $index => $faq)
-                        @php
-                            $q = is_array($faq) ? ($faq['question'] ?? $faq['title'] ?? '') : $faq;
-                            $a = is_array($faq) ? ($faq['answer'] ?? $faq['description'] ?? '') : '';
-                        @endphp
-                        @if(!empty($q))
-                        <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
-                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
-                                {{ $q }}
-                            </h3>
-                            @if(!empty($a))
-                            <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                                {!! $a !!}
-                            </div>
-                            @endif
-                        </div>
-                        @endif
-                        @endforeach
-                    @endif
 
-                    @if(isset($publishedFaqs) && $publishedFaqs->count() > 0)
-                        @foreach($publishedFaqs as $dbFaq)
-                        <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
-                            <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-2">
-                                @if($dbFaq->is_verified_traveler)
-                                    <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">✨ Verified Traveler Answer</span>
+                <div class="space-y-3">
+                    {{-- First 4 Primary FAQs --}}
+                    @foreach($visibleFaqs as $vf)
+                    <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
+                        <button @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50">
+                            <div>
+                                @if($vf['badge'] || $vf['keyword'])
+                                <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-1">
+                                    @if($vf['badge'])
+                                        <span class="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">{{ $vf['badge'] }}</span>
+                                    @endif
+                                    @if($vf['keyword'])
+                                        <span class="px-2 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $vf['keyword'] }}</span>
+                                    @endif
+                                </div>
                                 @endif
-                                @if($dbFaq->primary_keyword)
-                                    <span class="px-2.5 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $dbFaq->primary_keyword }}</span>
-                                @endif
+                                <span>{{ $vf['question'] }}</span>
                             </div>
-                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
-                                {{ $dbFaq->translate('question') }}
-                            </h3>
-                            <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                                {!! $dbFaq->translate('answer') !!}
-                            </div>
+                            <span class="text-[#8A6D0B] text-lg font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
+                            {!! $vf['answer'] !!}
                         </div>
-                        @endforeach
-                    @endif
-
-                    @foreach($aiQuestions as $aiQ)
-                        @if($aiQ->answer && !empty($aiQ->answer->content))
-                        <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
-                            <div class="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-wider mb-1">
-                                <span>✨ Verified Traveler Answer</span>
-                                @if($aiQ->primary_keyword)
-                                    <span>• {{ $aiQ->primary_keyword }}</span>
-                                @endif
-                            </div>
-                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
-                                {{ $aiQ->question }}
-                            </h3>
-                            <div class="text-stone-600 text-xs sm:text-sm leading-relaxed space-y-2">
-                                {!! nl2br(e($aiQ->answer->content)) !!}
-                            </div>
-                        </div>
-                        @endif
+                    </div>
                     @endforeach
+
+                    {{-- Extra FAQs (Expandable on click so page stays clean) --}}
+                    @if(count($hiddenFaqs) > 0)
+                    <div x-show="showMore" x-collapse x-cloak class="space-y-3 pt-1">
+                        @foreach($hiddenFaqs as $hf)
+                        <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
+                            <button @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50">
+                                <div>
+                                    @if($hf['badge'] || $hf['keyword'])
+                                    <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-1">
+                                        @if($hf['badge'])
+                                            <span class="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">{{ $hf['badge'] }}</span>
+                                        @endif
+                                        @if($hf['keyword'])
+                                            <span class="px-2 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $hf['keyword'] }}</span>
+                                        @endif
+                                    </div>
+                                    @endif
+                                    <span>{{ $hf['question'] }}</span>
+                                </div>
+                                <span class="text-[#8A6D0B] text-lg font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
+                            </button>
+                            <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
+                                {!! $hf['answer'] !!}
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <button @click="showMore = !showMore" class="w-full py-3.5 bg-stone-100 hover:bg-stone-200/70 border border-stone-200 text-stone-800 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all mt-2">
+                        <span x-text="showMore ? '{{ __('Show Fewer Questions') }}' : '{{ __('Show More Questions') }} (+' + {{ count($hiddenFaqs) }} + ')'"></span>
+                    </button>
+                    @endif
                 </div>
             </div>
             @endif
