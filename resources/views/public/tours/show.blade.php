@@ -884,10 +884,9 @@
             {{-- FREQUENTLY ASKED QUESTIONS --}}
             @php
                 $faqs = $tour->translate('faqs');
-                $aiQuestions = \App\Models\SearchQuestion::with('answer')
-                    ->where('status', 'published')
-                    ->where('tour_id', $tour->id)
-                    ->get();
+                $aiQuestions = \Illuminate\Support\Facades\Schema::hasTable('search_questions')
+                    ? \App\Models\SearchQuestion::with('answer')->where('status', 'published')->where('tour_id', $tour->id)->get()
+                    : collect();
             @endphp
             @if((!empty($faqs) && is_array($faqs) && count($faqs) > 0) || $aiQuestions->count() > 0)
             <div class="pt-8 border-t border-stone-200/80 mb-10">

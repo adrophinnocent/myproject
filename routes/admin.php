@@ -40,6 +40,14 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin'
 
     Route::get('/dashboard', [App\Http\Controllers\Admin\AnalyticsController::class, 'dashboard'])->name('admin.dashboard');
 
+    // Run Migrations Helper
+    Route::get('/run-migrations', function () {
+        ob_start();
+        require base_path('run-migration.php');
+        $output = ob_get_clean();
+        return redirect()->route('admin.dashboard')->with('success', 'Database migrations executed successfully! Output: ' . substr(strip_tags($output), 0, 200));
+    })->name('admin.run-migrations');
+
     // Chart Routes
     Route::get('/dashboard/revenue-chart', function () {
         $months = [];
