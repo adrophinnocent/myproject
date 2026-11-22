@@ -881,29 +881,9 @@
                 </div>
             </div>
 
-            {{-- FREQUENTLY ASKED QUESTIONS (Visual Compact Display + Behind-the-Scenes AI Indexing) --}}
+            {{-- FREQUENTLY ASKED QUESTIONS (Strictly Tour-Specific) --}}
             @php
                 $faqs = $tour->translate('faqs');
-                $publishedFaqs = $publishedFaqs ?? collect();
-                if ($publishedFaqs->isEmpty()) {
-                    try {
-                        if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'tour_id')) {
-                            $publishedFaqs = \App\Models\Faq::where('is_active', true)
-                                ->where(function($q) use ($tour) {
-                                    if ($tour instanceof \App\Models\Tour) {
-                                        $q->where('tour_id', $tour->id);
-                                    }
-                                    if (!empty($tour->destination_id)) {
-                                        $q->orWhere('destination_id', $tour->destination_id);
-                                    }
-                                })->orderBy('order')->get();
-                        } else {
-                            $publishedFaqs = \App\Models\Faq::where('is_active', true)->orderBy('order')->get();
-                        }
-                    } catch (\Throwable $e) {}
-                }
-
-                // Combine all visual FAQ items
                 $allVisualFaqs = [];
 
                 if (!empty($faqs) && is_array($faqs)) {
@@ -914,26 +894,10 @@
                             $allVisualFaqs[] = [
                                 'question' => $q,
                                 'answer' => $a,
-                                'badge' => null,
-                                'keyword' => null
                             ];
                         }
                     }
                 }
-
-                if (isset($publishedFaqs) && $publishedFaqs->count() > 0) {
-                    foreach ($publishedFaqs as $dbFaq) {
-                        $allVisualFaqs[] = [
-                            'question' => $dbFaq->translate('question'),
-                            'answer' => $dbFaq->translate('answer'),
-                            'badge' => $dbFaq->is_verified_traveler ? '✨ Verified Traveler Answer' : null,
-                            'keyword' => $dbFaq->primary_keyword ?: null
-                        ];
-                    }
-                }
-
-                $visibleFaqs = array_slice($allVisualFaqs, 0, 4);
-                $hiddenFaqs = array_slice($allVisualFaqs, 4);
             @endphp
 
             @if(count($allVisualFaqs) > 0)
@@ -945,16 +909,6 @@
                 <div class="space-y-4">
                     @foreach($allVisualFaqs as $vf)
                     <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
-                        @if(!empty($vf['badge']) || !empty($vf['keyword']))
-                        <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-2">
-                            @if(!empty($vf['badge']))
-                                <span class="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">{{ $vf['badge'] }}</span>
-                            @endif
-                            @if(!empty($vf['keyword']))
-                                <span class="px-2 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $vf['keyword'] }}</span>
-                            @endif
-                        </div>
-                        @endif
                         <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
                             {{ $vf['question'] }}
                         </h3>
