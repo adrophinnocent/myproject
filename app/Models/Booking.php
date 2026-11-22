@@ -138,7 +138,15 @@ class Booking extends Model
 
     public function payments()
     {
-        return $this->hasMany(BookingPayment::class);
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
+                return $this->hasMany(BookingPayment::class);
+            }
+        } catch (\Throwable $e) {
+            // Ignore if table check fails
+        }
+
+        return $this->hasMany(static::class, 'id', 'id')->whereRaw('1 = 0');
     }
 
     public function getBookableItemAttribute()

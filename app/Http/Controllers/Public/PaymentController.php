@@ -25,11 +25,16 @@ class PaymentController extends Controller
 
     public function show($reference)
     {
+        $relations = ['tour', 'safari'];
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
+                $relations['payments'] = function($q) { $q->latest(); };
+            }
+        } catch (\Throwable $e) {}
+
         $booking = Booking::where('booking_reference', $reference)
             ->orWhere('token', $reference)
-            ->with(['tour', 'safari', 'payments' => function($q) {
-                $q->latest();
-            }])->firstOrFail();
+            ->with($relations)->firstOrFail();
 
         // Bank details from settings
         $bankDetails = [

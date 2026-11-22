@@ -18,7 +18,14 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with(['tour', 'safari', 'payments']);
+        $relations = ['tour', 'safari'];
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
+                $relations[] = 'payments';
+            }
+        } catch (\Throwable $e) {}
+
+        $query = Booking::with($relations);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -46,9 +53,14 @@ class BookingController extends Controller
 
     public function show($id)
     {
-        $booking = Booking::with(['tour', 'safari', 'payments' => function($q) {
-            $q->latest();
-        }])
+        $relations = ['tour', 'safari'];
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
+                $relations['payments'] = function($q) { $q->latest(); };
+            }
+        } catch (\Throwable $e) {}
+
+        $booking = Booking::with($relations)
         ->where('id', $id)
         ->orWhere('booking_reference', $id)
         ->first();

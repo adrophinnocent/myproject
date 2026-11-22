@@ -192,9 +192,16 @@ class BookingController extends Controller
 
     public function confirmation($reference)
     {
+        $relations = ['tour', 'safari'];
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
+                $relations[] = 'payments';
+            }
+        } catch (\Throwable $e) {}
+
         $booking = Booking::where('booking_reference', $reference)
             ->orWhere('token', $reference)
-            ->with(['tour', 'safari', 'payments'])
+            ->with($relations)
             ->firstOrFail();
 
         return view('public.booking.confirmation', compact('booking'));
@@ -202,11 +209,16 @@ class BookingController extends Controller
 
     public function status($reference)
     {
+        $relations = ['tour', 'safari'];
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
+                $relations['payments'] = function($q) { $q->latest(); };
+            }
+        } catch (\Throwable $e) {}
+
         $booking = Booking::where('booking_reference', $reference)
             ->orWhere('token', $reference)
-            ->with(['tour', 'safari', 'payments' => function($q) {
-                $q->latest();
-            }])
+            ->with($relations)
             ->firstOrFail();
 
         return view('public.booking.status', compact('booking'));
