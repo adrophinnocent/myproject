@@ -800,6 +800,40 @@
     </div>
 </section>
 
+{{-- ========== 8.5 FREQUENTLY ASKED QUESTIONS (GLOBAL Q&A BASE) ========== --}}
+@if(isset($faqs) && $faqs->count() > 0)
+<section class="py-16 md:py-20 bg-stone-100/70 border-t border-stone-200/80">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="text-center mb-10 md:mb-12">
+            <span class="text-gold-600 text-xs font-black uppercase tracking-[0.3em] mb-2 block">{{ __('Help & Knowledge Base') }}</span>
+            <h2 class="font-display text-3xl md:text-5xl font-black text-stone-900 mb-3">{{ __('Frequently Asked Questions') }}</h2>
+            <p class="text-stone-600 text-sm md:text-base max-w-2xl mx-auto font-normal">{{ __('Find answers to common questions about safari bookings, travel advice, and Tanzania adventures.') }}</p>
+            <div class="w-16 h-1 bg-gold-500 mt-5 rounded-full mx-auto"></div>
+        </div>
+
+        <div class="space-y-4">
+            @foreach($faqs as $faq)
+            <div class="bg-white border border-[#e8dfcf] rounded-2xl p-6 md:p-8 shadow-xs hover:border-[#b8920d]/60 transition-all">
+                <h3 class="font-bold text-stone-900 text-base sm:text-lg mb-2">
+                    {{ $faq->translate('question') ?: $faq->question }}
+                </h3>
+                <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
+                    {!! $faq->translate('answer') ?: $faq->answer !!}
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="{{ route('faqs.index') }}" class="btn-gold px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest inline-flex items-center gap-2 group shadow-lg">
+                {{ __('View All FAQs') }}
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- ========== 7. HOME FOOTER BANNER ========== --}}
 <section class="relative h-[60vh] min-h-[500px] flex items-center overflow-hidden bg-safari-dark">
     <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('home_footer_banner') }}" width="1920" height="600" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Twina Safaris Africa" loading="lazy" decoding="async">
