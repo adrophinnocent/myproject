@@ -8,12 +8,22 @@ use App\Models\Tour;
 use App\Models\Destination;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class FaqController extends Controller
 {
     public function index()
     {
-        $faqs = Faq::with(['tour', 'destination', 'category'])->orderBy('order')->get();
+        $relations = [];
+        try {
+            if (Schema::hasColumn('faqs', 'tour_id')) {
+                $relations = ['tour', 'destination', 'category'];
+            }
+        } catch (\Throwable $e) {}
+
+        $faqs = Faq::with($relations)->orderBy('order')->get();
         return view('admin.faqs.index', compact('faqs'));
     }
 
@@ -39,17 +49,34 @@ class FaqController extends Controller
             'is_active' => 'nullable',
         ]);
 
-        Faq::create([
+        // Auto-run migration if column is missing on live database
+        if (!Schema::hasColumn('faqs', 'tour_id')) {
+            try {
+                Artisan::call('migrate', [
+                    '--path' => 'database/migrations/2026_10_09_000000_enhance_faqs_table.php',
+                    '--force' => true
+                ]);
+            } catch (\Throwable $e) {
+                Log::error('Auto-migration enhance_faqs_table failed: ' . $e->getMessage());
+            }
+        }
+
+        $payload = [
             'question' => $validated['question'],
             'answer' => $validated['answer'],
-            'tour_id' => $validated['tour_id'] ?? null,
-            'destination_id' => $validated['destination_id'] ?? null,
-            'category_id' => $validated['category_id'] ?? null,
-            'primary_keyword' => $validated['primary_keyword'] ?? null,
-            'is_verified_traveler' => $request->has('is_verified_traveler'),
             'order' => $validated['order'] ?? 0,
             'is_active' => $request->has('is_active'),
-        ]);
+        ];
+
+        if (Schema::hasColumn('faqs', 'tour_id')) {
+            $payload['tour_id'] = $validated['tour_id'] ?? null;
+            $payload['destination_id'] = $validated['destination_id'] ?? null;
+            $payload['category_id'] = $validated['category_id'] ?? null;
+            $payload['primary_keyword'] = $validated['primary_keyword'] ?? null;
+            $payload['is_verified_traveler'] = $request->has('is_verified_traveler');
+        }
+
+        Faq::create($payload);
 
         return redirect()->route('admin.faqs.index')->with('success', 'Published Q&A created successfully');
     }
@@ -76,17 +103,33 @@ class FaqController extends Controller
             'is_active' => 'nullable',
         ]);
 
-        $faq->update([
+        if (!Schema::hasColumn('faqs', 'tour_id')) {
+            try {
+                Artisan::call('migrate', [
+                    '--path' => 'database/migrations/2026_10_09_000000_enhance_faqs_table.php',
+                    '--force' => true
+                ]);
+            } catch (\Throwable $e) {
+                Log::error('Auto-migration enhance_faqs_table failed: ' . $e->getMessage());
+            }
+        }
+
+        $payload = [
             'question' => $validated['question'],
             'answer' => $validated['answer'],
-            'tour_id' => $validated['tour_id'] ?? null,
-            'destination_id' => $validated['destination_id'] ?? null,
-            'category_id' => $validated['category_id'] ?? null,
-            'primary_keyword' => $validated['primary_keyword'] ?? null,
-            'is_verified_traveler' => $request->has('is_verified_traveler'),
             'order' => $validated['order'] ?? 0,
             'is_active' => $request->has('is_active'),
-        ]);
+        ];
+
+        if (Schema::hasColumn('faqs', 'tour_id')) {
+            $payload['tour_id'] = $validated['tour_id'] ?? null;
+            $payload['destination_id'] = $validated['destination_id'] ?? null;
+            $payload['category_id'] = $validated['category_id'] ?? null;
+            $payload['primary_keyword'] = $validated['primary_keyword'] ?? null;
+            $payload['is_verified_traveler'] = $request->has('is_verified_traveler');
+        }
+
+        $faq->update($payload);
 
         return redirect()->route('admin.faqs.index')->with('success', 'Q&A updated successfully');
     }
