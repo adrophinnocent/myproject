@@ -937,69 +937,32 @@
             @endphp
 
             @if(count($allVisualFaqs) > 0)
-            <div class="pt-8 border-t border-stone-200/80 mb-10" x-data="{ showMore: false }">
+            <div class="pt-8 border-t border-stone-200/80 mb-10">
                 <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
                     {{ __('Frequently Asked Questions') }}
                 </h2>
 
-                <div class="space-y-3">
-                    {{-- First 4 Primary FAQs --}}
-                    @foreach($visibleFaqs as $vf)
-                    <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
-                        <button @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50">
-                            <div>
-                                @if($vf['badge'] || $vf['keyword'])
-                                <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-1">
-                                    @if($vf['badge'])
-                                        <span class="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">{{ $vf['badge'] }}</span>
-                                    @endif
-                                    @if($vf['keyword'])
-                                        <span class="px-2 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $vf['keyword'] }}</span>
-                                    @endif
-                                </div>
-                                @endif
-                                <span>{{ $vf['question'] }}</span>
-                            </div>
-                            <span class="text-[#8A6D0B] text-lg font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
-                        </button>
-                        <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
+                <div class="space-y-4">
+                    @foreach($allVisualFaqs as $vf)
+                    <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
+                        @if(!empty($vf['badge']) || !empty($vf['keyword']))
+                        <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-2">
+                            @if(!empty($vf['badge']))
+                                <span class="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">{{ $vf['badge'] }}</span>
+                            @endif
+                            @if(!empty($vf['keyword']))
+                                <span class="px-2 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $vf['keyword'] }}</span>
+                            @endif
+                        </div>
+                        @endif
+                        <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
+                            {{ $vf['question'] }}
+                        </h3>
+                        <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
                             {!! $vf['answer'] !!}
                         </div>
                     </div>
                     @endforeach
-
-                    {{-- Extra FAQs (Expandable on click so page stays clean) --}}
-                    @if(count($hiddenFaqs) > 0)
-                    <div x-show="showMore" x-collapse x-cloak class="space-y-3 pt-1">
-                        @foreach($hiddenFaqs as $hf)
-                        <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
-                            <button @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50">
-                                <div>
-                                    @if($hf['badge'] || $hf['keyword'])
-                                    <div class="flex items-center gap-2 text-amber-700 text-[10px] font-black uppercase tracking-wider mb-1">
-                                        @if($hf['badge'])
-                                            <span class="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full">{{ $hf['badge'] }}</span>
-                                        @endif
-                                        @if($hf['keyword'])
-                                            <span class="px-2 py-0.5 bg-stone-100 text-stone-700 rounded-full">🏷️ {{ $hf['keyword'] }}</span>
-                                        @endif
-                                    </div>
-                                    @endif
-                                    <span>{{ $hf['question'] }}</span>
-                                </div>
-                                <span class="text-[#8A6D0B] text-lg font-bold ml-2 shrink-0" x-text="open ? '−' : '+'"></span>
-                            </button>
-                            <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
-                                {!! $hf['answer'] !!}
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    <button @click="showMore = !showMore" class="w-full py-3.5 bg-stone-100 hover:bg-stone-200/70 border border-stone-200 text-stone-800 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all mt-2">
-                        <span x-text="showMore ? '{{ __('Show Fewer Questions') }}' : '{{ __('Show More Questions') }} (+' + {{ count($hiddenFaqs) }} + ')'"></span>
-                    </button>
-                    @endif
                 </div>
             </div>
             @endif
