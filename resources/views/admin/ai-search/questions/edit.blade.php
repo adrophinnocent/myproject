@@ -105,6 +105,14 @@
                 <textarea name="answer_content" id="answer_content" rows="8" required class="w-full bg-white border border-stone-300 rounded-xl p-4 text-sm focus:ring-2 focus:ring-amber-500 outline-none leading-relaxed">{{ old('answer_content', $question->answer->content ?? '') }}</textarea>
             </div>
 
+            {{-- Preview Answer Button Below Editor --}}
+            <div class="flex items-center justify-between p-3.5 bg-stone-100/90 border border-stone-200/80 rounded-2xl">
+                <button type="button" onclick="openAnswerPreview()" class="bg-stone-900 hover:bg-stone-800 text-amber-400 font-black px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm hover:scale-105">
+                    <span>👁️ Preview Answer (Public Website View)</span>
+                </button>
+                <span class="text-[11px] text-stone-500 font-medium italic">Preview mode does not publish or alter publication status.</span>
+            </div>
+
             <div>
                 <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Meta Description</label>
                 <textarea name="meta_description" id="meta_description" rows="2" class="w-full bg-white border border-stone-300 rounded-xl p-3.5 text-xs focus:ring-2 focus:ring-amber-500 outline-none">{{ old('meta_description', $question->answer->meta_description ?? '') }}</textarea>
@@ -128,20 +136,6 @@
             </div>
         </div>
 
-        {{-- Google Search Snippet Preview --}}
-        <div class="neo-card p-6 bg-stone-50 border border-stone-200">
-            <h4 class="text-xs font-black text-stone-400 uppercase tracking-wider mb-3">Google & AI Search Snippet Preview</h4>
-            <div class="bg-white p-4 rounded-xl border border-stone-200 shadow-xs max-w-2xl">
-                <div class="text-xs text-stone-500 font-mono mb-1">https://twinasafaris.com › {{ $question->slug }}</div>
-                <div id="pv-title" class="text-sky-800 hover:underline font-bold text-base cursor-pointer">
-                    {{ $question->answer->title ?? $question->question }}
-                </div>
-                <div id="pv-desc" class="text-stone-600 text-xs mt-1 leading-relaxed line-clamp-2">
-                    {{ $question->answer->meta_description ?? 'Learn expert tips and recommendations for Tanzania safaris with Twina Safaris.' }}
-                </div>
-            </div>
-        </div>
-
         {{-- Submit Button --}}
         <div class="flex items-center gap-4 pt-2">
             <button type="submit" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-8 py-4 rounded-2xl text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105">
@@ -152,6 +146,70 @@
             </a>
         </div>
     </form>
+</div>
+
+{{-- Answer Preview Modal --}}
+<div id="answer-preview-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-3xl w-full shadow-2xl border border-stone-200/90 overflow-hidden relative flex flex-col max-h-[90vh]">
+        {{-- Preview Header Bar --}}
+        <div class="bg-stone-900 text-white p-5 px-6 flex items-center justify-between border-b border-stone-800 shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="p-2 rounded-xl bg-amber-500/20 text-amber-400 text-base">👁️</span>
+                <div>
+                    <h3 class="font-bold text-sm text-white">Public Website Answer Preview</h3>
+                    <p class="text-[11px] text-stone-400">Live preview rendered with Twina Safaris frontend public styling</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeAnswerPreview()" class="w-8 h-8 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 font-bold flex items-center justify-center transition-colors text-lg">
+                &times;
+            </button>
+        </div>
+
+        {{-- Preview Content Body --}}
+        <div class="p-6 md:p-8 overflow-y-auto space-y-6 bg-[#faf9f6] flex-1">
+            {{-- Google Search Result Snippet Card --}}
+            <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+                <div class="text-[10px] uppercase font-black tracking-wider text-stone-400 mb-2">Google & AI Search Snippet Preview</div>
+                <div class="text-xs text-emerald-700 font-mono mb-0.5 truncate" id="prev-url">https://twinasafaris.com › tour-faq</div>
+                <div class="text-sky-800 font-bold text-base hover:underline cursor-pointer leading-tight mb-1" id="prev-meta-title">
+                    Meta Title Preview
+                </div>
+                <div class="text-stone-600 text-xs leading-relaxed line-clamp-2" id="prev-meta-desc">
+                    Meta Description Preview
+                </div>
+            </div>
+
+            {{-- Public Website Frontend Rendering Card --}}
+            <div class="bg-white border border-[#e8dfcf] rounded-3xl p-6 md:p-8 shadow-sm space-y-4">
+                <div class="flex items-center gap-2 text-[#8A6D0B] text-[11px] font-black uppercase tracking-wider">
+                    <span>✨ Verified Traveler Answer</span>
+                    <span id="prev-kw-badge" class="bg-[#fbf7ee] px-2.5 py-0.5 rounded-full border border-[#f1e5cf] text-[#8A6D0B]">
+                        Primary Keyword
+                    </span>
+                </div>
+
+                <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 leading-tight" id="prev-question-title">
+                    Question Title
+                </h2>
+
+                <div class="text-stone-700 text-sm md:text-base leading-relaxed space-y-3 font-medium max-w-none" id="prev-content-body">
+                    Answer content preview
+                </div>
+            </div>
+        </div>
+
+        {{-- Preview Footer Action Buttons --}}
+        <div class="p-5 px-6 bg-stone-100 border-t border-stone-200 flex items-center justify-between shrink-0">
+            <button type="button" onclick="closeAnswerPreview()" class="px-5 py-2.5 border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
+                ✏️ Continue Editing
+            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="closeAnswerPreview()" class="px-5 py-2.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
+                    ✕ Close Preview
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -192,14 +250,8 @@ async function generateAiContent() {
         if (res.success && res.data) {
             const d = res.data;
             if (d.content) document.getElementById('answer_content').value = d.content;
-            if (d.meta_title) {
-                document.getElementById('answer_title').value = d.meta_title;
-                document.getElementById('pv-title').innerText = d.meta_title;
-            }
-            if (d.meta_description) {
-                document.getElementById('meta_description').value = d.meta_description;
-                document.getElementById('pv-desc').innerText = d.meta_description;
-            }
+            if (d.meta_title) document.getElementById('answer_title').value = d.meta_title;
+            if (d.meta_description) document.getElementById('meta_description').value = d.meta_description;
             if (d.primary_keyword) document.getElementById('primary_keyword').value = d.primary_keyword;
             if (d.search_intent) document.getElementById('search_intent_input').value = d.search_intent;
         } else {
@@ -213,6 +265,38 @@ async function generateAiContent() {
         spinner.classList.add('hidden');
         btn.disabled = false;
     }
+}
+
+function openAnswerPreview() {
+    const question = document.getElementById('question_input').value.trim() || 'Tourist Question';
+    const answerContent = document.getElementById('answer_content').value.trim() || 'No answer content entered yet.';
+    const metaTitle = document.getElementById('answer_title').value.trim() || question;
+    const metaDesc = document.getElementById('meta_description').value.trim() || 'Experience an unforgettable safari journey with Twina Safaris Tanzania.';
+    const primaryKw = document.getElementById('primary_keyword').value.trim() || 'Tanzania Safari';
+
+    document.getElementById('prev-question-title').innerText = question;
+    document.getElementById('prev-meta-title').innerText = metaTitle;
+    document.getElementById('prev-meta-desc').innerText = metaDesc;
+    document.getElementById('prev-kw-badge').innerText = primaryKw;
+
+    const formattedContent = answerContent
+        .split('\n\n')
+        .map(p => `<p class="mb-3">${p.replace(/\n/g, '<br>')}</p>`)
+        .join('');
+
+    document.getElementById('prev-content-body').innerHTML = formattedContent;
+
+    const modal = document.getElementById('answer-preview-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAnswerPreview() {
+    const modal = document.getElementById('answer-preview-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
 }
 </script>
 @endsection
