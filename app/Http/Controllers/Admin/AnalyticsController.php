@@ -26,10 +26,24 @@ class AnalyticsController extends Controller
         $revenuePerTour = $this->getRevenuePerTour();
         $bookingStats = $this->getBookingStats();
 
-        // Add Marketing Summary
-        $marketingLeads = \App\Models\Lead::whereNotNull('campaign_id')->count();
-        $marketingVisits = \App\Models\CampaignStat::where('type', 'visit')->count();
-        $topCampaigns = \App\Models\Campaign::withCount(['leads', 'stats'])->orderByDesc('leads_count')->take(3)->get();
+        // Add Marketing Summary with Schema safety checks
+        $marketingLeads = 0;
+        $marketingVisits = 0;
+        $topCampaigns = collect();
+
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('leads')) {
+                $marketingLeads = \App\Models\Lead::whereNotNull('campaign_id')->count();
+            }
+            if (\Illuminate\Support\Facades\Schema::hasTable('campaign_stats')) {
+                $marketingVisits = \App\Models\CampaignStat::where('type', 'visit')->count();
+            }
+            if (\Illuminate\Support\Facades\Schema::hasTable('campaigns')) {
+                $topCampaigns = \App\Models\Campaign::withCount(['leads', 'stats'])->orderByDesc('leads_count')->take(3)->get();
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Analytics marketing summary exception: ' . $e->getMessage());
+        }
 
         return view('admin.dashboard', compact(
             'kpis', 'recentBooks', 'topTours', 'tourStats',
