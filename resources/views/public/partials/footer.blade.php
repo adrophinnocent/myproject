@@ -59,6 +59,7 @@
                     <ul class="space-y-4 text-sm">
                         <li><a href="{{ route('tours.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('All Tours') }}</a></li>
                         <li><a href="{{ route('trip-plan.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Plan Your Trip') }}</a></li>
+                        <li><a href="{{ route('faqs.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('FAQs') }}</a></li>
                         <li><a href="{{ route('about') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('About Us') }}</a></li>
                         <li><a href="{{ route('contact.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Contact') }}</a></li>
                     </ul>
