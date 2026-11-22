@@ -75,6 +75,15 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-2">
+                                @if($faq->tour)
+                                    <a href="{{ route('tours.show', ['type' => 'tour', 'slug' => $faq->tour->slug]) }}" target="_blank" class="px-3 py-1.5 bg-amber-50 text-amber-800 hover:bg-amber-100 font-bold rounded-lg transition-colors border border-amber-200/60" title="View on Public Tour Page">
+                                        View Live ↗
+                                    </a>
+                                @else
+                                    <a href="{{ route('faqs.index') }}" target="_blank" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-lg transition-colors" title="View on Public FAQs Page">
+                                        View Live ↗
+                                    </a>
+                                @endif
                                 <a href="{{ route('admin.faqs.edit', $faq) }}" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-lg transition-colors">Edit</a>
                                 <form method="POST" action="{{ route('admin.faqs.destroy', $faq) }}" onsubmit="return confirm('Delete Q&A?')">
                                     @csrf @method('DELETE')
