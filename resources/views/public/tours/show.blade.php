@@ -882,30 +882,57 @@
             </div>
 
             {{-- FREQUENTLY ASKED QUESTIONS --}}
-            @php $faqs = $tour->translate('faqs'); @endphp
-            @if(!empty($faqs) && is_array($faqs) && count($faqs) > 0)
+            @php
+                $faqs = $tour->translate('faqs');
+                $aiQuestions = \App\Models\SearchQuestion::with('answer')
+                    ->where('status', 'published')
+                    ->where('tour_id', $tour->id)
+                    ->get();
+            @endphp
+            @if((!empty($faqs) && is_array($faqs) && count($faqs) > 0) || $aiQuestions->count() > 0)
             <div class="pt-8 border-t border-stone-200/80 mb-10">
                 <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 border-b-2 border-[#b8920d] pb-3 mb-6">
                     {{ __('Frequently Asked Questions') }}
                 </h2>
                 <div class="space-y-4">
-                    @foreach($faqs as $index => $faq)
-                    @php
-                        $q = is_array($faq) ? ($faq['question'] ?? $faq['title'] ?? '') : $faq;
-                        $a = is_array($faq) ? ($faq['answer'] ?? $faq['description'] ?? '') : '';
-                    @endphp
-                    @if(!empty($q))
-                    <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
-                        <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
-                            {{ $q }}
-                        </h3>
-                        @if(!empty($a))
-                        <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                            {!! $a !!}
+                    @if(!empty($faqs) && is_array($faqs))
+                        @foreach($faqs as $index => $faq)
+                        @php
+                            $q = is_array($faq) ? ($faq['question'] ?? $faq['title'] ?? '') : $faq;
+                            $a = is_array($faq) ? ($faq['answer'] ?? $faq['description'] ?? '') : '';
+                        @endphp
+                        @if(!empty($q))
+                        <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
+                                {{ $q }}
+                            </h3>
+                            @if(!empty($a))
+                            <div class="text-stone-600 text-xs sm:text-sm leading-relaxed">
+                                {!! $a !!}
+                            </div>
+                            @endif
                         </div>
                         @endif
-                    </div>
+                        @endforeach
                     @endif
+
+                    @foreach($aiQuestions as $aiQ)
+                        @if($aiQ->answer && !empty($aiQ->answer->content))
+                        <div class="bg-white border border-[#e8dfcf] rounded-2xl p-5 md:p-6 shadow-xs hover:border-[#b8920d]/60 transition-all">
+                            <div class="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-wider mb-1">
+                                <span>✨ Verified Traveler Answer</span>
+                                @if($aiQ->primary_keyword)
+                                    <span>• {{ $aiQ->primary_keyword }}</span>
+                                @endif
+                            </div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-2">
+                                {{ $aiQ->question }}
+                            </h3>
+                            <div class="text-stone-600 text-xs sm:text-sm leading-relaxed space-y-2">
+                                {!! nl2br(e($aiQ->answer->content)) !!}
+                            </div>
+                        </div>
+                        @endif
                     @endforeach
                 </div>
             </div>

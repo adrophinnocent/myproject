@@ -109,4 +109,122 @@ if (Schema::hasTable('bookings')) {
     }
 }
 
+// AI Search Intelligence Tables
+use Illuminate\Database\Schema\Blueprint;
+
+if (!Schema::hasTable('search_question_categories')) {
+    echo "\nCreating search_question_categories table...\n";
+    Schema::create('search_question_categories', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('slug')->unique();
+        $table->text('description')->nullable();
+        $table->integer('sort_order')->default(0);
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
+}
+
+if (!Schema::hasTable('search_questions')) {
+    echo "Creating search_questions table...\n";
+    Schema::create('search_questions', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('category_id')->constrained('search_question_categories')->onDelete('cascade');
+        $table->foreignId('tour_id')->nullable()->constrained('tours')->onDelete('set null');
+        $table->text('question');
+        $table->string('slug')->unique();
+        $table->string('primary_keyword')->nullable();
+        $table->json('secondary_keywords')->nullable();
+        $table->string('search_intent')->default('informational');
+        $table->string('target_country')->nullable();
+        $table->string('suggested_content_type')->default('tour');
+        $table->string('status')->default('draft');
+        $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+        $table->timestamps();
+        $table->softDeletes();
+    });
+}
+
+if (!Schema::hasTable('search_answers')) {
+    echo "Creating search_answers table...\n";
+    Schema::create('search_answers', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('search_question_id')->constrained('search_questions')->onDelete('cascade');
+        $table->string('title')->nullable();
+        $table->longText('content');
+        $table->text('meta_description')->nullable();
+        $table->json('suggested_links')->nullable();
+        $table->json('related_questions')->nullable();
+        $table->boolean('is_approved')->default(false);
+        $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
+        $table->timestamp('approved_at')->nullable();
+        $table->timestamps();
+        $table->softDeletes();
+    });
+}
+
+if (!Schema::hasTable('search_content_assignments')) {
+    echo "Creating search_content_assignments table...\n";
+    Schema::create('search_content_assignments', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('search_question_id')->constrained('search_questions')->onDelete('cascade');
+        $table->string('target_type')->default('faq');
+        $table->unsignedBigInteger('target_id')->nullable();
+        $table->boolean('is_published')->default(false);
+        $table->timestamp('published_at')->nullable();
+        $table->timestamps();
+    });
+}
+
+if (!Schema::hasTable('ai_visibility_checks')) {
+    echo "Creating ai_visibility_checks table...\n";
+    Schema::create('ai_visibility_checks', function (Blueprint $table) {
+        $table->id();
+        $table->text('query_text');
+        $table->string('ai_platform');
+        $table->boolean('is_brand_mentioned')->default(false);
+        $table->boolean('is_source_cited')->default(false);
+        $table->json('competitors_mentioned')->nullable();
+        $table->text('source_link')->nullable();
+        $table->date('check_date');
+        $table->text('notes')->nullable();
+        $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+        $table->timestamps();
+    });
+}
+
+// Seed the 15 Search Question Categories if empty
+if (DB::table('search_question_categories')->count() === 0) {
+    echo "Seeding 15 search question categories...\n";
+    $categories = [
+        'Tanzania Safari',
+        'Serengeti',
+        'Ngorongoro',
+        'Tarangire',
+        'Lake Manyara',
+        'Kilimanjaro Climbing',
+        'Machame Route',
+        'Lemosho Route',
+        'Honeymoon Safaris',
+        'Zanzibar Holidays',
+        'Family Safaris',
+        'Private Safaris',
+        'Safari Pricing',
+        'Booking and Travel Information',
+        'Company Information',
+    ];
+
+    foreach ($categories as $index => $catName) {
+        DB::table('search_question_categories')->insert([
+            'name' => $catName,
+            'slug' => \Illuminate\Support\Str::slug($catName),
+            'description' => 'Tourist search questions regarding ' . $catName,
+            'sort_order' => $index + 1,
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+}
+
 echo "\nDone!\n";

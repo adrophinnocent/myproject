@@ -116,6 +116,104 @@ class AIGenerator
         }
     }
 
+    public function generateSearchAnswerAndSeo(string $questionText, string $categoryName, ?string $tourContext = null): array
+    {
+        try {
+            $prompt = "You are the head SEO and Travel Intelligence Specialist for Twina Safaris (a premier Tanzanian safari operator).\n" .
+                "A tourist asked the following question on AI/Search platforms (Google, ChatGPT, Gemini, Perplexity):\n\n" .
+                "QUESTION: {$questionText}\n" .
+                "CATEGORY: {$categoryName}\n" .
+                ($tourContext ? "LINKED TOUR PACKAGE: {$tourContext}\n" : "") . "\n" .
+                "Task:\n" .
+                "1. Provide a comprehensive, luxury-focused, factual, and persuasive answer (150-250 words) that positions Twina Safaris as the top expert operator. Do not invent fake prices or awards.\n" .
+                "2. Provide an SEO Meta Title (max 60 chars).\n" .
+                "3. Provide a Meta Description (max 155 chars).\n" .
+                "4. Identify the Primary Keyword.\n" .
+                "5. Identify 4-6 Secondary Keywords (comma-separated).\n" .
+                "6. Classify Search Intent (one of: Informational, Commercial, Transactional, Navigational).\n" .
+                "7. List 3 Related Questions tourists also ask.\n\n" .
+                "Format your response EXACTLY as follows:\n" .
+                "META_TITLE: [title]\n" .
+                "META_DESCRIPTION: [description]\n" .
+                "PRIMARY_KEYWORD: [primary keyword]\n" .
+                "SECONDARY_KEYWORDS: [kw1, kw2, kw3, kw4]\n" .
+                "SEARCH_INTENT: [Informational/Commercial/Transactional/Navigational]\n" .
+                "RELATED_QUESTIONS: [Q1 | Q2 | Q3]\n" .
+                "ANSWER:\n" .
+                "[Comprehensive answer text here]";
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->post($this->baseUrl . '/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are an expert AI Travel Search Intelligence Strategist for Twina Safaris Tanzania.'],
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+                'max_tokens' => 1200,
+            ]);
+
+            if ($response->successful()) {
+                $rawContent = $response->json()['choices'][0]['message']['content'];
+                return $this->parseSearchAnswerAndSeo($rawContent);
+            }
+
+            Log::error('AI Search Answer Generation failed: ' . $response->body());
+            return [];
+        } catch (\Exception $e) {
+            Log::error('AI Search Answer Exception: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    protected function parseSearchAnswerAndSeo(string $rawContent): array
+    {
+        $data = [
+            'meta_title' => '',
+            'meta_description' => '',
+            'primary_keyword' => '',
+            'secondary_keywords' => [],
+            'search_intent' => 'informational',
+            'related_questions' => [],
+            'content' => '',
+        ];
+
+        if (str_contains($rawContent, 'ANSWER:')) {
+            $parts = explode('ANSWER:', $rawContent, 2);
+            $headerPart = $parts[0];
+            $data['content'] = trim($parts[1]);
+        } else {
+            $headerPart = $rawContent;
+            $data['content'] = trim($rawContent);
+        }
+
+        $lines = explode("\n", trim($headerPart));
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (str_starts_with($line, 'META_TITLE:')) {
+                $data['meta_title'] = trim(str_replace('META_TITLE:', '', $line));
+            } elseif (str_starts_with($line, 'META_DESCRIPTION:')) {
+                $data['meta_description'] = trim(str_replace('META_DESCRIPTION:', '', $line));
+            } elseif (str_starts_with($line, 'PRIMARY_KEYWORD:')) {
+                $data['primary_keyword'] = trim(str_replace('PRIMARY_KEYWORD:', '', $line));
+            } elseif (str_starts_with($line, 'SECONDARY_KEYWORDS:')) {
+                $kws = trim(str_replace('SECONDARY_KEYWORDS:', '', $line));
+                $data['secondary_keywords'] = array_map('trim', explode(',', $kws));
+            } elseif (str_starts_with($line, 'SEARCH_INTENT:')) {
+                $intent = strtolower(trim(str_replace('SEARCH_INTENT:', '', $line)));
+                if (in_array($intent, ['informational', 'commercial', 'transactional', 'navigational'])) {
+                    $data['search_intent'] = $intent;
+                }
+            } elseif (str_starts_with($line, 'RELATED_QUESTIONS:')) {
+                $rqs = trim(str_replace('RELATED_QUESTIONS:', '', $line));
+                $data['related_questions'] = array_map('trim', explode('|', $rqs));
+            }
+        }
+
+        return $data;
+    }
+
     protected function getSystemPrompt(string $category): string
     {
         $prompts = [

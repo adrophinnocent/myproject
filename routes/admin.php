@@ -347,4 +347,23 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin'
         'update' => 'admin.campaigns.update',
         'destroy' => 'admin.campaigns.destroy',
     ]);
+
+    // AI Search Intelligence System
+    Route::prefix('ai-search-intelligence')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'dashboard'])->name('admin.ai-search.dashboard');
+
+        // Questions Management
+        Route::get('/questions', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'questionsIndex'])->name('admin.ai-search.questions.index');
+        Route::get('/questions/create', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'createQuestion'])->name('admin.ai-search.questions.create');
+        Route::post('/questions', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'storeQuestion'])->name('admin.ai-search.questions.store');
+        Route::get('/questions/{question}/edit', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'editQuestion'])->name('admin.ai-search.questions.edit');
+        Route::put('/questions/{question}', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'updateQuestion'])->name('admin.ai-search.questions.update');
+        Route::delete('/questions/{question}', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'destroyQuestion'])->name('admin.ai-search.questions.destroy');
+        Route::post('/generate-ai-answer', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'generateAiAnswer'])->name('admin.ai-search.generate-answer');
+
+        // AI Visibility Tracker
+        Route::get('/visibility', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'visibilityIndex'])->name('admin.ai-search.visibility.index');
+        Route::post('/visibility', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'storeVisibilityCheck'])->name('admin.ai-search.visibility.store');
+        Route::delete('/visibility/{check}', [App\Http\Controllers\Admin\AiSearchIntelligenceController::class, 'destroyVisibilityCheck'])->name('admin.ai-search.visibility.destroy');
+    });
 });
