@@ -10,13 +10,126 @@ use App\Models\SearchQuestion;
 use App\Models\SearchQuestionCategory;
 use App\Models\Tour;
 use App\Services\AIGenerator;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class AiSearchIntelligenceController extends Controller
 {
+    protected function ensureTablesExist()
+    {
+        if (Schema::hasTable('search_questions')) {
+            return;
+        }
+
+        try {
+            if (!Schema::hasTable('search_question_categories')) {
+                Schema::create('search_question_categories', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('name');
+                    $table->string('slug')->unique();
+                    $table->text('description')->nullable();
+                    $table->integer('sort_order')->default(0);
+                    $table->boolean('is_active')->default(true);
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable('search_questions')) {
+                Schema::create('search_questions', function (Blueprint $table) {
+                    $table->id();
+                    $table->foreignId('category_id')->constrained('search_question_categories')->onDelete('cascade');
+                    $table->foreignId('tour_id')->nullable()->constrained('tours')->onDelete('set null');
+                    $table->text('question');
+                    $table->string('slug')->unique();
+                    $table->string('primary_keyword')->nullable();
+                    $table->json('secondary_keywords')->nullable();
+                    $table->string('search_intent')->default('informational');
+                    $table->string('target_country')->nullable();
+                    $table->string('suggested_content_type')->default('tour');
+                    $table->string('status')->default('draft');
+                    $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+                    $table->timestamps();
+                    $table->softDeletes();
+                });
+            }
+
+            if (!Schema::hasTable('search_answers')) {
+                Schema::create('search_answers', function (Blueprint $table) {
+                    $table->id();
+                    $table->foreignId('search_question_id')->constrained('search_questions')->onDelete('cascade');
+                    $table->string('title')->nullable();
+                    $table->longText('content');
+                    $table->text('meta_description')->nullable();
+                    $table->json('suggested_links')->nullable();
+                    $table->json('related_questions')->nullable();
+                    $table->boolean('is_approved')->default(false);
+                    $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
+                    $table->timestamp('approved_at')->nullable();
+                    $table->timestamps();
+                    $table->softDeletes();
+                });
+            }
+
+            if (!Schema::hasTable('search_content_assignments')) {
+                Schema::create('search_content_assignments', function (Blueprint $table) {
+                    $table->id();
+                    $table->foreignId('search_question_id')->constrained('search_questions')->onDelete('cascade');
+                    $table->string('target_type')->default('faq');
+                    $table->unsignedBigInteger('target_id')->nullable();
+                    $table->boolean('is_published')->default(false);
+                    $table->timestamp('published_at')->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable('ai_visibility_checks')) {
+                Schema::create('ai_visibility_checks', function (Blueprint $table) {
+                    $table->id();
+                    $table->text('query_text');
+                    $table->string('ai_platform');
+                    $table->boolean('is_brand_mentioned')->default(false);
+                    $table->boolean('is_source_cited')->default(false);
+                    $table->json('competitors_mentioned')->nullable();
+                    $table->text('source_link')->nullable();
+                    $table->date('check_date');
+                    $table->text('notes')->nullable();
+                    $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+                    $table->timestamps();
+                });
+            }
+
+            if (DB::table('search_question_categories')->count() === 0) {
+                $categories = [
+                    'Tanzania Safari', 'Serengeti', 'Ngorongoro', 'Tarangire', 'Lake Manyara',
+                    'Kilimanjaro Climbing', 'Machame Route', 'Lemosho Route', 'Honeymoon Safaris',
+                    'Zanzibar Holidays', 'Family Safaris', 'Private Safaris', 'Safari Pricing',
+                    'Booking and Travel Information', 'Company Information',
+                ];
+
+                foreach ($categories as $index => $catName) {
+                    DB::table('search_question_categories')->insert([
+                        'name' => $catName,
+                        'slug' => Str::slug($catName),
+                        'description' => 'Tourist search questions regarding ' . $catName,
+                        'sort_order' => $index + 1,
+                        'is_active' => true,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Auto table creation error: ' . $e->getMessage());
+        }
+    }
+
     public function dashboard()
     {
+        $this->ensureTablesExist();
+
         $totalQuestions = SearchQuestion::count();
         $draftCount = SearchQuestion::where('status', 'draft')->count();
         $approvedCount = SearchQuestion::where('status', 'approved')->count();
@@ -31,7 +144,7 @@ class AiSearchIntelligenceController extends Controller
             SUM(CASE WHEN is_source_cited = 1 THEN 1 ELSE 0 END) as source_cites
         ')->first();
 
-        $mentionRate = $visibilityStats->total_checks > 0
+        $mentionRate = ($visibilityStats && $visibilityStats->total_checks > 0)
             ? round(($visibilityStats->brand_mentions / $visibilityStats->total_checks) * 100, 1)
             : 0;
 
@@ -60,6 +173,8 @@ class AiSearchIntelligenceController extends Controller
 
     public function questionsIndex(Request $request)
     {
+        $this->ensureTablesExist();
+
         $query = SearchQuestion::with(['category', 'tour', 'answer', 'assignments']);
 
         if ($request->filled('search')) {
@@ -95,6 +210,8 @@ class AiSearchIntelligenceController extends Controller
 
     public function createQuestion()
     {
+        $this->ensureTablesExist();
+
         $categories = SearchQuestionCategory::where('is_active', true)->orderBy('name')->get();
         $tours = Tour::published()->orderBy('title')->get(['id', 'title']);
 
@@ -103,6 +220,8 @@ class AiSearchIntelligenceController extends Controller
 
     public function storeQuestion(Request $request)
     {
+        $this->ensureTablesExist();
+
         $validated = $request->validate([
             'category_id' => 'required|exists:search_question_categories,id',
             'tour_id' => 'nullable|exists:tours,id',
@@ -134,7 +253,6 @@ class AiSearchIntelligenceController extends Controller
                 'approved_at' => in_array($validated['status'], ['approved', 'published']) ? now() : null,
             ]);
 
-            // Content assignment if target set
             if ($validated['status'] === 'published') {
                 SearchContentAssignment::create([
                     'search_question_id' => $question->id,
@@ -151,6 +269,8 @@ class AiSearchIntelligenceController extends Controller
 
     public function editQuestion(SearchQuestion $question)
     {
+        $this->ensureTablesExist();
+
         $question->load(['category', 'tour', 'answer', 'assignments']);
         $categories = SearchQuestionCategory::where('is_active', true)->orderBy('name')->get();
         $tours = Tour::published()->orderBy('title')->get(['id', 'title']);
@@ -160,6 +280,8 @@ class AiSearchIntelligenceController extends Controller
 
     public function updateQuestion(Request $request, SearchQuestion $question)
     {
+        $this->ensureTablesExist();
+
         $validated = $request->validate([
             'category_id' => 'required|exists:search_question_categories,id',
             'tour_id' => 'nullable|exists:tours,id',
@@ -195,7 +317,6 @@ class AiSearchIntelligenceController extends Controller
                 ]
             );
 
-            // Assignment handling
             if ($validated['status'] === 'published') {
                 SearchContentAssignment::updateOrCreate(
                     ['search_question_id' => $question->id],
@@ -249,6 +370,8 @@ class AiSearchIntelligenceController extends Controller
 
     public function visibilityIndex(Request $request)
     {
+        $this->ensureTablesExist();
+
         $query = AiVisibilityCheck::query();
 
         if ($request->filled('platform')) {
@@ -275,6 +398,8 @@ class AiSearchIntelligenceController extends Controller
 
     public function storeVisibilityCheck(Request $request)
     {
+        $this->ensureTablesExist();
+
         $validated = $request->validate([
             'query_text' => 'required|string|max:1000',
             'ai_platform' => 'required|string|in:ChatGPT,Gemini,Perplexity,Copilot,Claude,Other',
