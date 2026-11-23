@@ -368,7 +368,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
-                                {{ __('Platinum Operator') }}
+                                {{ __('Local Safari Specialists') }}
                             </h4>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 Twina Safaris • {{ __('World Adventure Tours') }}
@@ -1055,7 +1055,7 @@
                         <div class="flex items-start gap-2.5">
                             <span class="text-stone-700 font-bold text-sm shrink-0">🛡️</span>
                             <p class="leading-tight">
-                                <strong>Best price guarantee</strong>
+                                <strong>Transparent, upfront pricing</strong>
                             </p>
                         </div>
                     </div>

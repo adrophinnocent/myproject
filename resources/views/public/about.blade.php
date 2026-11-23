@@ -1,7 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'About Us - Twina Safaris')
-@section('meta_description', 'Discover Twina Safaris: Our story, mission, and why we are Tanzania\'s most trusted safari operator.')
+@section('meta_description', 'Meet Twina Safaris: a Tanzania-based team creating tailor-made safaris, Kilimanjaro treks and Zanzibar holidays.')
 
 @section('content')
 {{-- 1. HERO BANNER --}}
@@ -37,7 +37,7 @@
                 </div>
                 <div class="space-y-6 text-gray-700 text-lg leading-relaxed font-light">
                     <p>
-                        {{ __('Twina Safaris was founded with a simple mission: to share the breathtaking beauty, wildlife, and culture of Tanzania with travelers from around the world. What started as a passion for adventure and nature has grown into a trusted safari company dedicated to creating unforgettable travel experiences.') }}
+                        {{ __('Twina Safaris was founded with a simple mission: to share the beauty, wildlife and culture of Tanzania with travelers from around the world. What started as a passion for adventure and nature has grown into a Tanzania-based safari company creating tailor-made travel experiences.') }}
                     </p>
                     <p>
                         {{ __('From the endless plains of the Serengeti to the majestic peak of Mount Kilimanjaro and the pristine beaches of Zanzibar, we believe every journey should be more than just a trip—it should be a life-changing experience. Our team combines local knowledge, professional expertise, and genuine hospitality to ensure that every guest discovers the true spirit of Africa.') }}
@@ -124,7 +124,7 @@
             <div class="bg-white/5 backdrop-blur-md p-12 rounded-[3rem] border border-white/10">
                 <h3 class="font-display text-4xl font-bold mb-6 text-white">{{ __('Our Vision') }}</h3>
                 <p class="text-gray-300 text-lg leading-relaxed font-light">
-                    {{ __('To become one of Tanzania\'s most trusted and respected safari companies, recognized internationally for excellence in service, authentic travel experiences, environmental responsibility, and a commitment to showcasing the beauty of Tanzania to the world.') }}
+                    {{ __('To be a respected Tanzania-based safari company known for clear communication, authentic travel experiences, responsible practices and a genuine commitment to showcasing the country to the world.') }}
                 </p>
             </div>
         </div>
@@ -209,7 +209,10 @@
             <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">{{ __('The Twina Edge') }}</span>
             <h2 class="font-display text-4xl md:text-6xl font-black text-safari-dark mb-8">{{ __('Why Choose Twina Safaris?') }}</h2>
             <p class="text-gray-700 text-xl font-light leading-relaxed italic border-l-4 border-gold-500 pl-8">
-                {{ __('At Twina Safaris, we believe that every traveler deserves an authentic, comfortable, and unforgettable African adventure. Our passion for Tanzania, combined with our commitment to exceptional service, allows us to create journeys that go beyond ordinary tourism.') }}
+                {{ __('At Twina Safaris, we believe every traveler deserves an authentic, comfortable Tanzania adventure. Our local knowledge and clear planning help you compare routes, inclusions and costs before you book.') }}
+            </p>
+            <p class="mt-6 text-sm">
+                <a href="{{ route('guides.choose-company') }}" class="font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Read our guide to choosing a Tanzania safari company') }} →</a>
             </p>
         </div>
 
@@ -251,8 +254,8 @@
 
                 <div class="group">
                     <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Support') }}</h4>
-                    <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('24/7 Customer Support') }}</h3>
-                    <p class="text-gray-600 leading-relaxed font-light">{{ __('Travel plans can sometimes require flexibility and quick assistance. Our dedicated support team is available around the clock to answer questions, provide guidance, and assist with any concerns before, during, or after your trip. We are always just a message or phone call away.') }}</p>
+                    <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Clear Pre-Trip and In-Trip Support') }}</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">{{ __('Travel plans can change. Before departure you receive a written itinerary and contact details. During the trip your guide manages the daily plan and any changes caused by weather, roads or flight times.') }}</p>
                 </div>
 
                 <div class="group">

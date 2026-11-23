@@ -47,15 +47,9 @@
             </div>
             <span class="text-gray-600">|</span>
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-1.5">
-                    <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#34E0A1]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0zm0 21.6c-5.302 0-9.6-4.298-9.6-9.6S6.698 2.4 12 2.4s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6zm4.183-14.4c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm-8.366 0c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm4.183 9.6c-1.988 0-3.6-1.612-3.6-3.6h7.2c0 1.988-1.612 3.6-3.6 3.6z"/></svg>
-                    <span class="text-gray-500"><span class="text-white font-bold">4.9/5</span> TripAdvisor</span>
-                </div>
+                <span class="text-gray-500">{{ __('Locally based in Tanzania') }}</span>
                 <span class="text-gray-700">·</span>
-                <div class="flex items-center gap-1.5">
-                    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c1.61-1.48 2.54-3.67 2.54-6.09z" fill="#4285F4"/><path d="M12 23c3.11 0 5.71-1.03 7.62-2.79l-3.57-2.77c-1.01.68-2.3 1.08-4.05 1.08-3.11 0-5.75-2.1-6.7-4.91H1.05v2.85C2.94 19.46 7.18 23 12 23z" fill="#34A853"/><path d="M5.3 13.61c-.24-.68-.37-1.42-.37-2.18s.13-1.5-.37-2.18V6.4H1.05c-.68 1.4-1.05 2.96-1.05 4.6s.37 3.2 1.05 4.6l4.25-3.39z" fill="#FBBC05"/><path d="M12 4.75c1.69 0 3.2.58 4.39 1.71l3.3-3.3C17.7 1.19 15.11 0 12 0 7.18 0 2.94 3.54 1.05 8.12l4.25 3.39C6.25 8.65 8.89 6.55 12 6.55z" fill="#EA4335"/></svg>
-                    <span class="text-gray-500"><span class="text-white font-bold">5.0/5</span> Google</span>
-                </div>
+                <span class="text-gray-500">{{ __('Tailor-made safari itineraries') }}</span>
             </div>
         </div>
         <div class="flex items-center gap-4">
@@ -71,7 +65,9 @@
                     @endforeach
                 </div>
             </div>
-            <!-- Language Switcher -->
+            {{-- Language Switcher: hidden on English-only guides so crawlers are not
+                 sent to untranslated ?lang= variants. --}}
+            @unless(\App\Helpers\SeoHelper::hasEnglishOnlyContent(request()))
             <div class="relative" x-data="{open: false}">
                 <button x-on:click="open = !open" x-on:click.outside="open = false" class="flex items-center gap-1.5 text-gray-400 hover:text-gold-400 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9-9c1.657 0 3 1.343 3 3s-1.343 3-3 3m0-6H7m10 0v6m0 6H7m10 0v-6M3 12a9 9 0 019-9m-9 9a9 9 0 009 9m-9-9c1.657 0-3 1.343-3 3s1.343 3 3 3m0-6h10"></path></svg>
@@ -84,6 +80,7 @@
                     @endforeach
                 </div>
             </div>
+            @endunless
         </div>
     </div>
 </div>
@@ -93,16 +90,10 @@
      x-data="{ mobileMenuOpen: false, activeAccordion: null }"
      class="nav-transparent fixed top-0 lg:top-9 left-0 right-0 z-40 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="lg:hidden flex items-center justify-center gap-4 py-2 border-b border-white/5 bg-black/20 backdrop-blur-sm -mx-4 mb-1">
-            <div class="flex items-center gap-1">
-                <svg viewBox="0 0 24 24" class="h-3 w-3 text-[#34E0A1]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0zm0 21.6c-5.302 0-9.6-4.298-9.6-9.6S6.698 2.4 12 2.4s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6zm4.183-14.4c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm-8.366 0c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm4.183 9.6c-1.988 0-3.6-1.612-3.6-3.6h7.2c0 1.988-1.612 3.6-3.6 3.6z"/></svg>
-                <span class="text-[10px] text-gray-400"><span class="text-white font-bold">4.9/5</span> TripAdvisor</span>
-            </div>
+        <div class="lg:hidden flex items-center justify-center gap-3 py-2 border-b border-white/5 bg-black/20 backdrop-blur-sm -mx-4 mb-1">
+            <span class="text-[10px] text-gray-400">{{ __('Tanzania safari specialists') }}</span>
             <span class="text-gray-700">·</span>
-            <div class="flex items-center gap-1">
-                <svg viewBox="0 0 24 24" class="h-3 w-3" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c1.61-1.48 2.54-3.67 2.54-6.09z" fill="#4285F4"/><path d="M12 23c3.11 0 5.71-1.03 7.62-2.79l-3.57-2.77c-1.01.68-2.3 1.08-4.05 1.08-3.11 0-5.75-2.1-6.7-4.91H1.05v2.85C2.94 19.46 7.18 23 12 23z" fill="#34A853"/><path d="M5.3 13.61c-.24-.68-.37-1.42-.37-2.18s.13-1.5-.37-2.18V6.4H1.05c-.68 1.4-1.05 2.96-1.05 4.6s.37 3.2 1.05 4.6l4.25-3.39z" fill="#FBBC05"/><path d="M12 4.75c1.69 0 3.2.58 4.39 1.71l3.3-3.3C17.7 1.19 15.11 0 12 0 7.18 0 2.94 3.54 1.05 8.12l4.25 3.39C6.25 8.65 8.89 6.55 12 6.55z" fill="#EA4335"/></svg>
-                <span class="text-[10px] text-gray-400"><span class="text-white font-bold">5.0/5</span> Google</span>
-            </div>
+            <span class="text-[10px] text-gray-400">{{ __('Tailor-made itineraries') }}</span>
         </div>
 
         <div class="flex items-center justify-between py-3">
@@ -146,7 +137,7 @@
                         </div>
                         <div class="bg-white/5 border-t border-white/10 px-6 py-4 flex justify-between items-center">
                             <span class="text-gray-300 text-xs">{{ __('Looking for something unique?') }}</span>
-                            <a href="{{ route('trip-plan.index') }}" class="text-gold-400 text-sm font-bold hover:text-gold-300 flex items-center gap-1 transition-colors">
+                            <a href="{{ route('custom-safari.create') }}" class="text-gold-400 text-sm font-bold hover:text-gold-300 flex items-center gap-1 transition-colors">
                                 {{ __('Plan Custom Safari') }} <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                             </a>
                         </div>
@@ -154,7 +145,9 @@
                 </div>
 
                 <a href="{{ route('destinations.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('destinations.*')?'text-gold-400':'' }}">{{ __('Destinations') }}</a>
-                <a href="{{ url('/itineraries') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->is('itineraries*')?'text-gold-400':'' }}">{{ __('Itineraries') }}</a>
+                <a href="{{ route('guides.best-time') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('guides.best-time')?'text-gold-400':'' }}">{{ __('Best Time') }}</a>
+                <a href="{{ route('guides.safari-cost') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('guides.safari-cost')?'text-gold-400':'' }}">{{ __('Safari Costs') }}</a>
+                <a href="{{ route('tours.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('tours.*')?'text-gold-400':'' }}">{{ __('Itineraries') }}</a>
                 <a href="{{ route('gallery.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('gallery.*')?'text-gold-400':'' }}">{{ __('Gallery') }}</a>
                 <a href="{{ route('blog.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('blog.*')?'text-gold-400':'' }}">{{ __('Blog') }}</a>
                 <a href="{{ route('contact.index') }}" class="px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('contact.*')?'text-gold-400':'' }}">{{ __('Contact') }}</a>
@@ -208,6 +201,9 @@
                 </div>
 
                 <a href="{{ route('destinations.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('destinations.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Destinations') }}</a>
+                <a href="{{ route('guides.best-time') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">{{ __('Best Time') }}</a>
+                <a href="{{ route('guides.safari-cost') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">{{ __('Safari Costs') }}</a>
+                <a href="{{ route('tours.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('tours.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Itineraries') }}</a>
                 <a href="{{ route('gallery.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('gallery.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Gallery') }}</a>
                 <a href="{{ route('blog.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('blog.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Blog') }}</a>
                 <a href="{{ route('contact.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('contact.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Contact') }}</a>

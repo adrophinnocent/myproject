@@ -69,13 +69,13 @@
                 <div class="flex flex-col items-center text-center px-4">
                     <h4 class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
-                        {{ __('Award Winning') }}
+                        {{ __('Local Experts') }}
                     </h4>
                 </div>
                 <div class="flex flex-col items-center text-center px-4 border-l border-gray-100">
                     <h4 class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
-                        {{ __('Fully Insured') }}
+                        {{ __('Clear Inclusions') }}
                     </h4>
                 </div>
                 <div class="flex flex-col items-center text-center px-4 border-l border-gray-100">
@@ -87,7 +87,7 @@
                 <div class="flex flex-col items-center text-center px-4 border-l border-gray-100">
                     <h4 class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
-                        {{ __('5-Star Rated') }}
+                        {{ __('Tailor-Made Trips') }}
                     </h4>
                 </div>
             </div>

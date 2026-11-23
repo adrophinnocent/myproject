@@ -1,6 +1,45 @@
 @extends('public.layouts.app')
-@section('title', 'Safari Tour Packages - Tanzania & East Africa')
-@section('meta_description', 'Browse our complete collection of Tanzania safari packages, Kilimanjaro climbs, Zanzibar beach holidays and East Africa tours.')
+@section('title', 'Tanzania Safari Packages 2026 | Prices, Routes & Itineraries | Twina Safaris')
+@section('meta_description', 'Browse Tanzania safari packages for Serengeti, Ngorongoro and Tarangire. Compare listed prices, day-by-day routes, inclusions and guide support.')
+
+@php
+    $packageFaqs = [
+        [
+            'question' => 'How many days do I need for a Tanzania safari?',
+            'answer' => 'Three days works for a short Serengeti and Ngorongoro trip, five days gives a more relaxed northern circuit, and seven or more days allows a slower pace with more parks.',
+        ],
+        [
+            'question' => 'Are park fees included in Tanzania safari packages?',
+            'answer' => 'It depends on the itinerary. Check the inclusion list on each tour page and ask for current park or conservation fee information before comparing prices.',
+        ],
+        [
+            'question' => 'Can I combine a safari with Kilimanjaro or Zanzibar?',
+            'answer' => 'Yes. Many travellers trek Kilimanjaro first, go on safari, then finish on Zanzibar. Ask for flight days and rest days to be built into the itinerary.',
+        ],
+        [
+            'question' => 'What is usually included in a safari package?',
+            'answer' => 'Most packages include a guided vehicle, driver-guide, accommodation and meals as listed. Flights, visas, insurance, optional activities and personal costs are commonly excluded.',
+        ],
+        [
+            'question' => 'Can I customise a published itinerary?',
+            'answer' => 'Yes. Use the custom safari request form to change parks, accommodation, dates, group size and pace.',
+        ],
+    ];
+
+    $packageFaqSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => collect($packageFaqs)->map(fn (array $faq) => [
+            '@type' => 'Question',
+            'name' => $faq['question'],
+            'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq['answer']],
+        ])->values()->all(),
+    ];
+@endphp
+
+@section('schema')
+<script type="application/ld+json">@json($packageFaqSchema)</script>
+@endsection
 
 @section('content')
 <div class="relative pt-32 pb-16 bg-safari-dark">
@@ -10,10 +49,35 @@
     <div class="absolute inset-0 bg-gradient-to-br from-slate-800 via-amber-900/20 to-slate-800 opacity-60"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
         <span class="text-gold-400 text-sm uppercase tracking-widest font-semibold">{{ __('Explore Africa') }}</span>
-        <h1 class="font-display text-4xl md:text-6xl text-white font-bold mt-3">{{ __('Safari Tour Packages') }}</h1>
-        <p class="text-gray-300 max-w-2xl mx-auto mt-4">{{ __('Extraordinary experiences awaiting you across East Africa') }}</p>
+        <h1 class="font-display text-4xl md:text-6xl text-white font-bold mt-3">{{ __('Tanzania Safari Packages') }}</h1>
+        <p class="text-gray-300 max-w-2xl mx-auto mt-4">
+            {{ __('Compare routes, durations and inclusions for Serengeti, Ngorongoro, Tarangire and Kilimanjaro journeys, then ask for a tailored itinerary.') }}
+        </p>
     </div>
 </div>
+
+<section class="bg-white border-b border-stone-200/80 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-4">Choose your safari with the full picture</h2>
+        <p class="text-stone-600 max-w-4xl leading-relaxed mb-7">
+            A Tanzania safari package should show the route, number of days, accommodation style, vehicle, guide and exactly what is included in the price. Use the filters below to browse current itineraries, or start with the planning guides if you are still deciding when and where to go.
+        </p>
+        <div class="grid md:grid-cols-3 gap-4">
+            <a href="{{ route('guides.safari-cost') }}" class="p-5 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
+                <h3 class="font-bold text-stone-900 mb-2">Understand safari costs</h3>
+                <p class="text-sm text-stone-600">See what drives price by season, group size, park fees and accommodation.</p>
+            </a>
+            <a href="{{ route('guides.best-time') }}" class="p-5 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
+                <h3 class="font-bold text-stone-900 mb-2">Pick the right season</h3>
+                <p class="text-sm text-stone-600">Compare dry season, calving season, migration timing and green-season value.</p>
+            </a>
+            <a href="{{ route('custom-safari.create') }}" class="p-5 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
+                <h3 class="font-bold text-stone-900 mb-2">Build your own itinerary</h3>
+                <p class="text-sm text-stone-600">Tell us your dates, parks, pace and budget for a tailor-made plan.</p>
+            </a>
+        </div>
+    </div>
+</section>
 
 <div class="max-w-7xl mx-auto px-4 py-16">
     <div class="flex flex-col lg:flex-row gap-10">
@@ -154,6 +218,21 @@
             </div>
             @endif
         </div>
+
+        <section class="mt-16 pt-12 border-t border-stone-200">
+            <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-6">Safari package questions</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                @foreach($packageFaqs as $faq)
+                <details class="group bg-white border border-stone-200 rounded-2xl shadow-xs">
+                    <summary class="cursor-pointer list-none p-5 font-bold text-stone-900 text-sm flex items-start justify-between gap-3">
+                        <span>{{ $faq['question'] }}</span>
+                        <span class="text-[#8A6D0B] text-lg leading-none" aria-hidden="true">+</span>
+                    </summary>
+                    <div class="px-5 pb-5 text-stone-600 text-sm leading-relaxed border-t border-stone-100 pt-3">{{ $faq['answer'] }}</div>
+                </details>
+                @endforeach
+            </div>
+        </section>
     </div>
 </div>
 @endsection

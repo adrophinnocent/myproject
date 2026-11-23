@@ -177,39 +177,26 @@
     </div>
 </section>
 
-{{-- ========== 1.5 IMPACT IN NUMBERS (STATISTICS - WHITE BG) ========== --}}
-<section class="py-12 bg-white border-b border-gray-100 relative overflow-hidden" x-data="{
-    startCount(target, duration, callback) {
-        let start = 0;
-        const increment = target / (duration / 16);
-        const timer = setInterval(() => {
-            start += increment;
-            if (start >= target) {
-                callback(target);
-                clearInterval(timer);
-            } else {
-                callback(Math.floor(start));
-            }
-        }, 16);
-    }
-}">
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
+{{-- ========== 1.5 WHAT WE ARRANGE (NO UNVERIFIED STATISTICS) ========== --}}
+<section class="py-12 bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="sr-only">{{ __('What Twina Safaris arranges') }}</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">500+</div>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em]">{{ __('Happy Travelers') }}</p>
+            <div class="text-center">
+                <span class="text-3xl" aria-hidden="true">📍</span>
+                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Based in Tanzania') }}</p>
             </div>
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">150+</div>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em]">{{ __('Safari Packages') }}</p>
+            <div class="text-center">
+                <span class="text-3xl" aria-hidden="true">🧭</span>
+                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Tailor-made itineraries') }}</p>
             </div>
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">10+</div>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em]">{{ __('Years Experience') }}</p>
+            <div class="text-center">
+                <span class="text-3xl" aria-hidden="true">📝</span>
+                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Clear written quotes') }}</p>
             </div>
-            <div class="text-center group">
-                <div class="text-3xl md:text-5xl font-display font-black text-gold-600 mb-1 group-hover:scale-110 transition-transform duration-500">100%</div>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em]">{{ __('Safety Record') }}</p>
+            <div class="text-center">
+                <span class="text-3xl" aria-hidden="true">🌿</span>
+                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Responsible travel practices') }}</p>
             </div>
         </div>
     </div>
@@ -427,8 +414,8 @@
                         <span class="text-gray-300 text-[9px] font-black uppercase tracking-widest leading-tight">{{ __('Peak Elevation') }}</span>
                     </div>
                     <div class="flex items-center gap-3 px-5 py-2.5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                        <span class="text-gold-400 font-black text-lg md:text-xl">98%</span>
-                        <span class="text-gray-300 text-[9px] font-black uppercase tracking-widest leading-tight">{{ __('Success Rate') }}</span>
+                        <span class="text-gold-400 font-black text-lg md:text-xl">5–10</span>
+                        <span class="text-gray-300 text-[9px] font-black uppercase tracking-widest leading-tight">{{ __('Route days') }}</span>
                     </div>
                 </div>
 
@@ -500,7 +487,7 @@
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Excellence') }}</span>
                         <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Expert Local Guides') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
-                            {{ __('Our guides are born and raised in the heart of the Tanzanian wilderness, possessing an instinctive understanding of wildlife behavior and migratory patterns. With over a decade of field experience, they offer deep insights into the delicate balance of our ecosystem, ensuring every sighting is not just seen, but understood and ethically managed.') }}
+                            {{ __('Travel with local, English-speaking guides who know the parks, wildlife behaviour and seasonal migration patterns, and who explain what you are seeing as you go.') }}
                         </p>
                     </div>
 
@@ -518,16 +505,16 @@
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Value') }}</span>
                         <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Direct Local Pricing') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
-                            {{ __('By operating directly on the ground from our headquarters in Tanzania, we eliminate unnecessary third-party commissions and middleman fees. This allows us to offer ultra-premium experiences at exceptionally competitive rates while ensuring that a larger portion of your travel investment goes directly into local conservation efforts and community upliftment.') }}
+                            {{ __('We arrange the vehicle, guide and accommodation as one itinerary, so your quote clearly shows what is included and there are no hidden middleman charges.') }}
                         </p>
                     </div>
 
                     {{-- USP 4 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-5 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Reliability') }}</span>
-                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('24/7 Ground Support') }}</h4>
+                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('In-Trip Support') }}</h4>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
-                            {{ __('Your safety and comfort are our non-negotiable priorities. From the moment you step off the plane until your final departure, our dedicated logistics team is available around the clock. We handle every detail, from flight transfers to medical contingencies, giving you the absolute peace of mind to fully immerse yourself in the majestic beauty of the African wilderness.') }}
+                            {{ __('Before you travel you receive a written itinerary and a contact number. During the trip your guide handles the daily plan, transfers and any changes caused by weather or road conditions.') }}
                         </p>
                     </div>
                 </div>
@@ -542,9 +529,9 @@
     <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-10 md:mb-14">
             <span class="text-gold-600 text-xs font-black uppercase tracking-[0.3em] mb-2 block">Handpicked Journeys</span>
-            <h2 class="font-display text-3xl md:text-5xl font-black text-gray-900 mb-3">Featured Safari Packages</h2>
+            <h2 class="font-display text-3xl md:text-5xl font-black text-gray-900 mb-3">Featured Tanzania Safari Packages</h2>
             <p class="text-gray-600 text-sm md:text-base max-w-2xl mx-auto font-normal">
-                Explore our top-rated Tanzania safari itineraries and Kilimanjaro trekking packages crafted by local experts.
+                Explore tailor-made Tanzania safari itineraries and Kilimanjaro trekking routes arranged by a local team, with clear inclusions and dates.
             </p>
             <div class="w-16 h-1 bg-gold-500 mt-5 rounded-full mx-auto"></div>
         </div>
@@ -610,7 +597,8 @@
 </section>
 @endif
 
-{{-- ========== 5. WHAT TRAVELERS SAY (CUSTOM LUXURY CARD GRID) ========== --}}
+{{-- ========== 5. WHAT TRAVELERS SAY (REAL PUBLISHED TESTIMONIALS ONLY) ========== --}}
+@if($testimonials->isNotEmpty())
 <section class="py-10 px-4 md:px-8 bg-[#12110e] text-[#faf0d9] border-t border-white/5 relative">
     <div class="max-w-7xl mx-auto">
         {{-- Section Header --}}
@@ -619,7 +607,7 @@
                 {{ __('What Travelers Say') }}
             </h2>
             <div class="text-xs md:text-sm font-semibold text-[#e5b842] flex items-center gap-1.5 shrink-0">
-                <span class="text-[#e5b842]">★</span> 5.0 {{ __('from guest reviews') }}
+                <span class="text-[#e5b842]">★</span> {{ number_format($testimonialAverage, 1) }} {{ __('from') }} {{ $testimonialCount }} {{ $testimonialCount === 1 ? __('guest review') : __('guest reviews') }}
             </div>
         </div>
 
@@ -628,56 +616,33 @@
 
         {{-- 3-Column Card Grid --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4.5 md:gap-5">
-            @php
-                $reviewsList = [
-                    [
-                        'name' => 'Sarah Mitchell',
-                        'role' => __('Safari traveler'),
-                        'content' => __('"Absolutely life-changing experience! Our guide knew every animal\'s behavior."'),
-                        'initials' => 'SA',
-                    ],
-                    [
-                        'name' => 'Marco & Julia',
-                        'role' => __('Honeymoon couple'),
-                        'content' => __('"Perfect honeymoon! Safari followed by Zanzibar beach time."'),
-                        'initials' => 'MA',
-                    ],
-                    [
-                        'name' => 'David Chen',
-                        'role' => __('Mountain climber'),
-                        'content' => __('"Summiting Kilimanjaro was the toughest but most rewarding thing I\'ve ever done."'),
-                        'initials' => 'DA',
-                    ],
-                ];
-            @endphp
-
-            @foreach($reviewsList as $rev)
+            @foreach($testimonials as $rev)
             <div class="bg-[#1a1915] border border-white/10 border-l-[3px] border-l-[#d4af37] rounded-xl p-[18px] flex flex-col justify-between shadow-lg hover:border-white/20 transition-all duration-300">
                 <div>
-                    {{-- 5 Gold Stars --}}
+                    {{-- Stars come from the real published testimonial --}}
                     <div class="flex text-[#e5b842] gap-1 mb-3">
-                        @for($s=0; $s<5; $s++)
+                        @for($s=0; $s<(int) $rev->rating; $s++)
                             <svg class="w-3.5 h-3.5 fill-current"><use href="#star"/></svg>
                         @endfor
                     </div>
 
                     {{-- Review Content --}}
                     <p class="text-[#e2ded6] text-[0.92rem] leading-relaxed mb-4 font-normal">
-                        {{ $rev['content'] }}
+                        {{ $rev->content }}
                     </p>
                 </div>
 
                 {{-- Author Profile --}}
                 <div class="flex items-center gap-3 pt-2">
                     <div class="w-9 h-9 rounded-full bg-[#2a2416] border border-[#d4af37]/80 flex items-center justify-center text-[#e5b842] font-bold text-xs shrink-0">
-                        {{ $rev['initials'] }}
+                        {{ mb_strtoupper(mb_substr((string) $rev->name, 0, 2)) }}
                     </div>
                     <div>
                         <h4 class="font-bold text-[#faf0d9] text-sm leading-tight block">
-                            {{ $rev['name'] }}
+                            {{ $rev->name }}
                         </h4>
                         <span class="text-[#d4af37] text-xs font-medium block mt-0.5">
-                            {{ $rev['role'] }}
+                            {{ $rev->location ?: __('Guest') }}
                         </span>
                     </div>
                 </div>
@@ -693,6 +658,7 @@
         </symbol>
     </svg>
 </section>
+@endif
 
 {{-- ========== 6. SAFARI JOURNAL (BLOG) ========== --}}
 @if(isset($latestPosts) && $latestPosts->count() > 0)
@@ -766,32 +732,21 @@
 </section>
 @endif
 
-{{-- ========== 8. TRUST & AFFILIATIONS STRIP ========== --}}
+{{-- ========== 8. WHY TRAVEL WITH A LOCAL TEAM ========== --}}
 <section class="py-16 bg-white border-t border-gray-100">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-            {{-- TripAdvisor --}}
-            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
-                <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <svg viewBox="0 0 24 24" class="h-10 w-10 text-[#34E0A1]" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0zm0 21.6c-5.302 0-9.6-4.298-9.6-9.6S6.698 2.4 12 2.4s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6zm4.183-14.4c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm-8.366 0c-.663 0-1.2.537-1.2 1.2s.537 1.2 1.2 1.2 1.2-.537 1.2-1.2-.537-1.2-1.2-1.2zm4.183 9.6c-1.988 0-3.6-1.612-3.6-3.6h7.2c0 1.988-1.612 3.6-3.6 3.6z"/></svg>
-                </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">TripAdvisor Excellence</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-center h-32">
+                <span class="text-3xl" aria-hidden="true">📍</span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">{{ __('Based in Tanzania') }}</span>
             </div>
-
-            {{-- Google --}}
-            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
-                <div class="w-full flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <svg viewBox="0 0 24 24" class="h-10 w-10" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c1.61-1.48 2.54-3.67 2.54-6.09z" fill="#4285F4"/><path d="M12 23c3.11 0 5.71-1.03 7.62-2.79l-3.57-2.77c-1.01.68-2.3 1.08-4.05 1.08-3.11 0-5.75-2.1-6.7-4.91H1.05v2.85C2.94 19.46 7.18 23 12 23z" fill="#34A853"/><path d="M5.3 13.61c-.24-.68-.37-1.42-.37-2.18s.13-1.5-.37-2.18V6.4H1.05c-.68 1.4-1.05 2.96-1.05 4.6s.37 3.2 1.05 4.6l4.25-3.39z" fill="#FBBC05"/><path d="M12 4.75c1.69 0 3.2.58 4.39 1.71l3.3-3.3C17.7 1.19 15.11 0 12 0 7.18 0 2.94 3.54 1.05 8.12l4.25 3.39C6.25 8.65 8.89 6.55 12 6.55z" fill="#EA4335"/></svg>
-                </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Verified Google Reviews</span>
+            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-center h-32">
+                <span class="text-3xl" aria-hidden="true">🧭</span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">{{ __('Tailor-made itineraries') }}</span>
             </div>
-
-            {{-- Sustainable --}}
-            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
-                <div class="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-3xl">🌿</span>
-                </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Sustainable Tourism Partner</span>
+            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-center h-32">
+                <span class="text-3xl" aria-hidden="true">🌿</span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">{{ __('Responsible travel practices') }}</span>
             </div>
         </div>
     </div>
@@ -827,6 +782,13 @@
                 {{ __('View All FAQs') }}
                 <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
+            <div class="mt-6 flex flex-wrap justify-center gap-3">
+                <a href="{{ route('guides.safari-cost') }}" class="text-xs font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Safari costs') }}</a>
+                <span class="text-stone-300" aria-hidden="true">·</span>
+                <a href="{{ route('guides.best-time') }}" class="text-xs font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Best time to visit') }}</a>
+                <span class="text-stone-300" aria-hidden="true">·</span>
+                <a href="{{ route('guides.choose-company') }}" class="text-xs font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Choose a safari company') }}</a>
+            </div>
         </div>
     </div>
 </section>
@@ -840,7 +802,7 @@
         <h2 class="font-display text-5xl md:text-8xl text-white font-black mb-10 leading-tight drop-shadow-2xl">Start Your <span class="text-gold-400 italic">Legacy</span> Today</h2>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-8">
             <a href="{{ route('tours.index') }}" class="btn-gold px-14 py-6 rounded-full text-xl font-black shadow-2xl transition-all hover:scale-110 active:scale-95">Explore All Tours</a>
-            <a href="{{ route('trip-plan.index') }}" class="bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white hover:bg-white hover:text-safari-dark px-14 py-6 rounded-full text-xl font-black transition-all">Plan Custom Trip</a>
+            <a href="{{ route('custom-safari.create') }}" class="bg-white/10 backdrop-blur-lg border-2 border-white/20 text-white hover:bg-white hover:text-safari-dark px-14 py-6 rounded-full text-xl font-black transition-all">Plan Custom Trip</a>
         </div>
     </div>
 </section>

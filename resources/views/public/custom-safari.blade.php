@@ -1,7 +1,42 @@
 @extends('public.layouts.app')
 
-@section('title', 'Request a Custom Safari | Twina Safaris')
-@section('meta_description', 'Craft your tailor-made African safari with Twina Safaris. Personalize your itinerary, accommodation, travel dates, and experiences.')
+@section('title', 'Custom Safari Tanzania | Build Your Own Private Itinerary | Twina Safaris')
+@section('meta_description', 'Design a tailor-made Tanzania safari: choose your parks, pace, accommodation and dates. Tell Twina Safaris what you want and get an itinerary built around it.')
+
+@php
+    $customFaqs = [
+        [
+            'question' => 'What can I customise on a Tanzania safari?',
+            'answer' => 'You can choose parks, number of days, travel dates, accommodation style, vehicle type, group size, meal plan and optional activities such as balloon safaris or cultural visits.',
+        ],
+        [
+            'question' => 'How far in advance should I send a custom safari request?',
+            'answer' => 'Earlier is better for popular dry-season dates and specific lodges, but you can send a request at any time and we will check current availability.',
+        ],
+        [
+            'question' => 'Can I combine a custom safari with Kilimanjaro or Zanzibar?',
+            'answer' => 'Yes. Include those in your request and the itinerary can account for transfer days, flight times and rest days.',
+        ],
+        [
+            'question' => 'Will I receive a fixed price before paying?',
+            'answer' => 'A clear quote with inclusions, exclusions and payment terms should be provided before any booking is confirmed.',
+        ],
+    ];
+
+    $customFaqSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => collect($customFaqs)->map(fn (array $faq) => [
+            '@type' => 'Question',
+            'name' => $faq['question'],
+            'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq['answer']],
+        ])->values()->all(),
+    ];
+@endphp
+
+@section('schema')
+<script type="application/ld+json">@json($customFaqSchema)</script>
+@endsection
 
 @section('content')
 {{-- Hero Section --}}
@@ -14,10 +49,10 @@
             Bespoke African Adventures
         </span>
         <h1 class="text-3xl md:text-5xl font-black font-serif tracking-tight text-white mb-4">
-            Request a Custom Safari
+            Custom Safari in Tanzania
         </h1>
         <p class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Tell us about your dream African journey. Our local safari experts will design a personalized itinerary tailored to your exact dates, travel style, and budget.
+            Tell us your dates, preferred parks, pace and budget. We will build a tailor-made Tanzania itinerary around your plans, with the route, accommodation and inclusions written down clearly.
         </p>
     </div>
 </section>
@@ -212,6 +247,46 @@
                 </button>
             </div>
         </form>
+    </div>
+</section>
+
+<section class="py-16 bg-white border-t border-stone-200">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-6">How the custom safari process works</h2>
+        <div class="grid md:grid-cols-3 gap-5">
+            @foreach([
+                ['1. Send your brief', 'Share your dates, group size, must-see parks, accommodation style and rough budget through the form above.'],
+                ['2. Review a written itinerary', 'We check routes and availability, then send back a day-by-day plan with inclusions and exclusions.'],
+                ['3. Confirm and prepare', 'Once you are happy with the plan, payment terms and travel documents are confirmed before departure.'],
+            ] as $step)
+            <div class="p-6 rounded-2xl bg-stone-50 border border-stone-200">
+                <h3 class="font-bold text-stone-900 mb-2">{{ $step[0] }}</h3>
+                <p class="text-sm text-stone-600 leading-relaxed">{{ $step[1] }}</p>
+            </div>
+            @endforeach
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3">
+            <a href="{{ route('guides.safari-cost') }}" class="px-5 py-3 rounded-full border border-stone-300 text-sm font-bold text-stone-700 hover:border-[#b8920d] hover:text-[#8A6D0B] transition-colors">Understand safari costs</a>
+            <a href="{{ route('guides.best-time') }}" class="px-5 py-3 rounded-full border border-stone-300 text-sm font-bold text-stone-700 hover:border-[#b8920d] hover:text-[#8A6D0B] transition-colors">Best time to visit</a>
+            <a href="{{ route('tours.index') }}" class="px-5 py-3 rounded-full border border-stone-300 text-sm font-bold text-stone-700 hover:border-[#b8920d] hover:text-[#8A6D0B] transition-colors">Browse published itineraries</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-stone-100/70 border-t border-stone-200/80">
+    <div class="max-w-4xl mx-auto px-4">
+        <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-6">Custom safari questions</h2>
+        <div class="space-y-3">
+            @foreach($customFaqs as $faq)
+            <details class="bg-white border border-stone-200 rounded-2xl">
+                <summary class="cursor-pointer list-none p-5 font-bold text-stone-900 text-sm flex items-start justify-between gap-3">
+                    <span>{{ $faq['question'] }}</span>
+                    <span class="text-[#8A6D0B] text-lg leading-none" aria-hidden="true">+</span>
+                </summary>
+                <div class="px-5 pb-5 pt-1 text-stone-600 text-sm leading-relaxed border-t border-stone-100">{{ $faq['answer'] }}</div>
+            </details>
+            @endforeach
+        </div>
     </div>
 </section>
 @endsection

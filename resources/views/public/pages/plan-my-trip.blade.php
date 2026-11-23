@@ -6,7 +6,7 @@
 <div class="max-w-4xl mx-auto px-4 pt-32 pb-12">
     <div class="text-center mb-12">
         <h1 class="font-display text-4xl md:text-5xl font-bold text-gray-900 mb-4">{{ __('Plan Your Dream Safari') }}</h1>
-        <p class="text-gray-600 text-lg max-w-2xl mx-auto">{{ __('Let us create a personalized itinerary just for you. Fill out the form below and our safari experts will get back to you within 24 hours.') }}</p>
+        <p class="text-gray-600 text-lg max-w-2xl mx-auto">{{ __('Tell us your dates, preferred parks and budget. We will use the details below to prepare a tailor-made Tanzania itinerary.') }}</p>
     </div>
 
     @if(session('success'))

@@ -23,8 +23,8 @@
       "url": "https://twinasafaris.com/images/logo.png"
     }
   },
-  "datePublished": "{{ $post->published_at ? $post->published_at->toIso8601String() : $post->created_at->toIso8601String() }}",
-  "dateModified": "{{ $post->updated_at->toIso8601String() }}",
+  "datePublished": "{{ optional($post->published_at)->toIso8601String() ?: optional($post->created_at)->toIso8601String() }}",
+  "dateModified": "{{ optional($post->updated_at)->toIso8601String() ?: optional($post->published_at)->toIso8601String() ?: optional($post->created_at)->toIso8601String() }}",
   "description": "{{ $post->meta_description ?? $post->excerpt }}",
   "mainEntityOfPage": {
     "@@type": "WebPage",
@@ -192,7 +192,7 @@
                     <div class="relative z-10">
                         <h3 class="font-display text-3xl font-bold mb-4">{{ __('Ready for Adventure?') }}</h3>
                         <p class="text-white/60 mb-10 leading-relaxed text-sm">{{ __('We can customize a safari experience based on the insights in this article.') }}</p>
-                        <a href="{{ route('trip-plan.index') }}" class="btn-gold w-full block py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg">{{ __('Start Planning') }}</a>
+                        <a href="{{ route('custom-safari.create') }}" class="btn-gold w-full block py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg">{{ __('Start Planning') }}</a>
                     </div>
                     <div class="absolute -top-10 -left-10 w-40 h-40 bg-gold-500/10 rounded-full blur-3xl"></div>
                 </div>

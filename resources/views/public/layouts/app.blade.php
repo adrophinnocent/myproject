@@ -71,6 +71,13 @@
     <meta name="twitter:site"        content="@TwinaSafaris">
 
     {{-- Structured Data (Schema.org) for AI & Google --}}
+    @php
+        $sameAs = array_values(array_filter([
+            \App\Models\Setting::get('facebook_url'),
+            \App\Models\Setting::get('instagram_url'),
+            \App\Models\Setting::get('youtube_url'),
+        ], fn ($url) => is_string($url) && str_starts_with($url, 'http')));
+    @endphp
     <script type="application/ld+json">
     [
         {
@@ -101,12 +108,7 @@
           },
           "telephone": "{{ \App\Models\Setting::get('site_phone') }}",
           "email": "twinasafaris@gmail.com",
-          "priceRange": "$$$",
-          "sameAs": [
-            "{{ \App\Models\Setting::get('facebook_url', '#') }}",
-            "{{ \App\Models\Setting::get('instagram_url', '#') }}",
-            "{{ \App\Models\Setting::get('youtube_url', '#') }}"
-          ],
+          "sameAs": @json($sameAs),
           "contactPoint": {
             "@@type": "ContactPoint",
             "telephone": "{{ \App\Models\Setting::get('site_phone') }}",

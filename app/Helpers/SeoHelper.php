@@ -93,7 +93,7 @@ class SeoHelper
     {
         $url = self::siteUrl().self::canonicalPath($request);
         $query = self::paginationQuery($request);
-        $locale = self::requestedLocale($request);
+        $locale = self::indexableLocale($request);
 
         if ($locale !== null && $locale !== self::defaultLocale()) {
             $query['lang'] = $locale;
@@ -109,8 +109,30 @@ class SeoHelper
     {
         $url = self::siteUrl().self::canonicalPath($request);
         $query = self::paginationQuery($request);
+        $absoluteUrl = $query === [] ? $url : $url.'?'.http_build_query($query);
 
-        return self::alternatesFor($query === [] ? $url : $url.'?'.http_build_query($query));
+        // New guide pages are deliberately English-only until real translations
+        // exist. Sending hreflang to an untranslated page would mislead crawlers.
+        if (self::hasEnglishOnlyContent($request)) {
+            return ['x-default' => $absoluteUrl];
+        }
+
+        return self::alternatesFor($absoluteUrl);
+    }
+
+    /**
+     * Locale that should be reflected in canonical/hreflang tags.
+     */
+    private static function indexableLocale(Request $request): ?string
+    {
+        return self::hasEnglishOnlyContent($request) ? null : self::requestedLocale($request);
+    }
+
+    public static function hasEnglishOnlyContent(Request $request): bool
+    {
+        $routeName = $request->route()?->getName();
+
+        return $routeName !== null && str_starts_with($routeName, 'guides.');
     }
 
     /**

@@ -50,7 +50,7 @@
         <h2 class="font-display text-3xl md:text-5xl text-white font-bold mb-6">Can't decide where to go?</h2>
         <p class="text-gray-300 text-lg mb-10">Our safari experts are ready to help you craft the perfect multi-destination itinerary tailored to your dreams.</p>
         <div class="flex flex-wrap justify-center gap-4">
-            <a href="{{ route('trip-plan.index') }}" class="btn-gold px-10 py-4 rounded-full font-bold">Plan Custom Safari</a>
+            <a href="{{ route('custom-safari.create') }}" class="btn-gold px-10 py-4 rounded-full font-bold">Plan Custom Safari</a>
             <a href="{{ route('contact.index') }}" class="px-10 py-4 rounded-full border-2 border-white/20 text-white font-bold hover:bg-white hover:text-safari-dark transition-all">Talk to an Expert</a>
         </div>
     </div>

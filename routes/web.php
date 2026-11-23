@@ -12,6 +12,7 @@ use App\Http\Controllers\Public\CustomSafariController;
 use App\Http\Controllers\Public\DestinationController;
 use App\Http\Controllers\Public\FaqController;
 use App\Http\Controllers\Public\GalleryController;
+use App\Http\Controllers\Public\GuideController;
 use App\Http\Controllers\Public\InquiryController;
 use App\Http\Controllers\Public\NewsletterController;
 use App\Http\Controllers\Public\PaymentController;
@@ -165,6 +166,15 @@ Route::get('/blog/{slug}', function ($slug) {
 })->name('blog.redirect');
 
 Route::get('/faqs', [FaqController::class, 'index'])->name('faqs.index');
+
+// Practical planning guides for the questions tourists search for.
+Route::get('/choose-safari-company', [GuideController::class, 'chooseCompany'])->name('guides.choose-company');
+Route::get('/tanzania-safari-cost', [GuideController::class, 'safariCost'])->name('guides.safari-cost');
+Route::get('/best-time-for-tanzania-safari', [GuideController::class, 'bestTime'])->name('guides.best-time');
+Route::get('/serengeti-safari', [GuideController::class, 'serengeti'])->name('guides.serengeti');
+Route::get('/ngorongoro-tour', [GuideController::class, 'ngorongoro'])->name('guides.ngorongoro');
+Route::get('/kilimanjaro-trekking-company', [GuideController::class, 'kilimanjaro'])->name('guides.kilimanjaro');
+Route::get('/zanzibar-holiday-packages', [GuideController::class, 'zanzibar'])->name('guides.zanzibar');
 
 // Request a Custom Safari Public Form
 Route::get('/custom-safari', [CustomSafariController::class, 'create'])->name('custom-safari.create');

@@ -64,6 +64,13 @@
                         <li><a href="{{ route('custom-safari.create') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Custom Safari') }}</a></li>
                         <li><a href="{{ route('trip-plan.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Plan Your Trip') }}</a></li>
                         <li><a href="{{ route('faqs.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('FAQs') }}</a></li>
+                        <li><a href="{{ route('guides.choose-company') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Choose a Safari Company') }}</a></li>
+                        <li><a href="{{ route('guides.safari-cost') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Safari Costs') }}</a></li>
+                        <li><a href="{{ route('guides.best-time') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Best Time to Visit') }}</a></li>
+                        <li><a href="{{ route('guides.serengeti') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Serengeti Safari') }}</a></li>
+                        <li><a href="{{ route('guides.ngorongoro') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Ngorongoro Tour') }}</a></li>
+                        <li><a href="{{ route('guides.kilimanjaro') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Kilimanjaro Trekking') }}</a></li>
+                        <li><a href="{{ route('guides.zanzibar') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Zanzibar Holidays') }}</a></li>
                         <li><a href="{{ route('about') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('About Us') }}</a></li>
                         <li><a href="{{ route('contact.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Contact') }}</a></li>
                     </ul>

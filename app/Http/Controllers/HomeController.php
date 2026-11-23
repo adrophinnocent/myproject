@@ -87,10 +87,10 @@ class HomeController extends Controller
 
         $destinations = Destination::active()->get();
 
-        $testimonials = Testimonial::published()
-            ->latest()
-            ->take(6)
-            ->get();
+        $publishedTestimonials = Testimonial::published()->latest()->get();
+        $testimonials = $publishedTestimonials->take(6);
+        $testimonialCount = $publishedTestimonials->count();
+        $testimonialAverage = (float) ($publishedTestimonials->avg('rating') ?? 0);
 
         $faqs = Faq::active()->take(10)->get();
 
@@ -111,6 +111,6 @@ class HomeController extends Controller
                         $q->where('slug', 'kilimanjaro-trekking');
                     })->first();
 
-        return view('public.home', compact('sliders', 'featuredTours', 'allPublishedTours', 'destinations', 'testimonials', 'faqs', 'latestPosts', 'categories', 'heroTour'));
+        return view('public.home', compact('sliders', 'featuredTours', 'allPublishedTours', 'destinations', 'testimonials', 'testimonialCount', 'testimonialAverage', 'faqs', 'latestPosts', 'categories', 'heroTour'));
     }
 }

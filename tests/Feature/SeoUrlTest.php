@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Destination;
+use App\Models\Testimonial;
 use App\Models\Tour;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SeoUrlTest extends TestCase
@@ -104,5 +106,103 @@ class SeoUrlTest extends TestCase
         $response->assertOk();
         $this->assertStringNotContainsString('AggregateRating', $response->getContent());
         $this->assertStringNotContainsString('Sarah Mitchell', $response->getContent());
+    }
+
+    #[DataProvider('guidePageProvider')]
+    public function test_planning_guides_target_real_search_queries(string $path, string $expectedText): void
+    {
+        $response = $this->get($path);
+
+        $response->assertOk();
+        $response->assertSee($expectedText);
+        $response->assertSee('FAQPage', false);
+        $response->assertSee('BreadcrumbList', false);
+        $response->assertSee('<link rel="canonical" href="https://twinasafaris.com'.$path.'">', false);
+    }
+
+    public static function guidePageProvider(): array
+    {
+        return [
+            ['/choose-safari-company', 'How to Choose a Tanzania Safari Company'],
+            ['/tanzania-safari-cost', 'Tanzania Safari Cost'],
+            ['/best-time-for-tanzania-safari', 'Best Time to Visit Tanzania for Safari'],
+            ['/serengeti-safari', 'Serengeti Safari: Routes, Seasons and What to Expect'],
+            ['/ngorongoro-tour', 'Ngorongoro Tour: Crater Safari Guide'],
+            ['/kilimanjaro-trekking-company', 'Climb Kilimanjaro with a Local Moshi Trekking Team'],
+            ['/zanzibar-holiday-packages', 'Zanzibar Holiday Packages: Beach, Culture and Safari Combinations'],
+        ];
+    }
+
+    public function test_english_only_guide_does_not_advertise_untranslated_hreflang(): void
+    {
+        $response = $this->get('/tanzania-safari-cost?lang=fr');
+
+        $response->assertOk();
+        $response->assertSee('<link rel="canonical" href="https://twinasafaris.com/tanzania-safari-cost">', false);
+        $response->assertSee('hreflang="x-default"', false);
+        $response->assertDontSee('hreflang="fr"', false);
+    }
+
+    #[DataProvider('legacyBestTimeSlugProvider')]
+    public function test_missing_legacy_best_time_articles_redirect_to_the_guide(string $slug): void
+    {
+        $response = $this->get('/blog/'.$slug.'.html');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('https://twinasafaris.com/best-time-for-tanzania-safari');
+    }
+
+    public static function legacyBestTimeSlugProvider(): array
+    {
+        return [
+            ['best-time-to-go-on-safari-in-tanzania'],
+            ['best-time-to-visit-tanzania-for-an-incredible-safari'],
+        ];
+    }
+
+    public function test_sitemap_lists_all_planning_guides(): void
+    {
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertOk();
+        foreach (array_column(self::guidePageProvider(), 0) as $path) {
+            $response->assertSee('https://twinasafaris.com'.$path, false);
+        }
+    }
+
+    public function test_safari_cost_guide_uses_published_itinerary_prices(): void
+    {
+        $this->makeTour(['price' => 2500, 'duration_days' => 5]);
+
+        $response = $this->get('/tanzania-safari-cost');
+
+        $response->assertOk();
+        $response->assertSee('Luxury Serengeti Safari');
+        $response->assertSee('$2,500');
+        $response->assertSee('$500');
+    }
+
+    public function test_homepage_uses_published_testimonials_and_removes_fabricated_social_proof(): void
+    {
+        Testimonial::create([
+            'name' => 'Amina Hassan',
+            'location' => 'Arusha, Tanzania',
+            'content' => 'A clear itinerary and a knowledgeable local guide.',
+            'rating' => 4,
+            'is_published' => true,
+            'is_featured' => true,
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('Amina Hassan');
+        $response->assertSee('A clear itinerary and a knowledgeable local guide.');
+        $response->assertSee('4.0 from 1 guest review');
+        $response->assertDontSee('Sarah Mitchell');
+        $response->assertDontSee('4.9/5');
+        $response->assertDontSee('5.0/5');
+        $response->assertDontSee('TripAdvisor Excellence');
+        $response->assertDontSee('Verified Google Reviews');
     }
 }
