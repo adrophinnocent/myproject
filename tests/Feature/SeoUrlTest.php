@@ -301,6 +301,64 @@ class SeoUrlTest extends TestCase
         $response->assertSee('$500');
     }
 
+    public function test_homepage_signature_expedition_is_cleanly_organised(): void
+    {
+        $this->makeTour([
+            'title' => '8-Day Machame Route Kilimanjaro Trek',
+            'slug' => '8-day-machame-route',
+            'duration_days' => 8,
+            'duration_nights' => 7,
+            'short_description' => 'A scenic and well-paced route to the summit.',
+            'inclusions' => ['Professional English-speaking mountain guide', 'All Kilimanjaro National Park fees'],
+            'itinerary' => [
+                ['title' => 'Day 1: Machame Gate to Machame Camp', 'description' => 'Drive to Machame Gate and trek to camp.'],
+                ['title' => 'Day 2: Machame Camp to Shira Camp', 'description' => 'Trek through the moorland.'],
+            ],
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('Signature Expedition');
+        $response->assertSee('A scenic and well-paced route to the summit.');
+        $response->assertSee('What is included');
+        $response->assertSee('Professional English-speaking mountain guide');
+        $response->assertSee('Route summary');
+        $response->assertSee('Machame Gate to Machame Camp');
+        $response->assertSee('See full itinerary');
+        $response->assertSee('BOOK THIS TOUR');
+        $response->assertSee('TOUR DETAILS');
+        $response->assertSee('EXPLORE ALL TOURS');
+        $response->assertDontSee('Day 1: Day 1:');
+        $response->assertDontSee('Day 1: Day 2:');
+    }
+
+    public function test_tour_itinerary_does_not_repeat_day_prefixes_or_start_at_zero(): void
+    {
+        $this->makeTour([
+            'title' => '8-Day Machame Route Kilimanjaro Trek',
+            'slug' => '8-day-machame-route-kilimanjaro-trek',
+            'duration_days' => 8,
+            'duration_nights' => 7,
+            'itinerary' => [
+                ['title' => 'Day 1: Machame Gate to Machame Camp', 'description' => 'Drive to the gate and trek to camp.'],
+                ['title' => 'Day 2: Machame Camp to Shira Camp', 'description' => 'Trek through the moorland.'],
+            ],
+            'inclusions' => ['Professional English-speaking mountain guide', 'All Kilimanjaro National Park fees'],
+        ]);
+
+        $response = $this->get('/tours/tour/8-day-machame-route-kilimanjaro-trek.html');
+
+        $response->assertOk();
+        $response->assertSee('Route at a Glance');
+        $response->assertSee('Machame Gate to Machame Camp');
+        $response->assertSee('Day 1 of 2');
+        $response->assertSee('Day 2 of 2');
+        $response->assertSee('Professional English-speaking mountain guide');
+        $response->assertDontSee('Day 1: Day 1:');
+        $response->assertDontSee('Day 0:');
+    }
+
     public function test_homepage_uses_published_testimonials_and_removes_fabricated_social_proof(): void
     {
         Testimonial::create([

@@ -532,17 +532,35 @@
                 if (!is_array($itinerary) || count($itinerary) === 0) {
                     $itinerary = is_array($rawMainItinerary) ? $rawMainItinerary : [];
                 }
+
+                // Admin-entered titles often already start with "Day 1:". The
+                // layout adds its own numbered badge, so remove the duplicate
+                // prefix instead of printing "Day 1: Day 1: ..." twice.
+                $dayText = function ($value): string {
+                    if (is_array($value)) {
+                        return trim(implode(', ', array_filter(array_map('strval', $value), 'strlen')));
+                    }
+
+                    return trim((string) ($value ?? ''));
+                };
+                $cleanDayTitle = function ($title) use ($dayText): string {
+                    $title = $dayText(is_array($title) ? implode(', ', array_filter($title, 'strlen')) : $title);
+
+                    return trim(preg_replace('/^\s*day\s*\d+\s*[:.\-–—]\s*/i', '', $title) ?: $title);
+                };
+                $dayNumber = fn (int $position): string => str_pad((string) $position, 2, '0', STR_PAD_LEFT);
             @endphp
             @if(!empty($itinerary) && count($itinerary) > 0)
-            {{-- Collapsible Dropdown Itinerary Summary --}}
-            <div class="mb-10 bg-stone-50 border border-stone-200/80 rounded-3xl overflow-hidden shadow-xs transition-all" x-data="{ open: true }">
-                {{-- Dropdown Header / Toggle Button --}}
-                <button type="button" @click="open = !open" class="w-full flex items-center justify-between p-5 md:p-6 text-left bg-stone-100/80 hover:bg-stone-100 transition-colors focus:outline-none">
-                    <div class="flex items-center gap-3">
-                        <span class="text-[#e64a19] font-black text-xl">📋</span>
+            {{-- Route at a glance: a scannable, two-column day overview --}}
+            <div class="mb-10 bg-white border border-stone-200/80 rounded-3xl overflow-hidden shadow-sm" x-data="{ open: true }">
+                <button type="button" @click="open = !open" class="w-full flex items-center justify-between p-5 md:p-6 text-left hover:bg-stone-50/70 transition-colors focus:outline-none">
+                    <div class="flex items-center gap-3.5">
+                        <span class="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        </span>
                         <div>
-                            <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 uppercase tracking-tight leading-tight">
-                                {{ __('Itinerary Summary') }}
+                            <h2 class="font-display text-xl md:text-2xl font-bold text-stone-900 leading-tight">
+                                {{ __('Route at a Glance') }}
                             </h2>
                             <p class="text-xs text-stone-500 font-medium mt-0.5">
                                 {{ count($itinerary) }} {{ __('Days Overview') }} • {{ __('Click to') }} <span x-text="open ? '{{ __('collapse') }}' : '{{ __('expand') }}'"></span>
@@ -556,25 +574,34 @@
                     </div>
                 </button>
 
-                {{-- Dropdown Body Content (Clean compact original line design) --}}
-                <div x-show="open" x-collapse class="p-5 md:p-6 pt-4 border-t border-stone-200/60 bg-white">
-                    <div class="space-y-3">
-                        @foreach($itinerary as $index => $day)
-                        <div class="flex items-start gap-3">
-                            <span class="text-[#e64a19] font-black text-lg leading-tight shrink-0 mt-0.5">→</span>
-                            <p class="font-bold text-sm md:text-base leading-snug text-stone-800">
-                                <span class="text-stone-900 font-black">{{ __('Day') }} {{ $loop->iteration }}:</span>
-                                {{ is_array($day['title'] ?? '') ? implode(', ', $day['title']) : ($day['title'] ?? '') }}
-                            </p>
-                        </div>
+                <div x-show="open" x-collapse class="border-t border-stone-200/70 bg-stone-50/60 p-5 md:p-6">
+                    <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+                        @foreach($itinerary as $day)
+                        <li class="flex items-start gap-3.5 py-3 border-b border-stone-200/70 last:border-b-0">
+                            <span class="w-8 h-8 rounded-full bg-white border border-amber-500/40 text-amber-700 text-[11px] font-black flex items-center justify-center shrink-0 shadow-xs">
+                                {{ $dayNumber($loop->iteration) }}
+                            </span>
+                            <div class="min-w-0 pt-0.5">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-amber-700">{{ __('Day') }} {{ $loop->iteration }}</p>
+                                <p class="text-sm font-semibold text-stone-800 leading-snug mt-0.5">{{ $cleanDayTitle($day['title'] ?? '') }}</p>
+                            </div>
+                        </li>
                         @endforeach
-                    </div>
+                    </ol>
                 </div>
             </div>
 
             <div class="mb-10">
-                <h2 class="font-display text-2xl font-semibold text-gray-900 mb-6">{{ __('Day-by-Day Details') }}</h2>
-                <div class="space-y-4">
+                <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-widest text-amber-700 mb-1">{{ __('Your journey, step by step') }}</p>
+                        <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900">{{ __('Day-by-Day Details') }}</h2>
+                    </div>
+                    <span class="inline-flex items-center gap-2 text-xs font-bold text-stone-500 bg-stone-100 rounded-full px-4 py-2">
+                        {{ count($itinerary) }} {{ __('Days') }}
+                    </span>
+                </div>
+                <div class="space-y-5">
                     @foreach($itinerary as $index => $day)
                     @php
                         $mainDay = is_array($rawMainItinerary) && isset($rawMainItinerary[$index]) ? $rawMainItinerary[$index] : [];
@@ -654,16 +681,23 @@
                             }
                         }
                     @endphp
-                    <div class="relative pl-8">
-                        <div class="absolute left-0 top-3 w-6 h-6 bg-gold-500 rounded-full flex items-center justify-center text-safari-dark text-xs font-bold">{{ is_numeric($index) ? $index : $loop->iteration }}</div>
+                    <article class="relative pl-11 md:pl-14">
+                        <div class="absolute left-0 top-1 w-9 h-9 md:w-10 md:h-10 rounded-full bg-amber-500 text-white font-black text-xs md:text-sm flex items-center justify-center shadow-md ring-4 ring-amber-500/10">
+                            {{ $dayNumber($loop->iteration) }}
+                        </div>
                         @if(!$loop->last)
-                        <div class="absolute left-3 top-9 bottom-0 w-0.5 bg-gray-200"></div>
+                        <div class="absolute left-[18px] md:left-5 top-12 bottom-[-20px] w-px bg-stone-200"></div>
                         @endif
-                        <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-                            <h3 class="font-bold text-gray-800 mb-2">{{ __('Day') }} {{ is_numeric($index) ? $index : $loop->iteration }}: {{ $day['title'] ?? '' }}</h3>
+                        <div class="bg-white border border-stone-200/80 rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <div class="flex flex-wrap items-center gap-2 mb-2">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-amber-700">{{ __('Day') }} {{ $loop->iteration }} {{ __('of') }} {{ count($itinerary) }}</span>
+                            </div>
+                            <h3 class="font-display text-lg md:text-xl font-bold text-stone-900 leading-snug">
+                                {{ $cleanDayTitle($day['title'] ?? '') }}
+                            </h3>
 
                             @if(!empty($day['description']))
-                            <p class="text-gray-500 text-sm leading-relaxed mb-4">{{ $day['description'] ?? '' }}</p>
+                            <p class="text-stone-600 text-sm leading-relaxed mt-3">{{ $dayText($day['description'] ?? '') }}</p>
                             @endif
 
                             @if(!empty($allDayImages) && count($allDayImages) > 0)
@@ -695,22 +729,24 @@
                                     </div>
                                 </div>
                             @endif
-                            <div class="flex flex-wrap items-center gap-x-8 gap-y-3 mt-4 text-xs font-bold uppercase tracking-wider">
+                            @if(!empty($day['accommodation']) || !empty($day['meals']))
+                            <div class="flex flex-wrap gap-2 mt-5 pt-4 border-t border-stone-100">
                                 @if(!empty($day['accommodation']))
-                                <div class="flex items-center gap-2 text-gray-600">
-                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                    <span>{{ __('Stay') }}: {{ is_array($day['accommodation']) ? implode(', ', $day['accommodation']) : $day['accommodation'] }}</span>
-                                </div>
+                                <span class="inline-flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-[11px] font-semibold text-stone-700">
+                                    <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                    <span><span class="text-stone-400 uppercase tracking-wider text-[9px] font-black mr-1">{{ __('Stay') }}</span>{{ $dayText($day['accommodation']) }}</span>
+                                </span>
                                 @endif
                                 @if(!empty($day['meals']))
-                                <div class="flex items-center gap-2 text-gray-600">
-                                    <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                    <span>{{ __('Meals') }}: {{ is_array($day['meals']) ? implode(', ', $day['meals']) : $day['meals'] }}</span>
-                                </div>
+                                <span class="inline-flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-[11px] font-semibold text-stone-700">
+                                    <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    <span><span class="text-stone-400 uppercase tracking-wider text-[9px] font-black mr-1">{{ __('Meals') }}</span>{{ $dayText($day['meals']) }}</span>
+                                </span>
                                 @endif
                             </div>
+                            @endif
                         </div>
-                    </div>
+                    </article>
                     @endforeach
                 </div>
             </div>
@@ -723,19 +759,30 @@
             @endphp
             @if((!empty($inclusions) && is_array($inclusions)) || (!empty($exclusions) && is_array($exclusions)))
             <div class="mb-10 pt-4">
-                <h2 class="font-display text-3xl font-black text-stone-900 border-b-2 border-[#b8920d]/40 pb-3 mb-6">
-                    {{ __("What's Included") }}
-                </h2>
+                <div class="mb-6">
+                    <p class="text-[11px] font-black uppercase tracking-widest text-amber-700 mb-1">{{ __('Clear pricing, no surprises') }}</p>
+                    <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900">{{ __("What's Included") }}</h2>
+                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {{-- INCLUDED CARD --}}
                     @if(!empty($inclusions) && is_array($inclusions))
-                    <div class="bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-6 shadow-xs">
-                        <h4 class="text-xs font-black text-[#8A6D0B] uppercase tracking-wider mb-5">INCLUDED</h4>
+                    <div class="bg-emerald-50/60 border border-emerald-200/70 rounded-2xl p-5 md:p-6">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-black text-emerald-900 uppercase tracking-wider">{{ __('Included') }}</h3>
+                                <p class="text-[11px] text-emerald-800/70 font-medium">{{ count($inclusions) }} {{ __('services covered') }}</p>
+                            </div>
+                        </div>
                         <ul class="space-y-3">
                             @foreach($inclusions as $item)
                             <li class="flex items-start gap-2.5 text-stone-700 text-xs sm:text-sm font-medium">
-                                <span class="text-[#8A6D0B] font-black text-sm shrink-0">✓</span>
+                                <span class="w-5 h-5 rounded-full bg-emerald-600/10 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </span>
                                 <span class="leading-snug">{{ is_array($item) ? implode(', ', $item) : __($item) }}</span>
                             </li>
                             @endforeach
@@ -745,12 +792,22 @@
 
                     {{-- NOT INCLUDED CARD --}}
                     @if(!empty($exclusions) && is_array($exclusions))
-                    <div class="bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-6 shadow-xs">
-                        <h4 class="text-xs font-black text-rose-800 uppercase tracking-wider mb-5">NOT INCLUDED</h4>
+                    <div class="bg-rose-50/50 border border-rose-200/70 rounded-2xl p-5 md:p-6">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="w-9 h-9 rounded-full bg-rose-600 text-white flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-black text-rose-900 uppercase tracking-wider">{{ __('Not Included') }}</h3>
+                                <p class="text-[11px] text-rose-800/70 font-medium">{{ count($exclusions) }} {{ __('items to plan separately') }}</p>
+                            </div>
+                        </div>
                         <ul class="space-y-3">
                             @foreach($exclusions as $item)
                             <li class="flex items-start gap-2.5 text-stone-700 text-xs sm:text-sm font-medium">
-                                <span class="text-rose-600 font-bold text-sm shrink-0">×</span>
+                                <span class="w-5 h-5 rounded-full bg-rose-600/10 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </span>
                                 <span class="leading-snug">{{ is_array($item) ? implode(', ', $item) : __($item) }}</span>
                             </li>
                             @endforeach

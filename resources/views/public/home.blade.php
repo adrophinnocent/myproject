@@ -246,67 +246,117 @@
                     <span class="text-safari-dark text-[8px] font-bold uppercase">Per Person</span>
                 </div>
             </div>
-            <div class="lg:w-1/2 space-y-8">
-                <div>
-                    <span class="text-gold-600 text-sm font-black uppercase tracking-[0.3em] mb-4 block">{{ __('Signature Expedition') }}</span>
-                    <h2 class="font-display text-4xl md:text-5xl font-black text-safari-dark leading-tight text-center md:text-left">
-                        {{ $heroTour->translate('title') }}
-                    </h2>
-                    <div class="w-20 h-1.5 bg-[#e64a19] rounded-full mt-6 mx-auto md:mx-0"></div>
-                </div>
-                <div class="flex justify-center md:justify-start">
-                    <a href="{{ route('booking.create', $heroTour->slug) }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl hover:scale-105 transition-all text-center uppercase tracking-widest">
-                        {{ __('BOOK THIS TOUR') }}
-                    </a>
-                </div>
-                <p class="text-gray-600 text-lg leading-relaxed font-light">{{ $heroTour->translate('short_description') }}</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
-                    @php
-                        $inclusions = $heroTour->translate('inclusions');
-                        if (!is_array($inclusions)) {
-                            $inclusions = ['Professional Guides', 'Airport Transfers', 'Hotel Stay', 'Park Fees', 'Camping Gear', 'Fresh Meals', 'Emergency Oxygen', 'Summit Certificate'];
+            <div class="w-full lg:w-1/2">
+                @php
+                    $heroText = function ($value, string $separator = ', '): string {
+                        if (is_array($value)) {
+                            return trim(implode($separator, array_filter(array_map('strval', $value), 'strlen')));
                         }
-                    @endphp
-                    @foreach($inclusions as $inc)
-                    <div class="flex items-start gap-3 group">
-                        <div class="w-6 h-6 shrink-0 rounded-full bg-gold-500/10 flex items-center justify-center mt-0.5 group-hover:bg-gold-500 transition-colors duration-300">
-                            <svg class="w-3 h-3 text-gold-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
+
+                        return trim((string) ($value ?? ''));
+                    };
+                    $heroDayTitle = function ($title) use ($heroText): string {
+                        $title = $heroText(is_array($title) ? $title : [$title]);
+
+                        // Admin titles already contain "Day 1:"; the numbered
+                        // badge below supplies that label, so strip the prefix.
+                        return trim(preg_replace('/^\s*day\s*\d+\s*[:.\-–—]\s*/i', '', $title) ?: $title);
+                    };
+
+                    $heroInclusions = $heroTour->translate('inclusions');
+                    $heroInclusions = is_array($heroInclusions)
+                        ? array_values(array_filter(array_map(fn ($item) => $heroText($item), $heroInclusions), 'strlen'))
+                        : [];
+
+                    $heroItinerary = $heroTour->translate('itinerary');
+                    $heroItinerary = is_array($heroItinerary) ? array_values($heroItinerary) : [];
+                @endphp
+
+                <div class="space-y-6">
+                    {{-- Title block --}}
+                    <div>
+                        <div class="flex flex-wrap items-center gap-3 mb-3">
+                            <span class="text-gold-600 text-[11px] font-black uppercase tracking-[0.3em]">{{ __('Signature Expedition') }}</span>
+                            <span class="px-3 py-1 rounded-full bg-stone-100 text-stone-700 text-[10px] font-bold uppercase tracking-wider">{{ $heroTour->duration_text }}</span>
                         </div>
-                        <span class="text-gray-700 text-sm font-black uppercase tracking-tight leading-tight">{{ is_array($inc) ? implode(', ', $inc) : __($inc) }}</span>
+                        <h2 class="font-display text-3xl md:text-4xl lg:text-5xl font-black text-safari-dark leading-tight">
+                            {{ $heroTour->translate('title') }}
+                        </h2>
+                        <div class="w-16 h-1 bg-[#e64a19] rounded-full mt-5"></div>
                     </div>
-                    @endforeach
-                </div>
-                <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100" x-data="{ openItinerary: false }">
-                    <div class="flex items-center justify-between mb-10">
-                        <h2 class="font-display text-3xl font-black text-[#e64a19] uppercase tracking-tight">{{ __('Route summary') }}</h2>
-                        <button @@click="openItinerary = !openItinerary" class="text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 transition-colors flex items-center gap-1.5">
-                            <span x-text="openItinerary ? '{{ __('Hide Details') }}' : '{{ __('View Day-by-Day') }}'"></span>
-                            <svg class="w-3 h-3 transition-transform duration-300" :class="openItinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                    </div>
-                    <div class="space-y-6">
-                        @php $itinerary = $heroTour->translate('itinerary'); @endphp
-                        @if($itinerary && is_array($itinerary))
-                            @foreach($itinerary as $index => $day)
-                            <div class="flex flex-col gap-2">
-                                <div class="flex items-start gap-4">
-                                    <span class="text-[#e64a19] font-black text-2xl leading-none">→</span>
-                                    <h5 class="text-gray-800 font-bold text-lg md:text-xl leading-tight">
-                                        <span class="text-gray-400">{{ __('Day') }} {{ $loop->iteration }}:</span> {{ $day['title'] ?? '' }}
-                                    </h5>
-                                </div>
-                                <div x-show="openItinerary" x-collapse>
-                                    <div class="pl-9"><p class="text-gray-600 text-sm md:text-base leading-relaxed font-medium">{{ $day['description'] ?? '' }}</p></div>
-                                </div>
-                            </div>
+
+                    <p class="text-gray-600 text-base md:text-lg leading-relaxed">{{ $heroTour->translate('short_description') }}</p>
+
+                    {{-- What is included --}}
+                    @if($heroInclusions !== [])
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3">{{ __('What is included') }}</p>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+                            @foreach($heroInclusions as $inc)
+                            <li class="flex items-start gap-2.5 text-sm text-gray-700 font-semibold leading-snug">
+                                <span class="w-4 h-4 mt-0.5 rounded-full bg-gold-500/15 text-gold-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <span>{{ $inc }}</span>
+                            </li>
                             @endforeach
-                        @endif
+                        </ul>
                     </div>
-                </div>
-                <div class="pt-6 flex flex-col sm:flex-row gap-4">
-                    <a href="{{ route('tours.index') }}" class="flex-1 px-10 py-5 rounded-full border-2 border-safari-dark text-safari-dark text-sm font-black uppercase tracking-widest hover:bg-safari-dark hover:text-white transition-all text-center">
-                        {{ __('EXPLORE ALL TOURS') }}
-                    </a>
+                    @endif
+
+                    {{-- Route summary --}}
+                    @if($heroItinerary !== [])
+                    <div class="bg-gray-50 rounded-3xl p-5 md:p-6 border border-gray-100" x-data="{ openItinerary: false }">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{{ __('Your journey') }}</p>
+                                <h3 class="font-display text-xl md:text-2xl font-black text-[#e64a19] uppercase tracking-tight mt-0.5">{{ __('Route summary') }}</h3>
+                            </div>
+                            <button @@click="openItinerary = !openItinerary" class="text-[10px] font-black uppercase text-gold-600 hover:text-gold-700 transition-colors flex items-center gap-1.5">
+                                <span x-text="openItinerary ? '{{ __('Hide Details') }}' : '{{ __('View Day-by-Day') }}'"></span>
+                                <svg class="w-3 h-3 transition-transform duration-300" :class="openItinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                        </div>
+
+                        <ol class="max-h-72 overflow-y-auto pr-1">
+                            @foreach($heroItinerary as $day)
+                            <li class="flex gap-4">
+                                <div class="flex flex-col items-center">
+                                    <span class="w-7 h-7 rounded-full bg-white border border-amber-400/60 text-amber-700 text-[10px] font-black flex items-center justify-center shrink-0 shadow-xs">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                    @if(!$loop->last)<span class="w-px flex-1 bg-gray-200"></span>@endif
+                                </div>
+                                <div class="{{ $loop->last ? '' : 'pb-4' }} min-w-0">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-amber-700">{{ __('Day') }} {{ $loop->iteration }}</p>
+                                    <p class="text-sm md:text-base font-bold text-gray-800 leading-snug">{{ $heroDayTitle($day['title'] ?? '') }}</p>
+                                    @if(!empty($day['description']))
+                                    <div x-show="openItinerary" x-collapse>
+                                        <p class="text-gray-600 text-sm leading-relaxed mt-1.5">{{ $heroText($day['description'], ' ') }}</p>
+                                    </div>
+                                    @endif
+                                </div>
+                            </li>
+                            @endforeach
+                        </ol>
+
+                        <p class="mt-4 pt-3 border-t border-gray-200/70 text-[11px] text-gray-500 font-medium">
+                            {{ count($heroItinerary) }} {{ __('days') }} •
+                            <a href="{{ route('tours.show', ['type' => $heroTour->item_type ?? 'tour', 'slug' => $heroTour->slug]) }}" class="text-gold-700 font-bold hover:underline">{{ __('See full itinerary') }}</a>
+                        </p>
+                    </div>
+                    @endif
+
+                    {{-- Calls to action --}}
+                    <div class="flex flex-col sm:flex-row gap-3 pt-1">
+                        <a href="{{ route('booking.create', $heroTour->slug) }}" class="btn-gold px-8 py-4 rounded-full text-xs md:text-sm font-black shadow-lg hover:scale-[1.02] transition-all text-center uppercase tracking-widest">
+                            {{ __('BOOK THIS TOUR') }}
+                        </a>
+                        <a href="{{ route('tours.show', ['type' => $heroTour->item_type ?? 'tour', 'slug' => $heroTour->slug]) }}" class="px-7 py-4 rounded-full border-2 border-safari-dark text-safari-dark text-xs md:text-sm font-black uppercase tracking-widest hover:bg-safari-dark hover:text-white transition-all text-center">
+                            {{ __('TOUR DETAILS') }}
+                        </a>
+                        <a href="{{ route('tours.index') }}" class="px-7 py-4 rounded-full border-2 border-gray-200 text-gray-600 text-xs md:text-sm font-black uppercase tracking-widest hover:border-safari-dark hover:text-safari-dark transition-all text-center">
+                            {{ __('EXPLORE ALL TOURS') }}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
