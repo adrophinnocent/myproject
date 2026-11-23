@@ -1,5 +1,6 @@
 @extends('public.layouts.app')
-@section('title', $album->name . ' - Photo Gallery')
+@section('title', $album->name.' Photo Gallery | Twina Safaris')
+@section('meta_description', 'Browse '.($album->description ? strip_tags((string) $album->description).' ' : '').'photos and moments from Twina Safaris in Tanzania.')
 
 @section('content')
 {{-- Extra CSS for Lightbox --}}

@@ -12,10 +12,10 @@
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
 
     @php
-        $seoLocale = app()->getLocale();
+        $seoLocale = \App\Helpers\SeoHelper::requestedLocale(request()) ?? \App\Helpers\SeoHelper::defaultLocale();
         $canonical = \App\Helpers\SeoHelper::canonicalUrl(request());
         $alternates = \App\Helpers\SeoHelper::alternateUrls(request());
-        $isNoindex = request()->is('booking', 'booking/*', 'my-bookings', 'trip-plan/*', 'proposal/*', 'login', 'forgot-password', 'reset-password/*');
+        $isNoindex = request()->is('admin', 'admin/*', 'booking', 'booking/*', 'my-bookings', 'trip-plan', 'trip-plan/*', 'proposal', 'proposal/*', 'offer', 'offer/*', 'login', 'forgot-password', 'reset-password', 'reset-password/*');
     @endphp
     <link rel="canonical" href="{{ $canonical }}">
 

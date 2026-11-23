@@ -1,7 +1,7 @@
 @php
     $siteName = \App\Models\Setting::get('site_name', 'Twina Safaris');
     $siteEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
-    $sitePhone = \App\Models\Setting::get('site_phone', '+255 754 000 000');
+    $sitePhone = \App\Models\Setting::get('site_phone', '+255 795 482 197');
     $logo = \App\Models\Setting::get('logo');
     $footerLogo = \App\Models\Setting::get('footer_logo');
 @endphp
@@ -28,7 +28,7 @@
                     @endif
                     <div class="flex flex-col">
                         <span class="font-display text-2xl font-bold text-white leading-tight">{{ \App\Helpers\AssetHelper::asString($siteName) }}</span>
-                        <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">{{ __('Est. 2009') }} · {{ __('Tanzania') }}</span>
+                        <span class="text-gold-400 text-[10px] tracking-widest uppercase font-bold">{{ __('Est. 2010') }} · {{ __('Tanzania') }}</span>
                     </div>
                 </a>
                 <p class="text-gray-400 text-sm leading-relaxed">
@@ -58,6 +58,10 @@
                     <h4 class="font-bold text-white uppercase tracking-wider text-[11px]">{{ __('Quick Links') }}</h4>
                     <ul class="space-y-4 text-sm">
                         <li><a href="{{ route('tours.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('All Tours') }}</a></li>
+                        <li><a href="{{ route('destinations.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Destinations') }}</a></li>
+                        <li><a href="{{ route('blog.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Travel Blog') }}</a></li>
+                        <li><a href="{{ route('gallery.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Gallery') }}</a></li>
+                        <li><a href="{{ route('custom-safari.create') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Custom Safari') }}</a></li>
                         <li><a href="{{ route('trip-plan.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('Plan Your Trip') }}</a></li>
                         <li><a href="{{ route('faqs.index') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('FAQs') }}</a></li>
                         <li><a href="{{ route('about') }}" class="text-gray-500 hover:text-gold-400 transition-colors">{{ __('About Us') }}</a></li>

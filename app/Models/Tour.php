@@ -171,7 +171,7 @@ class Tour extends Model
     {
         $avg = $this->attributes['reviews_avg_rating'] ?? $this->reviews()->avg('rating');
 
-        return round($avg ?? 5.0, 1);
+        return $avg === null ? 0.0 : round((float) $avg, 1);
     }
 
     public function getReviewCountAttribute(): int

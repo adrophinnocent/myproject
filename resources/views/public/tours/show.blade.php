@@ -2,71 +2,102 @@
 @section('title', $tour->meta_title ?? $tour->title)
 @section('meta_description', $tour->meta_description ?? $tour->short_description)
 
-@section('schema')
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org/",
-  "@@type": "Product",
-  "name": "{{ $tour->translate('title') }}",
-  "description": "{{ $tour->translate('short_description') }}",
-  "image": "{{ $tour->featured_image_url }}",
-  "brand": {
-    "@@type": "Brand",
-    "name": "Twina Safaris"
-  },
-  "offers": {
-    "@@type": "Offer",
-    "priceCurrency": "USD",
-    "price": "{{ $tour->price }}",
-    "availability": "https://schema.org/InStock",
-    "url": "{{ str_replace('://www.', '://', url()->current()) . (str_ends_with(url()->current(), '.html') ? '' : '.html') }}",
-    "priceValidUntil": "{{ now()->addMonths(6)->format('Y-m-d') }}"
-  },
-  "aggregateRating": {
-    "@@type": "AggregateRating",
-    "ratingValue": "{{ $tour->average_rating }}",
-    "reviewCount": "{{ $tour->review_count ?: 1 }}"
-  },
-  "mainEntity": {
-    "@@type": "TouristTrip",
-    "name": "{{ $tour->translate('title') }}",
-    "description": "{{ $tour->translate('description') }}",
-    "touristType": "Wildlife & Adventure",
-    "duration": "{{ $tour->duration_text }}",
-    "itinerary": [
-      @if(is_array($tour->itinerary))
-          @foreach($tour->itinerary as $index => $day)
-          {
-            "@@type": "City",
-            "name": "{{ $day['title'] ?? '' }}",
-            "description": "{{ $day['description'] ?? '' }}"
-          }{{ !$loop->last ? ',' : '' }}
-          @endforeach
-      @endif
-    ]
-  }
-}
-</script>
+@php
+    $canonicalUrl = \App\Helpers\SeoHelper::canonicalUrl(request());
 
-@if(!empty($faqs) && is_array($faqs))
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@type": "FAQPage",
-  "mainEntity": [
-    @foreach($faqs as $index => $faq)
-    {
-      "@@type": "Question",
-      "name": "{{ $faq['question'] ?? '' }}",
-      "acceptedAnswer": {
-        "@@type": "Answer",
-        "text": "{{ strip_tags($faq['answer'] ?? '') }}"
-      }
-    }{{ !$loop->last ? ',' : '' }}
-    @endforeach
-  ]
-}
-</script>
+    // Normalise FAQ content once, before @section('schema'), so the JSON-LD
+    // and the visible FAQ block always describe the same questions.
+    $schemaFaqs = [];
+    $rawFaqs = $tour->translate('faqs');
+    if (is_array($rawFaqs)) {
+        foreach ($rawFaqs as $faqItem) {
+            $question = is_array($faqItem) ? ($faqItem['question'] ?? $faqItem['title'] ?? '') : $faqItem;
+            $answer = is_array($faqItem) ? ($faqItem['answer'] ?? $faqItem['description'] ?? '') : '';
+            if ($question !== '' && $answer !== '') {
+                $schemaFaqs[] = ['question' => $question, 'answer' => $answer];
+            }
+        }
+    }
+    if (isset($publishedFaqs)) {
+        foreach ($publishedFaqs as $faqItem) {
+            if ($faqItem->question && $faqItem->answer) {
+                $schemaFaqs[] = ['question' => $faqItem->question, 'answer' => $faqItem->answer];
+            }
+        }
+    }
+
+    $tripSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'TouristTrip',
+        'name' => $tour->translate('title'),
+        'description' => strip_tags((string) $tour->translate('description')),
+        'touristType' => 'Wildlife & Adventure',
+        'duration' => $tour->duration_text,
+        'url' => $canonicalUrl,
+    ];
+
+    $itinerary = [];
+    if (is_array($tour->itinerary)) {
+        foreach ($tour->itinerary as $day) {
+            $itinerary[] = [
+                '@type' => 'Place',
+                'name' => $day['title'] ?? '',
+                'description' => strip_tags((string) ($day['description'] ?? '')),
+            ];
+        }
+    }
+    if ($itinerary !== []) {
+        $tripSchema['itinerary'] = $itinerary;
+    }
+
+    $productSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Product',
+        'name' => $tour->translate('title'),
+        'description' => strip_tags((string) $tour->translate('short_description')),
+        'image' => $tour->featured_image_url,
+        'url' => $canonicalUrl,
+        'brand' => ['@type' => 'Brand', 'name' => 'Twina Safaris'],
+        'offers' => [
+            '@type' => 'Offer',
+            'priceCurrency' => 'USD',
+            'price' => (string) $tour->price,
+            'availability' => 'https://schema.org/InStock',
+            'url' => $canonicalUrl,
+            'priceValidUntil' => now()->addMonths(6)->format('Y-m-d'),
+        ],
+    ];
+
+    // Never publish fake ratings: only include aggregateRating when a real,
+    // approved review actually exists.
+    if ($tour->review_count > 0) {
+        $productSchema['aggregateRating'] = [
+            '@type' => 'AggregateRating',
+            'ratingValue' => (string) $tour->average_rating,
+            'reviewCount' => (string) $tour->review_count,
+        ];
+    }
+
+    $faqSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => array_map(fn ($faq) => [
+            '@type' => 'Question',
+            'name' => $faq['question'],
+            'acceptedAnswer' => [
+                '@type' => 'Answer',
+                'text' => strip_tags((string) $faq['answer']),
+            ],
+        ], $schemaFaqs),
+    ];
+@endphp
+
+@section('schema')
+<script type="application/ld+json">@json($productSchema)</script>
+<script type="application/ld+json">@json($tripSchema)</script>
+
+@if($schemaFaqs !== [])
+<script type="application/ld+json">@json($faqSchema)</script>
 @endif
 @endsection
 
@@ -101,13 +132,15 @@
                     </span>
                 @endif
 
-                {{-- Rating --}}
-                <div class="flex items-center gap-1 font-bold text-stone-900">
-                    <span class="text-amber-500">★ {{ number_format($tour->average_rating, 1) }}</span>
-                    <span class="text-stone-500 font-normal">({{ $tour->review_count }} {{ __('reviews') }})</span>
-                </div>
+                {{-- Rating: only show when there is at least one real review --}}
+                @if($tour->review_count > 0)
+                    <div class="flex items-center gap-1 font-bold text-stone-900">
+                        <span class="text-amber-500">★ {{ number_format($tour->average_rating, 1) }}</span>
+                        <span class="text-stone-500 font-normal">({{ $tour->review_count }} {{ __('reviews') }})</span>
+                    </div>
 
-                <span class="text-stone-300">•</span>
+                    <span class="text-stone-300">•</span>
+                @endif
 
                 {{-- Duration --}}
                 <span class="font-semibold text-stone-800">{{ $tour->duration_text }}</span>
@@ -187,12 +220,14 @@
                 @php
                     $gCount = count($topGallery);
                     $firstReview = $tour->reviews ? $tour->reviews->first() : null;
-                    $revContent = $firstReview ? $firstReview->content : __('We saw many, many animals and were able to get so close to cheetahs and lions hunting it was like being in a documentary.');
-                    $revName = $firstReview ? $firstReview->name : 'Sarah Mitchell';
-                    $revCountry = $firstReview ? ($firstReview->country ?: __('Safari Traveler')) : __('Safari Traveler');
-                    $revDate = $firstReview ? ($firstReview->trip_date ? $firstReview->trip_date->format('M Y') : $firstReview->created_at->format('M Y')) : 'Nov 2026';
-                    $revRating = $firstReview ? $firstReview->rating : 5;
-                    $revInitials = strtoupper(substr($revName, 0, 1));
+                    if ($firstReview) {
+                        $revContent = $firstReview->content;
+                        $revName = $firstReview->name;
+                        $revCountry = $firstReview->country ?: __('Safari Traveler');
+                        $revDate = $firstReview->trip_date ? $firstReview->trip_date->format('M Y') : $firstReview->created_at->format('M Y');
+                        $revRating = $firstReview->rating;
+                        $revInitials = strtoupper(substr($revName, 0, 1));
+                    }
                 @endphp
 
                 <div class="hidden md:grid md:grid-cols-3 md:grid-rows-2 md:gap-3 h-[420px] lg:h-[460px] rounded-3xl overflow-hidden border border-stone-200/80 bg-stone-100 p-1">
@@ -231,26 +266,37 @@
                             </div>
                         </div>
 
-                        {{-- 5. Bottom-Right Review Quote Box (Col 3, Row 2) --}}
-                        <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs relative overflow-hidden group">
-                            <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
-                                "{{ $revContent }}"
-                            </p>
-                            <div class="flex items-center gap-3 pt-3 border-t border-[#f3e8d3] mt-2">
-                                <div class="w-8 h-8 rounded-full bg-[#f4e8d3] text-[#8A6D0B] font-black text-xs flex items-center justify-center shrink-0">
-                                    {{ $revInitials }}
-                                </div>
-                                <div class="truncate">
-                                    <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
-                                    <p class="text-[10px] text-stone-500 font-medium">
-                                        {{ $revCountry }} • {{ $revDate }}
-                                    </p>
-                                </div>
-                                <div class="ml-auto text-[#8A6D0B] text-xs font-bold shrink-0">
-                                    ★ {{ number_format($revRating, 1) }}
+                        {{-- 5. Bottom-Right Review Quote Box (real reviews only) --}}
+                        @if($firstReview)
+                            <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs relative overflow-hidden group">
+                                <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
+                                    "{{ $revContent }}"
+                                </p>
+                                <div class="flex items-center gap-3 pt-3 border-t border-[#f3e8d3] mt-2">
+                                    <div class="w-8 h-8 rounded-full bg-[#f4e8d3] text-[#8A6D0B] font-black text-xs flex items-center justify-center shrink-0">
+                                        {{ $revInitials }}
+                                    </div>
+                                    <div class="truncate">
+                                        <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
+                                        <p class="text-[10px] text-stone-500 font-medium">
+                                            {{ $revCountry }} • {{ $revDate }}
+                                        </p>
+                                    </div>
+                                    <div class="ml-auto text-[#8A6D0B] text-xs font-bold shrink-0">
+                                        ★ {{ number_format($revRating, 1) }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+                                <p class="text-stone-800 text-xs sm:text-sm font-bold leading-relaxed">
+                                    {{ __('Experienced local guides, flexible itineraries and transparent pricing.') }}
+                                </p>
+                                <div class="pt-3 border-t border-[#f3e8d3] mt-2 text-[11px] font-bold text-[#8A6D0B] uppercase tracking-wide">
+                                    {{ __('Why book with Twina Safaris') }}
+                                </div>
+                            </div>
+                        @endif
 
                     @elseif($gCount >= 2)
                         {{-- Fallback for 2-3 photos --}}
@@ -260,20 +306,31 @@
                         <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
                             <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
                         </div>
-                        <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs">
-                            <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
-                                "{{ $revContent }}"
-                            </p>
-                            <div class="flex items-center gap-3 pt-3 border-t border-[#f3e8d3] mt-2">
-                                <div class="w-8 h-8 rounded-full bg-[#f4e8d3] text-[#8A6D0B] font-black text-xs flex items-center justify-center shrink-0">
-                                    {{ $revInitials }}
-                                </div>
-                                <div class="truncate">
-                                    <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
-                                    <p class="text-[10px] text-stone-500 font-medium">{{ $revCountry }}</p>
+                        @if($firstReview)
+                            <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+                                <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
+                                    "{{ $revContent }}"
+                                </p>
+                                <div class="flex items-center gap-3 pt-3 border-t border-[#f3e8d3] mt-2">
+                                    <div class="w-8 h-8 rounded-full bg-[#f4e8d3] text-[#8A6D0B] font-black text-xs flex items-center justify-center shrink-0">
+                                        {{ $revInitials }}
+                                    </div>
+                                    <div class="truncate">
+                                        <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
+                                        <p class="text-[10px] text-stone-500 font-medium">{{ $revCountry }}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs">
+                                <p class="text-stone-800 text-xs sm:text-sm font-bold leading-relaxed">
+                                    {{ __('Experienced local guides, flexible itineraries and transparent pricing.') }}
+                                </p>
+                                <div class="pt-3 border-t border-[#f3e8d3] mt-2 text-[11px] font-bold text-[#8A6D0B] uppercase tracking-wide">
+                                    {{ __('Why book with Twina Safaris') }}
+                                </div>
+                            </div>
+                        @endif
                     @else
                         {{-- 1 Photo Fallback --}}
                         <div class="col-span-3 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
@@ -882,23 +939,7 @@
             </div>
 
             {{-- FREQUENTLY ASKED QUESTIONS (Strictly Tour-Specific) --}}
-            @php
-                $faqs = $tour->translate('faqs');
-                $allVisualFaqs = [];
-
-                if (!empty($faqs) && is_array($faqs)) {
-                    foreach ($faqs as $f) {
-                        $q = is_array($f) ? ($f['question'] ?? $f['title'] ?? '') : $f;
-                        $a = is_array($f) ? ($f['answer'] ?? $f['description'] ?? '') : '';
-                        if (!empty($q) && !empty($a)) {
-                            $allVisualFaqs[] = [
-                                'question' => $q,
-                                'answer' => $a,
-                            ];
-                        }
-                    }
-                }
-            @endphp
+            @php $allVisualFaqs = $schemaFaqs; @endphp
 
             @if(count($allVisualFaqs) > 0)
             <div class="pt-8 border-t border-stone-200/80 mb-10">

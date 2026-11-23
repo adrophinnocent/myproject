@@ -128,7 +128,8 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-900 text-sm uppercase tracking-widest mb-1">{{ __('Email') }}</h4>
-                        <a href="https://twinasafaris.com" class="text-gray-700 font-bold hover:text-gold-600 transition-colors">twinasafaris.com</a>
+                        @php $contactEmail = \App\Models\Setting::get('site_email', 'info@twinasafaris.com'); @endphp
+                        <a href="mailto:{{ $contactEmail }}" class="text-gray-700 font-bold hover:text-gold-600 transition-colors">{{ $contactEmail }}</a>
                         <p class="text-gray-400 text-xs mt-1">{{ __('We reply within 24 hours') }}</p>
                     </div>
                 </div>

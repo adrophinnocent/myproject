@@ -16,8 +16,12 @@ Disallow: /my-bookings
 Disallow: /login
 Disallow: /forgot-password
 Disallow: /reset-password
+Disallow: /admin
+Disallow: /proposal
 Disallow: /proposal/
+Disallow: /trip-plan
 Disallow: /trip-plan/
+Disallow: /offer/
 Disallow: /currency/
 Disallow: /newsletter/confirm/
 Disallow: /newsletter/unsubscribe/

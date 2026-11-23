@@ -1,5 +1,8 @@
 @extends('public.layouts.app')
 
+@section('title', 'Twina Safaris | Tanzania Safaris, Kilimanjaro & Zanzibar')
+@section('meta_description', 'Plan Tanzania safaris, Kilimanjaro treks and Zanzibar beach holidays with Twina Safaris. Explore Serengeti and Ngorongoro itineraries, prices and expert local guides.')
+
 @section('content')
 
 {{-- ========== SEASON STATUS INDICATOR STYLES ========== --}}
@@ -60,6 +63,8 @@
     </div>
 
     <div class="relative z-20 flex-grow flex flex-col items-center justify-center text-center px-4 pt-20">
+        {{-- One stable, keyword-focused H1 for the page; slider headlines are H2s. --}}
+        <h1 class="sr-only">{{ __('Tanzania safaris, Kilimanjaro treks and Zanzibar holidays with Twina Safaris') }}</h1>
         <div class="w-full max-w-5xl">
             @if(isset($sliders) && $sliders->count() > 0)
                 @foreach($sliders as $index => $slide)
@@ -75,9 +80,9 @@
                                 </span>
                             @endif
                             @if($slide->title)
-                                <h1 class="font-display text-3xl sm:text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
+                                <h2 class="font-display text-3xl sm:text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
                                     {{ __($slide->title) }}
-                                </h1>
+                                </h2>
                             @endif
                         </div>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 relative z-50 pt-4 md:pt-0">

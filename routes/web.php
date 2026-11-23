@@ -61,7 +61,12 @@ Route::get('/currency/{code}', function ($code) {
 
 // Public Routes
 Route::get('/tours', [TourController::class, 'index'])->name('tours.index');
-Route::get('/itineraries', [TourController::class, 'index'])->name('itineraries.index');
+// Legacy alias: 301 to the single preferred listing URL to avoid duplicate content.
+Route::get('/itineraries', function () {
+    $query = request()->getQueryString();
+
+    return redirect()->to('/tours'.($query ? '?'.$query : ''), 301);
+})->name('itineraries.index');
 Route::get('/itineraries/{slug}.html', [TourController::class, 'showItinerary'])->name('itineraries.show');
 Route::get('/itineraries/{slug}', function ($slug) {
     if (str_ends_with($slug, '.html')) {

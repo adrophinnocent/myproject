@@ -1,7 +1,28 @@
 @extends('public.layouts.app')
 
-@section('title', 'Frequently Asked Questions')
-@section('meta-description', 'Find answers to common questions about Twina Safaris, booking, travel, and safari experiences in Tanzania.')
+@section('title', 'Tanzania Safari FAQs | Twina Safaris')
+@section('meta_description', 'Find answers to common questions about Twina Safaris, booking, travel, and safari experiences in Tanzania.')
+
+@php
+    $faqSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => $faqs->map(fn ($faq) => [
+            '@type' => 'Question',
+            'name' => $faq->question,
+            'acceptedAnswer' => [
+                '@type' => 'Answer',
+                'text' => strip_tags((string) $faq->answer),
+            ],
+        ])->values()->all(),
+    ];
+@endphp
+
+@section('schema')
+@if($faqs->isNotEmpty())
+<script type="application/ld+json">@json($faqSchema)</script>
+@endif
+@endsection
 
 @section('content')
 <section class="relative bg-safari-dark text-white overflow-hidden">

@@ -28,7 +28,20 @@ class SeoHelper
 
     public static function defaultLocale(): string
     {
+        // app.locale is mutated by SetLocale on every ?lang= request. hreflang
+        // needs the stable configured default, which is fallback_locale.
         return (string) config('app.fallback_locale', 'en');
+    }
+
+    /**
+     * Locale explicitly requested in the URL. The session locale is deliberately
+     * excluded: a crawler and a returning visitor must get the same canonical.
+     */
+    public static function requestedLocale(Request $request): ?string
+    {
+        $locale = $request->query('lang');
+
+        return self::isSupported($locale) ? (string) $locale : null;
     }
 
     /**
@@ -48,7 +61,7 @@ class SeoHelper
 
         return match ($route->getName()) {
             'tours.show' => route('tours.show', [
-                'type' => $params['type'] ?? 'tour',
+                'type' => $request->attributes->get('seo_tour_type', $params['type'] ?? 'tour'),
                 'slug' => self::cleanSlug($params['slug'] ?? ''),
             ], false),
             'blog.show' => route('blog.show', [
@@ -69,7 +82,9 @@ class SeoHelper
             return '/tours';
         }
 
-        $type = Safari::where('slug', $slug)->exists() ? 'safari' : 'tour';
+        $type = Safari::where('slug', $slug)->where('is_published', true)->exists()
+            ? 'safari'
+            : 'tour';
 
         return route('tours.show', ['type' => $type, 'slug' => $slug], false);
     }
@@ -77,13 +92,14 @@ class SeoHelper
     public static function canonicalUrl(Request $request): string
     {
         $url = self::siteUrl().self::canonicalPath($request);
-        $locale = app()->getLocale();
+        $query = self::paginationQuery($request);
+        $locale = self::requestedLocale($request);
 
-        if (self::isSupported($locale) && $locale !== self::defaultLocale()) {
-            return $url.'?lang='.$locale;
+        if ($locale !== null && $locale !== self::defaultLocale()) {
+            $query['lang'] = $locale;
         }
 
-        return $url;
+        return $query === [] ? $url : $url.'?'.http_build_query($query);
     }
 
     /**
@@ -91,18 +107,45 @@ class SeoHelper
      */
     public static function alternateUrls(Request $request): array
     {
-        $base = self::siteUrl().self::canonicalPath($request);
+        $url = self::siteUrl().self::canonicalPath($request);
+        $query = self::paginationQuery($request);
+
+        return self::alternatesFor($query === [] ? $url : $url.'?'.http_build_query($query));
+    }
+
+    /**
+     * Build every locale variation from one absolute URL. Used by both the HTML
+     * head and the XML sitemap so hreflang never disagrees with itself.
+     *
+     * @return array<string, string>
+     */
+    public static function alternatesFor(string $url): array
+    {
         $alternates = [];
 
         foreach (self::supportedLocales() as $locale) {
             $alternates[$locale] = $locale === self::defaultLocale()
-                ? $base
-                : $base.'?lang='.$locale;
+                ? $url
+                : $url.(str_contains($url, '?') ? '&' : '?').'lang='.$locale;
         }
 
-        $alternates['x-default'] = $base;
+        $alternates['x-default'] = $url;
 
         return $alternates;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private static function paginationQuery(Request $request): array
+    {
+        $page = $request->query('page');
+
+        if (! is_scalar($page) || filter_var($page, FILTER_VALIDATE_INT) === false || (int) $page < 2) {
+            return [];
+        }
+
+        return ['page' => (int) $page];
     }
 
     public static function isSupported(?string $locale): bool

@@ -19,6 +19,15 @@ class TourController extends Controller
 {
     public function index(Request $request)
     {
+        // This view is a duplicate of /destinations and was only reachable via
+        // a query string. Send it to the canonical page instead of indexing it.
+        if ($request->query('view') === 'destinations') {
+            $query = $request->query();
+            unset($query['view']);
+
+            return redirect()->to('/destinations'.($query ? '?'.http_build_query($query) : ''), 301);
+        }
+
         $tourQuery = Tour::where('is_published', true)->with(['category', 'destination']);
         $safariQuery = Safari::where('is_published', true)->with(['category', 'destination']);
 
@@ -128,14 +137,10 @@ class TourController extends Controller
         $categories = Category::where('is_active', true)->get();
         $destinations = Destination::where('is_active', true)->get();
 
-        if ($request->view === 'destinations') {
-            return view('public.destinations.index', compact('destinations'));
-        }
-
         return view('public.tours.index', compact('tours', 'categories', 'destinations'));
     }
 
-    public function show($type, $slug = null)
+    public function show(Request $request, $type, $slug = null)
     {
         // If slug is null, it means we only got one parameter (e.g. /tours/serengeti.html)
         if ($slug === null) {
@@ -144,8 +149,18 @@ class TourController extends Controller
             $slug = str_replace('.html', '', $slug);
         }
 
-        $tour = Safari::where('slug', $slug)->first()
-                ?? Tour::where('slug', $slug)->firstOrFail();
+        $tour = $this->publishedTour($slug) ?? abort(404);
+        $preferredType = $this->tourType($tour);
+
+        // Any /tours/{wrong-type}/... URL must 301 to the real model type,
+        // otherwise the same itinerary is indexable under multiple URLs.
+        if ($type !== $preferredType) {
+            $target = route('tours.show', ['type' => $preferredType, 'slug' => $slug]);
+
+            return redirect()->to($target.($request->getQueryString() ? '?'.$request->getQueryString() : ''), 301);
+        }
+
+        $request->attributes->set('seo_tour_type', $preferredType);
 
         $tour->load(['category', 'destination', 'images', 'translations', 'reviews' => function ($q) {
             $q->where('is_approved', true)->latest();
@@ -187,59 +202,36 @@ class TourController extends Controller
         return view('public.tours.show', compact('tour', 'relatedTours', 'publishedFaqs'));
     }
 
-    public function showItinerary($slug)
+    public function showItinerary(Request $request, $slug)
     {
         $cleanSlug = str_replace('.html', '', $slug);
+        $tour = $this->publishedTour($cleanSlug) ?? abort(404);
 
-        $tour = Safari::where('slug', $cleanSlug)->first()
-                ?? Tour::where('slug', $cleanSlug)->firstOrFail();
+        // The itineraries prefix is a legacy alias. Make it a real redirect so
+        // Google consolidates ranking signals on the preferred /tours URL.
+        $target = route('tours.show', [
+            'type' => $this->tourType($tour),
+            'slug' => $cleanSlug,
+        ]);
 
-        $tour->load(['category', 'destination', 'images', 'translations', 'reviews' => function ($q) {
-            $q->where('is_approved', true)->latest();
-        }]);
+        return redirect()->to($target.($request->getQueryString() ? '?'.$request->getQueryString() : ''), 301);
+    }
 
-        $relatedTours = Tour::where('is_published', true)
-            ->where('id', '!=', $tour->id)
-            ->where(function ($q) use ($tour) {
-                $q->where('category_id', $tour->category_id)
-                    ->orWhere('destination_id', $tour->destination_id);
-            })
-            ->with(['translations'])
-            ->take(4)
-            ->get();
+    private function publishedTour(string $slug): ?object
+    {
+        return Safari::where('slug', $slug)->where('is_published', true)->first()
+            ?? Tour::where('slug', $slug)->where('is_published', true)->first();
+    }
 
-        $publishedFaqs = collect();
-        try {
-            if (Schema::hasColumn('faqs', 'tour_id')) {
-                $publishedFaqs = Faq::where('is_active', true)
-                    ->where(function ($q) use ($tour) {
-                        if ($tour instanceof Tour) {
-                            $q->where('tour_id', $tour->id);
-                        }
-                        if (! empty($tour->destination_id)) {
-                            $q->orWhere('destination_id', $tour->destination_id);
-                        }
-                        if (! empty($tour->category_id)) {
-                            $q->orWhere('category_id', $tour->category_id);
-                        }
-                    })
-                    ->orderBy('order')
-                    ->get();
-            } else {
-                $publishedFaqs = Faq::where('is_active', true)->orderBy('order')->get();
-            }
-        } catch (\Throwable $e) {
-        }
-
-        return view('public.tours.show', compact('tour', 'relatedTours', 'publishedFaqs'));
+    private function tourType(object $tour): string
+    {
+        return $tour instanceof Safari ? 'safari' : 'tour';
     }
 
     public function downloadPdf($slug)
     {
         $cleanSlug = str_replace('.html', '', $slug);
-
-        $tour = Safari::where('slug', $cleanSlug)->first()
-                ?? Tour::where('slug', $cleanSlug)->firstOrFail();
+        $tour = $this->publishedTour($cleanSlug) ?? abort(404);
 
         try {
             $pdf = Pdf::loadView('emails.itinerary-pdf', [

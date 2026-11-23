@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
+use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
@@ -20,7 +21,9 @@ class BlogController extends Controller
     {
         $slug = str_replace('.html', '', $slug);
         $post = BlogPost::where('slug', $slug)->published()->firstOrFail();
-        $post->increment('views_count');
+        // A pageview is not a content update: increment without touching
+        // updated_at so sitemap lastmod stays truthful.
+        DB::table($post->getTable())->whereKey($post->getKey())->increment('views_count');
 
         $relatedPosts = BlogPost::where('category_id', $post->category_id)
             ->where('id', '!=', $post->id)
