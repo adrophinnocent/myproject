@@ -250,9 +250,12 @@
             </div>
 
             <div class="pt-4 mt-4 border-t border-[#d4af37]/15">
-                <a href="{{ route('admin.notifications.mark-all-read') }}" class="w-full block text-center py-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/20 hover:from-amber-500/30 text-amber-300 font-bold text-xs border border-amber-500/30 transition-all">
-                    Mark All Notifications Read
-                </a>
+                <form method="POST" action="{{ route('admin.notifications.mark-all-read') }}">
+                    @csrf
+                    <button type="submit" class="w-full block text-center py-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/20 hover:from-amber-500/30 text-amber-300 font-bold text-xs border border-amber-500/30 transition-all">
+                        Mark All Notifications Read
+                    </button>
+                </form>
             </div>
         </div>
     </div>
