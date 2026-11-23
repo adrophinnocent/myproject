@@ -12,41 +12,26 @@
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
 
     @php
-        $baseUrl = 'https://twinasafaris.com';
-        $path = request()->getPathInfo();
-
-        // 1. Ensure .html is only on detail pages
-        if ((str_contains($path, '/tours/tour/') || str_contains($path, '/blog/')) && !str_ends_with($path, '.html')) {
-            $path .= '.html';
-        }
-
-        // 2. Build full canonical with domain
-        $canonical = $baseUrl . $path;
-
-        // 3. IMPORTANT: Include 'lang' in canonical so Google indexes each language separately
-        if (request()->has('lang')) {
-            $canonical .= '?lang=' . request()->get('lang');
-        }
-
-        // 4. Handle other important filters like destination for sitemap consistency
-        if (!request()->has('lang') && request()->has('destination')) {
-            $canonical .= '?destination=' . request()->get('destination');
-        }
+        $seoLocale = app()->getLocale();
+        $canonical = \App\Helpers\SeoHelper::canonicalUrl(request());
+        $alternates = \App\Helpers\SeoHelper::alternateUrls(request());
+        $isNoindex = request()->is('booking', 'booking/*', 'my-bookings', 'trip-plan/*', 'proposal/*', 'login', 'forgot-password', 'reset-password/*');
     @endphp
     <link rel="canonical" href="{{ $canonical }}">
 
     {{-- Meta Robots: Noindex for booking, client workspaces and auth pages --}}
-    @if(request()->is('booking', 'booking/*', 'my-bookings', 'trip-plan/*', 'proposal/*', 'login', 'forgot-password', 'reset-password/*'))
+    @if($isNoindex)
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     @else
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     @endif
 
-    {{-- International SEO: Hreflang Tags - Always pointing to non-www --}}
-    @foreach(['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'] as $locale)
-        <link rel="alternate" hreflang="{{ $locale }}" href="{{ $baseUrl . $path }}?lang={{ $locale }}">
-    @endforeach
-    <link rel="alternate" hreflang="x-default" href="{{ $baseUrl . $path }}">
+    {{-- International SEO: self-referencing hreflang on indexable pages only --}}
+    @unless($isNoindex)
+        @foreach($alternates as $hreflang => $href)
+            <link rel="alternate" hreflang="{{ $hreflang }}" href="{{ $href }}">
+        @endforeach
+    @endunless
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,16 +50,21 @@
 
     {{-- Open Graph / Facebook --}}
     <meta property="og:type"        content="website">
-    <meta property="og:url"         content="{{ str_replace('://www.', '://', url()->current()) }}">
+    <meta property="og:url"         content="{{ $canonical }}">
     <meta property="og:site_name"   content="Twina Safaris">
     <meta property="og:title"       content="@yield('title', \App\Models\Setting::get('seo_title', config('app.name')))">
     <meta property="og:description" content="@yield('meta_description', \App\Models\Setting::get('meta_description'))">
     <meta property="og:image"       content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">
-    <meta property="og:locale"      content="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <meta property="og:locale"      content="{{ \App\Helpers\SeoHelper::ogLocale($seoLocale) }}">
+    @foreach($alternates as $hreflang => $href)
+        @if($hreflang !== $seoLocale && $hreflang !== 'x-default')
+            <meta property="og:locale:alternate" content="{{ \App\Helpers\SeoHelper::ogLocale($hreflang) }}">
+        @endif
+    @endforeach
 
     {{-- Twitter --}}
     <meta property="twitter:card"    content="summary_large_image">
-    <meta property="twitter:url"     content="{{ str_replace('://www.', '://', url()->current()) }}">
+    <meta property="twitter:url"     content="{{ $canonical }}">
     <meta property="twitter:title"   content="@yield('title', config('app.name'))">
     <meta property="twitter:description" content="@yield('meta_description')">
     <meta property="twitter:image"   content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">

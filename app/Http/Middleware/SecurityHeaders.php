@@ -20,6 +20,26 @@ class SecurityHeaders
             $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
             $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
 
+            // Private/auth pages must never be indexed, including standalone
+            // views that do not extend the public layout. Do not overwrite a
+            // more specific value already set by a controller (e.g. PDFs).
+            if (! $response->headers->has('X-Robots-Tag') && $request->is(
+                'admin',
+                'admin/*',
+                'booking',
+                'booking/*',
+                'my-bookings',
+                'trip-plan/*',
+                'proposal/*',
+                'login',
+                'forgot-password',
+                'reset-password/*',
+                'newsletter/confirm/*',
+                'newsletter/unsubscribe/*',
+            )) {
+                $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+            }
+
             // CSP: no wildcard plain-HTTP sources, no plugins, no framing by third parties.
             // 'unsafe-inline'/'unsafe-eval' are required by Alpine.js and the inline
             // scripts used throughout the public site.

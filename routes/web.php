@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\SeoHelper;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Public\AiChatController;
@@ -33,13 +34,19 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
 require __DIR__.'/auth.php';
 
 // Language Switcher
+// The UI now links with ?lang=... (crawlable). This route is kept for old
+// bookmarks and redirects them to the canonical URL for the chosen language.
 Route::get('/lang/{locale}', function ($locale) {
-    if (in_array($locale, ['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'])) {
-        session(['locale' => $locale]);
-        session()->save(); // Force immediate persistence
+    if (! SeoHelper::isSupported($locale)) {
+        return redirect()->to('/');
     }
 
-    return back();
+    session(['locale' => $locale]);
+    session()->save();
+
+    $target = $locale === SeoHelper::defaultLocale() ? '/' : '/?lang='.$locale;
+
+    return redirect()->to($target);
 })->name('lang.switch');
 
 // Currency Switcher

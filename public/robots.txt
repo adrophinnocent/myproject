@@ -18,8 +18,9 @@ Disallow: /forgot-password
 Disallow: /reset-password
 Disallow: /proposal/
 Disallow: /trip-plan/
-Disallow: /lang/
 Disallow: /currency/
+Disallow: /newsletter/confirm/
+Disallow: /newsletter/unsubscribe/
 Disallow: /offer/*/track
 Disallow: /offer/*/lead
 

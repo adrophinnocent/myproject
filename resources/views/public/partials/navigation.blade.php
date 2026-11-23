@@ -80,7 +80,7 @@
                 </button>
                 <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute right-0 top-full mt-2 w-44 bg-[#0a0703] border border-gold-500/20 rounded-xl shadow-2xl z-50 overflow-hidden" x-cloak>
                     @foreach(['en'=>'🇬🇧 English','de'=>'🇩🇪 Deutsch','fr'=>'🇫🇷 Français','es'=>'🇪🇸 Español','it'=>'🇮🇹 Italiano','zh'=>'🇨🇳 中文','nl'=>'🇳🇱 Nederlands'] as $code=>$label)
-                    <a href="{{ route('lang.switch', $code) }}" rel="nofollow" class="block px-4 py-2.5 text-sm text-gray-300 hover:text-gold-400 hover:bg-white/5 transition-colors {{ app()->getLocale() === $code ? 'text-gold-400 bg-white/5 font-bold' : '' }}">{{ $label }}</a>
+                    <a href="{{ $code === 'en' ? request()->fullUrlWithoutQuery('lang') : request()->fullUrlWithQuery(['lang' => $code]) }}" rel="alternate" hreflang="{{ $code }}" class="block px-4 py-2.5 text-sm text-gray-300 hover:text-gold-400 hover:bg-white/5 transition-colors {{ app()->getLocale() === $code ? 'text-gold-400 bg-white/5 font-bold' : '' }}">{{ $label }}</a>
                     @endforeach
                 </div>
             </div>

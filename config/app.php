@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Public Canonical URL
+    |--------------------------------------------------------------------------
+    |
+    | The production domain used in canonical links, hreflang tags and the
+    | XML sitemap. Keep this free of "www" so Google sees one preferred host.
+    |
+    */
+
+    'canonical_url' => env('CANONICAL_URL', 'https://twinasafaris.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
@@ -79,6 +91,8 @@ return [
     */
 
     'locale' => env('APP_LOCALE', 'en'),
+
+    'supported_locales' => ['en', 'de', 'fr', 'es', 'it', 'zh', 'nl'],
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 

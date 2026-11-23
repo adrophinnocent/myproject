@@ -781,14 +781,6 @@
                 <span class="text-[9px] font-black uppercase tracking-widest text-gray-900 text-center">Verified Google Reviews</span>
             </div>
 
-            {{-- Licensed --}}
-            <div class="bg-safari-dark border border-gold-500/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/20 group cursor-help h-32">
-                <div class="w-12 h-12 bg-gold-500 rounded-full flex items-center justify-center group-hover:rotate-12 transition-all">
-                    <svg class="w-7 h-7 text-safari-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                </div>
-                <span class="text-[9px] font-black uppercase tracking-widest text-gold-500 text-center">Licensed Safari Operator</span>
-            </div>
-
             {{-- Sustainable --}}
             <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all duration-500 hover:shadow-xl hover:shadow-gold-500/10 group cursor-help h-32">
                 <div class="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform">
