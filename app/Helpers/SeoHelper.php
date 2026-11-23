@@ -93,12 +93,10 @@ class SeoHelper
     {
         $url = self::siteUrl().self::canonicalPath($request);
         $query = self::paginationQuery($request);
-        $locale = self::indexableLocale($request);
 
-        if ($locale !== null && $locale !== self::defaultLocale()) {
-            $query['lang'] = $locale;
-        }
-
+        // ?lang= only changes the visitor's UI language. It does not produce a
+        // separate, indexable page, so it must never appear in a canonical.
+        // Keeping it here is what made Google report these URLs as duplicates.
         return $query === [] ? $url : $url.'?'.http_build_query($query);
     }
 
@@ -107,25 +105,7 @@ class SeoHelper
      */
     public static function alternateUrls(Request $request): array
     {
-        $url = self::siteUrl().self::canonicalPath($request);
-        $query = self::paginationQuery($request);
-        $absoluteUrl = $query === [] ? $url : $url.'?'.http_build_query($query);
-
-        // New guide pages are deliberately English-only until real translations
-        // exist. Sending hreflang to an untranslated page would mislead crawlers.
-        if (self::hasEnglishOnlyContent($request)) {
-            return ['x-default' => $absoluteUrl];
-        }
-
-        return self::alternatesFor($absoluteUrl);
-    }
-
-    /**
-     * Locale that should be reflected in canonical/hreflang tags.
-     */
-    private static function indexableLocale(Request $request): ?string
-    {
-        return self::hasEnglishOnlyContent($request) ? null : self::requestedLocale($request);
+        return ['x-default' => self::canonicalUrl($request)];
     }
 
     public static function hasEnglishOnlyContent(Request $request): bool
@@ -133,27 +113,6 @@ class SeoHelper
         $routeName = $request->route()?->getName();
 
         return $routeName !== null && str_starts_with($routeName, 'guides.');
-    }
-
-    /**
-     * Build every locale variation from one absolute URL. Used by both the HTML
-     * head and the XML sitemap so hreflang never disagrees with itself.
-     *
-     * @return array<string, string>
-     */
-    public static function alternatesFor(string $url): array
-    {
-        $alternates = [];
-
-        foreach (self::supportedLocales() as $locale) {
-            $alternates[$locale] = $locale === self::defaultLocale()
-                ? $url
-                : $url.(str_contains($url, '?') ? '&' : '?').'lang='.$locale;
-        }
-
-        $alternates['x-default'] = $url;
-
-        return $alternates;
     }
 
     /**

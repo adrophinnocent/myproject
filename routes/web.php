@@ -35,8 +35,8 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
 require __DIR__.'/auth.php';
 
 // Language Switcher
-// The UI now links with ?lang=... (crawlable). This route is kept for old
-// bookmarks and redirects them to the canonical URL for the chosen language.
+// Switching a language is a visitor preference (session), not a separate
+// indexable page. The link returns to a clean path with no ?lang= parameter.
 Route::get('/lang/{locale}', function ($locale) {
     if (! SeoHelper::isSupported($locale)) {
         return redirect()->to('/');
@@ -45,10 +45,16 @@ Route::get('/lang/{locale}', function ($locale) {
     session(['locale' => $locale]);
     session()->save();
 
-    $target = $locale === SeoHelper::defaultLocale() ? '/' : '/?lang='.$locale;
+    // Only accept a local path as the return target, never a full URL.
+    $redirect = request()->query('redirect');
+    $safe = is_string($redirect)
+        && str_starts_with($redirect, '/')
+        && ! str_starts_with($redirect, '//')
+        && ! str_contains($redirect, '\\');
+    $path = $safe ? (parse_url($redirect, PHP_URL_PATH) ?: '/') : '/';
 
-    return redirect()->to($target);
-})->name('lang.switch');
+    return redirect()->to($path);
+})->middleware('throttle:30,1')->name('lang.switch');
 
 // Currency Switcher
 Route::get('/currency/{code}', function ($code) {

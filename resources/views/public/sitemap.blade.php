@@ -9,13 +9,9 @@
         @endif
         <changefreq>{{ $url['changefreq'] }}</changefreq>
         <priority>{{ $url['priority'] }}</priority>
-        @if ($url['alternates'] ?? true)
-            @foreach (\App\Helpers\SeoHelper::alternatesFor($url['loc']) as $hreflang => $href)
-            <xhtml:link rel="alternate" hreflang="{{ $hreflang }}" href="{{ $href }}" />
-            @endforeach
-        @else
-            <xhtml:link rel="alternate" hreflang="x-default" href="{{ $url['loc'] }}" />
-        @endif
+        {{-- ?lang= pages are UI variants of the same content, not separate
+             indexable documents. Only the clean primary URL is advertised. --}}
+        <xhtml:link rel="alternate" hreflang="x-default" href="{{ $url['loc'] }}" />
     </url>
 @endforeach
 </urlset>

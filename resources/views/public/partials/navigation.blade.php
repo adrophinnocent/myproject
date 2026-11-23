@@ -65,8 +65,9 @@
                     @endforeach
                 </div>
             </div>
-            {{-- Language Switcher: hidden on English-only guides so crawlers are not
-                 sent to untranslated ?lang= variants. --}}
+            {{-- Language Switcher: a visitor preference stored in session. The link
+                 returns to the same clean URL (no ?lang=) so crawlers see one
+                 indexable page per route. Hidden on English-only guides. --}}
             @unless(\App\Helpers\SeoHelper::hasEnglishOnlyContent(request()))
             <div class="relative" x-data="{open: false}">
                 <button x-on:click="open = !open" x-on:click.outside="open = false" class="flex items-center gap-1.5 text-gray-400 hover:text-gold-400 transition-colors">
@@ -76,7 +77,7 @@
                 </button>
                 <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute right-0 top-full mt-2 w-44 bg-[#0a0703] border border-gold-500/20 rounded-xl shadow-2xl z-50 overflow-hidden" x-cloak>
                     @foreach(['en'=>'🇬🇧 English','de'=>'🇩🇪 Deutsch','fr'=>'🇫🇷 Français','es'=>'🇪🇸 Español','it'=>'🇮🇹 Italiano','zh'=>'🇨🇳 中文','nl'=>'🇳🇱 Nederlands'] as $code=>$label)
-                    <a href="{{ $code === 'en' ? request()->fullUrlWithoutQuery('lang') : request()->fullUrlWithQuery(['lang' => $code]) }}" rel="alternate" hreflang="{{ $code }}" class="block px-4 py-2.5 text-sm text-gray-300 hover:text-gold-400 hover:bg-white/5 transition-colors {{ app()->getLocale() === $code ? 'text-gold-400 bg-white/5 font-bold' : '' }}">{{ $label }}</a>
+                    <a href="{{ route('lang.switch', ['locale' => $code, 'redirect' => request()->getPathInfo()]) }}" class="block px-4 py-2.5 text-sm text-gray-300 hover:text-gold-400 hover:bg-white/5 transition-colors {{ app()->getLocale() === $code ? 'text-gold-400 bg-white/5 font-bold' : '' }}">{{ $label }}</a>
                     @endforeach
                 </div>
             </div>

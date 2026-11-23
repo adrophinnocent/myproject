@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\SeoHelper;
 use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\Destination;
@@ -80,15 +81,85 @@ class SeoUrlTest extends TestCase
         $this->get('/tours/tour/draft-safari.html')->assertNotFound();
     }
 
-    public function test_pagination_and_locale_are_self_canonical(): void
+    public function test_pagination_is_self_canonical_but_locale_is_dropped(): void
     {
         $response = $this->get('/?page=2&lang=fr');
 
         $response->assertOk();
-        $response->assertSee('<link rel="canonical" href="https://twinasafaris.com/?page=2&amp;lang=fr">', false);
+        $response->assertSee('<link rel="canonical" href="https://twinasafaris.com/?page=2">', false);
     }
 
-    public function test_sitemap_exposes_locale_alternates_and_cache_header(): void
+    #[DataProvider('localizedPageProvider')]
+    public function test_language_parameter_always_canonicalizes_to_the_clean_primary_url(string $path, string $expected): void
+    {
+        $response = $this->get($path);
+
+        $response->assertOk();
+        $response->assertSee('<link rel="canonical" href="'.$expected.'">', false);
+        $response->assertSee('hreflang="x-default" href="'.$expected.'"', false);
+    }
+
+    public static function localizedPageProvider(): array
+    {
+        return [
+            ['/?lang=fr', 'https://twinasafaris.com/'],
+            ['/about?lang=de', 'https://twinasafaris.com/about'],
+            ['/tours?lang=zh', 'https://twinasafaris.com/tours'],
+            ['/blog?lang=it', 'https://twinasafaris.com/blog'],
+            ['/faqs?lang=nl', 'https://twinasafaris.com/faqs'],
+            ['/destinations?lang=es', 'https://twinasafaris.com/destinations'],
+        ];
+    }
+
+    public function test_language_pages_do_not_advertise_language_specific_hreflang(): void
+    {
+        $response = $this->get('/?lang=fr');
+
+        $response->assertOk();
+        $response->assertSee('hreflang="x-default"', false);
+        foreach (SeoHelper::supportedLocales() as $locale) {
+            $response->assertDontSee('hreflang="'.$locale.'"', false);
+        }
+    }
+
+    public function test_default_language_parameter_is_301_redirected_to_the_clean_url(): void
+    {
+        $this->get('/?lang=en')
+            ->assertStatus(301)
+            ->assertRedirect('https://twinasafaris.com/');
+
+        $this->get('/about?lang=en&page=2')
+            ->assertStatus(301)
+            ->assertRedirect('https://twinasafaris.com/about?page=2');
+    }
+
+    public function test_language_switcher_keeps_the_preference_without_indexable_language_urls(): void
+    {
+        $this->get('/lang/fr?redirect=/tours')
+            ->assertRedirect('https://twinasafaris.com/tours');
+
+        $response = $this->get('/tours');
+
+        $response->assertOk();
+        $this->assertSame('fr', app()->getLocale());
+        // A session-only choice must never leak into canonical or hreflang.
+        $response->assertSee('<link rel="canonical" href="https://twinasafaris.com/tours">', false);
+        $response->assertDontSee('hreflang="fr"', false);
+        $response->assertSee('href="https://twinasafaris.com/lang/fr?redirect=%2Ftours"', false);
+    }
+
+    public function test_www_requests_redirect_to_the_non_www_host_with_301(): void
+    {
+        $this->get('https://www.twinasafaris.com/about')
+            ->assertStatus(301)
+            ->assertRedirect('https://twinasafaris.com/about');
+
+        $this->get('https://www.twinasafaris.com/tours?tour_type=safari')
+            ->assertStatus(301)
+            ->assertRedirect('https://twinasafaris.com/tours?tour_type=safari');
+    }
+
+    public function test_sitemap_exposes_only_x_default_and_cache_header(): void
     {
         $response = $this->get('/sitemap.xml');
 
@@ -96,7 +167,11 @@ class SeoUrlTest extends TestCase
         $response->assertHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->assertStringContainsString('max-age=3600', (string) $response->headers->get('Cache-Control'));
         $response->assertSee('xmlns:xhtml="http://www.w3.org/1999/xhtml"', false);
-        $response->assertSee('hreflang="fr" href="https://twinasafaris.com/?lang=fr"', false);
+        $response->assertSee('hreflang="x-default" href="https://twinasafaris.com/"', false);
+        foreach (SeoHelper::supportedLocales() as $locale) {
+            $response->assertDontSee('hreflang="'.$locale.'"', false);
+        }
+        $response->assertDontSee('?lang=', false);
     }
 
     public function test_sitemap_is_well_formed_xml_with_correct_elements(): void
@@ -128,6 +203,10 @@ class SeoUrlTest extends TestCase
             $this->assertSame(1, $node->getElementsByTagNameNS($namespace, 'changefreq')->length);
             $this->assertSame(1, $node->getElementsByTagNameNS($namespace, 'priority')->length);
             $this->assertLessThanOrEqual(1, $node->getElementsByTagNameNS($namespace, 'lastmod')->length);
+
+            $links = $node->getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'link');
+            $this->assertSame(1, $links->length);
+            $this->assertSame('x-default', $links->item(0)->getAttribute('hreflang'));
         }
 
         $this->assertStringNotContainsString('savannatrails.com', $body);

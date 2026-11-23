@@ -12,7 +12,7 @@
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
 
     @php
-        $seoLocale = \App\Helpers\SeoHelper::requestedLocale(request()) ?? \App\Helpers\SeoHelper::defaultLocale();
+        $seoLocale = \App\Helpers\SeoHelper::defaultLocale();
         $canonical = \App\Helpers\SeoHelper::canonicalUrl(request());
         $alternates = \App\Helpers\SeoHelper::alternateUrls(request());
         $isNoindex = request()->is('admin', 'admin/*', 'booking', 'booking/*', 'my-bookings', 'trip-plan', 'trip-plan/*', 'proposal', 'proposal/*', 'offer', 'offer/*', 'login', 'forgot-password', 'reset-password', 'reset-password/*');
@@ -56,11 +56,6 @@
     <meta property="og:description" content="@yield('meta_description', \App\Models\Setting::get('meta_description'))">
     <meta property="og:image"       content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">
     <meta property="og:locale"      content="{{ \App\Helpers\SeoHelper::ogLocale($seoLocale) }}">
-    @foreach($alternates as $hreflang => $href)
-        @if($hreflang !== $seoLocale && $hreflang !== 'x-default')
-            <meta property="og:locale:alternate" content="{{ \App\Helpers\SeoHelper::ogLocale($hreflang) }}">
-        @endif
-    @endforeach
 
     {{-- Twitter --}}
     <meta property="twitter:card"    content="summary_large_image">

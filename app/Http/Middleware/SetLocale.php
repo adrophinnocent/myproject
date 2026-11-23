@@ -12,24 +12,42 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next)
     {
-        // 1. ?lang=fr is crawlable and wins over the session so Google can
-        //    index each translated URL directly.
         $queryLocale = $request->query('lang');
-        $locale = SeoHelper::isSupported($queryLocale)
-            ? (string) $queryLocale
-            : Session::get('locale', config('app.locale'));
 
-        // 2. Fallback if not supported
+        if (is_string($queryLocale) && SeoHelper::isSupported($queryLocale)) {
+            // A valid URL choice wins for this request and is remembered so the
+            // language switcher can use clean URLs from here on.
+            Session::put('locale', $queryLocale);
+
+            // English is the default: ?lang=en is a needless duplicate URL.
+            // Remember the choice first, then 301 to the clean URL so the
+            // visitor still sees English after the redirect.
+            if ($queryLocale === SeoHelper::defaultLocale()) {
+                $query = $request->query();
+                unset($query['lang']);
+
+                $path = $request->getPathInfo();
+
+                return redirect()->to(
+                    SeoHelper::siteUrl().$path.($query === [] ? '' : '?'.http_build_query($query)),
+                    301
+                );
+            }
+
+            App::setLocale($queryLocale);
+
+            return $next($request);
+        }
+
+        // No usable ?lang= value: fall back to the visitor's session choice.
+        // This never affects canonical or hreflang, only the rendered UI.
+        $locale = Session::get('locale', config('app.locale'));
+        $locale = is_string($locale) ? $locale : config('app.locale');
+
         if (! SeoHelper::isSupported($locale)) {
             $locale = config('app.locale');
         }
 
-        // 3. Remember a valid URL choice for the rest of this visitor's session
-        if ($queryLocale !== null && SeoHelper::isSupported($queryLocale)) {
-            Session::put('locale', $locale);
-        }
-
-        // 4. Set the application locale
         App::setLocale($locale);
 
         return $next($request);
