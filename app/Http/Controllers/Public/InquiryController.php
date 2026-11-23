@@ -30,7 +30,7 @@ class InquiryController extends Controller
 
         // 1. Send notification to admin
         try {
-            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            $adminEmail = Setting::publicEmail();
             Mail::to($adminEmail)->send(new TourInquiryMail($inquiry));
         } catch (\Throwable $e) {
             Log::error('Failed to send tour inquiry notification: '.$e->getMessage());

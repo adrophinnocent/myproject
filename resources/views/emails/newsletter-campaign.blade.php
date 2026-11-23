@@ -14,7 +14,7 @@
         <a href="{{ $unsubscribeUrl }}" style="color: #999; text-decoration: underline;">{{ __('Unsubscribe') }}</a>
     @else
         {{ __('To stop receiving these emails, contact us at') }}
-        {{ \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com') }}.
+        {{ \App\Models\Setting::publicEmail() }}.
     @endif
 </p>
 @endsection

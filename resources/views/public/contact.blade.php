@@ -136,7 +136,7 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-900 text-sm uppercase tracking-widest mb-1">{{ __('Email') }}</h4>
-                        @php $contactEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com'); @endphp
+                        @php $contactEmail = \App\Models\Setting::publicEmail(); @endphp
                         <a href="mailto:{{ $contactEmail }}" class="text-gray-700 font-bold hover:text-gold-600 transition-colors">{{ $contactEmail }}</a>
                         <p class="text-gray-400 text-xs mt-1">{{ __('Use email for detailed itinerary requests and documents') }}</p>
                     </div>

@@ -36,7 +36,7 @@ class ContactController extends Controller
 
         // 1. Send contact notification to admin
         try {
-            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            $adminEmail = Setting::publicEmail();
             Mail::to($adminEmail)->send(new ContactNotification($validated));
         } catch (\Throwable $e) {
             Log::error('Failed to send contact admin notification: '.$e->getMessage());

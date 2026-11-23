@@ -67,7 +67,7 @@ class TripPlanController extends Controller
         $plan = TripPlan::create($validated);
 
         try {
-            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            $adminEmail = Setting::publicEmail();
             Mail::to($adminEmail)->send(new AdminNewTripPlanMail($plan));
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send trip plan admin mail: '.$e->getMessage());

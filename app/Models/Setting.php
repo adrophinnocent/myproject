@@ -27,6 +27,22 @@ class Setting extends Model
         }
     }
 
+    /**
+     * The single public contact address used across the site and all outgoing
+     * notifications. Older production data still held info@twinasafaris.com,
+     * so treat that stale value as unset until the correcting migration runs.
+     */
+    public static function publicEmail(): string
+    {
+        $email = strtolower(trim((string) (self::get('site_email', 'twinasafaris@gmail.com') ?? '')));
+
+        if ($email === '' || $email === 'info@twinasafaris.com') {
+            return 'twinasafaris@gmail.com';
+        }
+
+        return $email;
+    }
+
     public static function set($key, $value)
     {
         self::updateOrCreate(['key' => $key], ['value' => $value]);

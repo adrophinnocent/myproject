@@ -1,6 +1,6 @@
 @php
     $siteName = \App\Models\Setting::get('site_name', 'Twina Safaris');
-    $siteEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
+    $siteEmail = \App\Models\Setting::publicEmail();
     $sitePhone = \App\Models\Setting::get('site_phone', '+255 795 482 197');
     $logo = \App\Models\Setting::get('logo');
     $footerLogo = \App\Models\Setting::get('footer_logo');

@@ -127,7 +127,7 @@
                 <a href="{{ route('home') }}">Visit Website</a> |
                 <a href="{{ route('contact.index') }}">Contact Us</a>
             </p>
-            <p>{{ \App\Models\Setting::get('site_phone', '+255 795 482 197') }} | {{ \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com') }}</p>
+            <p>{{ \App\Models\Setting::get('site_phone', '+255 795 482 197') }} | {{ \App\Models\Setting::publicEmail() }}</p>
         </div>
     </div>
 </body>

@@ -189,7 +189,7 @@ class BookingController extends Controller
 
         // 3. Send Admin Alert Notification
         try {
-            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            $adminEmail = Setting::publicEmail();
             Mail::to($adminEmail)->send(new AdminNewBookingNotification($booking));
         } catch (\Throwable $e) {
             Log::error('Admin Email Alert failed: '.$e->getMessage());

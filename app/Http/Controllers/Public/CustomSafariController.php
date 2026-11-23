@@ -74,7 +74,7 @@ class CustomSafariController extends Controller
         ]);
 
         try {
-            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            $adminEmail = Setting::publicEmail();
             Mail::to($adminEmail)->send(new TourInquiryMail(
                 $inquiry->full_name,
                 $inquiry->email,
