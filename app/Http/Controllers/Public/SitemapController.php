@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tour;
-use App\Models\Safari;
 use App\Models\BlogPost;
 use App\Models\Destination;
+use App\Models\Safari;
+use App\Models\Tour;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller

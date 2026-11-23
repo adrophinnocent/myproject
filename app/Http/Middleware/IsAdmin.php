@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class IsAdmin
 {
@@ -17,10 +17,7 @@ class IsAdmin
             return redirect()->guest(route('login'));
         }
 
-        if ($user->is_admin || in_array(strtolower($user->email), ['twinasafaris@gmail.com', 'admin@tourism.com', 'info@twinasafaris.com'])) {
-            if (! $user->is_admin) {
-                $user->update(['is_admin' => true]);
-            }
+        if ($user->is_admin) {
             return $next($request);
         }
 

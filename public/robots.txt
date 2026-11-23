@@ -11,13 +11,17 @@ Allow: /custom-safari
 
 # Disallow Private, Auth, Session & Workspace Routes
 Disallow: /admin/
-Disallow: /book/
+Disallow: /booking
+Disallow: /my-bookings
 Disallow: /login
-Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
 Disallow: /proposal/
 Disallow: /trip-plan/
 Disallow: /lang/
 Disallow: /currency/
+Disallow: /offer/*/track
+Disallow: /offer/*/lead
 
 # Sitemap
 Sitemap: https://twinasafaris.com/sitemap.xml

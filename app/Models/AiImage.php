@@ -30,11 +30,11 @@ class AiImage extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image_path ? asset('storage/' . $this->image_path) : null;
+        return $this->image_path ? asset('storage/'.$this->image_path) : null;
     }
 
     public function getOriginalImageUrlAttribute()
     {
-        return $this->original_image_path ? asset('storage/' . $this->original_image_path) : null;
+        return $this->original_image_path ? asset('storage/'.$this->original_image_path) : null;
     }
 }

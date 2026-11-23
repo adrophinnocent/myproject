@@ -15,14 +15,13 @@ class Setting extends Model
     public static function get($key, $default = null)
     {
         try {
-            if ($key === 'site_email') {
-                return 'twinasafaris@gmail.com';
-            }
-
-            return Cache::remember('setting_' . $key, 3600, function() use ($key, $default) {
-                $setting = self::where('key', $key)->first();
-                return $setting ? $setting->value : $default;
+            // Cache the stored value only; never cache the fallback default,
+            // otherwise a setting added later keeps returning the stale default.
+            $value = Cache::remember('setting_'.$key, 3600, function () use ($key) {
+                return self::where('key', $key)->value('value');
             });
+
+            return $value ?? $default;
         } catch (\Throwable $e) {
             return $default;
         }
@@ -31,25 +30,27 @@ class Setting extends Model
     public static function set($key, $value)
     {
         self::updateOrCreate(['key' => $key], ['value' => $value]);
-        Cache::forget('setting_' . $key);
+        Cache::forget('setting_'.$key);
         Cache::forget('all_settings');
     }
 
     public static function getEmbedUrl($key, $default = null)
     {
         $url = self::get($key, $default);
-        if (empty($url)) return null;
+        if (empty($url)) {
+            return null;
+        }
 
         // Extract YouTube video ID
         $youtubePattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
         if (preg_match($youtubePattern, $url, $matches)) {
-            return 'https://www.youtube.com/embed/' . $matches[1];
+            return 'https://www.youtube.com/embed/'.$matches[1];
         }
 
         // Extract Vimeo video ID
         $vimeoPattern = '/vimeo\.com\/(?:video\/)?([0-9]+)/';
         if (preg_match($vimeoPattern, $url, $matches)) {
-            return 'https://player.vimeo.com/video/' . $matches[1];
+            return 'https://player.vimeo.com/video/'.$matches[1];
         }
 
         return $url;

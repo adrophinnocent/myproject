@@ -3,38 +3,22 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\Booking;
 use App\Models\BookingPayment;
 use App\Models\Setting;
-use App\Models\AdminNotification;
-use App\Mail\PaymentConfirmation;
-use App\Services\PdfService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    protected $pdfService;
+    private const MANUAL_GATEWAYS = ['bank_transfer', 'mpesa', 'tigopesa', 'airtelmoney'];
 
-    public function __construct(PdfService $pdfService)
+    public function show($token)
     {
-        $this->pdfService = $pdfService;
-    }
-
-    public function show($reference)
-    {
-        $relations = ['tour', 'safari'];
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
-                $relations['payments'] = function($q) { $q->latest(); };
-            }
-        } catch (\Throwable $e) {}
-
-        $booking = Booking::where('booking_reference', $reference)
-            ->orWhere('token', $reference)
-            ->with($relations)->firstOrFail();
+        $booking = Booking::where('token', $token)
+            ->with(['tour', 'safari', 'payments' => fn ($q) => $q->latest()])
+            ->firstOrFail();
 
         // Bank details from settings
         $bankDetails = [
@@ -45,130 +29,86 @@ class PaymentController extends Controller
             'branch' => Setting::get('bank_branch', 'Moshi Branch, Tanzania'),
         ];
 
-        return view('public.booking.payment', compact('booking', 'bankDetails'));
+        $mobileMoney = [
+            'mpesa' => Setting::get('mpesa_number', '+255 795 482 197'),
+            'tigopesa' => Setting::get('tigopesa_number', '+255 795 482 197'),
+            'airtelmoney' => Setting::get('airtelmoney_number', '+255 795 482 197'),
+        ];
+
+        return response()
+            ->view('public.booking.payment', compact('booking', 'bankDetails', 'mobileMoney'))
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     }
 
-    public function processPayment(Request $request, $reference)
+    public function processPayment(Request $request, $token)
     {
-        $booking = Booking::where('booking_reference', $reference)
-            ->orWhere('token', $reference)
-            ->firstOrFail();
+        $booking = Booking::where('token', $token)->firstOrFail();
 
         $validated = $request->validate([
-            'gateway' => 'required|in:visa_mastercard,paypal,bank_transfer,mpesa,tigopesa,airtelmoney,pesapal,flutterwave',
+            'gateway' => 'required|in:'.implode(',', self::MANUAL_GATEWAYS),
             'payment_type' => 'required|in:deposit,balance,full',
-            'amount' => 'required|numeric|min:1',
             'payer_name' => 'nullable|string|max:255',
             'payer_email' => 'nullable|email|max:255',
             'transaction_notes' => 'nullable|string|max:1000',
         ]);
 
-        $amount = (float) $validated['amount'];
-        $type = $validated['payment_type'];
-        $gateway = $validated['gateway'];
+        if (in_array($booking->status, [Booking::STATUS_CANCELLED, Booking::STATUS_COMPLETED], true)) {
+            return back()->with('error', 'This booking can no longer receive payments.');
+        }
+
+        // Amounts are always calculated on the server. Never trust a hidden
+        // "amount" field from the browser.
+        $totalPrice = (float) $booking->total_price;
+        $paidTotal = (float) $booking->payments()
+            ->where('status', BookingPayment::STATUS_COMPLETED)
+            ->sum('amount');
+
+        $amountDue = match ($validated['payment_type']) {
+            'deposit' => max(0, (float) $booking->calculated_deposit_required - $paidTotal),
+            'full', 'balance' => max(0, $totalPrice - $paidTotal),
+        };
+
+        if ($amountDue <= 0) {
+            return back()->with('info', 'This booking is already fully paid. No further payment is required.');
+        }
+
+        // Avoid duplicate pending submissions from repeated clicks.
+        $pendingExists = $booking->payments()
+            ->where('status', BookingPayment::STATUS_PENDING)
+            ->exists();
+
+        if ($pendingExists) {
+            return back()->with('info', 'A payment is already awaiting verification. Our team will confirm it shortly.');
+        }
 
         $payment = BookingPayment::create([
             'booking_id' => $booking->id,
-            'transaction_reference' => 'TXN-' . strtoupper(Str::random(10)),
-            'gateway' => $gateway,
-            'payment_type' => $type,
-            'amount' => $amount,
+            'gateway' => $validated['gateway'],
+            'payment_type' => $validated['payment_type'],
+            'amount' => $amountDue,
             'currency' => $booking->currency ?? 'USD',
             'status' => BookingPayment::STATUS_PENDING,
             'payer_name' => $validated['payer_name'] ?? $booking->full_name,
             'payer_email' => $validated['payer_email'] ?? $booking->email,
-            'notes' => $validated['transaction_notes'] ?? null,
+            'notes' => 'Manual payment submitted by customer. Awaiting admin verification. Note: '
+                .($validated['transaction_notes'] ?? 'N/A'),
         ]);
 
-        // If manual method (bank transfer or mobile money offline)
-        if (in_array($gateway, ['bank_transfer', 'mpesa', 'tigopesa', 'airtelmoney'])) {
-            $payment->update([
-                'notes' => 'Manual payment submitted by customer. Awaiting admin verification. Note: ' . ($validated['transaction_notes'] ?? 'N/A')
+        try {
+            AdminNotification::create([
+                'type' => 'payment_submitted',
+                'title' => 'Payment Submitted: '.$booking->booking_reference,
+                'message' => "Customer {$booking->full_name} submitted a {$payment->gateway} payment of "
+                    .$booking->currency_symbol.number_format($amountDue, 2)
+                    ." for booking {$booking->booking_reference}.",
+                'link' => route('admin.bookings.show', $booking),
+                'is_read' => false,
             ]);
-
-            try {
-                AdminNotification::create([
-                    'type' => 'payment_submitted',
-                    'title' => 'Payment Submitted: ' . $booking->booking_reference,
-                    'message' => "Customer {$booking->full_name} submitted a {$gateway} payment of {$booking->currency_symbol}{$amount} for booking {$booking->booking_reference}.",
-                    'link' => route('admin.bookings.show', $booking),
-                    'is_read' => false
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Failed creating payment admin notification: ' . $e->getMessage());
-            }
-
-            return redirect()->route('booking.status', $booking->booking_reference)
-                ->with('success', 'Your payment submission has been received! Our team will verify the transaction and update your booking status.');
+        } catch (\Throwable $e) {
+            Log::error('Failed creating payment admin notification: '.$e->getMessage());
         }
 
-        // For online gateways (Pesapal, Flutterwave, PayPal, Stripe), integrate gateway redirect URL
-        return redirect()->route('booking.payment', $booking->booking_reference)
-            ->with('info', 'Please complete payment with the gateway. Payment will be verified via secure webhook.');
-    }
-
-    public function webhook(Request $request)
-    {
-        Log::info('Payment Webhook Received', $request->all());
-
-        $transactionRef = $request->input('transaction_reference') ?? $request->input('order_id') ?? $request->input('reference');
-        $gatewayRef = $request->input('gateway_reference') ?? $request->input('transaction_id');
-        $status = strtolower($request->input('status', ''));
-
-        if (!$transactionRef) {
-            return response()->json(['error' => 'Missing transaction reference'], 400);
-        }
-
-        $payment = BookingPayment::where('transaction_reference', $transactionRef)->first();
-        if (!$payment) {
-            return response()->json(['error' => 'Payment record not found'], 404);
-        }
-
-        // Verify payment is genuine (never mark paid without verified webhook status)
-        if (in_array($status, ['completed', 'success', 'paid', 'approved', '00'])) {
-            $payment->update([
-                'status' => BookingPayment::STATUS_COMPLETED,
-                'gateway_reference' => $gatewayRef,
-                'gateway_response' => $request->all(),
-                'paid_at' => now(),
-            ]);
-
-            $booking = $payment->booking;
-            $paidTotal = (float) $booking->payments()->where('status', BookingPayment::STATUS_COMPLETED)->sum('amount');
-
-            $booking->deposit_paid = $paidTotal;
-            $booking->balance_amount = max(0, (float)$booking->total_price - $paidTotal);
-
-            if ($booking->balance_amount <= 0) {
-                $booking->payment_status = Booking::PAYMENT_FULLY_PAID;
-                $booking->status = Booking::STATUS_CONFIRMED;
-            } else {
-                $booking->payment_status = Booking::PAYMENT_DEPOSIT_PAID;
-                $booking->status = Booking::STATUS_DEPOSIT_PAID;
-            }
-
-            if (!$booking->confirmed_at && $booking->status === Booking::STATUS_CONFIRMED) {
-                $booking->confirmed_at = now();
-            }
-
-            $booking->save();
-
-            // Send Email Confirmation
-            try {
-                Mail::to($booking->email)->send(new PaymentConfirmation($booking));
-                Mail::to(Setting::get('site_email', 'twinasafaris@gmail.com'))->send(new PaymentConfirmation($booking));
-            } catch (\Exception $e) {
-                Log::error('Failed sending payment confirmation email: ' . $e->getMessage());
-            }
-
-            return response()->json(['success' => true, 'message' => 'Payment verified and booking updated']);
-        }
-
-        $payment->update([
-            'status' => BookingPayment::STATUS_FAILED,
-            'gateway_response' => $request->all()
-        ]);
-
-        return response()->json(['success' => false, 'message' => 'Payment status updated to failed']);
+        return redirect()->route('booking.status', $booking->token)
+            ->with('success', 'Your payment submission has been received! Our team will verify the transaction and update your booking status.');
     }
 }

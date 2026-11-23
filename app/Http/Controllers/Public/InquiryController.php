@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Mail\TourInquiryMail;
+use App\Models\AdminNotification;
+use App\Models\Setting;
 use App\Models\Tour;
 use App\Models\TourInquiry;
-use App\Models\AdminNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class InquiryController extends Controller
@@ -18,7 +20,7 @@ class InquiryController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:255',
-            'message' => 'required|string',
+            'message' => 'required|string|max:5000',
         ]);
 
         $inquiry = new TourInquiry($validated);
@@ -27,18 +29,22 @@ class InquiryController extends Controller
         $inquiry->save();
 
         // 1. Send notification to admin
-        $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
-        Mail::to($adminEmail)->send(new TourInquiryMail($inquiry));
+        try {
+            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            Mail::to($adminEmail)->send(new TourInquiryMail($inquiry));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send tour inquiry notification: '.$e->getMessage());
+        }
 
         // 2. Create Admin Dashboard Notification
         AdminNotification::create([
             'type' => 'inquiry',
-            'title' => 'Tour Inquiry: ' . $tour->title,
-            'message' => 'New inquiry from ' . $validated['name'],
+            'title' => 'Tour Inquiry: '.$tour->title,
+            'message' => 'New inquiry from '.$validated['name'],
             'link' => route('admin.inquiries.show', $inquiry),
-            'is_read' => false
+            'is_read' => false,
         ]);
 
-        return redirect()->back()->with('success', 'Your inquiry has been sent! We will contact you regarding ' . $tour->title . ' shortly.');
+        return redirect()->back()->with('success', 'Your inquiry has been sent! We will contact you regarding '.$tour->title.' shortly.');
     }
 }

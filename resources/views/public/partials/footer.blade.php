@@ -157,10 +157,11 @@
                 <p class="text-gray-600 text-[11px] font-bold uppercase tracking-[0.2em]">© {{ date('Y') }} {{ $siteName }}. {{ __('All rights reserved.') }}</p>
             </div>
             <div class="flex items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em]">
-                <div class="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-3 w-auto">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-5 w-auto">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="h-4 w-auto">
+                <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                    <span class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">{{ __('Bank Transfer') }}</span>
+                    <span class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">{{ __('M-Pesa') }}</span>
+                    <span class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">{{ __('Tigo Pesa') }}</span>
+                    <span class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10">{{ __('Airtel Money') }}</span>
                 </div>
                 <span class="text-white/10 hidden md:block">|</span>
                 <a href="{{ route('privacy.index') }}" class="text-gray-600 hover:text-gold-400 transition-colors">{{ __('Privacy Policy') }}</a>

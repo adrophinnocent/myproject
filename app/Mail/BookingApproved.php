@@ -39,9 +39,9 @@ class BookingApproved extends Mailable
     public function attachments(): array
     {
         $pdf = Pdf::loadView('emails.itinerary-pdf', ['booking' => $this->booking]);
-        
+
         return [
-            Attachment::fromData(fn () => $pdf->output(), 'itinerary-' . $this->booking->booking_reference . '.pdf')
+            Attachment::fromData(fn () => $pdf->output(), 'itinerary-'.$this->booking->booking_reference.'.pdf')
                 ->withMime('application/pdf'),
         ];
     }

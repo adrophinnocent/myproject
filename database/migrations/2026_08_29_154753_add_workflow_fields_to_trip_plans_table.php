@@ -54,7 +54,7 @@ return new class extends Migration
                 'discount_amount', 'tax_amount', 'deposit_amount', 'balance_amount',
                 'currency', 'itinerary_data', 'inclusions_data', 'exclusions_data',
                 'terms_conditions', 'sent_at', 'viewed_at', 'accepted_at',
-                'declined_at', 'payment_status', 'booking_id'
+                'declined_at', 'payment_status', 'booking_id',
             ]);
         });
     }

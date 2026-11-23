@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailCampaign;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class EmailCampaignController extends Controller
 {
@@ -20,6 +20,7 @@ class EmailCampaignController extends Controller
     public function create()
     {
         $totalActive = NewsletterSubscriber::where('active', true)->count();
+
         return view('admin.email-campaigns.create', compact('totalActive'));
     }
 
@@ -27,26 +28,31 @@ class EmailCampaignController extends Controller
     {
         $request->validate([
             'subject' => 'required|string|max:255',
-            'content' => 'required|string',
+            'content' => 'required|string|max:65000',
         ]);
 
-        $subscribers = NewsletterSubscriber::where('active', true)->get();
+        $totalActive = NewsletterSubscriber::where('active', true)->count();
 
-        // In a real application, you would use a queue here.
-        // For this project, we'll simulate the "sending" process.
+        if ($totalActive === 0) {
+            return back()->with('error', 'There are no active subscribers to send this campaign to.');
+        }
 
-        return redirect()->route('admin.email-campaigns.index')->with('success', 'Email campaign has been queued to ' . $subscribers->count() . ' subscribers!');
+        SendEmailCampaign::dispatch($request->subject, $request->content);
+
+        return redirect()->route('admin.email-campaigns.index')->with('success', 'Email campaign has been queued to '.$totalActive.' subscribers!');
     }
 
     public function destroy(NewsletterSubscriber $subscriber)
     {
         $subscriber->delete();
+
         return back()->with('success', 'Subscriber removed.');
     }
 
     public function toggleStatus(NewsletterSubscriber $subscriber)
     {
-        $subscriber->update(['active' => !$subscriber->active]);
+        $subscriber->update(['active' => ! $subscriber->active]);
+
         return back()->with('success', 'Subscriber status updated.');
     }
 }

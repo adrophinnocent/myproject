@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use App\Helpers\Currency;
 use App\Traits\HasSlug;
 use App\Traits\Translatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Safari extends Model
 {
-    use HasFactory, SoftDeletes, HasSlug, Translatable;
+    use HasFactory, HasSlug, SoftDeletes, Translatable;
 
     protected $slugSource = 'title';
 
@@ -28,7 +30,7 @@ class Safari extends Model
         'video_url', 'meta_keywords', 'is_published', 'is_featured', 'is_bestseller', 'is_new',
         'availability_notes', 'min_age', 'max_age', 'languages_offered', 'safari_type',
         'seasonal_pricing', 'availability_dates', 'booking_deadline_days', 'sort_order', 'views_count',
-        'location_name', 'latitude', 'longitude', 'pickup_locations', 'meeting_point', 'extras'
+        'location_name', 'latitude', 'longitude', 'pickup_locations', 'meeting_point', 'extras',
     ];
 
     protected $casts = [
@@ -67,6 +69,7 @@ class Safari extends Model
     public function getAverageRatingAttribute(): float
     {
         $avg = $this->attributes['reviews_avg_rating'] ?? $this->reviews()->avg('rating');
+
         return round($avg ?? 5.0, 1);
     }
 
@@ -78,20 +81,31 @@ class Safari extends Model
     public function getFeaturedImageUrlAttribute(): string
     {
         return $this->featured_image
-            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image)
+            ? Storage::disk('public')->url($this->featured_image)
             : asset('images/tour-placeholder.jpg');
     }
 
     public function getFormattedPriceAttribute(): string
     {
-        return '$' . number_format($this->price, 0);
+        return '$'.number_format($this->price, 0);
+    }
+
+    /** Price converted to the visitor's selected display currency. */
+    public function getDisplayPriceAttribute(): float
+    {
+        return Currency::convert((float) $this->price);
+    }
+
+    public function getDisplayPriceFormattedAttribute(): string
+    {
+        return Currency::format((float) $this->price);
     }
 
     public function getDurationTextAttribute(): string
     {
         return __(':days Days / :nights Nights', [
             'days' => $this->duration_days,
-            'nights' => $this->duration_nights ?: ($this->duration_days - 1)
+            'nights' => $this->duration_nights ?: ($this->duration_days - 1),
         ]);
     }
 
@@ -121,8 +135,6 @@ class Safari extends Model
         return $this->title;
     }
 
-
-
     public function getYouTubeEmbedUrlAttribute(): ?string
     {
         if (empty($this->video_url)) {
@@ -135,7 +147,7 @@ class Safari extends Model
         $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i';
 
         if (preg_match($pattern, $url, $matches)) {
-            return 'https://www.youtube.com/embed/' . $matches[1] . '?rel=0&showinfo=0&modestbranding=1';
+            return 'https://www.youtube.com/embed/'.$matches[1].'?rel=0&showinfo=0&modestbranding=1';
         }
 
         return null;

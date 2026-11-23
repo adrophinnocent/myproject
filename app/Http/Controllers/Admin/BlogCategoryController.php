@@ -11,6 +11,7 @@ class BlogCategoryController extends Controller
     public function index()
     {
         $categories = BlogCategory::withCount('posts')->latest()->paginate(10);
+
         return view('admin.blog-categories.index', compact('categories'));
     }
 
@@ -53,6 +54,7 @@ class BlogCategoryController extends Controller
     public function destroy(BlogCategory $blogCategory)
     {
         $blogCategory->delete();
+
         return redirect()->route('admin.blog-categories.index')->with('success', 'Blog category deleted successfully!');
     }
 }

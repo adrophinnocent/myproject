@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BlogPost;
 use App\Models\BlogCategory;
+use App\Models\BlogPost;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -15,12 +16,14 @@ class BlogController extends Controller
     {
         $posts = BlogPost::with('category')->latest()->get();
         $categories = BlogCategory::withCount('posts')->orderBy('name')->get();
+
         return view('admin.blog.index', compact('posts', 'categories'));
     }
 
     public function create()
     {
         $categories = BlogCategory::all();
+
         return view('admin.blog.create', compact('categories'));
     }
 
@@ -36,7 +39,7 @@ class BlogController extends Controller
             'is_published' => 'nullable',
         ]);
 
-        $post = new BlogPost();
+        $post = new BlogPost;
         $post->title = $request->title;
         $post->slug = $request->slug;
         $post->category_id = $request->category_id;
@@ -58,6 +61,7 @@ class BlogController extends Controller
     public function edit(BlogPost $blog)
     {
         $categories = BlogCategory::all();
+
         return view('admin.blog.edit', compact('blog', 'categories'));
     }
 
@@ -81,7 +85,7 @@ class BlogController extends Controller
         $blog->excerpt = $request->excerpt;
         $blog->is_published = $request->has('is_published');
 
-        if ($blog->is_published && !$blog->published_at) {
+        if ($blog->is_published && ! $blog->published_at) {
             $blog->published_at = now();
         }
 
@@ -98,7 +102,7 @@ class BlogController extends Controller
         if ($request->has('translations')) {
             foreach ($request->translations as $locale => $fields) {
                 foreach ($fields as $field => $text) {
-                    if (!empty($text)) {
+                    if (! empty($text)) {
                         $processedText = ($field === 'content') ? $this->processContentImages($text) : $text;
                         $blog->translations()->updateOrCreate(
                             ['locale' => $locale, 'field' => $field],
@@ -118,6 +122,7 @@ class BlogController extends Controller
             Storage::disk('public')->delete($blog->featured_image);
         }
         $blog->delete();
+
         return redirect()->route('admin.blog.index')->with('success', 'Blog post deleted successfully');
     }
 
@@ -130,7 +135,7 @@ class BlogController extends Controller
         // Process base64 embedded images in HTML content
         if (str_contains($content, 'data:image/')) {
             try {
-                $dom = new \DOMDocument();
+                $dom = new \DOMDocument;
                 libxml_use_internal_errors(true);
                 $dom->loadHTML(mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
                 libxml_clear_errors();
@@ -141,28 +146,30 @@ class BlogController extends Controller
                     if (str_starts_with($src, 'data:image/')) {
                         preg_match('/data:image\/(\w+);base64,/', $src, $typeMatches);
                         $ext = strtolower($typeMatches[1] ?? 'jpg');
-                        if ($ext === 'jpeg') $ext = 'jpg';
+                        if ($ext === 'jpeg') {
+                            $ext = 'jpg';
+                        }
 
                         $imageData = substr($src, strpos($src, ',') + 1);
                         $decodedBytes = base64_decode($imageData);
 
                         if ($decodedBytes !== false) {
-                            $filename = 'article_' . time() . '_' . Str::random(8) . '.' . $ext;
+                            $filename = 'article_'.time().'_'.Str::random(8).'.'.$ext;
                             $directory = storage_path('app/public/blog/content');
 
-                            if (!file_exists($directory)) {
+                            if (! file_exists($directory)) {
                                 mkdir($directory, 0755, true);
                             }
 
-                            file_put_contents($directory . '/' . $filename, $decodedBytes);
-                            $img->setAttribute('src', asset('storage/blog/content/' . $filename));
+                            file_put_contents($directory.'/'.$filename, $decodedBytes);
+                            $img->setAttribute('src', asset('storage/blog/content/'.$filename));
                         }
                     }
                 }
 
                 $content = $dom->saveHTML();
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Failed to process blog content images: ' . $e->getMessage());
+                Log::error('Failed to process blog content images: '.$e->getMessage());
             }
         }
 

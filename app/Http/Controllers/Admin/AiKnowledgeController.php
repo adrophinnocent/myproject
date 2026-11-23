@@ -11,6 +11,7 @@ class AiKnowledgeController extends Controller
     public function index()
     {
         $knowledge = AiKnowledge::orderBy('sort_order')->orderBy('created_at', 'desc')->paginate(20);
+
         return view('admin.ai-knowledge.index', compact('knowledge'));
     }
 
@@ -26,7 +27,7 @@ class AiKnowledgeController extends Controller
             'topic' => 'required|string|max:255',
             'content' => 'required|string',
             'is_active' => 'nullable|boolean',
-            'sort_order' => 'nullable|integer'
+            'sort_order' => 'nullable|integer',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
@@ -48,7 +49,7 @@ class AiKnowledgeController extends Controller
             'topic' => 'required|string|max:255',
             'content' => 'required|string',
             'is_active' => 'nullable|boolean',
-            'sort_order' => 'nullable|integer'
+            'sort_order' => 'nullable|integer',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
@@ -61,6 +62,7 @@ class AiKnowledgeController extends Controller
     public function destroy(AiKnowledge $aiKnowledge)
     {
         $aiKnowledge->delete();
+
         return redirect()->route('admin.ai-knowledge.index')->with('success', 'Fact removed from AI knowledge.');
     }
 }

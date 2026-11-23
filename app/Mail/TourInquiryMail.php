@@ -2,8 +2,8 @@
 
 namespace App\Mail;
 
+use App\Models\TourInquiry;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -14,37 +14,57 @@ class TourInquiryMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public ?string $name = null;
+
+    public ?string $tourTitle = null;
+
+    public ?string $adminUrl = null;
+
+    public ?string $inquiryMessage = null;
 
     /**
-     * Get the message envelope.
+     * Accepts either a TourInquiry model (tour inquiry form) or the raw
+     * name/email/phone/message arguments used by the custom safari form.
      */
+    public function __construct(
+        public TourInquiry|string|null $inquiry = null,
+        public ?string $email = null,
+        public ?string $phone = null,
+        ?string $message = null,
+    ) {
+        if ($inquiry instanceof TourInquiry) {
+            $this->name = $inquiry->name;
+            $this->email = $inquiry->email;
+            $this->phone = $inquiry->phone;
+            $this->inquiryMessage = $inquiry->message;
+            $this->tourTitle = $inquiry->tour?->title;
+
+            if ($inquiry->exists) {
+                $this->adminUrl = route('admin.inquiries.show', $inquiry);
+            }
+        } else {
+            $this->name = $inquiry;
+            $this->inquiryMessage = $message;
+        }
+    }
+
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Tour Inquiry Mail',
+            subject: $this->tourTitle
+                ? 'New Tour Inquiry: '.$this->tourTitle
+                : 'New Safari Inquiry from '.($this->name ?? 'a customer'),
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.tour-inquiry',
+            view: 'emails.tour-inquiry',
         );
     }
 
     /**
-     * Get the attachments for the message.
-     *
      * @return array<int, Attachment>
      */
     public function attachments(): array

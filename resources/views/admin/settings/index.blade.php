@@ -259,6 +259,26 @@
             </div>
         </div>
 
+        <h3 class="text-lg font-semibold text-gray-900 mb-6 mt-8">Currency Exchange Rates</h3>
+
+        <div class="mb-6 p-4 border border-gray-100 rounded-xl bg-gray-50">
+            <p class="text-xs text-gray-500 mb-4">
+                Tour prices are stored in USD. When a visitor switches currency on the website, prices are
+                converted using these rates (units per 1 USD). Bookings are charged in the currency the
+                visitor selected. Update these regularly to match current market rates.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                @foreach(['EUR' => 'Euro (€)', 'GBP' => 'British Pound (£)', 'TZS' => 'Tanzanian Shilling (TSh)', 'KES' => 'Kenyan Shilling (KSh)', 'UGX' => 'Ugandan Shilling (USh)'] as $code => $label)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ $label }}</label>
+                        <input type="number" step="0.0001" min="0" name="currency_rate_{{ $code }}"
+                               value="{{ \App\Models\Setting::get('currency_rate_'.$code, \App\Helpers\Currency::DEFAULT_RATES[$code]) }}"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
         <h3 class="text-lg font-semibold text-gray-900 mb-6 mt-8">Social Media</h3>
 
         <div class="mb-6">

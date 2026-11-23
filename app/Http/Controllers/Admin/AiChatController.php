@@ -24,7 +24,7 @@ class AiChatController extends Controller
     {
         $request->validate([
             'message' => 'required|string',
-            'history' => 'nullable|array'
+            'history' => 'nullable|array',
         ]);
 
         $systemPrompt = "You are the Twina Safaris Business Partner & Senior Consultant.
@@ -44,7 +44,7 @@ class AiChatController extends Controller
         $response = $this->ai->generateChatResponse($request->message, $request->history ?? [], $systemPrompt);
 
         return response()->json([
-            'response' => $response
+            'response' => $response,
         ]);
     }
 }

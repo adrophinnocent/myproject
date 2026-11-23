@@ -55,11 +55,13 @@
                     <form action="{{ route('booking.store', $tour->slug) }}" method="POST" class="p-8" x-data="{
                         adults: {{ old('number_of_adults', 1) }},
                         children: {{ old('number_of_children', 0) }},
-                        tourPrice: {{ $tour->price }},
-                        childPrice: {{ $tour->child_price ?? ($tour->price * 0.7) }},
+                        tourPrice: {{ \App\Helpers\Currency::convert((float) $tour->price) }},
+                        childPrice: {{ \App\Helpers\Currency::convert((float) ($tour->child_price ?? ($tour->price * 0.7))) }},
                         depositPct: {{ \App\Models\Setting::get('deposit_percentage', 20) }},
                         selectedExtrasQty: {},
-                        extrasList: {{ json_encode($tour->extras ?? []) }},
+                        extrasList: {{ json_encode($extras) }},
+                        symbol: '{{ $symbol }}',
+                        decimals: {{ $decimals }},
                         get totalGuests() { return parseInt(this.adults || 0) + parseInt(this.children || 0); },
                         get baseCost() { return (parseInt(this.adults || 0) * this.tourPrice) + (parseInt(this.children || 0) * this.childPrice); },
                         get extrasCost() {
@@ -200,7 +202,7 @@
                                     @php
                                         $exName = is_array($ext) ? ($ext['name'] ?? $ext['title'] ?? '') : $ext;
                                         $exDesc = is_array($ext) ? ($ext['description'] ?? '') : '';
-                                        $exPrice = is_array($ext) ? (float)($ext['price'] ?? 0) : 0;
+                                        $exPrice = \App\Helpers\Currency::convert(is_array($ext) ? (float)($ext['price'] ?? 0) : 0);
                                         $exType = is_array($ext) ? ($ext['price_type'] ?? 'per_person') : 'per_person';
                                         $unitLabel = ($exType === 'per_group') ? __('per Group') : __('per Traveler');
                                     @endphp
@@ -231,7 +233,7 @@
 
                                             {{-- Middle Price & Unit --}}
                                             <div class="md:text-right shrink-0">
-                                                <div class="text-lg font-black text-gray-900">${{ number_format($exPrice, 0) }}</div>
+                                                <div class="text-lg font-black text-gray-900">{{ $symbol }}{{ number_format($exPrice, $decimals) }}</div>
                                                 <div class="text-[11px] font-medium text-gray-500">{{ $unitLabel }}</div>
                                             </div>
 
@@ -320,26 +322,37 @@
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <label class="relative flex items-center gap-4 p-5 border border-gray-200 rounded-2xl cursor-pointer hover:border-gold-500 transition-all bg-gray-50 has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/30">
-                                    <input type="radio" name="payment_method" value="paypal" required {{ old('payment_method') == 'paypal' ? 'checked' : '' }} class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500">
+                                    <input type="radio" name="payment_method" value="bank_transfer" required {{ old('payment_method', 'bank_transfer') == 'bank_transfer' ? 'checked' : '' }} class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500">
                                     <div>
-                                        <span class="block font-bold text-gray-900">{{ __('PayPal / Credit Card') }}</span>
-                                        <span class="text-xs text-gray-500 font-medium uppercase tracking-tighter italic">{{ __('Fast & Secure · Online Payment') }}</span>
-                                    </div>
-                                    <div class="ml-auto">
-                                        <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" class="h-6">
+                                        <span class="block font-bold text-gray-900">{{ __('Direct Bank Transfer') }}</span>
+                                        <span class="text-xs text-gray-500 font-medium uppercase tracking-tighter italic">{{ __('SWIFT / International Wire') }}</span>
                                     </div>
                                 </label>
                                 <label class="relative flex items-center gap-4 p-5 border border-gray-200 rounded-2xl cursor-pointer hover:border-gold-500 transition-all bg-gray-50 has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/30">
-                                    <input type="radio" name="payment_method" value="bank_transfer" required {{ old('payment_method') == 'bank_transfer' ? 'checked' : '' }} class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500">
+                                    <input type="radio" name="payment_method" value="mpesa" {{ old('payment_method') == 'mpesa' ? 'checked' : '' }} class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500">
                                     <div>
-                                        <span class="block font-bold text-gray-900">{{ __('Direct Bank Transfer') }}</span>
-                                        <span class="text-xs text-gray-500 font-medium uppercase tracking-tighter italic">{{ __('Swift / Wire Transfer') }}</span>
+                                        <span class="block font-bold text-gray-900">{{ __('M-Pesa') }}</span>
+                                        <span class="text-xs text-gray-500 font-medium uppercase tracking-tighter italic">{{ __('Vodacom Tanzania') }}</span>
                                     </div>
-                                    <div class="ml-auto">
-                                        <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v20c0 4.418 7.163 8 16 8 1.38 0 2.721-.087 4-.252V23.252c-1.279.165-2.62.252-4 .252-8.837 0-16-3.582-16-8zM40 14v20c0 4.418-7.163 8-16 8-1.38 0-2.721-.087-4-.252V23.252c1.279.165 2.62.252 4 .252 8.837 0 16-3.582 16-8z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M24 4c-13.255 0-24 4.03-24 9s10.745 9 24 9 24-4.03 24-9-10.745-9-24-9z"/></svg>
+                                </label>
+                                <label class="relative flex items-center gap-4 p-5 border border-gray-200 rounded-2xl cursor-pointer hover:border-gold-500 transition-all bg-gray-50 has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/30">
+                                    <input type="radio" name="payment_method" value="tigopesa" {{ old('payment_method') == 'tigopesa' ? 'checked' : '' }} class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500">
+                                    <div>
+                                        <span class="block font-bold text-gray-900">{{ __('Tigo Pesa') }}</span>
+                                        <span class="text-xs text-gray-500 font-medium uppercase tracking-tighter italic">{{ __('Tigo Tanzania') }}</span>
+                                    </div>
+                                </label>
+                                <label class="relative flex items-center gap-4 p-5 border border-gray-200 rounded-2xl cursor-pointer hover:border-gold-500 transition-all bg-gray-50 has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50/30">
+                                    <input type="radio" name="payment_method" value="airtelmoney" {{ old('payment_method') == 'airtelmoney' ? 'checked' : '' }} class="w-5 h-5 text-gold-600 border-gray-300 focus:ring-gold-500">
+                                    <div>
+                                        <span class="block font-bold text-gray-900">{{ __('Airtel Money') }}</span>
+                                        <span class="text-xs text-gray-500 font-medium uppercase tracking-tighter italic">{{ __('Airtel Tanzania') }}</span>
                                     </div>
                                 </label>
                             </div>
+                            <p class="text-[11px] text-gray-500 mt-3 leading-relaxed">
+                                {{ __('Payment is completed manually after your booking is approved. Our team will send you the payment instructions and verify your transaction.') }}
+                            </p>
                         </div>
 
                         <div class="pt-6 border-t border-gray-100">
@@ -350,7 +363,7 @@
                                 </p>
                             </div>
                             <button type="submit" class="w-full btn-gold py-5 rounded-2xl font-bold text-lg shadow-xl shadow-gold-500/20">
-                                {{ __('Confirm & Proceed to Payment') }}
+                                {{ __('Submit Booking Request') }}
                             </button>
                         </div>
                     </form>
@@ -383,26 +396,26 @@
                             </div>
                             <div class="flex justify-between items-center text-sm">
                                 <span class="text-gray-500 font-medium">{{ __('Price per person') }}</span>
-                                <span class="text-gray-900 font-bold">{{ $tour->formatted_price }}</span>
+                                <span class="text-gray-900 font-bold">{{ $tour->display_price_formatted }}</span>
                             </div>
                         </div>
 
                         <div class="py-6 border-t border-b border-gray-100 space-y-3">
                             <div class="flex justify-between items-center text-sm text-gray-600 font-medium">
                                 <span>{{ __('Base Tour Price') }}</span>
-                                <span class="font-bold text-gray-900" x-text="'$' + baseCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+                                <span class="font-bold text-gray-900" x-text="symbol + baseCost.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})"></span>
                             </div>
                             <div x-show="countSelectedExtras > 0" class="flex justify-between items-center text-sm text-amber-800 font-medium">
                                 <span>{{ __('Selected Extras') }} (<span x-text="countSelectedExtras"></span>)</span>
-                                <span class="font-bold text-amber-800" x-text="'+$' + extrasCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+                                <span class="font-bold text-amber-800" x-text="'+' + symbol + extrasCost.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})"></span>
                             </div>
                             <div class="flex justify-between items-center pt-2">
                                 <span class="text-base font-bold text-gray-900">{{ __('Estimated Total') }}</span>
-                                <span class="text-2xl font-display font-bold text-gold-600" x-text="'$' + totalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})">{{ $tour->formatted_price }}</span>
+                                <span class="text-2xl font-display font-bold text-gold-600" x-text="symbol + totalPrice.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})">{{ $tour->display_price_formatted }}</span>
                             </div>
                             <div class="flex justify-between items-center text-xs text-stone-500 pt-1 font-medium">
                                 <span>{{ __('Deposit Required') }} (<span x-text="depositPct"></span>%)</span>
-                                <span class="font-bold text-amber-700" x-text="'$' + depositRequired.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
+                                <span class="font-bold text-amber-700" x-text="symbol + depositRequired.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})"></span>
                             </div>
                         </div>
 

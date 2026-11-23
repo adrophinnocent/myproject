@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\CustomSafariInquiry;
+use App\Mail\TourInquiryMail;
 use App\Models\AdminNotification;
+use App\Models\CustomSafariInquiry;
 use App\Models\Destination;
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CustomSafariController extends Controller
 {
     public function create()
     {
         $destinations = Destination::active()->orderBy('name')->get();
+
         return view('public.custom-safari', compact('destinations'));
     }
 
@@ -35,7 +40,7 @@ class CustomSafariController extends Controller
             'travel_style' => 'nullable|string|max:100',
             'group_type' => 'nullable|string|max:100',
             'activities' => 'nullable|array',
-            'special_requests' => 'nullable|string',
+            'special_requests' => 'nullable|string|max:5000',
         ]);
 
         $inquiry = CustomSafariInquiry::create([
@@ -62,22 +67,22 @@ class CustomSafariController extends Controller
         // Create Admin Dashboard Notification
         AdminNotification::create([
             'type' => 'inquiry',
-            'title' => 'Custom Safari Request: ' . $inquiry->full_name,
+            'title' => 'Custom Safari Request: '.$inquiry->full_name,
             'message' => "New {$inquiry->duration_days}-day {$inquiry->trip_type} request from {$inquiry->full_name} ({$inquiry->adults} Adults, {$inquiry->children} Children)",
             'link' => route('admin.custom-inquiries.show', $inquiry),
             'is_read' => false,
         ]);
 
         try {
-            $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
-            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\TourInquiryMail(
+            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            Mail::to($adminEmail)->send(new TourInquiryMail(
                 $inquiry->full_name,
                 $inquiry->email,
                 $inquiry->phone,
                 "Custom Safari Request: {$inquiry->duration_days} Days {$inquiry->trip_type}\n\nAdults: {$inquiry->adults}\nChildren: {$inquiry->children}\nDuration: {$inquiry->duration_days} days\nSpecial Requests: {$inquiry->special_requests}"
             ));
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send custom safari email notification: ' . $e->getMessage());
+            Log::error('Failed to send custom safari email notification: '.$e->getMessage());
         }
 
         return redirect()->back()->with('success', 'Thank you! Your custom safari request has been submitted. One of our lead travel consultants will prepare a personalized itinerary proposal for you.');

@@ -20,7 +20,7 @@ class Faq extends Model
         'destination_id',
         'category_id',
         'primary_keyword',
-        'is_verified_traveler'
+        'is_verified_traveler',
     ];
 
     protected $casts = [

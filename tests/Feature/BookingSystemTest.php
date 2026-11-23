@@ -33,16 +33,16 @@ class BookingSystemTest extends TestCase
             'number_of_children' => 0,
             'travel_date' => date('Y-m-d', strtotime('+30 days')),
             'special_requests' => 'Vegetarian food preferred',
-            'payment_method' => 'visa_mastercard',
+            'payment_method' => 'bank_transfer',
         ]);
 
         $this->assertDatabaseHas('bookings', [
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'john@example.com',
-            'total_price' => 4000.00, // 2000 * 2 adults
+            'total_price' => 4000.00,
             'deposit_percentage' => 20.00,
-            'deposit_required' => 800.00, // 20% of 4000
+            'deposit_required' => 800.00,
             'status' => 'pending',
             'payment_status' => 'unpaid',
         ]);
@@ -50,15 +50,16 @@ class BookingSystemTest extends TestCase
         $booking = Booking::where('email', 'john@example.com')->first();
         $this->assertNotNull($booking->booking_reference);
         $this->assertStringStartsWith('TWN-', $booking->booking_reference);
+        $this->assertNotNull($booking->token);
 
-        $response->assertRedirect(route('booking.confirmation', $booking->booking_reference));
+        $response->assertRedirect(route('booking.confirmation', $booking->token));
     }
 
     public function test_admin_can_approve_booking_and_set_deposit(): void
     {
         $admin = User::create([
             'name' => 'Admin User',
-            'email' => 'admin@tourism.com',
+            'email' => 'admin@test.com',
             'password' => bcrypt('password'),
             'is_admin' => true,
         ]);
@@ -83,13 +84,20 @@ class BookingSystemTest extends TestCase
 
         $this->assertEquals('approved', $booking->status);
         $this->assertEquals(25.00, $booking->deposit_percentage);
-        $this->assertEquals(375.00, $booking->deposit_required); // 25% of 1500
+        $this->assertEquals(375.00, $booking->deposit_required);
 
         $response->assertRedirect();
     }
 
-    public function test_payment_webhook_verifies_transaction_and_updates_booking_status(): void
+    public function test_manual_payment_is_submitted_and_verified_by_admin(): void
     {
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@test.com',
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+        ]);
+
         $booking = Booking::create([
             'booking_reference' => 'TWN-2026-002',
             'first_name' => 'Alice',
@@ -102,31 +110,40 @@ class BookingSystemTest extends TestCase
             'payment_status' => 'unpaid',
         ]);
 
-        $payment = BookingPayment::create([
-            'booking_id' => $booking->id,
-            'transaction_reference' => 'TXN-TEST12345',
-            'gateway' => 'pesapal',
+        // Client submits a payment request with a bogus amount; server ignores it.
+        $response = $this->post(route('booking.payment.process', $booking->token), [
+            'gateway' => 'bank_transfer',
             'payment_type' => 'deposit',
+            'amount' => 9999,
+            'transaction_notes' => 'Bank slip #123',
+        ]);
+
+        $response->assertRedirect(route('booking.status', $booking->token));
+
+        $payment = BookingPayment::where('booking_id', $booking->id)->first();
+        $this->assertNotNull($payment);
+        $this->assertEquals(400.00, (float) $payment->amount);
+        $this->assertEquals('pending', $payment->status);
+
+        $booking->refresh();
+        $this->assertEquals('unpaid', $booking->payment_status);
+
+        // Admin verifies the payment.
+        $adminResponse = $this->actingAs($admin)->post(route('admin.bookings.record-payment', $booking), [
             'amount' => 400.00,
-            'currency' => 'USD',
-            'status' => 'pending',
+            'gateway' => 'bank_transfer',
+            'payment_type' => 'deposit',
+            'notes' => 'Verified from bank statement',
         ]);
 
-        $response = $this->postJson(route('booking.payment.webhook'), [
-            'transaction_reference' => 'TXN-TEST12345',
-            'gateway_reference' => 'GW-998877',
-            'status' => 'completed',
-        ]);
-
-        $response->assertStatus(200);
-        $response->assertJson(['success' => true]);
+        $adminResponse->assertRedirect();
 
         $booking->refresh();
         $payment->refresh();
 
         $this->assertEquals('completed', $payment->status);
-        $this->assertEquals(400.00, $booking->deposit_paid);
-        $this->assertEquals(1600.00, $booking->balance_amount);
+        $this->assertEquals(400.00, (float) $booking->deposit_paid);
+        $this->assertEquals(1600.00, (float) $booking->balance_amount);
         $this->assertEquals('deposit_paid', $booking->status);
         $this->assertEquals('deposit_paid', $booking->payment_status);
     }

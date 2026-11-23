@@ -6,6 +6,7 @@ use App\Traits\HasSlug;
 use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class BlogPost extends Model
 {
@@ -56,7 +57,7 @@ class BlogPost extends Model
     public function getFeaturedImageUrlAttribute()
     {
         return $this->featured_image
-            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image)
+            ? Storage::disk('public')->url($this->featured_image)
             : asset('images/blog-placeholder.jpg');
     }
 

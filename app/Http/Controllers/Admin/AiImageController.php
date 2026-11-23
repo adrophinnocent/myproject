@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AiImage;
-use App\Services\ImageProcessor;
 use App\Services\AIGenerator;
+use App\Services\ImageProcessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class AiImageController extends Controller
 {
     protected $imageProcessor;
+
     protected $aiGenerator;
 
     public function __construct(ImageProcessor $imageProcessor, AIGenerator $aiGenerator)
@@ -24,12 +25,14 @@ class AiImageController extends Controller
     public function index()
     {
         $images = AiImage::latest()->paginate(12);
+
         return view('admin.ai-images.index', compact('images'));
     }
 
     public function create()
     {
         $categories = ['destination', 'tour', 'gallery', 'banner'];
+
         return view('admin.ai-images.create', compact('categories'));
     }
 
@@ -38,7 +41,7 @@ class AiImageController extends Controller
         $request->validate([
             'image' => 'required|image|mimes:jpeg,jpg,png|max:10240', // 10MB max
             'category' => 'required|in:destination,tour,gallery,banner',
-            'related_id' => 'nullable|integer'
+            'related_id' => 'nullable|integer',
         ]);
 
         // Process the image
@@ -56,7 +59,7 @@ class AiImageController extends Controller
             'optimized_path' => $processedImages['optimized'],
             'category' => $request->category,
             'related_id' => $request->related_id,
-            'ai_content' => $aiContent
+            'ai_content' => $aiContent,
         ]);
 
         return redirect()->route('admin.ai-images.preview');
@@ -66,7 +69,7 @@ class AiImageController extends Controller
     {
         $uploaded = Session::get('uploaded_image');
 
-        if (!$uploaded) {
+        if (! $uploaded) {
             return redirect()->route('admin.ai-images.create');
         }
 
@@ -77,7 +80,7 @@ class AiImageController extends Controller
     {
         $uploaded = Session::get('uploaded_image');
 
-        if (!$uploaded) {
+        if (! $uploaded) {
             return redirect()->route('admin.ai-images.create');
         }
 
@@ -85,7 +88,7 @@ class AiImageController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'alt_text' => 'nullable|string|max:255',
-            'tags' => 'nullable|string'
+            'tags' => 'nullable|string',
         ]);
 
         $tags = array_map('trim', explode(',', $validated['tags'] ?? ''));
@@ -119,7 +122,7 @@ class AiImageController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'alt_text' => 'nullable|string|max:255',
-            'tags' => 'nullable|string'
+            'tags' => 'nullable|string',
         ]);
 
         $tags = array_map('trim', explode(',', $validated['tags'] ?? ''));

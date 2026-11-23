@@ -15,20 +15,27 @@ class SecurityHeaders
         if ($response instanceof Response) {
             // Basic Security Headers
             $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-            $response->headers->set('X-XSS-Protection', '1; mode=block');
             $response->headers->set('X-Content-Type-Options', 'nosniff');
             $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
             $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+            $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
 
-            // Robust Content Security Policy (CSP) allowing all external embeds (YouTube, Vimeo, Google Maps, reCAPTCHA, OpenStreetMap, etc.)
-            $csp = "upgrade-insecure-requests; "
-                 . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:; "
-                 . "frame-src 'self' https: http: data: blob:; "
-                 . "child-src 'self' https: http: data: blob:; "
-                 . "style-src 'self' 'unsafe-inline' https: http:; "
-                 . "font-src 'self' https: http: data:; "
-                 . "img-src 'self' data: https: http: blob:; "
-                 . "connect-src 'self' https: http: wss:;";
+            // CSP: no wildcard plain-HTTP sources, no plugins, no framing by third parties.
+            // 'unsafe-inline'/'unsafe-eval' are required by Alpine.js and the inline
+            // scripts used throughout the public site.
+            $csp = "default-src 'self'; "
+                 ."script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; "
+                 ."style-src 'self' 'unsafe-inline' https:; "
+                 ."img-src 'self' data: blob: https:; "
+                 ."font-src 'self' data: https:; "
+                 ."connect-src 'self' https: wss:; "
+                 ."frame-src 'self' https:; "
+                 ."child-src 'self' https:; "
+                 ."object-src 'none'; "
+                 ."base-uri 'self'; "
+                 ."form-action 'self' https:; "
+                 ."frame-ancestors 'self'; "
+                 .'upgrade-insecure-requests;';
 
             $response->headers->set('Content-Security-Policy', $csp);
 

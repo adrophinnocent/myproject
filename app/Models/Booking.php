@@ -11,15 +11,23 @@ class Booking extends Model
     use HasFactory;
 
     const STATUS_PENDING = 'pending';
+
     const STATUS_APPROVED = 'approved';
+
     const STATUS_DEPOSIT_PAID = 'deposit_paid';
+
     const STATUS_CONFIRMED = 'confirmed';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_CANCELLED = 'cancelled';
 
     const PAYMENT_UNPAID = 'unpaid';
+
     const PAYMENT_DEPOSIT_PAID = 'deposit_paid';
+
     const PAYMENT_FULLY_PAID = 'fully_paid';
+
     const PAYMENT_REFUNDED = 'refunded';
 
     protected $fillable = [
@@ -88,7 +96,9 @@ class Booking extends Model
 
         static::creating(function ($booking) {
             if (empty($booking->token)) {
-                $booking->token = Str::random(32);
+                do {
+                    $booking->token = Str::random(48);
+                } while (static::where('token', $booking->token)->exists());
             }
 
             if (empty($booking->booking_reference)) {
@@ -108,17 +118,14 @@ class Booking extends Model
     public static function generateNextReferenceCode(): string
     {
         $year = date('Y');
-        $lastBooking = static::where('booking_reference', 'like', "TWN-{$year}-%")
-            ->orderBy('id', 'desc')
-            ->first();
 
-        if ($lastBooking && preg_match('/TWN-\d{4}-(\d+)/', $lastBooking->booking_reference, $matches)) {
-            $nextNum = (int) $matches[1] + 1;
-        } else {
-            $nextNum = 1;
-        }
+        // A random suffix avoids the race condition of "last reference + 1" and
+        // keeps references non-enumerable when they are shown in emails.
+        do {
+            $reference = sprintf('TWN-%s-%s', $year, strtoupper(Str::random(6)));
+        } while (static::where('booking_reference', $reference)->exists());
 
-        return sprintf('TWN-%s-%03d', $year, $nextNum);
+        return $reference;
     }
 
     public function tour()
@@ -138,32 +145,28 @@ class Booking extends Model
 
     public function payments()
     {
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
-                return $this->hasMany(BookingPayment::class);
-            }
-        } catch (\Throwable $e) {
-            // Ignore if table check fails
-        }
-
-        return $this->hasMany(static::class, 'id', 'id')->whereRaw('1 = 0');
+        return $this->hasMany(BookingPayment::class);
     }
 
     public function getBookableItemAttribute()
     {
-        if ($this->tour) return $this->tour;
-        if ($this->safari) return $this->safari;
+        if ($this->tour) {
+            return $this->tour;
+        }
+        if ($this->safari) {
+            return $this->safari;
+        }
 
         if ($this->tripPlan) {
             return (object) [
-                'title' => $this->tripPlan->trip_title ?: 'Custom Safari: ' . $this->tripPlan->name,
+                'title' => $this->tripPlan->trip_title ?: 'Custom Safari: '.$this->tripPlan->name,
                 'featured_image_url' => asset('images/banners/hero_fallback.webp'),
                 'duration_text' => $this->tripPlan->duration ?: 'Custom Duration',
-                'formatted_price' => '$' . number_format($this->tripPlan->total_price ?? 0, 0),
+                'formatted_price' => '$'.number_format($this->tripPlan->total_price ?? 0, 0),
                 'category' => (object) ['name' => 'Custom Trip'],
                 'destination' => (object) ['name' => 'Tanzania'],
                 'item_type' => 'custom',
-                'itinerary' => $this->tripPlan->itinerary_data ?? []
+                'itinerary' => $this->tripPlan->itinerary_data ?? [],
             ];
         }
 
@@ -172,12 +175,12 @@ class Booking extends Model
 
     public function getFullNameAttribute(): string
     {
-        return trim($this->first_name . ' ' . $this->last_name);
+        return trim($this->first_name.' '.$this->last_name);
     }
 
     public function getTotalGuestsAttribute(): int
     {
-        return (int)$this->number_of_adults + (int)$this->number_of_children;
+        return (int) $this->number_of_adults + (int) $this->number_of_children;
     }
 
     public function getCurrencySymbolAttribute(): string
@@ -194,7 +197,7 @@ class Booking extends Model
 
     public function getFormattedTotalPriceAttribute(): string
     {
-        return $this->currency_symbol . number_format($this->total_price ?? 0, 2);
+        return $this->currency_symbol.number_format($this->total_price ?? 0, 2);
     }
 
     public function getCalculatedDepositRequiredAttribute(): float
@@ -204,39 +207,41 @@ class Booking extends Model
         }
 
         $pct = $this->deposit_percentage ?? 20.00;
+
         return round((($this->total_price ?? 0) * $pct) / 100, 2);
     }
 
     public function getFormattedDepositRequiredAttribute(): string
     {
-        return $this->currency_symbol . number_format($this->calculated_deposit_required, 2);
+        return $this->currency_symbol.number_format($this->calculated_deposit_required, 2);
     }
 
     public function getCalculatedBalanceAmountAttribute(): float
     {
         $total = (float) ($this->total_price ?? 0);
         $paid = (float) ($this->deposit_paid ?? 0);
+
         return max(0, $total - $paid);
     }
 
     public function getFormattedBalanceAmountAttribute(): string
     {
-        return $this->currency_symbol . number_format($this->calculated_balance_amount, 2);
+        return $this->currency_symbol.number_format($this->calculated_balance_amount, 2);
     }
 
     public function getConfirmationUrlAttribute(): string
     {
-        return route('booking.confirmation', $this->booking_reference);
+        return route('booking.confirmation', $this->token);
     }
 
     public function getPaymentUrlAttribute(): string
     {
-        return route('booking.payment', $this->booking_reference);
+        return route('booking.payment', $this->token);
     }
 
     public function getTrackingUrlAttribute(): string
     {
-        return route('booking.status', $this->booking_reference);
+        return route('booking.status', $this->token);
     }
 
     public function getStatusBadgeAttribute(): string

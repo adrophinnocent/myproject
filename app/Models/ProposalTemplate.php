@@ -10,6 +10,7 @@ class ProposalTemplate extends Model
     use HasFactory;
 
     const STATUS_ACTIVE = 'active';
+
     const STATUS_ARCHIVED = 'archived';
 
     protected $fillable = [
@@ -114,6 +115,7 @@ class ProposalTemplate extends Model
                     'gallery_images' => $day->gallery_images ?? [],
                 ];
             }
+
             return $structured;
         }
 
@@ -138,6 +140,7 @@ class ProposalTemplate extends Model
                     'website_url' => $acc->website_url,
                 ];
             }
+
             return $accs;
         }
 

@@ -14,11 +14,11 @@ class AdminNotification extends Model
         'title',
         'message',
         'link',
-        'is_read'
+        'is_read',
     ];
 
     protected $casts = [
-        'is_read' => 'boolean'
+        'is_read' => 'boolean',
     ];
 
     public function scopeUnread($query)

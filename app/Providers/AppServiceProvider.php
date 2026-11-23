@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,10 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Enforce HTTPS in production
         if (config('app.env') === 'production') {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
         // Prevent N+1 queries during development
-        \Illuminate\Database\Eloquent\Model::preventLazyLoading(! app()->isProduction());
+        Model::preventLazyLoading(! app()->isProduction());
     }
 }

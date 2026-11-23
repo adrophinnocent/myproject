@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Helpers\Currency;
 use App\Http\Controllers\Controller;
-use App\Mail\CustomerBookingConfirmation;
 use App\Mail\AdminNewBookingNotification;
-use App\Models\Booking;
-use App\Models\Tour;
-use App\Models\Safari;
+use App\Mail\CustomerBookingConfirmation;
 use App\Models\AdminNotification;
+use App\Models\Booking;
+use App\Models\Safari;
 use App\Models\Setting;
+use App\Models\Tour;
 use App\Services\PdfService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -33,7 +34,21 @@ class BookingController extends Controller
             return redirect()->route('tours.index')->with('error', __('This tour package is no longer available.'));
         }
 
-        return view('public.booking.create', compact('tour'));
+        // Present the estimate in the visitor's selected currency; the same
+        // conversion is applied server-side in store().
+        $currency = Currency::current();
+        $symbol = Currency::symbol($currency);
+        $decimals = in_array($currency, ['TZS', 'KES', 'UGX'], true) ? 0 : 2;
+
+        $extras = [];
+        foreach ((array) ($tour->extras ?? []) as $extra) {
+            if (is_array($extra)) {
+                $extra['price'] = Currency::convert((float) ($extra['price'] ?? 0), $currency);
+            }
+            $extras[] = $extra;
+        }
+
+        return view('public.booking.create', compact('tour', 'currency', 'symbol', 'decimals', 'extras'));
     }
 
     public function store(Request $request, $slug)
@@ -52,16 +67,16 @@ class BookingController extends Controller
             'phone' => 'required|string|max:255',
             'country' => 'nullable|string|max:255',
             'nationality' => 'nullable|string|max:255',
-            'number_of_adults' => 'required|integer|min:1',
-            'number_of_children' => 'nullable|integer|min:0',
+            'number_of_adults' => 'required|integer|min:1|max:50',
+            'number_of_children' => 'nullable|integer|min:0|max:50',
             'travel_date' => 'required|date|after:today',
             'special_requests' => 'nullable|string|max:2000',
             'accommodation_preference' => 'nullable|string|max:255',
-            'payment_method' => 'nullable|string|max:100',
-            'currency' => 'nullable|string|in:USD,EUR,GBP,TZS',
+            // Only manual payment methods are supported until a real gateway is integrated.
+            'payment_method' => 'nullable|in:bank_transfer,mpesa,tigopesa,airtelmoney',
         ]);
 
-        $booking = new Booking();
+        $booking = new Booking;
         $booking->first_name = $validated['first_name'];
         $booking->last_name = $validated['last_name'];
         $booking->email = $validated['email'];
@@ -73,8 +88,8 @@ class BookingController extends Controller
         $booking->travel_date = $validated['travel_date'];
         $booking->special_requests = $validated['special_requests'] ?? null;
         $booking->accommodation_preference = $validated['accommodation_preference'] ?? null;
-        $booking->payment_method = $validated['payment_method'] ?? 'visa_mastercard';
-        $booking->currency = $validated['currency'] ?? 'USD';
+        $booking->payment_method = $validated['payment_method'] ?? 'bank_transfer';
+        $booking->currency = Currency::current();
 
         if ($tour instanceof Tour) {
             $booking->tour_id = $tour->id;
@@ -112,6 +127,8 @@ class BookingController extends Controller
                         $priceType = is_array($tExtra) ? ($tExtra['price_type'] ?? 'per_person') : 'per_person';
                         $desc = is_array($tExtra) ? ($tExtra['description'] ?? '') : '';
 
+                        // Extras are priced in USD; charge in the booking currency.
+                        $price = Currency::convert($price, $booking->currency);
                         $itemTotal = ($priceType === 'per_person') ? ($price * $totalGuests) : $price;
                         $extrasTotal += $itemTotal;
 
@@ -131,7 +148,7 @@ class BookingController extends Controller
         $booking->selected_extras = $selectedExtras;
         $booking->extras_total = $extrasTotal;
 
-        $totalPrice = $basePrice + $extrasTotal;
+        $totalPrice = round(Currency::convert($basePrice, $booking->currency) + $extrasTotal, 2);
         $booking->total_price = $totalPrice;
 
         // Deposit Percentage (20%)
@@ -150,95 +167,90 @@ class BookingController extends Controller
         // Load relationships
         $booking->load(['tour', 'safari']);
 
-        // 1. Generate PDF Itinerary
+        // 1. Generate PDF Itinerary (stored privately)
+        $pdfPath = null;
         try {
             $pdfPath = $this->pdfService->generateItinerary($booking);
-        } catch (\Exception $e) {
-            Log::error('PDF Generation failed: ' . $e->getMessage());
-            $pdfPath = null;
+        } catch (\Throwable $e) {
+            Log::error('PDF Generation failed: '.$e->getMessage());
         }
 
         // 2. Send Booking Confirmation email to Customer
         try {
             Mail::to($booking->email)->send(new CustomerBookingConfirmation($booking, $pdfPath));
-        } catch (\Exception $e) {
-            Log::error('Customer Mail failed: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Customer Mail failed: '.$e->getMessage());
+        } finally {
+            // The PDF is an email attachment, not a public document.
+            if ($pdfPath && file_exists($pdfPath)) {
+                @unlink($pdfPath);
+            }
         }
 
         // 3. Send Admin Alert Notification
         try {
             $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
             Mail::to($adminEmail)->send(new AdminNewBookingNotification($booking));
-        } catch (\Exception $e) {
-            Log::error('Admin Email Alert failed: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Admin Email Alert failed: '.$e->getMessage());
         }
 
         // 4. Create Admin Dashboard Notification
         try {
             AdminNotification::create([
                 'type' => 'booking',
-                'title' => 'New Booking Request: ' . $booking->booking_reference,
-                'message' => "New safari request from {$booking->full_name} for {$booking->bookable_item->title} ({$booking->formatted_total_price})",
+                'title' => 'New Booking Request: '.$booking->booking_reference,
+                'message' => "New safari request from {$booking->full_name} for ".($booking->bookable_item->title ?? 'Safari')." ({$booking->formatted_total_price})",
                 'link' => route('admin.bookings.show', $booking),
-                'is_read' => false
+                'is_read' => false,
             ]);
-        } catch (\Exception $e) {
-            Log::error('Admin Notification DB create failed: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Admin Notification DB create failed: '.$e->getMessage());
         }
 
-        return redirect()->route('booking.confirmation', $booking->booking_reference)
-            ->with('success', __('Your booking request has been submitted successfully! Ref: ') . $booking->booking_reference);
+        return redirect()->route('booking.confirmation', $booking->token)
+            ->with('success', __('Your booking request has been submitted successfully! Ref: ').$booking->booking_reference);
     }
 
-    public function confirmation($reference)
+    public function confirmation($token)
     {
-        $relations = ['tour', 'safari'];
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
-                $relations[] = 'payments';
-            }
-        } catch (\Throwable $e) {}
-
-        $booking = Booking::where('booking_reference', $reference)
-            ->orWhere('token', $reference)
-            ->with($relations)
+        $booking = Booking::where('token', $token)
+            ->with(['tour', 'safari', 'payments'])
             ->firstOrFail();
 
-        return view('public.booking.confirmation', compact('booking'));
+        return response()
+            ->view('public.booking.confirmation', compact('booking'))
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     }
 
-    public function status($reference)
+    public function status($token)
     {
-        $relations = ['tour', 'safari'];
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('booking_payments')) {
-                $relations['payments'] = function($q) { $q->latest(); };
-            }
-        } catch (\Throwable $e) {}
-
-        $booking = Booking::where('booking_reference', $reference)
-            ->orWhere('token', $reference)
-            ->with($relations)
+        $booking = Booking::where('token', $token)
+            ->with(['tour', 'safari', 'payments' => fn ($q) => $q->latest()])
             ->firstOrFail();
 
-        return view('public.booking.status', compact('booking'));
+        return response()
+            ->view('public.booking.status', compact('booking'))
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     }
 
     public function myBookings(Request $request)
     {
         $bookings = collect();
-        $query = trim($request->input('search', ''));
+        $reference = trim((string) $request->input('reference', ''));
+        $email = trim((string) $request->input('email', ''));
 
-        if (!empty($query)) {
-            $bookings = Booking::where('booking_reference', $query)
-                ->orWhere('email', 'like', "%{$query}%")
-                ->orWhere('token', $query)
+        if ($reference !== '' && $email !== '') {
+            $bookings = Booking::where('booking_reference', strtoupper($reference))
+                ->whereRaw('LOWER(email) = ?', [strtolower($email)])
                 ->with(['tour', 'safari'])
                 ->latest()
                 ->get();
         }
 
-        return view('public.booking.my-bookings', compact('bookings', 'query'));
+        return response()
+            ->view('public.booking.my-bookings', compact('bookings', 'reference', 'email'))
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     }
 
     public function policies()
@@ -246,30 +258,25 @@ class BookingController extends Controller
         return view('public.booking.policies');
     }
 
-    public function success($reference)
+    public function success($token)
     {
-        return redirect()->route('booking.confirmation', $reference);
+        return redirect()->route('booking.confirmation', $token);
     }
 
-    public function downloadItinerary($reference)
+    public function downloadItinerary($token)
     {
-        $booking = Booking::where('booking_reference', $reference)->with(['tour', 'safari'])->first();
+        $booking = Booking::where('token', $token)->with(['tour', 'safari'])->firstOrFail();
 
-        if ($booking) {
-            try {
-                $pdfPath = $this->pdfService->generateItinerary($booking);
-                return response()->download($pdfPath, 'Itinerary-' . $booking->booking_reference . '.pdf');
-            } catch (\Exception $e) {
-                Log::error('PDF Download failed: ' . $e->getMessage());
-                return back()->with('error', 'Sorry, we could not generate the PDF at this moment. Please try again later.');
-            }
+        try {
+            $pdfPath = $this->pdfService->generateItinerary($booking);
+
+            return response()
+                ->download($pdfPath, 'Itinerary-'.$booking->booking_reference.'.pdf')
+                ->deleteFileAfterSend(true);
+        } catch (\Throwable $e) {
+            Log::error('PDF Download failed: '.$e->getMessage());
+
+            return back()->with('error', 'Sorry, we could not generate the PDF at this moment. Please try again later.');
         }
-
-        $tour = Tour::where('slug', $reference)->first() ?? Safari::where('slug', $reference)->first();
-        if ($tour) {
-            return redirect()->route('tours.download-pdf', $tour->slug);
-        }
-
-        abort(404);
     }
 }

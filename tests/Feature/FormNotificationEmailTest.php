@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Mail\AdminNewTripPlanMail;
+use App\Mail\ContactNotification;
+use App\Mail\TourInquiryMail;
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Setting;
-use App\Mail\ContactNotification;
-use App\Mail\AdminNewTripPlanMail;
-use App\Mail\TourInquiryMail;
 use Tests\TestCase;
 
 class FormNotificationEmailTest extends TestCase

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 /**
  * @mixin Model
+ *
  * @method static \Illuminate\Database\Eloquent\Builder creating(callable $callback)
  * @method static \Illuminate\Database\Eloquent\Builder updating(callable $callback)
  * @method static \Illuminate\Database\Eloquent\Builder where(string $column, mixed $operator = null, mixed $value = null)
@@ -37,15 +38,16 @@ trait HasSlug
         $slugField = $this->getSlugField();
 
         // If slug is provided manually and is not empty, use it but ensure uniqueness
-        if ($this->isDirty($slugField) && !empty(trim($this->$slugField))) {
+        if ($this->isDirty($slugField) && ! empty(trim($this->$slugField))) {
             $this->$slugField = $this->makeSlugUnique(Str::slug($this->$slugField));
+
             return;
         }
 
         // If we have a source field value, generate a slug from it
-        if (!empty($this->$sourceField)) {
+        if (! empty($this->$sourceField)) {
             // Generate a new slug if source changed or slug is empty
-            if ($this->isDirty($sourceField) || empty($this->$slugField) || !$this->exists) {
+            if ($this->isDirty($sourceField) || empty($this->$slugField) || ! $this->exists) {
                 $slug = Str::slug($this->$sourceField);
                 $this->$slugField = $this->makeSlugUnique($slug);
             }
@@ -67,7 +69,7 @@ trait HasSlug
         }
 
         while ($this->slugExists($slug)) {
-            $slug = $originalSlug . '-' . $count;
+            $slug = $originalSlug.'-'.$count;
             $count++;
         }
 
@@ -80,7 +82,7 @@ trait HasSlug
     protected function slugExists(string $slug): bool
     {
         $slugField = $this->getSlugField();
-        /** @var \Illuminate\Database\Eloquent\Builder $query */
+        /** @var Builder $query */
         $query = static::where($slugField, $slug);
 
         if ($this->getKey()) {

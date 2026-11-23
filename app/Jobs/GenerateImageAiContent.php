@@ -39,7 +39,7 @@ class GenerateImageAiContent implements ShouldQueue
 
             Log::info("AI content generated for image ID: {$this->aiImage->id}");
         } catch (\Exception $e) {
-            Log::error("Failed to generate AI content for image ID {$this->aiImage->id}: " . $e->getMessage());
+            Log::error("Failed to generate AI content for image ID {$this->aiImage->id}: ".$e->getMessage());
         }
     }
 }

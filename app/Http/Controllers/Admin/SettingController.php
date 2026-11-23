@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SettingController extends Controller
 {
@@ -37,6 +39,11 @@ class SettingController extends Controller
             'tiktok_url' => 'nullable|url',
             'google_maps_url' => 'nullable|url',
             'current_season' => 'required|in:peak,shoulder,low',
+            'currency_rate_EUR' => 'nullable|numeric|min:0|max:1000000',
+            'currency_rate_GBP' => 'nullable|numeric|min:0|max:1000000',
+            'currency_rate_TZS' => 'nullable|numeric|min:0|max:1000000',
+            'currency_rate_KES' => 'nullable|numeric|min:0|max:1000000',
+            'currency_rate_UGX' => 'nullable|numeric|min:0|max:1000000',
             'logo_upload' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
             'favicon_upload' => 'nullable|image|mimes:jpg,jpeg,png,ico|max:1024',
             'footer_logo_upload' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
@@ -54,20 +61,26 @@ class SettingController extends Controller
 
         foreach ($request->all() as $key => $value) {
             if (in_array($key, $fileKeys)) {
-                $uploadKey = $key . '_upload';
+                $uploadKey = $key.'_upload';
                 if ($request->hasFile($uploadKey)) {
                     $file = $request->file($uploadKey);
                     $folder = ($key === 'hero_video') ? 'videos' : ($key === 'footer_logo' || $key === 'logo' || $key === 'favicon' ? 'logos' : 'banners');
 
                     if (str_contains($file->getMimeType(), 'image') && $key !== 'favicon') {
-                        $filename = $key . '_' . time() . '.webp';
-                        $img = imagecreatefromstring(file_get_contents($file->getRealPath()));
-                        ob_start();
-                        imagewebp($img, null, 80);
-                        $content = ob_get_clean();
-                        Storage::disk('public')->put($folder . '/' . $filename, $content);
-                        Setting::set($key, $folder . '/' . $filename);
-                        imagedestroy($img);
+                        $filename = $key.'_'.time().'_'.Str::random(6).'.webp';
+                        $img = @imagecreatefromstring(file_get_contents($file->getRealPath()));
+
+                        if ($img !== false) {
+                            ob_start();
+                            imagewebp($img, null, 80);
+                            $content = ob_get_clean();
+                            Storage::disk('public')->put($folder.'/'.$filename, $content);
+                            Setting::set($key, $folder.'/'.$filename);
+                            imagedestroy($img);
+                        } else {
+                            // GD could not decode the image; store the original instead.
+                            Setting::set($key, $file->store($folder, 'public'));
+                        }
                     } else {
                         Setting::set($key, $file->store($folder, 'public'));
                     }
@@ -75,7 +88,7 @@ class SettingController extends Controller
                     // Selected from library or existing value
                     Setting::set($key, $request->input($key));
                 }
-            } elseif ($key !== '_token' && $key !== '_method' && !str_ends_with($key, '_upload')) {
+            } elseif ($key !== '_token' && $key !== '_method' && ! str_ends_with($key, '_upload')) {
                 Setting::set($key, $value);
             }
         }

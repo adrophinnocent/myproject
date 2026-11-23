@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Traits\HasSlug;
 use App\Traits\Translatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Destination extends Model
 {
@@ -39,13 +40,13 @@ class Destination extends Model
 
     public function safaris(): HasMany
     {
-        return $this->hasMany(\App\Models\Safari::class);
+        return $this->hasMany(Safari::class);
     }
 
     public function getFeaturedImageUrlAttribute(): ?string
     {
         if ($this->featured_image) {
-            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
+            return Storage::disk('public')->url($this->featured_image);
         }
 
         return asset('images/banners/hero_fallback.webp');
@@ -70,6 +71,7 @@ class Destination extends Model
     {
         $tourCount = $this->tours()->where('is_published', true)->count();
         $safariCount = $this->safaris()->where('is_published', true)->count();
+
         return $tourCount + $safariCount;
     }
 }

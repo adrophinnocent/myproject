@@ -63,7 +63,7 @@
 
                 {{-- Critical Action Buttons --}}
                 <div class="flex flex-wrap gap-3 w-full md:w-auto">
-                    <a href="{{ route('trip-plan.show', $tripPlan->id) }}" target="_blank" class="flex-1 md:flex-none bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/10 transition-all text-center">
+                    <a href="{{ route('trip-plan.show', $tripPlan->token) }}" target="_blank" class="flex-1 md:flex-none bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/10 transition-all text-center">
                         Preview Plan
                     </a>
 

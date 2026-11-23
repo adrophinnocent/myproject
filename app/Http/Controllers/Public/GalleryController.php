@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\GalleryAlbum;
-use App\Models\GalleryImage;
-use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
@@ -22,6 +20,7 @@ class GalleryController extends Controller
     public function show(GalleryAlbum $album)
     {
         $album->load('images');
+
         return view('public.gallery.show', compact('album'));
     }
 }

@@ -14,10 +14,13 @@
 
         <div class="flex items-center gap-4">
             @if(\App\Models\AdminNotification::unread()->count() > 0)
-                <a href="{{ route('admin.notifications.mark-all-read') }}" class="neo-btn px-6 py-3 text-[10px] font-black text-amber-600 uppercase tracking-widest hover:text-amber-700 transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                    Mark all as read
-                </a>
+                <form method="POST" action="{{ route('admin.notifications.mark-all-read') }}">
+                    @csrf
+                    <button type="submit" class="neo-btn px-6 py-3 text-[10px] font-black text-amber-600 uppercase tracking-widest hover:text-amber-700 transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        Mark all as read
+                    </button>
+                </form>
             @endif
         </div>
     </div>

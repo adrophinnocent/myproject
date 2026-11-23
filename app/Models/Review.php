@@ -9,7 +9,7 @@ class Review extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['tour_id', 'name', 'email', 'country', 'rating', 'title', 'content', 'trip_date', 'is_approved', 'helpful_count'];
+    protected $fillable = ['tour_id', 'safari_id', 'name', 'email', 'country', 'rating', 'title', 'content', 'trip_date', 'is_approved', 'helpful_count'];
 
     protected function casts(): array
     {
@@ -19,6 +19,11 @@ class Review extends Model
     public function tour()
     {
         return $this->belongsTo(Tour::class);
+    }
+
+    public function safari()
+    {
+        return $this->belongsTo(Safari::class);
     }
 
     public function scopeApproved($q)

@@ -47,7 +47,7 @@
             </h1>
             @if($campaign->price)
             <div class="text-2xl md:text-4xl text-gold-400 font-black drop-shadow-lg">
-                {{ __('Exclusive Offer from') }} ${{ number_format($campaign->price, 0) }}
+                {{ __('Exclusive Offer from') }} {{ \App\Helpers\Currency::format((float) $campaign->price) }}
             </div>
             @endif
         </div>
@@ -284,7 +284,7 @@
                                 <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-safari-dark text-[10px] font-black uppercase tracking-widest">{{ __($tour->category->name ?? 'Safari') }}</span>
                             </div>
                             <div class="absolute bottom-4 right-4">
-                                <span class="px-4 py-2 rounded-xl bg-gold-500 text-safari-dark font-black text-sm shadow-xl">{{ __('From') }} {{ $tour->formatted_price }}</span>
+                                <span class="px-4 py-2 rounded-xl bg-gold-500 text-safari-dark font-black text-sm shadow-xl">{{ __('From') }} {{ $tour->display_price_formatted }}</span>
                             </div>
                         </div>
                         <div class="p-8 flex-grow flex flex-col">

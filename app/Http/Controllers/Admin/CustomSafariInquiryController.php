@@ -17,9 +17,9 @@ class CustomSafariInquiryController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('country', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('country', 'like', "%{$search}%");
             });
         }
 
@@ -46,12 +46,13 @@ class CustomSafariInquiryController extends Controller
         // Redirect directly to proposal creation page with inquiry ID pre-filled
         return redirect()->route('admin.proposals.create', [
             'inquiry_id' => $inquiry->id,
-        ])->with('success', 'Converting inquiry from ' . $inquiry->full_name . ' into a personalized proposal.');
+        ])->with('success', 'Converting inquiry from '.$inquiry->full_name.' into a personalized proposal.');
     }
 
     public function destroy(CustomSafariInquiry $inquiry)
     {
         $inquiry->delete();
+
         return redirect()->route('admin.custom-inquiries.index')
             ->with('success', 'Inquiry deleted successfully.');
     }

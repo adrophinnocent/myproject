@@ -1,58 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Twina Safaris
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Tourism / safari booking website for Twina Safaris (Tanzania), built with Laravel 13 + PHP 8.3, Tailwind CSS and Alpine.js.
 
-## About Laravel
+Features: tour & safari catalog, online bookings with manual payment tracking, custom safari inquiries, trip plans, client proposals (PDF), blog, gallery, newsletter (double opt-in), AI-assisted content/SEO tools, multi-language UI and multi-currency price display.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirements
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.3+ with `pdo_sqlite` (or MySQL), `gd`, `mbstring`, `dom`, `fileinfo`
+- Composer
+- Node.js + npm (frontend assets)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Local setup
 
 ```bash
-composer require laravel/boost --dev
+composer install
+cp .env.example .env
+php artisan key:generate
 
-php artisan boost:install
+# SQLite (default): create the database file, then migrate + seed
+touch database/database.sqlite        # Windows: New-Item database/database.sqlite
+php artisan migrate --seed
+
+npm install
+npm run build                         # or: npm run dev
+
+php artisan storage:link
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+The seeder creates an admin account. By default a random password is generated and
+printed once in the console. To choose your own, set these in `.env` before seeding:
 
-## Contributing
+```dotenv
+ADMIN_SEED_EMAIL=admin@yourdomain.com
+ADMIN_SEED_PASSWORD=a-strong-password
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Admin panel: `/admin` (login with the seeded account).
 
-## Code of Conduct
+## Queue worker (required for email campaigns)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Newsletter campaigns are dispatched to the queue (`QUEUE_CONNECTION=database`).
+They are only sent while a worker is running:
 
-## Security Vulnerabilities
+```bash
+php artisan queue:work --tries=3 --timeout=600
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Local (Windows):** keep a second terminal open with the command above.
+  Without it, campaigns stay queued and are not delivered.
+- **Production (Linux):** use supervisor — see [`deploy/supervisor-queue.conf`](deploy/supervisor-queue.conf).
+  After each deploy run `php artisan queue:restart` so workers pick up new code.
+- Failed jobs land in `failed_jobs`; inspect with `php artisan queue:failed`
+  and retry with `php artisan queue:retry all`.
 
-## License
+## Currency display
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Tour prices are stored in **USD**. Visitors can switch display currency
+(USD / EUR / GBP / TZS / KES / UGX) from the navbar; prices are converted using
+rates managed in **Admin → Settings → Currency Exchange Rates** (sensible
+defaults are built in). Bookings are charged in the currency selected at checkout.
+Update the rates regularly — they are manual, not live market rates.
+
+## Newsletter
+
+Subscriptions use double opt-in: the subscriber receives a confirmation email and
+only becomes active after clicking the link. Every campaign email contains a
+personal unsubscribe link. Campaigns are sent from **Admin → Email Campaigns**.
+
+## Tests & code style
+
+```bash
+php artisan test          # feature + unit tests (SQLite in-memory)
+vendor/bin/pint --test    # code style check
+vendor/bin/pint           # auto-fix style
+```
+
+CI (`.github/workflows/ci.yml`) runs Pint, migrations and the full test suite on
+every push / pull request.
+
+## Deployment checklist
+
+- `APP_ENV=production`, `APP_DEBUG=false`
+- Real `MAIL_*` credentials (SMTP) and a running queue worker
+- `php artisan migrate --force`, `php artisan storage:link`
+- `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+- `php artisan queue:restart` after each deploy
+- Keep `database/database.sqlite` (or your MySQL DB) backed up before migrating

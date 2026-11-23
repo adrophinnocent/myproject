@@ -23,7 +23,7 @@ class AdminNewTripPlanMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Trip Plan Request from ' . $this->plan->name,
+            subject: 'New Trip Plan Request from '.$this->plan->name,
         );
     }
 

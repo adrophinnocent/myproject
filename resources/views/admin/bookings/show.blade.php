@@ -190,9 +190,9 @@
                                 <label class="block font-bold text-stone-700 mb-1">Payment Gateway / Method</label>
                                 <select name="gateway" class="w-full bg-white border border-stone-300 rounded-xl p-2.5 outline-none font-bold">
                                     <option value="bank_transfer">Direct Bank Transfer</option>
-                                    <option value="mpesa">M-Pesa / Tigo Pesa</option>
-                                    <option value="visa_mastercard">Credit Card (Visa/Mastercard)</option>
-                                    <option value="paypal">PayPal</option>
+                                    <option value="mpesa">M-Pesa</option>
+                                    <option value="tigopesa">Tigo Pesa</option>
+                                    <option value="airtelmoney">Airtel Money</option>
                                     <option value="cash">Cash / Office</option>
                                 </select>
                             </div>

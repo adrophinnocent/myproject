@@ -12,6 +12,7 @@ class AdminNotificationController extends Controller
     public function index()
     {
         $notifications = AdminNotification::latest()->paginate(20);
+
         return view('admin.notifications.index', compact('notifications'));
     }
 
@@ -19,6 +20,7 @@ class AdminNotificationController extends Controller
     public function markAllRead(Request $request)
     {
         AdminNotification::where('is_read', false)->update(['is_read' => true]);
+
         return back()->with('success', 'All notifications marked as read.');
     }
 }

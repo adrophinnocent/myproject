@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProposalTemplate;
-use App\Models\ProposalTemplateDay;
-use App\Models\ProposalTemplateAccommodation;
-use App\Models\ProposalTemplateInclusion;
-use App\Models\ProposalTemplateExclusion;
-use App\Models\ProposalTemplatePrice;
-use App\Models\ProposalDayTemplate;
 use App\Models\Proposal;
+use App\Models\ProposalDayTemplate;
+use App\Models\ProposalTemplate;
+use App\Models\ProposalTemplateAccommodation;
+use App\Models\ProposalTemplateDay;
+use App\Models\ProposalTemplateExclusion;
+use App\Models\ProposalTemplateInclusion;
+use App\Models\ProposalTemplatePrice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProposalTemplateController extends Controller
 {
@@ -23,8 +25,8 @@ class ProposalTemplateController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where('title', 'like', "%{$search}%")
-                  ->orWhere('safari_style', 'like', "%{$search}%")
-                  ->orWhere('accommodation_level', 'like', "%{$search}%");
+                ->orWhere('safari_style', 'like', "%{$search}%")
+                ->orWhere('accommodation_level', 'like', "%{$search}%");
         }
 
         if ($request->filled('status')) {
@@ -43,6 +45,7 @@ class ProposalTemplateController extends Controller
     public function create()
     {
         $dayTemplates = ProposalDayTemplate::orderBy('title')->get();
+
         return view('admin.proposal-templates.create', compact('dayTemplates'));
     }
 
@@ -120,12 +123,13 @@ class ProposalTemplateController extends Controller
         $this->syncRelationalRecords($template, $itinerary, $accommodations, $inclusions, $exclusions, $internalCosting, $validated);
 
         return redirect()->route('admin.proposal-templates.index')
-            ->with('success', 'Proposal template "' . $template->title . '" created successfully.');
+            ->with('success', 'Proposal template "'.$template->title.'" created successfully.');
     }
 
     public function show(ProposalTemplate $template)
     {
         $template->load(['days', 'templateAccommodations', 'templateInclusions', 'templateExclusions', 'templatePrice']);
+
         return view('admin.proposal-templates.show', compact('template'));
     }
 
@@ -133,6 +137,7 @@ class ProposalTemplateController extends Controller
     {
         $template->load(['days', 'templateAccommodations', 'templateInclusions', 'templateExclusions', 'templatePrice']);
         $dayTemplates = ProposalDayTemplate::orderBy('title')->get();
+
         return view('admin.proposal-templates.edit', compact('template', 'dayTemplates'));
     }
 
@@ -210,7 +215,7 @@ class ProposalTemplateController extends Controller
         $this->syncRelationalRecords($template, $itinerary, $accommodations, $inclusions, $exclusions, $internalCosting, $validated);
 
         return redirect()->route('admin.proposal-templates.index')
-            ->with('success', 'Proposal template "' . $template->title . '" updated successfully.');
+            ->with('success', 'Proposal template "'.$template->title.'" updated successfully.');
     }
 
     public function duplicate(ProposalTemplate $template)
@@ -218,7 +223,7 @@ class ProposalTemplateController extends Controller
         $template->load(['days', 'templateAccommodations', 'templateInclusions', 'templateExclusions', 'templatePrice']);
 
         $newTemplate = $template->replicate();
-        $newTemplate->title = 'Copy of ' . $template->title;
+        $newTemplate->title = 'Copy of '.$template->title;
         $newTemplate->status = 'active';
         $newTemplate->save();
 
@@ -253,7 +258,7 @@ class ProposalTemplateController extends Controller
         }
 
         return redirect()->route('admin.proposal-templates.index')
-            ->with('success', 'Duplicated proposal template: "' . $newTemplate->title . '"');
+            ->with('success', 'Duplicated proposal template: "'.$newTemplate->title.'"');
     }
 
     public function archive(ProposalTemplate $template)
@@ -261,12 +266,13 @@ class ProposalTemplateController extends Controller
         $newStatus = $template->status === 'archived' ? 'active' : 'archived';
         $template->update(['status' => $newStatus]);
 
-        return redirect()->back()->with('success', 'Template status updated to ' . strtoupper($newStatus));
+        return redirect()->back()->with('success', 'Template status updated to '.strtoupper($newStatus));
     }
 
     public function destroy(ProposalTemplate $template)
     {
         $template->delete();
+
         return redirect()->route('admin.proposal-templates.index')
             ->with('success', 'Proposal template deleted.');
     }
@@ -306,7 +312,9 @@ class ProposalTemplateController extends Controller
         // 2. Accommodations
         $template->templateAccommodations()->delete();
         foreach ($accommodations as $aIndex => $acc) {
-            if (empty($acc['property_name'])) continue;
+            if (empty($acc['property_name'])) {
+                continue;
+            }
             ProposalTemplateAccommodation::create([
                 'proposal_template_id' => $template->id,
                 'property_name' => $acc['property_name'],
@@ -371,6 +379,7 @@ class ProposalTemplateController extends Controller
     public function getDayTemplates()
     {
         $templates = ProposalDayTemplate::orderBy('title')->get();
+
         return response()->json($templates);
     }
 
@@ -406,25 +415,27 @@ class ProposalTemplateController extends Controller
             return response()->json(['success' => true, 'template' => $dayTemplate]);
         }
 
-        return redirect()->back()->with('success', 'Day template "' . $dayTemplate->title . '" saved successfully.');
+        return redirect()->back()->with('success', 'Day template "'.$dayTemplate->title.'" saved successfully.');
     }
 
     public function destroyDayTemplate(ProposalDayTemplate $dayTemplate)
     {
         $dayTemplate->delete();
+
         return redirect()->back()->with('success', 'Day template deleted successfully.');
     }
 
     public function getProposalTemplates()
     {
         $templates = ProposalTemplate::with(['days', 'templateAccommodations', 'templateInclusions', 'templateExclusions', 'templatePrice'])->orderBy('title')->get();
+
         return response()->json($templates);
     }
 
     public function saveProposalAsTemplate(Proposal $proposal)
     {
         $template = ProposalTemplate::create([
-            'title' => $proposal->title . ' Template',
+            'title' => $proposal->title.' Template',
             'subtitle' => $proposal->subtitle,
             'duration_days' => $proposal->duration_days,
             'duration_nights' => $proposal->duration_nights,
@@ -466,12 +477,13 @@ class ProposalTemplateController extends Controller
             ['default_total_price' => $proposal->total_price, 'default_adult_price' => $proposal->adult_price, 'default_child_price' => $proposal->child_price, 'default_deposit_percentage' => $proposal->deposit_percentage]
         );
 
-        return redirect()->back()->with('success', 'Saved proposal as reusable template "' . $template->title . '".');
+        return redirect()->back()->with('success', 'Saved proposal as reusable template "'.$template->title.'".');
     }
 
     public function destroyProposalTemplate(ProposalTemplate $template)
     {
         $template->delete();
+
         return redirect()->back()->with('success', 'Proposal template deleted.');
     }
 
@@ -482,7 +494,7 @@ class ProposalTemplateController extends Controller
             $rawItinerary = is_array($decoded) ? $decoded : [];
         }
 
-        if (!is_array($rawItinerary)) {
+        if (! is_array($rawItinerary)) {
             return [];
         }
 
@@ -493,7 +505,7 @@ class ProposalTemplateController extends Controller
             }
 
             $gallery = [];
-            if (!empty($item['gallery_images'])) {
+            if (! empty($item['gallery_images'])) {
                 if (is_string($item['gallery_images'])) {
                     $decodedG = json_decode($item['gallery_images'], true);
                     $gallery = is_array($decodedG) ? $decodedG : [];
@@ -525,18 +537,20 @@ class ProposalTemplateController extends Controller
                         try {
                             preg_match('/data:image\/(\w+);base64,/', $url, $typeMatches);
                             $ext = strtolower($typeMatches[1] ?? 'jpg');
-                            if ($ext === 'jpeg') $ext = 'jpg';
+                            if ($ext === 'jpeg') {
+                                $ext = 'jpg';
+                            }
 
                             $imageData = substr($url, strpos($url, ',') + 1);
                             $decodedBytes = base64_decode($imageData);
 
                             if ($decodedBytes !== false) {
-                                $filename = 'day_' . ($index + 1) . '_' . time() . '_' . Str::random(8) . '.' . $ext;
-                                \Illuminate\Support\Facades\Storage::disk('public')->put('proposals/days/' . $filename, $decodedBytes);
-                                $url = 'storage/proposals/days/' . $filename;
+                                $filename = 'day_'.($index + 1).'_'.time().'_'.Str::random(8).'.'.$ext;
+                                Storage::disk('public')->put('proposals/days/'.$filename, $decodedBytes);
+                                $url = 'storage/proposals/days/'.$filename;
                             }
                         } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Failed to save base64 day image: ' . $e->getMessage());
+                            Log::error('Failed to save base64 day image: '.$e->getMessage());
                         }
                     }
 
@@ -578,6 +592,7 @@ class ProposalTemplateController extends Controller
 
         if (is_string($input)) {
             $lines = preg_split('/\r\n|\r|\n/', $input);
+
             return array_values(array_filter(array_map('trim', $lines)));
         }
 

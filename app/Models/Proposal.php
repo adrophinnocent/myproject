@@ -12,11 +12,17 @@ class Proposal extends Model
     use HasFactory, SoftDeletes;
 
     const STATUS_DRAFT = 'draft';
+
     const STATUS_SENT = 'sent';
+
     const STATUS_VIEWED = 'viewed';
+
     const STATUS_ACCEPTED = 'accepted';
+
     const STATUS_CHANGES_REQUESTED = 'changes_requested';
+
     const STATUS_DECLINED = 'declined';
+
     const STATUS_EXPIRED = 'expired';
 
     protected $fillable = [
@@ -156,8 +162,9 @@ class Proposal extends Model
 
     public function getFullReferenceAttribute(): string
     {
-        $ref = $this->reference_code ?: ('TW-' . date('Y') . '-' . sprintf('%04d', $this->id));
-        return $ref . '-V' . ($this->version ?: 1);
+        $ref = $this->reference_code ?: ('TW-'.date('Y').'-'.sprintf('%04d', $this->id));
+
+        return $ref.'-V'.($this->version ?: 1);
     }
 
     public function tour()
@@ -189,18 +196,19 @@ class Proposal extends Model
 
     public function getFormattedTotalPriceAttribute(): string
     {
-        return $this->currency_symbol . number_format($this->total_price ?? 0, 2);
+        return $this->currency_symbol.number_format($this->total_price ?? 0, 2);
     }
 
     public function getFormattedDepositRequiredAttribute(): string
     {
-        return $this->currency_symbol . number_format($this->deposit_required ?? 0, 2);
+        return $this->currency_symbol.number_format($this->deposit_required ?? 0, 2);
     }
 
     public function getFormattedBalanceAmountAttribute(): string
     {
         $bal = $this->balance_amount ?? max(0, ($this->total_price ?? 0) - ($this->deposit_required ?? 0));
-        return $this->currency_symbol . number_format($bal, 2);
+
+        return $this->currency_symbol.number_format($bal, 2);
     }
 
     public function getCalculatedBalanceAmountAttribute(): float
@@ -215,12 +223,13 @@ class Proposal extends Model
         }
 
         $pct = $this->deposit_percentage ?? 30.0;
+
         return round((($this->total_price ?? 0) * $pct) / 100, 2);
     }
 
     public function getRouteChainAttribute(): string
     {
-        if (!empty($this->route_summary)) {
+        if (! empty($this->route_summary)) {
             return $this->route_summary;
         }
 
@@ -231,12 +240,12 @@ class Proposal extends Model
             }
 
             foreach ($this->itinerary as $day) {
-                if (!empty($day['destination']) && !in_array($day['destination'], $points)) {
+                if (! empty($day['destination']) && ! in_array($day['destination'], $points)) {
                     $points[] = $day['destination'];
                 }
             }
 
-            if ($this->end_location && !in_array($this->end_location, $points)) {
+            if ($this->end_location && ! in_array($this->end_location, $points)) {
                 $points[] = $this->end_location;
             }
 
@@ -245,17 +254,18 @@ class Proposal extends Model
             }
         }
 
-        return ($this->start_location ?: 'Arusha') . ' → ' . ($this->end_location ?: 'Zanzibar');
+        return ($this->start_location ?: 'Arusha').' → '.($this->end_location ?: 'Zanzibar');
     }
 
     public function getWhatsappMessageUrlAttribute(): string
     {
-        $text = "Hello {$this->client_name}, your personalized Tanzania safari proposal from Twina Safaris is ready. Please review your itinerary, accommodation and pricing here: " . $this->public_url;
+        $text = "Hello {$this->client_name}, your personalized Tanzania safari proposal from Twina Safaris is ready. Please review your itinerary, accommodation and pricing here: ".$this->public_url;
         $phone = preg_replace('/[^0-9]/', '', $this->client_phone ?? '');
-        if (!empty($phone)) {
-            return "https://api.whatsapp.com/send?phone={$phone}&text=" . urlencode($text);
+        if (! empty($phone)) {
+            return "https://api.whatsapp.com/send?phone={$phone}&text=".urlencode($text);
         }
-        return "https://api.whatsapp.com/send?text=" . urlencode($text);
+
+        return 'https://api.whatsapp.com/send?text='.urlencode($text);
     }
 
     public function getTotalTravelersAttribute(): int

@@ -9,22 +9,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tours', function (Blueprint $table) {
-            if (!Schema::hasColumn('tours', 'extras')) {
+            if (! Schema::hasColumn('tours', 'extras')) {
                 $table->json('extras')->nullable()->after('itinerary');
             }
         });
 
         Schema::table('safaris', function (Blueprint $table) {
-            if (!Schema::hasColumn('safaris', 'extras')) {
+            if (! Schema::hasColumn('safaris', 'extras')) {
                 $table->json('extras')->nullable()->after('itinerary');
             }
         });
 
         Schema::table('bookings', function (Blueprint $table) {
-            if (!Schema::hasColumn('bookings', 'selected_extras')) {
+            if (! Schema::hasColumn('bookings', 'selected_extras')) {
                 $table->json('selected_extras')->nullable()->after('special_requests');
             }
-            if (!Schema::hasColumn('bookings', 'extras_total')) {
+            if (! Schema::hasColumn('bookings', 'extras_total')) {
                 $table->decimal('extras_total', 10, 2)->default(0.00)->after('selected_extras');
             }
         });

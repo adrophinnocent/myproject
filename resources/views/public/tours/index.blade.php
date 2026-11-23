@@ -115,7 +115,7 @@
                         {{-- Price Tag Badge at TOP RIGHT --}}
                         <div class="absolute top-2.5 right-2.5 z-10">
                             <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-xs px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
-                                From ${{ number_format($tour->price) }} USD*
+                                From {{ $tour->display_price_formatted }}*
                             </span>
                         </div>
 

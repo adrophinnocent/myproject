@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -15,36 +14,25 @@ class ContactAcknowledgmentMail extends Mailable
     use Queueable, SerializesModels;
 
     /**
-     * Create a new message instance.
+     * @param  array{name?: string, email?: string, subject?: string, message?: string}  $contact
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(public array $contact) {}
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Contact Acknowledgment Mail',
+            subject: 'We received your message - '.config('app.name'),
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.contact-acknowledgment',
+            view: 'emails.contact-acknowledgment',
         );
     }
 
     /**
-     * Get the attachments for the message.
-     *
      * @return array<int, Attachment>
      */
     public function attachments(): array

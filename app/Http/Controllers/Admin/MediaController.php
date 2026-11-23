@@ -18,9 +18,9 @@ class MediaController extends Controller
             $query->where('type', $request->type);
         }
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%'.$request->search.'%')
-                  ->orWhere('alt', 'like', '%'.$request->search.'%');
+                    ->orWhere('alt', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -40,12 +40,12 @@ class MediaController extends Controller
     public function upload(Request $request)
     {
         try {
-            if (!$request->hasFile('file')) {
+            if (! $request->hasFile('file')) {
                 return response()->json(['success' => false, 'message' => 'No file provided.'], 422);
             }
 
             $request->validate([
-                'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,svg,mp4,pdf|max:20480',
+                'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,pdf|max:20480',
                 'alt' => 'nullable|string|max:255',
             ]);
 
@@ -59,7 +59,7 @@ class MediaController extends Controller
             $folder = 'media/'.date('Y/m');
 
             if ($type === 'image' && $extension !== 'svg') {
-                $filename = Str::slug($name).'-'.uniqid().'.webp';
+                $filename = Str::slug($name).'-'.Str::random(12).'.webp';
                 $path = $folder.'/'.$filename;
 
                 // Optimization using native PHP functions
@@ -88,16 +88,16 @@ class MediaController extends Controller
                     $mime = 'image/webp';
                 } else {
                     // Fallback to regular upload if image processing fails
-                    $filename = Str::slug($name).'-'.uniqid().'.'.$extension;
+                    $filename = Str::slug($name).'-'.Str::random(12).'.'.$extension;
                     $path = $file->storeAs($folder, $filename, 'public');
                 }
             } else {
-                $filename = Str::slug($name).'-'.uniqid().'.'.$extension;
+                $filename = Str::slug($name).'-'.Str::random(12).'.'.$extension;
                 $path = $file->storeAs($folder, $filename, 'public');
             }
 
-            if (!$path) {
-                throw new \Exception("Failed to store file on disk.");
+            if (! $path) {
+                throw new \Exception('Failed to store file on disk.');
             }
 
             $media = Media::create([
@@ -117,10 +117,11 @@ class MediaController extends Controller
                 'message' => 'File uploaded and optimized successfully.',
             ]);
         } catch (\Throwable $e) {
-            \Log::error('Media Upload Error: ' . $e->getMessage());
+            \Log::error('Media Upload Error: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Upload failed: ' . $e->getMessage()
+                'message' => 'Upload failed. Please try again or contact support if the problem persists.',
             ], 500);
         }
     }
@@ -138,9 +139,16 @@ class MediaController extends Controller
 
     public function bulkDelete(Request $request)
     {
-        $ids = $request->input('ids', []);
-        Media::whereIn('id', $ids)->get()->each(function ($m) {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:media,id',
+        ]);
+
+        Media::whereIn('id', $validated['ids'])->get()->each(function ($m) {
             Storage::disk('public')->delete($m->path);
+            if ($m->thumb) {
+                Storage::disk('public')->delete($m->thumb);
+            }
             $m->delete();
         });
 
@@ -151,12 +159,12 @@ class MediaController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'alt' => 'required|string|max:255'
+            'alt' => 'required|string|max:255',
         ]);
 
         $media->update([
             'name' => $request->name,
-            'alt' => $request->alt
+            'alt' => $request->alt,
         ]);
 
         return response()->json(['success' => true, 'media' => $media]);

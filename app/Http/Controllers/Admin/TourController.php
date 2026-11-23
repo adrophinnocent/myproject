@@ -6,9 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Destination;
 use App\Models\Tour;
+use App\Models\TourImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TourController extends Controller
 {
@@ -26,7 +31,7 @@ class TourController extends Controller
 
     public function togglePublish(Tour $tour)
     {
-        $tour->update(['is_published' => !$tour->is_published]);
+        $tour->update(['is_published' => ! $tour->is_published]);
         Cache::forget('nav_categories_v7');
 
         return back()->with('success', 'Tour '.($tour->is_published ? 'published' : 'unpublished').'!');
@@ -112,19 +117,19 @@ class TourController extends Controller
 
         // Auto-add extras column if missing on production database
         try {
-            if (!\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
-                \Illuminate\Support\Facades\DB::statement("ALTER TABLE tours ADD COLUMN extras LONGTEXT DEFAULT NULL");
+            if (! Schema::hasColumn('tours', 'extras')) {
+                DB::statement('ALTER TABLE tours ADD COLUMN extras LONGTEXT DEFAULT NULL');
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Auto-adding extras column failed: ' . $e->getMessage());
+            Log::error('Auto-adding extras column failed: '.$e->getMessage());
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
+        if (Schema::hasColumn('tours', 'extras')) {
             $cleanExtras = [];
             if ($request->has('extras') && is_array($request->extras)) {
                 foreach ($request->extras as $item) {
                     $name = trim(is_array($item) ? ($item['name'] ?? $item['title'] ?? '') : $item);
-                    if (!empty($name)) {
+                    if (! empty($name)) {
                         $cleanExtras[] = [
                             'name' => $name,
                             'description' => trim(is_array($item) ? ($item['description'] ?? '') : ''),
@@ -145,20 +150,36 @@ class TourController extends Controller
         if ($itineraryMode === 'code' && $request->filled('itinerary_raw')) {
             $decoded = json_decode($request->itinerary_raw, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: ' . json_last_error_msg()]);
+                return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: '.json_last_error_msg()]);
             }
 
             // If it's a full package object with keys
             if (isset($decoded['itinerary'])) {
                 $data['itinerary'] = $decoded['itinerary'];
-                if (isset($decoded['highlights'])) $data['highlights'] = $decoded['highlights'];
-                if (isset($decoded['inclusions'])) $data['inclusions'] = $decoded['inclusions'];
-                if (isset($decoded['exclusions'])) $data['exclusions'] = $decoded['exclusions'];
-                if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
-                if (isset($decoded['what_to_bring'])) $data['what_to_bring'] = $decoded['what_to_bring'];
-                if (isset($decoded['good_to_know'])) $data['good_to_know'] = $decoded['good_to_know'];
-                if (isset($decoded['price'])) $data['price'] = $decoded['price'];
-                if (isset($decoded['duration_days'])) $data['duration_days'] = $decoded['duration_days'];
+                if (isset($decoded['highlights'])) {
+                    $data['highlights'] = $decoded['highlights'];
+                }
+                if (isset($decoded['inclusions'])) {
+                    $data['inclusions'] = $decoded['inclusions'];
+                }
+                if (isset($decoded['exclusions'])) {
+                    $data['exclusions'] = $decoded['exclusions'];
+                }
+                if (isset($decoded['faqs'])) {
+                    $data['faqs'] = $decoded['faqs'];
+                }
+                if (isset($decoded['what_to_bring'])) {
+                    $data['what_to_bring'] = $decoded['what_to_bring'];
+                }
+                if (isset($decoded['good_to_know'])) {
+                    $data['good_to_know'] = $decoded['good_to_know'];
+                }
+                if (isset($decoded['price'])) {
+                    $data['price'] = $decoded['price'];
+                }
+                if (isset($decoded['duration_days'])) {
+                    $data['duration_days'] = $decoded['duration_days'];
+                }
             } else {
                 // Fallback to just itinerary if it's a simple array
                 $data['itinerary'] = $decoded;
@@ -170,13 +191,15 @@ class TourController extends Controller
                 $uploadedItineraryImages = $request->file('itinerary_images', []);
 
                 foreach ($itinerary as $dayKey => &$dayData) {
-                    if (!is_array($dayData)) continue;
+                    if (! is_array($dayData)) {
+                        continue;
+                    }
 
                     // Single uploaded image file
                     if (isset($uploadedItineraryImages[$dayKey]) && $uploadedItineraryImages[$dayKey]->isValid()) {
                         $path = $uploadedItineraryImages[$dayKey]->store('tours/itinerary', 'public');
                         $dayData['image'] = $path;
-                        $dayData['cover_image'] = 'storage/' . $path;
+                        $dayData['cover_image'] = 'storage/'.$path;
                     } else {
                         $existingImage = $dayData['image'] ?? $dayData['cover_image'] ?? null;
 
@@ -185,24 +208,26 @@ class TourController extends Controller
                             try {
                                 preg_match('/data:image\/(\w+);base64,/', $existingImage, $typeMatches);
                                 $ext = strtolower($typeMatches[1] ?? 'jpg');
-                                if ($ext === 'jpeg') $ext = 'jpg';
+                                if ($ext === 'jpeg') {
+                                    $ext = 'jpg';
+                                }
 
                                 $imageData = substr($existingImage, strpos($existingImage, ',') + 1);
                                 $decodedBytes = base64_decode($imageData);
 
                                 if ($decodedBytes !== false) {
-                                    $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                    \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
-                                    $existingImage = 'tours/itinerary/' . $filename;
+                                    $filename = 'tour_day_'.($dayKey + 1).'_'.time().'_'.Str::random(8).'.'.$ext;
+                                    Storage::disk('public')->put('tours/itinerary/'.$filename, $decodedBytes);
+                                    $existingImage = 'tours/itinerary/'.$filename;
                                 }
                             } catch (\Throwable $e) {
-                                \Illuminate\Support\Facades\Log::error('Failed to save tour single day base64 image: ' . $e->getMessage());
+                                Log::error('Failed to save tour single day base64 image: '.$e->getMessage());
                             }
                         }
 
                         $dayData['image'] = $existingImage;
                         if ($existingImage && empty($dayData['cover_image'])) {
-                            $dayData['cover_image'] = str_starts_with($existingImage, 'http') ? $existingImage : 'storage/' . ltrim($existingImage, '/');
+                            $dayData['cover_image'] = str_starts_with($existingImage, 'http') ? $existingImage : 'storage/'.ltrim($existingImage, '/');
                         }
                     }
 
@@ -219,25 +244,29 @@ class TourController extends Controller
                             $url = is_array($imgItem) ? ($imgItem['url'] ?? $imgItem['path'] ?? '') : $imgItem;
                             $caption = is_array($imgItem) ? ($imgItem['caption'] ?? '') : '';
 
-                            if (empty($url)) continue;
+                            if (empty($url)) {
+                                continue;
+                            }
 
                             // Save Base64 image uploaded directly from device
                             if (str_starts_with($url, 'data:image/')) {
                                 try {
                                     preg_match('/data:image\/(\w+);base64,/', $url, $typeMatches);
                                     $ext = strtolower($typeMatches[1] ?? 'jpg');
-                                    if ($ext === 'jpeg') $ext = 'jpg';
+                                    if ($ext === 'jpeg') {
+                                        $ext = 'jpg';
+                                    }
 
                                     $imageData = substr($url, strpos($url, ',') + 1);
                                     $decodedBytes = base64_decode($imageData);
 
                                     if ($decodedBytes !== false) {
-                                        $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                        \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
-                                        $url = 'storage/tours/itinerary/' . $filename;
+                                        $filename = 'tour_day_'.($dayKey + 1).'_'.time().'_'.Str::random(8).'.'.$ext;
+                                        Storage::disk('public')->put('tours/itinerary/'.$filename, $decodedBytes);
+                                        $url = 'storage/tours/itinerary/'.$filename;
                                     }
                                 } catch (\Throwable $e) {
-                                    \Illuminate\Support\Facades\Log::error('Failed to save tour day base64 image: ' . $e->getMessage());
+                                    Log::error('Failed to save tour day base64 image: '.$e->getMessage());
                                 }
                             }
 
@@ -249,9 +278,9 @@ class TourController extends Controller
                     }
 
                     // If single image exists but multiple images is empty, add single image to array for compatibility
-                    if (empty($processedImages) && !empty($dayData['image'])) {
+                    if (empty($processedImages) && ! empty($dayData['image'])) {
                         $processedImages[] = [
-                            'url' => str_starts_with($dayData['image'], 'http') ? $dayData['image'] : 'storage/' . ltrim($dayData['image'], '/'),
+                            'url' => str_starts_with($dayData['image'], 'http') ? $dayData['image'] : 'storage/'.ltrim($dayData['image'], '/'),
                             'caption' => $dayData['title'] ?? 'Day Image',
                         ];
                     }
@@ -278,13 +307,13 @@ class TourController extends Controller
 
         if ($request->hasFile('featured_image_upload')) {
             $image = $request->file('featured_image_upload');
-            $filename = time() . '.webp';
+            $filename = time().'.webp';
             $img = imagecreatefromstring(file_get_contents($image->getRealPath()));
             ob_start();
             imagewebp($img, null, 75); // 75% quality compression
             $content = ob_get_clean();
-            Storage::disk('public')->put('tours/' . $filename, $content);
-            $data['featured_image'] = 'tours/' . $filename;
+            Storage::disk('public')->put('tours/'.$filename, $content);
+            $data['featured_image'] = 'tours/'.$filename;
             imagedestroy($img);
         } elseif ($request->filled('featured_image')) {
             $data['featured_image'] = $request->featured_image;
@@ -413,19 +442,19 @@ class TourController extends Controller
 
         // Auto-add extras column if missing on production database
         try {
-            if (!\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
-                \Illuminate\Support\Facades\DB::statement("ALTER TABLE tours ADD COLUMN extras LONGTEXT DEFAULT NULL");
+            if (! Schema::hasColumn('tours', 'extras')) {
+                DB::statement('ALTER TABLE tours ADD COLUMN extras LONGTEXT DEFAULT NULL');
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Auto-adding extras column failed: ' . $e->getMessage());
+            Log::error('Auto-adding extras column failed: '.$e->getMessage());
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasColumn('tours', 'extras')) {
+        if (Schema::hasColumn('tours', 'extras')) {
             $cleanExtras = [];
             if ($request->has('extras') && is_array($request->extras)) {
                 foreach ($request->extras as $item) {
                     $name = trim(is_array($item) ? ($item['name'] ?? $item['title'] ?? '') : $item);
-                    if (!empty($name)) {
+                    if (! empty($name)) {
                         $cleanExtras[] = [
                             'name' => $name,
                             'description' => trim(is_array($item) ? ($item['description'] ?? '') : ''),
@@ -449,20 +478,36 @@ class TourController extends Controller
         if ($itineraryMode === 'code' && $request->filled('itinerary_raw')) {
             $decoded = json_decode($request->itinerary_raw, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: ' . json_last_error_msg()]);
+                return back()->withInput()->withErrors(['itinerary_raw' => 'Invalid JSON Format: '.json_last_error_msg()]);
             }
 
             // If it's a full package object with keys
             if (isset($decoded['itinerary'])) {
                 $data['itinerary'] = $decoded['itinerary'];
-                if (isset($decoded['highlights'])) $data['highlights'] = $decoded['highlights'];
-                if (isset($decoded['inclusions'])) $data['inclusions'] = $decoded['inclusions'];
-                if (isset($decoded['exclusions'])) $data['exclusions'] = $decoded['exclusions'];
-                if (isset($decoded['faqs'])) $data['faqs'] = $decoded['faqs'];
-                if (isset($decoded['what_to_bring'])) $data['what_to_bring'] = $decoded['what_to_bring'];
-                if (isset($decoded['good_to_know'])) $data['good_to_know'] = $decoded['good_to_know'];
-                if (isset($decoded['price'])) $data['price'] = $decoded['price'];
-                if (isset($decoded['duration_days'])) $data['duration_days'] = $decoded['duration_days'];
+                if (isset($decoded['highlights'])) {
+                    $data['highlights'] = $decoded['highlights'];
+                }
+                if (isset($decoded['inclusions'])) {
+                    $data['inclusions'] = $decoded['inclusions'];
+                }
+                if (isset($decoded['exclusions'])) {
+                    $data['exclusions'] = $decoded['exclusions'];
+                }
+                if (isset($decoded['faqs'])) {
+                    $data['faqs'] = $decoded['faqs'];
+                }
+                if (isset($decoded['what_to_bring'])) {
+                    $data['what_to_bring'] = $decoded['what_to_bring'];
+                }
+                if (isset($decoded['good_to_know'])) {
+                    $data['good_to_know'] = $decoded['good_to_know'];
+                }
+                if (isset($decoded['price'])) {
+                    $data['price'] = $decoded['price'];
+                }
+                if (isset($decoded['duration_days'])) {
+                    $data['duration_days'] = $decoded['duration_days'];
+                }
             } else {
                 // Fallback to just itinerary if it's a simple array
                 $data['itinerary'] = $decoded;
@@ -474,15 +519,17 @@ class TourController extends Controller
                 $uploadedItineraryImages = $request->file('itinerary_images', []);
 
                 foreach ($itinerary as $dayKey => &$dayData) {
-                    if (!is_array($dayData)) continue;
+                    if (! is_array($dayData)) {
+                        continue;
+                    }
 
                     $existingImage = $dayData['image'] ?? $dayData['cover_image'] ?? null;
 
                     if (isset($uploadedItineraryImages[$dayKey]) && $uploadedItineraryImages[$dayKey]->isValid()) {
                         $path = $uploadedItineraryImages[$dayKey]->store('tours/itinerary', 'public');
                         $dayData['image'] = $path;
-                        $dayData['cover_image'] = 'storage/' . $path;
-                    } elseif (!empty($dayData['remove_image']) && $dayData['remove_image'] == '1') {
+                        $dayData['cover_image'] = 'storage/'.$path;
+                    } elseif (! empty($dayData['remove_image']) && $dayData['remove_image'] == '1') {
                         $dayData['image'] = null;
                         $dayData['cover_image'] = null;
                     } else {
@@ -491,24 +538,26 @@ class TourController extends Controller
                             try {
                                 preg_match('/data:image\/(\w+);base64,/', $existingImage, $typeMatches);
                                 $ext = strtolower($typeMatches[1] ?? 'jpg');
-                                if ($ext === 'jpeg') $ext = 'jpg';
+                                if ($ext === 'jpeg') {
+                                    $ext = 'jpg';
+                                }
 
                                 $imageData = substr($existingImage, strpos($existingImage, ',') + 1);
                                 $decodedBytes = base64_decode($imageData);
 
                                 if ($decodedBytes !== false) {
-                                    $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                    \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
-                                    $existingImage = 'tours/itinerary/' . $filename;
+                                    $filename = 'tour_day_'.($dayKey + 1).'_'.time().'_'.Str::random(8).'.'.$ext;
+                                    Storage::disk('public')->put('tours/itinerary/'.$filename, $decodedBytes);
+                                    $existingImage = 'tours/itinerary/'.$filename;
                                 }
                             } catch (\Throwable $e) {
-                                \Illuminate\Support\Facades\Log::error('Failed to save tour single day base64 image: ' . $e->getMessage());
+                                Log::error('Failed to save tour single day base64 image: '.$e->getMessage());
                             }
                         }
 
                         $dayData['image'] = $existingImage;
                         if ($existingImage && empty($dayData['cover_image'])) {
-                            $dayData['cover_image'] = str_starts_with($existingImage, 'http') ? $existingImage : 'storage/' . ltrim($existingImage, '/');
+                            $dayData['cover_image'] = str_starts_with($existingImage, 'http') ? $existingImage : 'storage/'.ltrim($existingImage, '/');
                         }
                     }
 
@@ -525,25 +574,29 @@ class TourController extends Controller
                             $url = is_array($imgItem) ? ($imgItem['url'] ?? $imgItem['path'] ?? '') : $imgItem;
                             $caption = is_array($imgItem) ? ($imgItem['caption'] ?? '') : '';
 
-                            if (empty($url)) continue;
+                            if (empty($url)) {
+                                continue;
+                            }
 
                             // Save Base64 image uploaded directly from device
                             if (str_starts_with($url, 'data:image/')) {
                                 try {
                                     preg_match('/data:image\/(\w+);base64,/', $url, $typeMatches);
                                     $ext = strtolower($typeMatches[1] ?? 'jpg');
-                                    if ($ext === 'jpeg') $ext = 'jpg';
+                                    if ($ext === 'jpeg') {
+                                        $ext = 'jpg';
+                                    }
 
                                     $imageData = substr($url, strpos($url, ',') + 1);
                                     $decodedBytes = base64_decode($imageData);
 
                                     if ($decodedBytes !== false) {
-                                        $filename = 'tour_day_' . ($dayKey + 1) . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $ext;
-                                        \Illuminate\Support\Facades\Storage::disk('public')->put('tours/itinerary/' . $filename, $decodedBytes);
-                                        $url = 'storage/tours/itinerary/' . $filename;
+                                        $filename = 'tour_day_'.($dayKey + 1).'_'.time().'_'.Str::random(8).'.'.$ext;
+                                        Storage::disk('public')->put('tours/itinerary/'.$filename, $decodedBytes);
+                                        $url = 'storage/tours/itinerary/'.$filename;
                                     }
                                 } catch (\Throwable $e) {
-                                    \Illuminate\Support\Facades\Log::error('Failed to save tour day base64 image: ' . $e->getMessage());
+                                    Log::error('Failed to save tour day base64 image: '.$e->getMessage());
                                 }
                             }
 
@@ -555,9 +608,9 @@ class TourController extends Controller
                     }
 
                     // If single image exists but multiple images is empty, add single image to array for compatibility
-                    if (empty($processedImages) && !empty($dayData['image'])) {
+                    if (empty($processedImages) && ! empty($dayData['image'])) {
                         $processedImages[] = [
-                            'url' => str_starts_with($dayData['image'], 'http') ? $dayData['image'] : 'storage/' . ltrim($dayData['image'], '/'),
+                            'url' => str_starts_with($dayData['image'], 'http') ? $dayData['image'] : 'storage/'.ltrim($dayData['image'], '/'),
                             'caption' => $dayData['title'] ?? 'Day Image',
                         ];
                     }
@@ -583,8 +636,8 @@ class TourController extends Controller
         $data['transport_included'] = $request->has('transport_included') ? 1 : 0;
 
         if ($request->hasFile('featured_image_upload')) {
-            if ($tour->featured_image && !str_contains($tour->featured_image, 'media/')) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($tour->featured_image);
+            if ($tour->featured_image && ! str_contains($tour->featured_image, 'media/')) {
+                Storage::disk('public')->delete($tour->featured_image);
             }
             $data['featured_image'] = $request->file('featured_image_upload')->store('tours', 'public');
         } elseif ($request->filled('featured_image')) {
@@ -629,7 +682,7 @@ class TourController extends Controller
         return redirect()->route('admin.tours.index')->with('success', 'Tour updated successfully!');
     }
 
-    public function deleteImage(\App\Models\TourImage $image)
+    public function deleteImage(TourImage $image)
     {
         Storage::disk('public')->delete($image->image_path);
         $image->delete();

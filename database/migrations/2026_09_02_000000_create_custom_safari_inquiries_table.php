@@ -71,7 +71,7 @@ return new class extends Migration
                 'reference_code', 'version', 'subtitle', 'country', 'duration_nights',
                 'start_location', 'end_location', 'destinations', 'safari_style',
                 'accommodation_level', 'transport_type', 'is_private', 'highlights',
-                'optional_extras', 'cancellation_policy', 'custom_safari_inquiry_id'
+                'optional_extras', 'cancellation_policy', 'custom_safari_inquiry_id',
             ]);
         });
 

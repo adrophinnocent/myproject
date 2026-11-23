@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use App\Models\ProposalTemplate;
-use App\Models\ProposalTemplateDay;
 use App\Models\ProposalTemplateAccommodation;
-use App\Models\ProposalTemplateInclusion;
+use App\Models\ProposalTemplateDay;
 use App\Models\ProposalTemplateExclusion;
+use App\Models\ProposalTemplateInclusion;
 use App\Models\ProposalTemplatePrice;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -31,9 +31,9 @@ return new class extends Migration
                 'default_adult_price' => 1600.00,
                 'default_child_price' => 800.00,
                 'default_deposit_percentage' => 30.00,
-                'payment_terms' => "A 30% deposit is required upon booking confirmation. The remaining balance is due 30 days prior to departure date.",
-                'terms_conditions' => "Prices are based on private 4x4 safari and subject to park fee regulations.",
-                'cancellation_policy' => "Cancellations 60+ days prior to arrival receive a full refund minus administrative bank charges.",
+                'payment_terms' => 'A 30% deposit is required upon booking confirmation. The remaining balance is due 30 days prior to departure date.',
+                'terms_conditions' => 'Prices are based on private 4x4 safari and subject to park fee regulations.',
+                'cancellation_policy' => 'Cancellations 60+ days prior to arrival receive a full refund minus administrative bank charges.',
                 'status' => 'active',
                 'inclusions_list' => [
                     'All national park entry fees & conservation fees',
@@ -41,14 +41,14 @@ return new class extends Migration
                     'Professional English-speaking driver/guide',
                     'Full board accommodation at comfort lodges/tented camps',
                     'Unlimited bottled drinking water in vehicle',
-                    'All government taxes and VAT'
+                    'All government taxes and VAT',
                 ],
                 'exclusions_list' => [
                     'International flights & visas',
                     'Travel and medical insurance',
                     'Tips for driver/guide and lodge staff',
                     'Personal expenses and laundry',
-                    'Optional hot air balloon safari ($550/person)'
+                    'Optional hot air balloon safari ($550/person)',
                 ],
                 'accommodations_list' => [
                     ['property_name' => 'Arusha Planet Lodge', 'location' => 'Arusha', 'category' => 'Comfort', 'room_type' => 'Standard Room', 'nights' => 1, 'meal_plan' => 'Bed & Breakfast'],
@@ -163,7 +163,7 @@ return new class extends Migration
                         'room_type' => 'N/A',
                         'cover_image' => 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1200&q=80',
                     ],
-                ]
+                ],
             ],
             [
                 'title' => '8 Days Tanzania Luxury Safari',
@@ -183,21 +183,21 @@ return new class extends Migration
                 'default_adult_price' => 2900.00,
                 'default_child_price' => 1450.00,
                 'default_deposit_percentage' => 30.00,
-                'payment_terms' => "30% deposit required at booking. Balance 30 days prior to travel.",
-                'terms_conditions' => "Luxury safari package including premium accommodations.",
-                'cancellation_policy' => "Cancellation policies follow luxury lodge rules.",
+                'payment_terms' => '30% deposit required at booking. Balance 30 days prior to travel.',
+                'terms_conditions' => 'Luxury safari package including premium accommodations.',
+                'cancellation_policy' => 'Cancellation policies follow luxury lodge rules.',
                 'status' => 'active',
                 'inclusions_list' => [
                     'All park fees and luxury crater service fees',
                     'Private luxury 4x4 Land Cruiser with fridge & Wi-Fi',
                     'Top-tier professional safari guide',
                     'Luxury lodge accommodations on Full Board & drinks',
-                    'All airport transfers'
+                    'All airport transfers',
                 ],
                 'exclusions_list' => [
                     'International flights & visas',
                     'Hot air balloon safari ($550 per person)',
-                    'Gratuities and tips'
+                    'Gratuities and tips',
                 ],
                 'accommodations_list' => [
                     ['property_name' => 'Gran Melia Arusha', 'location' => 'Arusha', 'category' => 'Luxury', 'room_type' => 'Executive Suite', 'nights' => 1, 'meal_plan' => 'Bed & Breakfast'],
@@ -248,7 +248,7 @@ return new class extends Migration
                         'accommodation_property' => 'Four Seasons Safari Lodge',
                         'cover_image' => 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1200&q=80',
                     ],
-                ]
+                ],
             ],
             [
                 'title' => '5 Days Zanzibar Escape',
@@ -268,20 +268,20 @@ return new class extends Migration
                 'default_adult_price' => 1200.00,
                 'default_child_price' => 600.00,
                 'default_deposit_percentage' => 30.00,
-                'payment_terms' => "30% deposit required upon confirmation.",
-                'terms_conditions' => "Beach package in Zanzibar.",
-                'cancellation_policy' => "Full refund up to 30 days before arrival.",
+                'payment_terms' => '30% deposit required upon confirmation.',
+                'terms_conditions' => 'Beach package in Zanzibar.',
+                'cancellation_policy' => 'Full refund up to 30 days before arrival.',
                 'status' => 'active',
                 'inclusions_list' => [
                     'Private airport & hotel transfers in Zanzibar',
                     'Accommodations in 5-star beachfront resort',
                     'Guided Stone Town & Spice Plantation tour',
-                    'Safari Blue full day dhow cruise with seafood lunch'
+                    'Safari Blue full day dhow cruise with seafood lunch',
                 ],
                 'exclusions_list' => [
                     'Flights into Zanzibar',
                     'Zanzibar infrastructure tax ($5/night/person)',
-                    'Tips and personal items'
+                    'Tips and personal items',
                 ],
                 'accommodations_list' => [
                     ['property_name' => 'The Park Hyatt Stone Town', 'location' => 'Stone Town', 'category' => 'Luxury', 'room_type' => 'Ocean Front Room', 'nights' => 1, 'meal_plan' => 'Bed & Breakfast'],
@@ -316,7 +316,7 @@ return new class extends Migration
                         'accommodation_property' => 'Riu Palace Zanzibar',
                         'cover_image' => 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
                     ],
-                ]
+                ],
             ],
             [
                 'title' => '7 Days Safari + Zanzibar',
@@ -336,21 +336,21 @@ return new class extends Migration
                 'default_adult_price' => 1975.00,
                 'default_child_price' => 987.50,
                 'default_deposit_percentage' => 30.00,
-                'payment_terms' => "30% deposit to secure safari and domestic flight.",
-                'terms_conditions' => "Bush and beach combo itinerary.",
-                'cancellation_policy' => "Standard cancellation policy applies.",
+                'payment_terms' => '30% deposit to secure safari and domestic flight.',
+                'terms_conditions' => 'Bush and beach combo itinerary.',
+                'cancellation_policy' => 'Standard cancellation policy applies.',
                 'status' => 'active',
                 'inclusions_list' => [
                     'All park entrance fees & crater fees',
                     'Private 4x4 Land Cruiser safari',
                     'Domestic flight from Arusha/Seronera to Zanzibar',
                     'Comfort lodge & beach resort accommodations',
-                    'All airport and ferry transfers'
+                    'All airport and ferry transfers',
                 ],
                 'exclusions_list' => [
                     'International flights & visas',
                     'Zanzibar infrastructure tax',
-                    'Tips and personal expenses'
+                    'Tips and personal expenses',
                 ],
                 'accommodations_list' => [
                     ['property_name' => 'Tarangire Safari Lodge', 'location' => 'Tarangire', 'category' => 'Comfort', 'room_type' => 'Luxury Tent', 'nights' => 1, 'meal_plan' => 'Full Board'],
@@ -372,7 +372,7 @@ return new class extends Migration
                         'accommodation_property' => 'Tarangire Safari Lodge',
                         'cover_image' => 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80',
                     ],
-                ]
+                ],
             ],
             [
                 'title' => '10 Days Tanzania Safari',
@@ -392,21 +392,21 @@ return new class extends Migration
                 'default_adult_price' => 2400.00,
                 'default_child_price' => 1200.00,
                 'default_deposit_percentage' => 30.00,
-                'payment_terms' => "30% deposit required at booking.",
-                'terms_conditions' => "10-day comprehensive safari.",
-                'cancellation_policy' => "Standard cancellation policy.",
+                'payment_terms' => '30% deposit required at booking.',
+                'terms_conditions' => '10-day comprehensive safari.',
+                'cancellation_policy' => 'Standard cancellation policy.',
                 'status' => 'active',
                 'inclusions_list' => [
                     'All national park & crater fees for 10 days',
                     'Private 4x4 Land Cruiser with unlimited mileage',
                     'Professional safari guide',
                     'Full board accommodation at comfort lodges',
-                    'Unlimited drinking water in safari vehicle'
+                    'Unlimited drinking water in safari vehicle',
                 ],
                 'exclusions_list' => [
                     'International flights',
                     'Visas & travel insurance',
-                    'Tips for driver guide'
+                    'Tips for driver guide',
                 ],
                 'accommodations_list' => [
                     ['property_name' => 'Arusha Planet Lodge', 'location' => 'Arusha', 'category' => 'Comfort', 'room_type' => 'Standard', 'nights' => 1, 'meal_plan' => 'Bed & Breakfast'],
@@ -430,8 +430,8 @@ return new class extends Migration
                         'accommodation_property' => 'Arusha Planet Lodge',
                         'cover_image' => 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
 
         foreach ($templatesData as $tData) {
@@ -545,7 +545,5 @@ return new class extends Migration
         }
     }
 
-    public function down(): void
-    {
-    }
+    public function down(): void {}
 };

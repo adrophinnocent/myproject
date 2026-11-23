@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Proposal;
 use App\Models\AdminNotification;
+use App\Models\Proposal;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -35,7 +35,7 @@ class ProposalController extends Controller
         if ($isFirstView) {
             AdminNotification::create([
                 'type' => 'proposal',
-                'title' => 'Proposal Viewed: ' . $proposal->client_name,
+                'title' => 'Proposal Viewed: '.$proposal->client_name,
                 'message' => "Client {$proposal->client_name} has viewed their proposal '{$proposal->title}' for the first time.",
                 'link' => route('admin.proposals.show', $proposal),
                 'is_read' => false,
@@ -50,15 +50,27 @@ class ProposalController extends Controller
     {
         $proposal = Proposal::where('token', $token)->firstOrFail();
 
+        if (! in_array($proposal->status, [
+            Proposal::STATUS_SENT,
+            Proposal::STATUS_VIEWED,
+            Proposal::STATUS_CHANGES_REQUESTED,
+        ], true)) {
+            return redirect()->back()->with('error', 'This proposal can no longer be accepted in its current state. Please contact our team.');
+        }
+
+        if ($proposal->valid_until && $proposal->valid_until->isPast()) {
+            return redirect()->back()->with('error', 'This proposal has expired. Please contact our team for an updated quote.');
+        }
+
         $validated = $request->validate([
             'signature_name' => 'required|string|max:255',
             'client_email' => 'nullable|email|max:255',
             'client_notes' => 'nullable|string|max:2000',
         ]);
 
-        $feedbackNote = "Accepted by: " . $validated['signature_name'];
-        if (!empty($validated['client_notes'])) {
-            $feedbackNote .= "\nClient Notes: " . $validated['client_notes'];
+        $feedbackNote = 'Accepted by: '.$validated['signature_name'];
+        if (! empty($validated['client_notes'])) {
+            $feedbackNote .= "\nClient Notes: ".$validated['client_notes'];
         }
 
         $proposal->update([
@@ -71,7 +83,7 @@ class ProposalController extends Controller
 
         AdminNotification::create([
             'type' => 'proposal_accepted',
-            'title' => 'Proposal Accepted: ' . $proposal->client_name,
+            'title' => 'Proposal Accepted: '.$proposal->client_name,
             'message' => "Client {$proposal->client_name} ACCEPTED proposal '{$proposal->title}' ({$proposal->full_reference})!",
             'link' => route('admin.proposals.show', $proposal),
             'is_read' => false,
@@ -84,6 +96,14 @@ class ProposalController extends Controller
     {
         $proposal = Proposal::where('token', $token)->firstOrFail();
 
+        if (! in_array($proposal->status, [
+            Proposal::STATUS_SENT,
+            Proposal::STATUS_VIEWED,
+            Proposal::STATUS_CHANGES_REQUESTED,
+        ], true)) {
+            return redirect()->back()->with('error', 'This proposal can no longer be changed. Please contact our team.');
+        }
+
         $validated = $request->validate([
             'feedback' => 'required|string|min:5|max:2000',
         ]);
@@ -95,7 +115,7 @@ class ProposalController extends Controller
 
         AdminNotification::create([
             'type' => 'proposal_changes',
-            'title' => 'Changes Requested: ' . $proposal->client_name,
+            'title' => 'Changes Requested: '.$proposal->client_name,
             'message' => "Client {$proposal->client_name} requested changes for proposal '{$proposal->title}'",
             'link' => route('admin.proposals.show', $proposal),
             'is_read' => false,
@@ -111,11 +131,11 @@ class ProposalController extends Controller
         $pdf = Pdf::loadView('proposals.pdf', compact('proposal'))
             ->setOption('isRemoteEnabled', true)
             ->setOption('isHtml5ParserEnabled', true);
-        $filename = 'Safari-Proposal-' . Str::slug($proposal->client_name) . '.pdf';
+        $filename = 'Safari-Proposal-'.Str::slug($proposal->client_name).'.pdf';
 
         return response($pdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
             'X-Robots-Tag' => 'noindex, nofollow, noarchive',
         ]);
     }

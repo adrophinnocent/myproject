@@ -12,6 +12,7 @@ class SliderController extends Controller
     public function index()
     {
         $sliders = Slider::orderBy('order')->get();
+
         return view('admin.sliders.index', compact('sliders'));
     }
 
@@ -34,7 +35,7 @@ class SliderController extends Controller
             'active' => 'nullable',
         ]);
 
-        $slider = new Slider();
+        $slider = new Slider;
         $slider->title = $request->title;
         $slider->subtitle = $request->subtitle;
         $slider->page = $request->page;
@@ -93,8 +94,8 @@ class SliderController extends Controller
         $slider->active = $request->has('active');
 
         if ($request->hasFile('image_upload')) {
-            if ($slider->image && !str_contains($slider->image, 'media/')) {
-                 Storage::disk('public')->delete($slider->image);
+            if ($slider->image && ! str_contains($slider->image, 'media/')) {
+                Storage::disk('public')->delete($slider->image);
             }
             $file = $request->file('image_upload');
             $slider->mime_type = $file->getMimeType();

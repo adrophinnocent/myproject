@@ -8,7 +8,7 @@ class Lead extends Model
 {
     protected $fillable = [
         'campaign_id', 'name', 'email', 'phone', 'country',
-        'travel_date', 'travelers_count', 'message', 'status'
+        'travel_date', 'travelers_count', 'message', 'status',
     ];
 
     public function campaign()

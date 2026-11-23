@@ -43,14 +43,14 @@ return new class extends Migration
             $table->dropColumn([
                 'valid_until', 'route_summary', 'deposit_percentage', 'balance_amount',
                 'balance_due_date', 'payment_methods', 'payment_instructions', 'refund_policy',
-                'first_viewed_at', 'last_viewed_at', 'view_count', 'signature_name', 'accepted_email'
+                'first_viewed_at', 'last_viewed_at', 'view_count', 'signature_name', 'accepted_email',
             ]);
         });
 
         Schema::table('proposal_templates', function (Blueprint $table) {
             $table->dropColumn([
                 'route_summary', 'default_deposit_percentage', 'payment_methods',
-                'payment_instructions', 'refund_policy'
+                'payment_instructions', 'refund_policy',
             ]);
         });
     }

@@ -9,19 +9,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('faqs', function (Blueprint $table) {
-            if (!Schema::hasColumn('faqs', 'tour_id')) {
+            if (! Schema::hasColumn('faqs', 'tour_id')) {
                 $table->foreignId('tour_id')->nullable()->constrained('tours')->onDelete('cascade');
             }
-            if (!Schema::hasColumn('faqs', 'destination_id')) {
+            if (! Schema::hasColumn('faqs', 'destination_id')) {
                 $table->foreignId('destination_id')->nullable()->constrained('destinations')->onDelete('cascade');
             }
-            if (!Schema::hasColumn('faqs', 'category_id')) {
+            if (! Schema::hasColumn('faqs', 'category_id')) {
                 $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
             }
-            if (!Schema::hasColumn('faqs', 'primary_keyword')) {
+            if (! Schema::hasColumn('faqs', 'primary_keyword')) {
                 $table->string('primary_keyword')->nullable();
             }
-            if (!Schema::hasColumn('faqs', 'is_verified_traveler')) {
+            if (! Schema::hasColumn('faqs', 'is_verified_traveler')) {
                 $table->boolean('is_verified_traveler')->default(true);
             }
         });

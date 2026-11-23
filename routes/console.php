@@ -7,7 +7,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// Explicitly register the banners compression command
-Artisan::command('banners:compress', function () {
-    $this->call(\App\Console\Commands\CompressBanners::class);
-})->purpose('Compress and convert all banner images to WebP format');
+// App\Console\Commands\CompressBanners is auto-discovered; no manual
+// registration needed here (it previously shadowed the real command).

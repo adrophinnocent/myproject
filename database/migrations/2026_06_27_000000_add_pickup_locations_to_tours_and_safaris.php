@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasColumn('tours', 'pickup_locations')) {
+        if (! Schema::hasColumn('tours', 'pickup_locations')) {
             Schema::table('tours', function (Blueprint $table) {
                 $table->json('pickup_locations')->nullable();
             });
         }
 
         Schema::table('safaris', function (Blueprint $table) {
-            if (!Schema::hasColumn('safaris', 'pickup_locations')) {
+            if (! Schema::hasColumn('safaris', 'pickup_locations')) {
                 $table->json('pickup_locations')->nullable();
             }
-            if (!Schema::hasColumn('safaris', 'meeting_point')) {
+            if (! Schema::hasColumn('safaris', 'meeting_point')) {
                 $table->string('meeting_point')->nullable();
             }
         });

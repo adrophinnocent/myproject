@@ -4,27 +4,40 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class TripPlan extends Model
 {
     use HasFactory;
 
     const STATUS_NEW = 'new';
+
     const STATUS_REVIEWING = 'reviewing';
+
     const STATUS_PREPARING = 'preparing_plan';
+
     const STATUS_SENT = 'sent';
+
     const STATUS_VIEWED = 'viewed';
+
     const STATUS_CHANGES_REQUESTED = 'changes_requested';
+
     const STATUS_ACCEPTED = 'accepted';
+
     const STATUS_BOOKING = 'booking';
+
     const STATUS_CONFIRMED = 'confirmed';
+
     const STATUS_CLOSED = 'closed';
+
     const STATUS_DECLINED = 'declined';
+
     const STATUS_CANCELLED = 'cancelled';
+
     const STATUS_EXPIRED = 'expired';
 
     protected $fillable = [
-        'name', 'email', 'phone', 'nationality',
+        'token', 'name', 'email', 'phone', 'nationality',
         'destination_ids', 'travel_style', 'budget_range',
         'duration', 'accommodation_level', 'interests',
         'travel_date', 'group_size', 'adults', 'children',
@@ -33,7 +46,7 @@ class TripPlan extends Model
         'discount_amount', 'tax_amount', 'deposit_amount', 'balance_amount',
         'currency', 'itinerary_data', 'inclusions_data', 'exclusions_data',
         'terms_conditions', 'sent_at', 'viewed_at', 'accepted_at',
-        'declined_at', 'payment_status', 'booking_id'
+        'declined_at', 'payment_status', 'booking_id',
     ];
 
     protected function casts(): array
@@ -57,6 +70,19 @@ class TripPlan extends Model
             'deposit_amount' => 'decimal:2',
             'balance_amount' => 'decimal:2',
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (TripPlan $plan) {
+            if (empty($plan->token)) {
+                do {
+                    $plan->token = Str::random(48);
+                } while (static::where('token', $plan->token)->exists());
+            }
+        });
     }
 
     public function booking()

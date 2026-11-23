@@ -2,45 +2,49 @@
 
 namespace App\Services;
 
+use App\Models\Booking;
+use App\Models\TripPlan;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PdfService
 {
+    /**
+     * Generated PDFs contain customer PII and must never be written to the
+     * public disk. They are created in storage/app/private/temp and are
+     * deleted by the caller after the email/download completes.
+     */
     public function generateItinerary($model)
     {
-        $reference = $model instanceof \App\Models\Booking ? $model->booking_reference : 'TP-' . $model->id;
-        $fileName = 'itinerary-' . $reference . '.pdf';
+        $fileName = 'itinerary-'.Str::random(32).'.pdf';
 
         $pdf = Pdf::loadView('emails.itinerary-pdf', [
-            'booking' => $model instanceof \App\Models\Booking ? $model : null,
-            'tripPlan' => $model instanceof \App\Models\TripPlan ? $model : null
+            'booking' => $model instanceof Booking ? $model : null,
+            'tripPlan' => $model instanceof TripPlan ? $model : null,
         ]);
 
-        $storageDir = storage_path('app/public/temp');
-        if (!file_exists($storageDir)) {
-            mkdir($storageDir, 0755, true);
-        }
-
-        $fullPath = $storageDir . '/' . $fileName;
-        file_put_contents($fullPath, $pdf->output());
-
-        return $fullPath;
+        return $this->writePrivate($fileName, $pdf->output());
     }
 
     public function generateInvoice($booking)
     {
-        $fileName = 'invoice-' . $booking->booking_reference . '.pdf';
+        $fileName = 'invoice-'.Str::random(32).'.pdf';
 
         $pdf = Pdf::loadView('emails.invoice-pdf', compact('booking'));
 
-        $storageDir = storage_path('app/public/temp');
-        if (!file_exists($storageDir)) {
+        return $this->writePrivate($fileName, $pdf->output());
+    }
+
+    private function writePrivate(string $fileName, string $contents): string
+    {
+        $storageDir = storage_path('app/private/temp');
+
+        if (! is_dir($storageDir)) {
             mkdir($storageDir, 0755, true);
         }
 
-        $fullPath = $storageDir . '/' . $fileName;
-        file_put_contents($fullPath, $pdf->output());
+        $fullPath = $storageDir.DIRECTORY_SEPARATOR.$fileName;
+        file_put_contents($fullPath, $contents);
 
         return $fullPath;
     }

@@ -131,8 +131,8 @@
                     <span x-text="saved ? 'Saved' : 'Save'">{{ __('Save') }}</span>
                 </button>
                 <div class="text-right ml-1">
-                    <span class="text-2xl md:text-3xl font-black text-amber-600 leading-none">${{ number_format($tour->price) }}</span>
-                    <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block mt-0.5">{{ __('FROM USD') }}</span>
+                    <span class="text-2xl md:text-3xl font-black text-amber-600 leading-none">{{ $tour->display_price_formatted }}</span>
+                    <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block mt-0.5">{{ __('FROM') }} {{ \App\Helpers\Currency::current() }}</span>
                 </div>
                 <a href="#booking-card" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-7 py-3 rounded-2xl text-xs uppercase tracking-widest shadow-md transition-all hover:scale-105 inline-flex items-center gap-2">
                     {{ __('BOOK NOW') }}
@@ -929,7 +929,7 @@
                 <div id="booking-card" class="bg-white rounded-3xl p-6 md:p-8 border border-stone-200/90 shadow-lg relative overflow-hidden">
                     <div class="flex items-center justify-between gap-2 mb-2">
                         <span class="text-xs text-stone-400 font-semibold line-through">
-                            From ${{ number_format($tour->price * 1.5) }}
+                            From {{ \App\Helpers\Currency::format($tour->price * 1.5) }}
                         </span>
                         <span class="px-2.5 py-1 bg-red-600 text-white font-black text-[10px] uppercase rounded-md tracking-wider">
                             50% off
@@ -937,8 +937,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <span class="text-xs font-bold text-stone-900 uppercase tracking-wider">US</span>
-                        <span class="text-3xl md:text-4xl font-black text-stone-900 tracking-tight">${{ number_format($tour->price) }}</span>
+                        <span class="text-xs font-bold text-stone-900 uppercase tracking-wider">{{ \App\Helpers\Currency::current() }}</span>
+                        <span class="text-3xl md:text-4xl font-black text-stone-900 tracking-tight">{{ $tour->display_price_formatted }}</span>
                         <span class="text-xs font-semibold text-stone-500">per person</span>
                     </div>
 

@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class DestinationController extends Controller
 {
@@ -34,7 +34,7 @@ class DestinationController extends Controller
             'is_featured' => 'nullable',
         ]);
 
-        $destination = new Destination();
+        $destination = new Destination;
         $destination->name = $request->name;
         $destination->slug = $request->slug;
         $destination->country = $request->country;
@@ -44,15 +44,15 @@ class DestinationController extends Controller
 
         if ($request->hasFile('featured_image')) {
             $image = $request->file('featured_image');
-            $filename = time() . '.webp';
+            $filename = time().'.webp';
             $imageContent = file_get_contents($image->getRealPath());
             $img = @imagecreatefromstring($imageContent);
             if ($img) {
                 ob_start();
                 imagewebp($img, null, 75);
                 $content = ob_get_clean();
-                Storage::disk('public')->put('destinations/' . $filename, $content);
-                $destination->featured_image = 'destinations/' . $filename;
+                Storage::disk('public')->put('destinations/'.$filename, $content);
+                $destination->featured_image = 'destinations/'.$filename;
                 imagedestroy($img);
             } else {
                 // Fallback if compression fails
@@ -98,15 +98,15 @@ class DestinationController extends Controller
             }
 
             $image = $request->file('featured_image');
-            $filename = time() . '.webp';
+            $filename = time().'.webp';
             $imageContent = file_get_contents($image->getRealPath());
             $img = @imagecreatefromstring($imageContent);
             if ($img) {
                 ob_start();
                 imagewebp($img, null, 75);
                 $content = ob_get_clean();
-                Storage::disk('public')->put('destinations/' . $filename, $content);
-                $destination->featured_image = 'destinations/' . $filename;
+                Storage::disk('public')->put('destinations/'.$filename, $content);
+                $destination->featured_image = 'destinations/'.$filename;
                 imagedestroy($img);
             } else {
                 $destination->featured_image = $request->file('featured_image')->store('destinations', 'public');

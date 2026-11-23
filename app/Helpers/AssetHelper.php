@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Facades\File;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 
 class AssetHelper
@@ -16,6 +16,7 @@ class AssetHelper
         if (is_array($value)) {
             return implode(', ', $value);
         }
+
         return (string) ($value ?? $default);
     }
 
@@ -26,16 +27,16 @@ class AssetHelper
     {
         try {
             // Check Admin Settings First
-            $settingValue = \App\Models\Setting::get($name);
+            $settingValue = Setting::get($name);
             if ($settingValue && is_string($settingValue)) {
-                return asset('storage/' . $settingValue);
+                return asset('storage/'.$settingValue);
             }
 
             $extensions = ['webp', 'jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'WEBP'];
 
             // 1. Check in kilimanjaro folder
             foreach ($extensions as $ext) {
-                $path = 'images/kilimanjaro/' . $name . '.' . $ext;
+                $path = 'images/kilimanjaro/'.$name.'.'.$ext;
                 if (file_exists(public_path($path))) {
                     return asset($path);
                 }
@@ -43,7 +44,7 @@ class AssetHelper
 
             // 2. Check in banners folder
             foreach ($extensions as $ext) {
-                $path = 'images/banners/' . $name . '.' . $ext;
+                $path = 'images/banners/'.$name.'.'.$ext;
                 if (file_exists(public_path($path))) {
                     return asset($path);
                 }
@@ -51,13 +52,13 @@ class AssetHelper
 
             // 3. Check in root images folder
             foreach ($extensions as $ext) {
-                $path = 'images/' . $name . '.' . $ext;
+                $path = 'images/'.$name.'.'.$ext;
                 if (file_exists(public_path($path))) {
                     return asset($path);
                 }
             }
         } catch (\Throwable $e) {
-            Log::error("AssetHelper Banner Error: " . $e->getMessage());
+            Log::error('AssetHelper Banner Error: '.$e->getMessage());
         }
 
         return $default ?: asset('images/banners/hero_fallback.webp');
@@ -70,9 +71,9 @@ class AssetHelper
     {
         try {
             // 1. Check Admin Setting for specific OG image
-            $settingValue = \App\Models\Setting::get('og_image');
+            $settingValue = Setting::get('og_image');
             if ($settingValue && is_string($settingValue)) {
-                return asset('storage/' . $settingValue);
+                return asset('storage/'.$settingValue);
             }
 
             // 2. Check if og-default.jpg exists
@@ -85,7 +86,7 @@ class AssetHelper
                 return asset('images/big-five/lion.webp');
             }
         } catch (\Throwable $e) {
-            Log::error("AssetHelper OG Image Error: " . $e->getMessage());
+            Log::error('AssetHelper OG Image Error: '.$e->getMessage());
         }
 
         return $default ?: self::getLogoUrl();
@@ -98,9 +99,9 @@ class AssetHelper
     {
         try {
             // 1. Check Admin Setting
-            $settingValue = \App\Models\Setting::get($type);
+            $settingValue = Setting::get($type);
             if ($settingValue && is_string($settingValue)) {
-                return asset('storage/' . $settingValue);
+                return asset('storage/'.$settingValue);
             }
 
             // 2. Check public/uploads (New Simple System)
@@ -120,10 +121,10 @@ class AssetHelper
                 }
             }
         } catch (\Throwable $e) {
-            Log::error("AssetHelper Logo Error: " . $e->getMessage());
+            Log::error('AssetHelper Logo Error: '.$e->getMessage());
         }
 
-        return asset("images/logo.png");
+        return asset('images/logo.png');
     }
 
     /**
@@ -133,9 +134,9 @@ class AssetHelper
     {
         try {
             // 1. Prioritize Admin Setting
-            $settingValue = \App\Models\Setting::get('favicon');
+            $settingValue = Setting::get('favicon');
             if ($settingValue && is_string($settingValue)) {
-                return asset('storage/' . $settingValue);
+                return asset('storage/'.$settingValue);
             }
 
             // 2. Check public/uploads
@@ -151,7 +152,7 @@ class AssetHelper
                 }
             }
         } catch (\Throwable $e) {
-            Log::error("AssetHelper Favicon Error: " . $e->getMessage());
+            Log::error('AssetHelper Favicon Error: '.$e->getMessage());
         }
 
         return asset('favicon.ico');

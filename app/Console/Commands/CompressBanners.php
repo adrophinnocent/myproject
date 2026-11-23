@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class CompressBanners extends Command
 {
@@ -39,8 +38,9 @@ class CompressBanners extends Command
 
         $count = 0;
         foreach ($directories as $directory) {
-            if (!File::isDirectory($directory)) {
+            if (! File::isDirectory($directory)) {
                 $this->warn("Directory $directory does not exist. Skipping.");
+
                 continue;
             }
 
@@ -51,7 +51,7 @@ class CompressBanners extends Command
                 $extension = strtolower($file->getExtension());
 
                 if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
-                    $this->info("Processing: " . $file->getFilename());
+                    $this->info('Processing: '.$file->getFilename());
 
                     try {
                         $source = @imagecreatefromstring(file_get_contents($file->getPathname()));
@@ -72,7 +72,7 @@ class CompressBanners extends Command
                             }
 
                             $filename = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-                            $destination = $directory . '/' . $filename . '.webp';
+                            $destination = $directory.'/'.$filename.'.webp';
 
                             // Save as WebP with good quality
                             imagewebp($source, $destination, 80);
@@ -82,7 +82,7 @@ class CompressBanners extends Command
                             $count++;
                         }
                     } catch (\Throwable $e) {
-                        $this->error("Failed to process " . $file->getFilename() . ": " . $e->getMessage());
+                        $this->error('Failed to process '.$file->getFilename().': '.$e->getMessage());
                     }
                 }
             }

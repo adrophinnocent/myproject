@@ -31,7 +31,7 @@ class GalleryController extends Controller
             'is_published' => 'nullable',
         ]);
 
-        $album = new GalleryAlbum();
+        $album = new GalleryAlbum;
         $album->name = $request->name;
         $album->slug = $request->slug;
         $album->description = $request->description;
@@ -102,7 +102,7 @@ class GalleryController extends Controller
             'caption' => 'nullable|string|max:255',
         ]);
 
-        $image = new GalleryImage();
+        $image = new GalleryImage;
         $image->album_id = $album->id;
         $image->caption = $request->caption;
         $image->sort_order = $album->images()->count() + 1;

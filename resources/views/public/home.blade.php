@@ -250,7 +250,7 @@
                 </div>
                 <div class="absolute -top-6 -right-6 w-32 h-32 bg-gold-500 rounded-full flex flex-col items-center justify-center shadow-2xl z-20 transform rotate-12">
                     <span class="text-safari-dark text-[10px] font-black uppercase">From</span>
-                    <span class="text-safari-dark text-xl font-black">${{ number_format($heroTour->price) }}</span>
+                    <span class="text-safari-dark text-xl font-black">{{ $heroTour->display_price_formatted }}</span>
                     <span class="text-safari-dark text-[8px] font-bold uppercase">Per Person</span>
                 </div>
             </div>
@@ -569,7 +569,7 @@
                     {{-- Price Tag Badge at TOP RIGHT --}}
                     <div class="absolute top-2.5 right-2.5 z-10">
                         <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-[10px] sm:text-[11px] px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
-                            From ${{ number_format($tour->price) }} USD*
+                            From {{ $tour->display_price_formatted }}*
                         </span>
                     </div>
 

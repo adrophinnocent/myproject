@@ -23,7 +23,7 @@ class BookingConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Safari Booking Confirmation - ' . $this->booking->tour->title,
+            subject: 'Your Safari Booking Confirmation - '.$this->booking->tour->title,
         );
     }
 

@@ -96,7 +96,7 @@ class ProposalPrivacySecurityTest extends TestCase
         $lastStatus = null;
 
         for ($i = 0; $i < 31; $i++) {
-            $response = $this->get('/proposal/invalid-token-' . $i);
+            $response = $this->get('/proposal/invalid-token-'.$i);
             $lastStatus = $response->getStatusCode();
         }
 

@@ -26,7 +26,7 @@ class ClientProposalMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Personalized Safari Proposal: ' . $this->proposal->title . ' - Twina Safaris',
+            subject: 'Your Personalized Safari Proposal: '.$this->proposal->title.' - Twina Safaris',
         );
     }
 
@@ -44,7 +44,7 @@ class ClientProposalMail extends Mailable
             ->setOption('isHtml5ParserEnabled', true);
 
         return [
-            Attachment::fromData(fn () => $pdf->output(), 'Safari-Proposal-' . Str::slug($this->proposal->client_name) . '.pdf')
+            Attachment::fromData(fn () => $pdf->output(), 'Safari-Proposal-'.Str::slug($this->proposal->client_name).'.pdf')
                 ->withMime('application/pdf'),
         ];
     }

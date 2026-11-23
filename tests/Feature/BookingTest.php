@@ -4,11 +4,10 @@ namespace Tests\Feature;
 
 use App\Mail\AdminNewBookingNotification;
 use App\Mail\CustomerBookingConfirmation;
+use App\Models\Booking;
 use App\Models\Category;
 use App\Models\Destination;
 use App\Models\Tour;
-use App\Models\Booking;
-use App\Models\AdminNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -56,15 +55,15 @@ class BookingTest extends TestCase
             'travel_date' => now()->addDays(10)->format('Y-m-d'),
             'special_requests' => 'Vegetarian meals preferred.',
             'accommodation_preference' => 'luxury',
-            'payment_method' => 'paypal',
+            'payment_method' => 'bank_transfer',
         ];
 
-        $response = $this->post(route('booking.store', $tour), $bookingData);
+        $response = $this->post(route('booking.store', $tour->slug), $bookingData);
 
         // 4. Assert response redirects to success page
         $booking = Booking::first();
         $this->assertNotNull($booking);
-        $response->assertRedirect(route('booking.success', $booking->booking_reference));
+        $response->assertRedirect(route('booking.confirmation', $booking->token));
 
         // 5. Assert Booking is saved in database with correct values
         $this->assertDatabaseHas('bookings', [
@@ -72,7 +71,7 @@ class BookingTest extends TestCase
             'last_name' => 'Doe',
             'email' => 'john.doe@example.com',
             'tour_id' => $tour->id,
-            'total_price' => 7500.00, // 2500 * (2 adults + 1 child) = 7500
+            'total_price' => 6750.00, // 2500 * (2 adults + 1 child at 70%)
             'status' => 'pending',
             'payment_status' => 'unpaid',
         ]);
@@ -92,7 +91,7 @@ class BookingTest extends TestCase
         // 8. Assert Admin Notification is logged in the database
         $this->assertDatabaseHas('admin_notifications', [
             'type' => 'booking',
-            'title' => 'New Booking: ' . $booking->booking_reference,
+            'title' => 'New Booking Request: '.$booking->booking_reference,
             'is_read' => 0,
         ]);
     }

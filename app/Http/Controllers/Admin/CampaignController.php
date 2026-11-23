@@ -4,50 +4,56 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
-use App\Models\Lead;
+use App\Models\Category;
+use App\Models\Tour;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CampaignController extends Controller
 {
     public function index()
     {
         $campaigns = Campaign::withCount(['leads', 'stats'])->latest()->paginate(10);
+
         return view('admin.campaigns.index', compact('campaigns'));
     }
 
     public function create()
     {
-        $tours = \App\Models\Tour::orderBy('title')->get();
-        $categories = \App\Models\Category::orderBy('name')->get();
+        $tours = Tour::orderBy('title')->get();
+        $categories = Category::orderBy('name')->get();
+
         return view('admin.campaigns.create', compact('tours', 'categories'));
     }
 
     public function getTourData($id)
     {
-        $tour = \App\Models\Tour::with(['category', 'destination'])->findOrFail($id);
+        $tour = Tour::with(['category', 'destination'])->findOrFail($id);
 
         // Standardize Itinerary for Landing Page
         $itineraryText = '';
         if (is_array($tour->itinerary)) {
             foreach ($tour->itinerary as $index => $day) {
-                $dayTitle = $day['title'] ?? "Day " . ($index + 1);
+                $dayTitle = $day['title'] ?? 'Day '.($index + 1);
                 $dayDesc = $day['description'] ?? '';
-                $itineraryText .= "DAY " . ($index + 1) . ": " . strtoupper($dayTitle) . "\n" . $dayDesc . "\n\n";
+                $itineraryText .= 'DAY '.($index + 1).': '.strtoupper($dayTitle)."\n".$dayDesc."\n\n";
             }
         } else {
             $itineraryText = $tour->itinerary;
         }
 
-        $formatList = function($items) {
-            if (empty($items)) return '';
+        $formatList = function ($items) {
+            if (empty($items)) {
+                return '';
+            }
             if (is_array($items)) {
-                return implode("\n", array_map(function($i) {
+                return implode("\n", array_map(function ($i) {
                     return is_array($i) ? implode(', ', $i) : $i;
                 }, $items));
             }
-            return (string)$items;
+
+            return (string) $items;
         };
 
         return response()->json([
@@ -91,8 +97,9 @@ class CampaignController extends Controller
 
     public function edit(Campaign $campaign)
     {
-        $tours = \App\Models\Tour::orderBy('title')->get();
-        $categories = \App\Models\Category::orderBy('name')->get();
+        $tours = Tour::orderBy('title')->get();
+        $categories = Category::orderBy('name')->get();
+
         return view('admin.campaigns.edit', compact('campaign', 'tours', 'categories'));
     }
 
@@ -130,6 +137,7 @@ class CampaignController extends Controller
             Storage::disk('public')->delete($campaign->image);
         }
         $campaign->delete();
+
         return redirect()->route('admin.campaigns.index')->with('success', 'Campaign deleted!');
     }
 

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\BlogPost;
 use App\Models\BlogCategory;
-use Illuminate\Http\Request;
+use App\Models\BlogPost;
 
 class BlogController extends Controller
 {
@@ -13,6 +12,7 @@ class BlogController extends Controller
     {
         $posts = BlogPost::published()->with('category')->latest()->paginate(9);
         $categories = BlogCategory::withCount('posts')->get();
+
         return view('public.blog.index', compact('posts', 'categories'));
     }
 

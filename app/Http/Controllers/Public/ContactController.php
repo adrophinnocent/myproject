@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Mail\ContactNotification;
 use App\Mail\ContactAcknowledgmentMail;
-use App\Models\Contact;
-use App\Models\Slider;
+use App\Mail\ContactNotification;
 use App\Models\AdminNotification;
+use App\Models\Contact;
+use App\Models\Setting;
+use App\Models\Slider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
@@ -16,6 +18,7 @@ class ContactController extends Controller
     public function index()
     {
         $banner = Slider::where('page', 'contact')->active()->first();
+
         return view('public.contact', compact('banner'));
     }
 
@@ -26,25 +29,33 @@ class ContactController extends Controller
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:255',
             'subject' => 'required|string|max:255',
-            'message' => 'required|string',
+            'message' => 'required|string|max:5000',
         ]);
 
         $contact = Contact::create($validated);
 
         // 1. Send contact notification to admin
-        $adminEmail = \App\Models\Setting::get('site_email', 'twinasafaris@gmail.com');
-        Mail::to($adminEmail)->send(new ContactNotification($validated));
+        try {
+            $adminEmail = Setting::get('site_email', 'twinasafaris@gmail.com');
+            Mail::to($adminEmail)->send(new ContactNotification($validated));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send contact admin notification: '.$e->getMessage());
+        }
 
         // 2. Send automatic acknowledgment to customer
-        Mail::to($validated['email'])->send(new ContactAcknowledgmentMail($validated));
+        try {
+            Mail::to($validated['email'])->send(new ContactAcknowledgmentMail($validated));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send contact acknowledgment: '.$e->getMessage());
+        }
 
         // 3. Create Admin Dashboard Notification
         AdminNotification::create([
             'type' => 'contact',
             'title' => 'New Contact Message',
-            'message' => 'Message from ' . $validated['name'] . ': ' . $validated['subject'],
+            'message' => 'Message from '.$validated['name'].': '.$validated['subject'],
             'link' => null, // Assuming no admin contact view yet, or link to a general list
-            'is_read' => false
+            'is_read' => false,
         ]);
 
         return redirect()->back()->with('success', __('Thank you for your message! We have received your inquiry and will get back to you soon.'));

@@ -11,6 +11,7 @@ class MarketingController extends Controller
     public function index()
     {
         $settings = Setting::all()->pluck('value', 'key');
+
         return view('admin.marketing.index', compact('settings'));
     }
 

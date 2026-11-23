@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
@@ -33,7 +34,7 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        \Illuminate\Support\Facades\Cache::forget('nav_categories_v7');
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.categories.index')->with('success', 'Category created successfully!');
     }
@@ -56,7 +57,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        \Illuminate\Support\Facades\Cache::forget('nav_categories_v7');
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully!');
     }

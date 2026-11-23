@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Destination;
 use App\Models\Safari;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class SafariController extends Controller
@@ -18,6 +19,7 @@ class SafariController extends Controller
             ->withAvg('reviews', 'rating')
             ->latest()
             ->paginate(10);
+
         return view('admin.safaris.index', compact('safaris'));
     }
 
@@ -25,6 +27,7 @@ class SafariController extends Controller
     {
         $categories = Category::all();
         $destinations = Destination::all();
+
         return view('admin.safaris.create', compact('categories', 'destinations'));
     }
 
@@ -51,7 +54,7 @@ class SafariController extends Controller
 
         Safari::create($data);
 
-        \Illuminate\Support\Facades\Cache::forget('nav_categories_v7');
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.safaris.index')->with('success', 'Safari created successfully!');
     }
@@ -60,6 +63,7 @@ class SafariController extends Controller
     {
         $categories = Category::all();
         $destinations = Destination::all();
+
         return view('admin.safaris.edit', compact('safari', 'categories', 'destinations'));
     }
 
@@ -78,7 +82,7 @@ class SafariController extends Controller
 
         $safari->update($data);
 
-        \Illuminate\Support\Facades\Cache::forget('nav_categories_v7');
+        Cache::forget('nav_categories_v7');
 
         return redirect()->route('admin.safaris.index')->with('success', 'Safari updated successfully!');
     }
@@ -89,6 +93,7 @@ class SafariController extends Controller
             Storage::disk('public')->delete($safari->featured_image);
         }
         $safari->delete();
+
         return redirect()->route('admin.safaris.index')->with('success', 'Safari deleted successfully!');
     }
 }

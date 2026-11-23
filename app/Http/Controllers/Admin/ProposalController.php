@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Proposal;
-use App\Models\Tour;
-use App\Models\CustomSafariInquiry;
-use App\Models\ProposalTemplate;
-use App\Models\ProposalDayTemplate;
 use App\Mail\ClientProposalMail;
+use App\Models\CustomSafariInquiry;
+use App\Models\Proposal;
+use App\Models\ProposalDayTemplate;
+use App\Models\ProposalTemplate;
+use App\Models\Tour;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProposalController extends Controller
@@ -24,9 +26,9 @@ class ProposalController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('client_name', 'like', "%{$search}%")
-                  ->orWhere('client_email', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%")
-                  ->orWhere('reference_code', 'like', "%{$search}%");
+                    ->orWhere('client_email', 'like', "%{$search}%")
+                    ->orWhere('title', 'like', "%{$search}%")
+                    ->orWhere('reference_code', 'like', "%{$search}%");
             });
         }
 
@@ -57,7 +59,7 @@ class ProposalController extends Controller
             $selectedTour = Tour::find($request->tour_id);
             $startType = 'tour';
         } else {
-            if (!$startType) {
+            if (! $startType) {
                 $startType = 'scratch';
             }
         }
@@ -179,7 +181,7 @@ class ProposalController extends Controller
             'status' => Proposal::STATUS_DRAFT,
         ]);
 
-        if (!empty($validated['custom_safari_inquiry_id'])) {
+        if (! empty($validated['custom_safari_inquiry_id'])) {
             $inquiry = CustomSafariInquiry::find($validated['custom_safari_inquiry_id']);
             if ($inquiry) {
                 $inquiry->update([
@@ -190,12 +192,13 @@ class ProposalController extends Controller
         }
 
         return redirect()->route('admin.proposals.show', $proposal)
-            ->with('success', 'Proposal ' . $proposal->full_reference . ' created successfully.');
+            ->with('success', 'Proposal '.$proposal->full_reference.' created successfully.');
     }
 
     public function show(Proposal $proposal)
     {
         $proposal->load(['tour', 'customSafariInquiry']);
+
         return view('admin.proposals.show', compact('proposal'));
     }
 
@@ -204,6 +207,7 @@ class ProposalController extends Controller
         $tours = Tour::published()->orderBy('title')->get();
         $proposalTemplates = ProposalTemplate::orderBy('title')->get();
         $dayTemplates = ProposalDayTemplate::orderBy('title')->get();
+
         return view('admin.proposals.edit', compact('proposal', 'tours', 'proposalTemplates', 'dayTemplates'));
     }
 
@@ -317,7 +321,7 @@ class ProposalController extends Controller
         ]);
 
         return redirect()->route('admin.proposals.show', $proposal)
-            ->with('success', 'Proposal ' . $proposal->full_reference . ' updated successfully.');
+            ->with('success', 'Proposal '.$proposal->full_reference.' updated successfully.');
     }
 
     public function duplicateVersion(Proposal $proposal)
@@ -335,12 +339,13 @@ class ProposalController extends Controller
         $newProposal->save();
 
         return redirect()->route('admin.proposals.edit', $newProposal)
-            ->with('success', 'Created new proposal version: ' . $newProposal->full_reference);
+            ->with('success', 'Created new proposal version: '.$newProposal->full_reference);
     }
 
     public function destroy(Proposal $proposal)
     {
         $proposal->delete();
+
         return redirect()->route('admin.proposals.index')
             ->with('success', 'Proposal deleted successfully.');
     }
@@ -356,7 +361,7 @@ class ProposalController extends Controller
             $proposal->sent_at = now();
             $proposal->save();
 
-            return redirect()->back()->with('success', 'Proposal email sent successfully to ' . $proposal->client_email);
+            return redirect()->back()->with('success', 'Proposal email sent successfully to '.$proposal->client_email);
         } catch (\Exception $e) {
             if ($proposal->status === Proposal::STATUS_DRAFT) {
                 $proposal->status = Proposal::STATUS_SENT;
@@ -364,7 +369,7 @@ class ProposalController extends Controller
             $proposal->sent_at = now();
             $proposal->save();
 
-            return redirect()->back()->with('success', 'Proposal status marked as sent. (Mail note: ' . $e->getMessage() . ')');
+            return redirect()->back()->with('success', 'Proposal status marked as sent. (Mail note: '.$e->getMessage().')');
         }
     }
 
@@ -373,7 +378,7 @@ class ProposalController extends Controller
         $pdf = Pdf::loadView('proposals.pdf', compact('proposal'))
             ->setOption('isRemoteEnabled', true)
             ->setOption('isHtml5ParserEnabled', true);
-        $filename = 'Safari-Proposal-' . $proposal->full_reference . '-' . Str::slug($proposal->client_name) . '.pdf';
+        $filename = 'Safari-Proposal-'.$proposal->full_reference.'-'.Str::slug($proposal->client_name).'.pdf';
 
         return $pdf->download($filename);
     }
@@ -381,17 +386,19 @@ class ProposalController extends Controller
     public function uploadDayImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif,svg|max:12288',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:12288',
         ]);
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
-            if ($ext === 'jpeg') $ext = 'jpg';
-            $filename = 'day_' . time() . '_' . Str::random(8) . '.' . $ext;
+            if ($ext === 'jpeg') {
+                $ext = 'jpg';
+            }
+            $filename = 'day_'.time().'_'.Str::random(8).'.'.$ext;
 
-            \Illuminate\Support\Facades\Storage::disk('public')->putFileAs('proposals/days', $file, $filename);
-            $url = 'storage/proposals/days/' . $filename;
+            Storage::disk('public')->putFileAs('proposals/days', $file, $filename);
+            $url = 'storage/proposals/days/'.$filename;
 
             return response()->json([
                 'success' => true,
@@ -409,7 +416,7 @@ class ProposalController extends Controller
             $rawItinerary = is_array($decoded) ? $decoded : [];
         }
 
-        if (!is_array($rawItinerary)) {
+        if (! is_array($rawItinerary)) {
             return [];
         }
 
@@ -420,7 +427,7 @@ class ProposalController extends Controller
             }
 
             $gallery = [];
-            if (!empty($item['gallery_images'])) {
+            if (! empty($item['gallery_images'])) {
                 if (is_string($item['gallery_images'])) {
                     $decodedG = json_decode($item['gallery_images'], true);
                     $gallery = is_array($decodedG) ? $decodedG : [];
@@ -452,18 +459,20 @@ class ProposalController extends Controller
                         try {
                             preg_match('/data:image\/(\w+);base64,/', $url, $typeMatches);
                             $ext = strtolower($typeMatches[1] ?? 'jpg');
-                            if ($ext === 'jpeg') $ext = 'jpg';
+                            if ($ext === 'jpeg') {
+                                $ext = 'jpg';
+                            }
 
                             $imageData = substr($url, strpos($url, ',') + 1);
                             $decodedBytes = base64_decode($imageData);
 
                             if ($decodedBytes !== false) {
-                                $filename = 'day_' . ($index + 1) . '_' . time() . '_' . Str::random(8) . '.' . $ext;
-                                \Illuminate\Support\Facades\Storage::disk('public')->put('proposals/days/' . $filename, $decodedBytes);
-                                $url = 'storage/proposals/days/' . $filename;
+                                $filename = 'day_'.($index + 1).'_'.time().'_'.Str::random(8).'.'.$ext;
+                                Storage::disk('public')->put('proposals/days/'.$filename, $decodedBytes);
+                                $url = 'storage/proposals/days/'.$filename;
                             }
                         } catch (\Throwable $e) {
-                            \Illuminate\Support\Facades\Log::error('Failed to save base64 day image: ' . $e->getMessage());
+                            Log::error('Failed to save base64 day image: '.$e->getMessage());
                         }
                     }
 
@@ -513,6 +522,7 @@ class ProposalController extends Controller
 
         if (is_string($input)) {
             $lines = preg_split('/\r\n|\r|\n/', $input);
+
             return array_values(array_filter(array_map('trim', $lines)));
         }
 

@@ -11,8 +11,11 @@ class CustomSafariInquiry extends Model
     use HasFactory, SoftDeletes;
 
     const STATUS_NEW = 'new';
+
     const STATUS_REVIEWED = 'reviewed';
+
     const STATUS_CONVERTED = 'converted';
+
     const STATUS_CLOSED = 'closed';
 
     protected $fillable = [

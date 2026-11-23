@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\AiKnowledge;
 use App\Services\AIGenerator;
 use Illuminate\Http\Request;
 
@@ -17,17 +18,22 @@ class AiChatController extends Controller
 
     public function sendMessage(Request $request)
     {
-        $request->validate([
-            'message' => 'required|string',
-            'history' => 'nullable|array'
+        $validated = $request->validate([
+            'message' => 'required|string|max:2000',
+            'history' => 'nullable|array|max:10',
+            'history.*' => 'array',
+            'history.*.role' => 'nullable|in:user,assistant',
+            'history.*.content' => 'nullable|string|max:2000',
+            'history.*.from' => 'nullable|in:user,assistant',
+            'history.*.text' => 'nullable|string|max:2000',
         ]);
 
         // Fetch custom "Nondo" from the database
-        $dbFacts = \App\Models\AiKnowledge::active()->orderBy('sort_order')->get();
-        $formattedFacts = "";
+        $dbFacts = AiKnowledge::active()->orderBy('sort_order')->get();
+        $formattedFacts = '';
 
-        foreach($dbFacts as $fact) {
-            $formattedFacts .= "- " . ($fact->category ? $fact->category . ": " : "") . $fact->topic . ": " . $fact->content . "\n";
+        foreach ($dbFacts as $fact) {
+            $formattedFacts .= '- '.($fact->category ? $fact->category.': ' : '').$fact->topic.': '.$fact->content."\n";
         }
 
         // Specific instructions for public guest assistant
@@ -36,7 +42,7 @@ class AiChatController extends Controller
         KNOWLEDGE BASE (Nondo):
         - Company: Twina Safaris. Known for boutique, private, and highly personalized experiences.
         - Tone: Professional, warm, inviting, and luxury-focused. Use 'Jambo!' for greetings.
-        " . $formattedFacts . "
+        ".$formattedFacts."
         - Contact: Site WhatsApp (+255 795 482 197), Email (twinasafaris@gmail.com).
 
         INSTRUCTIONS:
@@ -46,14 +52,14 @@ class AiChatController extends Controller
         4. Remember the chat history to keep context.";
 
         try {
-            $history = $request->history ?? [];
-            $response = $this->ai->generateChatResponse($request->message, $history, $systemPrompt);
+            $history = $validated['history'] ?? [];
+            $response = $this->ai->generateChatResponse($validated['message'], $history, $systemPrompt);
 
             return response()->json([
-                'response' => $response
+                'response' => $response,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['response' => "Jambo! Karibu Twina Safaris. For immediate assistance with tours and pricing, please chat with us directly on WhatsApp!"], 500);
+            return response()->json(['response' => 'Jambo! Karibu Twina Safaris. For immediate assistance with tours and pricing, please chat with us directly on WhatsApp!'], 500);
         }
     }
 }

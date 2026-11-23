@@ -24,7 +24,7 @@
                 <ul class="space-y-2 list-disc pl-5">
                     <li>A <strong>20% deposit</strong> is required upon approval of your booking request to lock in hotel lodges, national park entry permits, and private safari vehicle allocations.</li>
                     <li>Official booking vouchers and payment receipts are issued immediately upon receipt of deposit.</li>
-                    <li>Deposits can be paid online via Credit/Debit card (Visa/Mastercard), PayPal, SWIFT Direct Bank Transfer, or Tanzania Mobile Money.</li>
+                    <li>Deposits can be paid via SWIFT Direct Bank Transfer or Tanzania Mobile Money (M-Pesa, Tigo Pesa, Airtel Money). All payments are verified manually by our team.</li>
                 </ul>
             </div>
 

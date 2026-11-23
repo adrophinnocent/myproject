@@ -25,7 +25,7 @@ class AdminNewBookingNotification extends Mailable
         $itemName = $this->booking->tour->title ?? $this->booking->safari->title ?? 'Reservation';
 
         return new Envelope(
-            subject: 'ALERT: New Booking Received - ' . $itemName . ' (' . $this->booking->booking_reference . ')',
+            subject: 'ALERT: New Booking Received - '.$itemName.' ('.$this->booking->booking_reference.')',
         );
     }
 

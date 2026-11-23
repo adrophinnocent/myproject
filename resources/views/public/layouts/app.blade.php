@@ -9,7 +9,6 @@
     <title>@yield('title', \App\Models\Setting::get('seo_title', config('app.name', 'Twina Safaris')))</title>
     <meta name="description" content="@yield('meta_description', \App\Models\Setting::get('meta_description', 'Explore Africa\'s finest safari experiences with Twina Safaris.'))">
     <meta name="keywords"    content="@yield('meta_keywords', \App\Models\Setting::get('meta_keywords', 'safari, Tanzania, Africa, tours, Serengeti, Kilimanjaro, Zanzibar'))">
-    <meta name="robots"      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="google-site-verification" content="3SbowPIqEdIG3r0Vkoq-q2OlJo7TuY9egyJFzYFZiyk" />
 
     @php
@@ -36,9 +35,9 @@
     @endphp
     <link rel="canonical" href="{{ $canonical }}">
 
-    {{-- Meta Robots: Noindex for booking and private pages to clean up Search Console --}}
-    @if(str_contains(request()->url(), '/book') || str_contains(request()->url(), '/trip-plan/') || str_contains(request()->url(), '/login') || str_contains(request()->url(), '/proposal/'))
-        <meta name="robots" content="noindex, nofollow">
+    {{-- Meta Robots: Noindex for booking, client workspaces and auth pages --}}
+    @if(request()->is('booking', 'booking/*', 'my-bookings', 'trip-plan/*', 'proposal/*', 'login', 'forgot-password', 'reset-password/*'))
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     @else
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     @endif

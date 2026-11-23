@@ -13,6 +13,7 @@ use App\Services\AIGenerator;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -25,7 +26,7 @@ class AiSearchIntelligenceController extends Controller
         }
 
         try {
-            if (!Schema::hasTable('search_question_categories')) {
+            if (! Schema::hasTable('search_question_categories')) {
                 Schema::create('search_question_categories', function (Blueprint $table) {
                     $table->id();
                     $table->string('name');
@@ -37,7 +38,7 @@ class AiSearchIntelligenceController extends Controller
                 });
             }
 
-            if (!Schema::hasTable('search_questions')) {
+            if (! Schema::hasTable('search_questions')) {
                 Schema::create('search_questions', function (Blueprint $table) {
                     $table->id();
                     $table->foreignId('category_id')->constrained('search_question_categories')->onDelete('cascade');
@@ -56,7 +57,7 @@ class AiSearchIntelligenceController extends Controller
                 });
             }
 
-            if (!Schema::hasTable('search_answers')) {
+            if (! Schema::hasTable('search_answers')) {
                 Schema::create('search_answers', function (Blueprint $table) {
                     $table->id();
                     $table->foreignId('search_question_id')->constrained('search_questions')->onDelete('cascade');
@@ -73,7 +74,7 @@ class AiSearchIntelligenceController extends Controller
                 });
             }
 
-            if (!Schema::hasTable('search_content_assignments')) {
+            if (! Schema::hasTable('search_content_assignments')) {
                 Schema::create('search_content_assignments', function (Blueprint $table) {
                     $table->id();
                     $table->foreignId('search_question_id')->constrained('search_questions')->onDelete('cascade');
@@ -85,7 +86,7 @@ class AiSearchIntelligenceController extends Controller
                 });
             }
 
-            if (!Schema::hasTable('ai_visibility_checks')) {
+            if (! Schema::hasTable('ai_visibility_checks')) {
                 Schema::create('ai_visibility_checks', function (Blueprint $table) {
                     $table->id();
                     $table->text('query_text');
@@ -113,7 +114,7 @@ class AiSearchIntelligenceController extends Controller
                     DB::table('search_question_categories')->insert([
                         'name' => $catName,
                         'slug' => Str::slug($catName),
-                        'description' => 'Tourist search questions regarding ' . $catName,
+                        'description' => 'Tourist search questions regarding '.$catName,
                         'sort_order' => $index + 1,
                         'is_active' => true,
                         'created_at' => now(),
@@ -122,7 +123,7 @@ class AiSearchIntelligenceController extends Controller
                 }
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Auto table creation error: ' . $e->getMessage());
+            Log::error('Auto table creation error: '.$e->getMessage());
         }
     }
 
@@ -179,9 +180,9 @@ class AiSearchIntelligenceController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('question', 'like', "%{$search}%")
-                  ->orWhere('primary_keyword', 'like', "%{$search}%");
+                    ->orWhere('primary_keyword', 'like', "%{$search}%");
             });
         }
 
@@ -241,7 +242,7 @@ class AiSearchIntelligenceController extends Controller
         $validated['created_by'] = auth()->id();
         $question = SearchQuestion::create($validated);
 
-        if (!empty($validated['answer_content'])) {
+        if (! empty($validated['answer_content'])) {
             $answer = SearchAnswer::create([
                 'search_question_id' => $question->id,
                 'title' => $validated['answer_title'] ?? $question->question,
@@ -301,7 +302,7 @@ class AiSearchIntelligenceController extends Controller
 
         $question->update($validated);
 
-        if (!empty($validated['answer_content'])) {
+        if (! empty($validated['answer_content'])) {
             $isApproved = in_array($validated['status'], ['approved', 'published']);
 
             $question->answer()->updateOrCreate(
@@ -351,13 +352,17 @@ class AiSearchIntelligenceController extends Controller
         $categoryName = 'Tanzania Safari';
         if ($request->filled('category_id')) {
             $cat = SearchQuestionCategory::find($request->category_id);
-            if ($cat) $categoryName = $cat->name;
+            if ($cat) {
+                $categoryName = $cat->name;
+            }
         }
 
         $tourTitle = null;
         if ($request->filled('tour_id')) {
             $tour = Tour::find($request->tour_id);
-            if ($tour) $tourTitle = $tour->title;
+            if ($tour) {
+                $tourTitle = $tour->title;
+            }
         }
 
         $aiResult = $aiGenerator->generateSearchAnswerAndSeo($request->question, $categoryName, $tourTitle);

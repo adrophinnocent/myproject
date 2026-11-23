@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Helpers\Currency;
 use App\Traits\HasSlug;
 use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Tour extends Model
 {
-    use HasFactory, SoftDeletes, HasSlug, Translatable;
+    use HasFactory, HasSlug, SoftDeletes, Translatable;
 
     protected $slugSource = 'title';
 
@@ -135,7 +137,7 @@ class Tour extends Model
     public function getFeaturedImageUrlAttribute(): string
     {
         if ($this->featured_image) {
-            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
+            return Storage::disk('public')->url($this->featured_image);
         }
 
         return asset('images/banners/hero_fallback.webp');
@@ -146,17 +148,29 @@ class Tour extends Model
         return '$'.number_format($this->price, 0);
     }
 
+    /** Price converted to the visitor's selected display currency. */
+    public function getDisplayPriceAttribute(): float
+    {
+        return Currency::convert((float) $this->price);
+    }
+
+    public function getDisplayPriceFormattedAttribute(): string
+    {
+        return Currency::format((float) $this->price);
+    }
+
     public function getDurationTextAttribute(): string
     {
         return __(':days Days / :nights Nights', [
             'days' => $this->duration_days,
-            'nights' => $this->duration_nights
+            'nights' => $this->duration_nights,
         ]);
     }
 
     public function getAverageRatingAttribute(): float
     {
         $avg = $this->attributes['reviews_avg_rating'] ?? $this->reviews()->avg('rating');
+
         return round($avg ?? 5.0, 1);
     }
 
@@ -200,7 +214,7 @@ class Tour extends Model
         $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i';
 
         if (preg_match($pattern, $url, $matches)) {
-            return 'https://www.youtube.com/embed/' . $matches[1];
+            return 'https://www.youtube.com/embed/'.$matches[1];
         }
 
         return null;

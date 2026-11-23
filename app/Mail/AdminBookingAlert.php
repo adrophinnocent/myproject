@@ -23,7 +23,7 @@ class AdminBookingAlert extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Safari Booking Received - ' . $this->booking->tour->title,
+            subject: 'New Safari Booking Received - '.$this->booking->tour->title,
         );
     }
 

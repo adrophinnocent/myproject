@@ -130,12 +130,12 @@
 
             {{-- Action Buttons --}}
             <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-stone-100">
-                <a href="{{ route('booking.status', $booking->booking_reference) }}"
+                <a href="{{ route('booking.status', $booking->token) }}"
                    class="btn-gold flex-1 text-center py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-md">
                     {{ __('Track Booking Status') }}
                 </a>
 
-                <a href="{{ route('booking.download', $booking->booking_reference) }}"
+                <a href="{{ route('booking.download', $booking->token) }}"
                    class="px-8 py-4 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-2xl font-bold text-xs uppercase tracking-wider text-center transition-colors">
                     {{ __('Download PDF Request') }}
                 </a>

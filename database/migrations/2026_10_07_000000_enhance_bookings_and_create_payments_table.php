@@ -10,40 +10,40 @@ return new class extends Migration
     {
         // 1. Add missing fields to bookings table if they don't exist
         Schema::table('bookings', function (Blueprint $table) {
-            if (!Schema::hasColumn('bookings', 'token')) {
+            if (! Schema::hasColumn('bookings', 'token')) {
                 $table->string('token', 64)->nullable()->after('booking_reference');
             }
-            if (!Schema::hasColumn('bookings', 'country')) {
+            if (! Schema::hasColumn('bookings', 'country')) {
                 $table->string('country', 100)->nullable()->after('nationality');
             }
-            if (!Schema::hasColumn('bookings', 'currency')) {
+            if (! Schema::hasColumn('bookings', 'currency')) {
                 $table->string('currency', 10)->default('USD')->after('total_price');
             }
-            if (!Schema::hasColumn('bookings', 'deposit_percentage')) {
+            if (! Schema::hasColumn('bookings', 'deposit_percentage')) {
                 $table->decimal('deposit_percentage', 5, 2)->default(20.00)->after('currency');
             }
-            if (!Schema::hasColumn('bookings', 'deposit_required')) {
+            if (! Schema::hasColumn('bookings', 'deposit_required')) {
                 $table->decimal('deposit_required', 10, 2)->nullable()->after('deposit_percentage');
             }
-            if (!Schema::hasColumn('bookings', 'deposit_paid')) {
+            if (! Schema::hasColumn('bookings', 'deposit_paid')) {
                 $table->decimal('deposit_paid', 10, 2)->default(0.00)->after('deposit_required');
             }
-            if (!Schema::hasColumn('bookings', 'balance_amount')) {
+            if (! Schema::hasColumn('bookings', 'balance_amount')) {
                 $table->decimal('balance_amount', 10, 2)->nullable()->after('deposit_paid');
             }
-            if (!Schema::hasColumn('bookings', 'balance_due_date')) {
+            if (! Schema::hasColumn('bookings', 'balance_due_date')) {
                 $table->date('balance_due_date')->nullable()->after('balance_amount');
             }
-            if (!Schema::hasColumn('bookings', 'approved_at')) {
+            if (! Schema::hasColumn('bookings', 'approved_at')) {
                 $table->timestamp('approved_at')->nullable()->after('confirmed_at');
             }
-            if (!Schema::hasColumn('bookings', 'cancellation_reason')) {
+            if (! Schema::hasColumn('bookings', 'cancellation_reason')) {
                 $table->text('cancellation_reason')->nullable()->after('admin_notes');
             }
         });
 
         // 2. Create booking_payments table for transaction tracking
-        if (!Schema::hasTable('booking_payments')) {
+        if (! Schema::hasTable('booking_payments')) {
             Schema::create('booking_payments', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('booking_id')->constrained()->onDelete('cascade');

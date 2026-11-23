@@ -91,7 +91,7 @@ return new class extends Migration
         Schema::table('proposals', function (Blueprint $table) {
             $table->dropColumn([
                 'subtotal_price', 'discount_amount', 'adult_price', 'child_price',
-                'child_age_range', 'accommodations'
+                'child_age_range', 'accommodations',
             ]);
         });
 

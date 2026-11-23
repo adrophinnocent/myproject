@@ -4,13 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Campaign;
+use App\Models\CampaignStat;
 use App\Models\Contact;
+use App\Models\Lead;
 use App\Models\Tour;
 use App\Models\TripPlan;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class AnalyticsController extends Controller
 {
@@ -32,17 +37,17 @@ class AnalyticsController extends Controller
         $topCampaigns = collect();
 
         try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('leads')) {
-                $marketingLeads = \App\Models\Lead::whereNotNull('campaign_id')->count();
+            if (Schema::hasTable('leads')) {
+                $marketingLeads = Lead::whereNotNull('campaign_id')->count();
             }
-            if (\Illuminate\Support\Facades\Schema::hasTable('campaign_stats')) {
-                $marketingVisits = \App\Models\CampaignStat::where('type', 'visit')->count();
+            if (Schema::hasTable('campaign_stats')) {
+                $marketingVisits = CampaignStat::where('type', 'visit')->count();
             }
-            if (\Illuminate\Support\Facades\Schema::hasTable('campaigns')) {
-                $topCampaigns = \App\Models\Campaign::withCount(['leads', 'stats'])->orderByDesc('leads_count')->take(3)->get();
+            if (Schema::hasTable('campaigns')) {
+                $topCampaigns = Campaign::withCount(['leads', 'stats'])->orderByDesc('leads_count')->take(3)->get();
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Analytics marketing summary exception: ' . $e->getMessage());
+            Log::warning('Analytics marketing summary exception: '.$e->getMessage());
         }
 
         return view('admin.dashboard', compact(

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\TripPlan;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class TripPlanAdminController extends Controller
         }
         if ($request->search) {
             $query->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('email', 'like', "%{$request->search}%");
+                ->orWhere('email', 'like', "%{$request->search}%");
         }
 
         $plans = $query->orderBy('created_at', 'desc')->paginate(20);
@@ -28,6 +29,7 @@ class TripPlanAdminController extends Controller
     public function show(TripPlan $tripPlan)
     {
         $tripPlan->load('messages', 'booking');
+
         return view('admin.trip-plans.workspace', compact('tripPlan'));
     }
 
@@ -36,10 +38,10 @@ class TripPlanAdminController extends Controller
         $validStatuses = [
             'new', 'reviewing', 'preparing_plan', 'sent', 'viewed',
             'changes_requested', 'accepted', 'booking', 'confirmed',
-            'closed', 'declined', 'cancelled', 'expired'
+            'closed', 'declined', 'cancelled', 'expired',
         ];
 
-        $request->validate(['status' => 'required|in:' . implode(',', $validStatuses)]);
+        $request->validate(['status' => 'required|in:'.implode(',', $validStatuses)]);
 
         $tripPlan->update(['status' => $request->status]);
 
@@ -48,7 +50,7 @@ class TripPlanAdminController extends Controller
             // Logic to send email would go here
         }
 
-        return back()->with('success', 'Status updated to ' . ucfirst(str_replace('_', ' ', $request->status)));
+        return back()->with('success', 'Status updated to '.ucfirst(str_replace('_', ' ', $request->status)));
     }
 
     public function saveItinerary(Request $request, TripPlan $tripPlan)
@@ -115,7 +117,7 @@ class TripPlanAdminController extends Controller
         }
 
         // Create actual booking linked to this trip plan
-        $booking = \App\Models\Booking::create([
+        $booking = Booking::create([
             'trip_plan_id' => $tripPlan->id,
             'first_name' => explode(' ', $tripPlan->name)[0],
             'last_name' => str_contains($tripPlan->name, ' ') ? explode(' ', $tripPlan->name, 2)[1] : '',
@@ -133,7 +135,7 @@ class TripPlanAdminController extends Controller
 
         $tripPlan->update([
             'booking_id' => $booking->id,
-            'status' => 'booking'
+            'status' => 'booking',
         ]);
 
         return redirect()->route('admin.bookings.show', $booking)->with('success', 'Trip plan successfully converted to booking.');
@@ -142,6 +144,7 @@ class TripPlanAdminController extends Controller
     public function destroy(TripPlan $tripPlan)
     {
         $tripPlan->delete();
+
         return redirect()->route('admin.trip-plans.index')->with('success', 'Trip plan deleted.');
     }
 }

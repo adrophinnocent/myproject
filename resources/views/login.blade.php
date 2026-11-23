@@ -148,9 +148,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 0 9 9 0 009 0zm-4.5 7.5a2.5 2.5 0 005 0v-1.5" />
                             </svg>
                         </div>
-                        <input type="email" name="email" value="bellainnos@gmail.com" required
+                        <input type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
                             class="w-full pl-14 pr-6 py-4.5 rounded-[22px] clay-input focus:outline-none transition-all text-gray-800 font-medium"
-                            placeholder="bellainnos@gmail.com" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
+                            placeholder="admin@example.com" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
                     </div>
                 </div>
 
@@ -163,7 +163,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
                         </div>
-                        <input type="password" name="password" value="password123" required
+                        <input type="password" name="password" required autocomplete="current-password"
                             class="w-full pl-14 pr-6 py-4.5 rounded-[22px] clay-input focus:outline-none transition-all text-gray-800 font-medium"
                             placeholder="••••••••" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
                     </div>

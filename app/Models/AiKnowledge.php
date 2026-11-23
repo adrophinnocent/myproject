@@ -16,7 +16,7 @@ class AiKnowledge extends Model
         'topic',
         'content',
         'is_active',
-        'sort_order'
+        'sort_order',
     ];
 
     protected $casts = [

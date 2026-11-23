@@ -17,7 +17,7 @@ class SetLocale
         $locale = Session::get('locale', config('app.locale'));
 
         // 2. Fallback if not supported
-        if (!in_array($locale, $supported)) {
+        if (! in_array($locale, $supported)) {
             $locale = config('app.locale');
         }
 

@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use Intervention\Image\ImageManager;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
 
 class ImageProcessor
 {
@@ -18,11 +18,11 @@ class ImageProcessor
     public function process(UploadedFile $file, string $directory = 'ai-images'): array
     {
         // Generate unique filenames
-        $originalFilename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $optimizedFilename = uniqid() . '_' . time() . '.webp';
+        $originalFilename = uniqid().'_'.time().'.'.$file->getClientOriginalExtension();
+        $optimizedFilename = uniqid().'_'.time().'.webp';
 
         // Store original image
-        $originalPath = $file->storeAs($directory . '/original', $originalFilename, 'public');
+        $originalPath = $file->storeAs($directory.'/original', $originalFilename, 'public');
 
         // Process and store optimized WebP
         $image = $this->manager->read($file->getPathname());
@@ -32,11 +32,11 @@ class ImageProcessor
 
         // Save as WebP with 80% quality
         $optimizedContent = $image->toWebp(quality: 80);
-        Storage::disk('public')->put($directory . '/optimized/' . $optimizedFilename, $optimizedContent);
+        Storage::disk('public')->put($directory.'/optimized/'.$optimizedFilename, $optimizedContent);
 
         return [
             'original' => $originalPath,
-            'optimized' => $directory . '/optimized/' . $optimizedFilename,
+            'optimized' => $directory.'/optimized/'.$optimizedFilename,
         ];
     }
 }

@@ -32,11 +32,13 @@ trait Translatable
                 $translation = $translationRelation->where('locale', $locale)
                     ->where('field', $field)
                     ->first();
+
                 return $translation ? $translation->text : $this->{$field};
             } else {
                 // Dedicated table style (like Tour)
                 $translation = $translationRelation->where('locale', $locale)->first();
-                return ($translation && !empty($translation->{$field})) ? $translation->{$field} : $this->{$field};
+
+                return ($translation && ! empty($translation->{$field})) ? $translation->{$field} : $this->{$field};
             }
         } catch (\Throwable $e) {
             // Fallback to default field if anything fails (e.g. missing table)

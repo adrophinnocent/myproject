@@ -1,27 +1,22 @@
 @extends('public.layouts.app')
 
-@section('title', 'Secure Deposit Payment - ' . $booking->booking_reference)
+@section('title', 'Deposit Payment - ' . $booking->booking_reference)
 
 @section('content')
 <div class="bg-[#fcfaf7] min-h-screen py-16" x-data="{
-    method: 'visa_mastercard',
-    payType: 'deposit',
-    depositAmount: {{ $booking->calculated_deposit_required }},
-    fullAmount: {{ $booking->total_price ?? 0 }},
-    get activeAmount() {
-        return this.payType === 'full' ? this.fullAmount : this.depositAmount;
-    }
+    method: 'bank_transfer',
+    payType: 'deposit'
 }">
     <div class="max-w-4xl mx-auto px-4">
 
         {{-- Top Header --}}
         <div class="mb-8">
-            <span class="text-xs font-black text-amber-600 uppercase tracking-widest block mb-2">{{ __('SECURE PAYMENT GATEWAY') }}</span>
+            <span class="text-xs font-black text-amber-600 uppercase tracking-widest block mb-2">{{ __('SECURE MANUAL PAYMENT') }}</span>
             <h1 class="font-display text-3xl md:text-4xl font-bold text-stone-900">
                 {{ __('Deposit Payment for') }} {{ $booking->booking_reference }}
             </h1>
             <p class="text-stone-600 text-sm mt-1">
-                {{ $booking->bookable_item->title ?? 'Tanzania Safari' }} • {{ __('Guest') }}: {{ $booking->full_name }}
+                {{ $booking->bookable_item->title ?? 'Tanzania Safari' }} &middot; {{ __('Guest') }}: {{ $booking->full_name }}
             </p>
         </div>
 
@@ -36,6 +31,22 @@
         @if(session('info'))
             <div class="mb-6 p-4 bg-sky-50 border border-sky-200 text-sky-800 rounded-2xl text-sm">
                 <p class="font-bold">{{ session('info') }}</p>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-sm">
+                <p class="font-bold">{{ session('error') }}</p>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-sm">
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -76,60 +87,60 @@
                         <h3 class="font-bold text-stone-900 text-sm uppercase tracking-wider mb-4">{{ __('2. Choose Payment Method') }}</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-                            {{-- Visa / Mastercard --}}
-                            <button type="button" @click="method = 'visa_mastercard'"
-                                    class="p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer"
-                                    :class="method === 'visa_mastercard' ? 'border-amber-500 bg-amber-50/30 ring-2 ring-amber-500/20' : 'border-stone-200 bg-white hover:bg-stone-50'">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xl">💳</span>
-                                    <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Visa / Mastercard') }}</h4>
-                                        <p class="text-[10px] text-stone-500">{{ __('International Credit/Debit') }}</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs font-bold text-amber-700" x-show="method === 'visa_mastercard'">✓</span>
-                            </button>
-
-                            {{-- PayPal --}}
-                            <button type="button" @click="method = 'paypal'"
-                                    class="p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer"
-                                    :class="method === 'paypal' ? 'border-amber-500 bg-amber-50/30 ring-2 ring-amber-500/20' : 'border-stone-200 bg-white hover:bg-stone-50'">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xl">🅿️</span>
-                                    <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('PayPal') }}</h4>
-                                        <p class="text-[10px] text-stone-500">{{ __('PayPal Account / Cards') }}</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs font-bold text-amber-700" x-show="method === 'paypal'">✓</span>
-                            </button>
-
-                            {{-- Direct Bank Wire Transfer --}}
+                            {{-- Bank Wire Transfer --}}
                             <button type="button" @click="method = 'bank_transfer'"
                                     class="p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer"
                                     :class="method === 'bank_transfer' ? 'border-amber-500 bg-amber-50/30 ring-2 ring-amber-500/20' : 'border-stone-200 bg-white hover:bg-stone-50'">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl">🏦</span>
                                     <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Direct Bank Wire') }}</h4>
-                                        <p class="text-[10px] text-stone-500">{{ __('SWIFT / Bank Transfer') }}</p>
+                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Direct Bank Transfer') }}</h4>
+                                        <p class="text-[10px] text-stone-500">{{ __('SWIFT / International Wire') }}</p>
                                     </div>
                                 </div>
                                 <span class="text-xs font-bold text-amber-700" x-show="method === 'bank_transfer'">✓</span>
                             </button>
 
-                            {{-- Mobile Money (M-Pesa / Tigo Pesa) --}}
+                            {{-- M-Pesa --}}
                             <button type="button" @click="method = 'mpesa'"
                                     class="p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer"
                                     :class="method === 'mpesa' ? 'border-amber-500 bg-amber-50/30 ring-2 ring-amber-500/20' : 'border-stone-200 bg-white hover:bg-stone-50'">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl">📱</span>
                                     <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('M-Pesa / Tigo / Airtel') }}</h4>
-                                        <p class="text-[10px] text-stone-500">{{ __('Tanzania Mobile Money') }}</p>
+                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('M-Pesa') }}</h4>
+                                        <p class="text-[10px] text-stone-500">{{ __('Vodacom Tanzania') }}</p>
                                     </div>
                                 </div>
                                 <span class="text-xs font-bold text-amber-700" x-show="method === 'mpesa'">✓</span>
+                            </button>
+
+                            {{-- Tigo Pesa --}}
+                            <button type="button" @click="method = 'tigopesa'"
+                                    class="p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer"
+                                    :class="method === 'tigopesa' ? 'border-amber-500 bg-amber-50/30 ring-2 ring-amber-500/20' : 'border-stone-200 bg-white hover:bg-stone-50'">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xl">📲</span>
+                                    <div>
+                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Tigo Pesa') }}</h4>
+                                        <p class="text-[10px] text-stone-500">{{ __('Tigo Tanzania') }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-amber-700" x-show="method === 'tigopesa'">✓</span>
+                            </button>
+
+                            {{-- Airtel Money --}}
+                            <button type="button" @click="method = 'airtelmoney'"
+                                    class="p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer"
+                                    :class="method === 'airtelmoney' ? 'border-amber-500 bg-amber-50/30 ring-2 ring-amber-500/20' : 'border-stone-200 bg-white hover:bg-stone-50'">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xl">💳</span>
+                                    <div>
+                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Airtel Money') }}</h4>
+                                        <p class="text-[10px] text-stone-500">{{ __('Airtel Tanzania') }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-amber-700" x-show="method === 'airtelmoney'">✓</span>
                             </button>
 
                         </div>
@@ -151,31 +162,39 @@
                     </div>
 
                     {{-- Mobile Money Details Display --}}
-                    <div x-show="method === 'mpesa'" x-cloak class="p-6 bg-stone-50 border border-stone-200 rounded-2xl space-y-3 text-xs">
+                    <div x-show="method !== 'bank_transfer'" x-cloak class="p-6 bg-stone-50 border border-stone-200 rounded-2xl space-y-3 text-xs">
                         <h4 class="font-bold text-stone-900 text-sm uppercase tracking-wider text-amber-800">{{ __('Tanzania Mobile Money Instructions') }}</h4>
                         <p class="text-stone-700 font-medium">
-                            {{ __('Send payment to') }} <strong class="text-stone-900 font-bold">Twina Safaris Vodacom M-Pesa / Tigo Pesa: +255 795 482 197</strong>.
+                            {{ __('Send payment to') }}
+                            <strong class="text-stone-900 font-bold">
+                                <span x-show="method === 'mpesa'">M-Pesa: {{ $mobileMoney['mpesa'] }}</span>
+                                <span x-show="method === 'tigopesa'">Tigo Pesa: {{ $mobileMoney['tigopesa'] }}</span>
+                                <span x-show="method === 'airtelmoney'">Airtel Money: {{ $mobileMoney['airtelmoney'] }}</span>
+                            </strong>
                         </p>
                         <p class="text-[11px] text-stone-500 italic">
-                            * {{ __('After sending, paste your transaction ID / MPESA confirmation code in the notes box below.') }}
+                            * {{ __('After sending, enter your transaction ID / confirmation code in the notes box below.') }}
                         </p>
                     </div>
 
                     {{-- Form Submission --}}
-                    <form action="{{ route('booking.payment.process', $booking->booking_reference) }}" method="POST" class="space-y-4 pt-4 border-t border-stone-100">
+                    <form action="{{ route('booking.payment.process', $booking->token) }}" method="POST" class="space-y-4 pt-4 border-t border-stone-100">
                         @csrf
                         <input type="hidden" name="gateway" :value="method">
                         <input type="hidden" name="payment_type" :value="payType">
-                        <input type="hidden" name="amount" :value="activeAmount">
 
                         <div>
-                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Payment / Bank Reference Notes (Optional)') }}</label>
-                            <input type="text" name="transaction_notes" placeholder="{{ __('e.g. Bank transfer reference or M-Pesa transaction ID...') }}"
+                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Payment / Transaction Reference (Optional)') }}</label>
+                            <input type="text" name="transaction_notes" maxlength="1000" placeholder="{{ __('e.g. Bank transfer reference or M-Pesa transaction ID...') }}"
                                    class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-xs focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none">
                         </div>
 
+                        <p class="text-[11px] text-stone-500 leading-relaxed">
+                            {{ __('This form records your payment details for manual verification. No card details are collected. Our team will confirm the transaction and update your booking status.') }}
+                        </p>
+
                         <button type="submit" class="btn-gold w-full text-center py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg">
-                            <span x-text="'Proceed with ' + activeAmount + ' ' + '{{ $booking->currency }}' + ' Payment'"></span>
+                            {{ __('Submit Payment for Verification') }}
                         </button>
                     </form>
 
@@ -198,7 +217,7 @@
                     </div>
 
                     <div class="flex justify-between items-center text-stone-600 pb-3 border-b border-stone-100">
-                        <span>{{ __('Deposit (20%)') }}</span>
+                        <span>{{ __('Deposit') }} ({{ number_format($booking->deposit_percentage, 0) }}%)</span>
                         <span class="font-bold text-amber-700">{{ $booking->formatted_deposit_required }}</span>
                     </div>
 
@@ -211,7 +230,7 @@
                 <div class="p-6 bg-[#0a0703] text-white rounded-3xl space-y-3 text-xs">
                     <h4 class="font-bold text-amber-400 uppercase tracking-widest">{{ __('Twina Safaris Guarantee') }}</h4>
                     <p class="text-stone-300 leading-relaxed">
-                        {{ __('All payments are protected under our official registration in Tanzania. You will receive an instant digital receipt and updated booking voucher.') }}
+                        {{ __('All payments are protected under our official registration in Tanzania. You will receive a digital receipt and an updated booking voucher after verification.') }}
                     </p>
                 </div>
             </div>

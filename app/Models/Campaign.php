@@ -14,7 +14,7 @@ class Campaign extends Model
         'tour_id', 'title', 'slug', 'type', 'description', 'itinerary',
         'highlights', 'inclusions', 'exclusions',
         'price', 'currency', 'image', 'video_url', 'status',
-        'tracking_id', 'meta_title', 'meta_description', 'published_at'
+        'tracking_id', 'meta_title', 'meta_description', 'published_at',
     ];
 
     protected $casts = [
@@ -48,11 +48,11 @@ class Campaign extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $this->image ? asset('storage/'.$this->image) : null;
     }
 
     public function getPublicUrlAttribute()
     {
-        return route('campaign.show', $this->slug) . '?cid=' . $this->tracking_id;
+        return route('campaign.show', $this->slug).'?cid='.$this->tracking_id;
     }
 }

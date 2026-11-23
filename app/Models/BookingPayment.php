@@ -11,8 +11,11 @@ class BookingPayment extends Model
     use HasFactory;
 
     const STATUS_PENDING = 'pending';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_FAILED = 'failed';
+
     const STATUS_REFUNDED = 'refunded';
 
     protected $fillable = [
@@ -45,7 +48,7 @@ class BookingPayment extends Model
         parent::boot();
         static::creating(function ($payment) {
             if (empty($payment->transaction_reference)) {
-                $payment->transaction_reference = 'TXN-' . strtoupper(Str::random(10));
+                $payment->transaction_reference = 'TXN-'.strtoupper(Str::random(10));
             }
         });
     }

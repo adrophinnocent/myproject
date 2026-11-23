@@ -15,6 +15,7 @@ class CustomerBookingConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $booking;
+
     public $pdfPath;
 
     public function __construct(Booking $booking, $pdfPath = null)
@@ -28,7 +29,7 @@ class CustomerBookingConfirmation extends Mailable
         $itemName = $this->booking->tour->title ?? $this->booking->safari->title ?? 'Your Safari';
 
         return new Envelope(
-            subject: 'Booking Confirmation: ' . $itemName . ' (Ref: ' . $this->booking->booking_reference . ')',
+            subject: 'Booking Confirmation: '.$itemName.' (Ref: '.$this->booking->booking_reference.')',
         );
     }
 
@@ -44,9 +45,10 @@ class CustomerBookingConfirmation extends Mailable
         $attachments = [];
         if ($this->pdfPath && file_exists($this->pdfPath)) {
             $attachments[] = Attachment::fromPath($this->pdfPath)
-                ->as('Itinerary-' . $this->booking->booking_reference . '.pdf')
+                ->as('Itinerary-'.$this->booking->booking_reference.'.pdf')
                 ->withMime('application/pdf');
         }
+
         return $attachments;
     }
 }

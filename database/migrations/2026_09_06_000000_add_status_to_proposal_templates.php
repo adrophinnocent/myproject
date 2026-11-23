@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('proposal_templates') && !Schema::hasColumn('proposal_templates', 'status')) {
+        if (Schema::hasTable('proposal_templates') && ! Schema::hasColumn('proposal_templates', 'status')) {
             Schema::table('proposal_templates', function (Blueprint $table) {
                 $table->string('status')->default('active')->after('internal_costing');
             });

@@ -15,7 +15,7 @@ class TourInquiry extends Model
         'email',
         'phone',
         'message',
-        'status'
+        'status',
     ];
 
     public function tour()

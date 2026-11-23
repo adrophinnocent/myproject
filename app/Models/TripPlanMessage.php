@@ -10,12 +10,12 @@ class TripPlanMessage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'trip_plan_id', 'sender_type', 'message', 'attachments', 'is_read'
+        'trip_plan_id', 'sender_type', 'message', 'attachments', 'is_read',
     ];
 
     protected $casts = [
         'attachments' => 'array',
-        'is_read' => 'boolean'
+        'is_read' => 'boolean',
     ];
 
     public function tripPlan()

@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Traits\HasSlug;
 use App\Traits\Translatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
@@ -37,7 +37,7 @@ class Category extends Model
 
     public function safaris(): HasMany
     {
-        return $this->hasMany(\App\Models\Safari::class);
+        return $this->hasMany(Safari::class);
     }
 
     public function scopeActive(Builder $query): Builder
@@ -54,6 +54,7 @@ class Category extends Model
     {
         $tourCount = $this->tours()->where('is_published', true)->count();
         $safariCount = $this->safaris()->where('is_published', true)->count();
+
         return $tourCount + $safariCount;
     }
 }
