@@ -12,6 +12,15 @@ class BlogPost extends Model
 {
     use HasFactory, HasSlug, Translatable;
 
+    /**
+     * Superseded by the evergreen /best-time-for-tanzania-safari guide.
+     * These legacy URLs must not be advertised in the sitemap.
+     */
+    public const LEGACY_BEST_TIME_SLUGS = [
+        'best-time-to-go-on-safari-in-tanzania',
+        'best-time-to-visit-tanzania-for-an-incredible-safari',
+    ];
+
     protected $slugSource = 'title';
 
     protected $fillable = [

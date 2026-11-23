@@ -62,7 +62,10 @@ class SitemapController extends Controller
             ];
         }
 
-        foreach (BlogPost::published()->latest()->get() as $blog) {
+        foreach (BlogPost::published()
+            ->whereNotIn('slug', BlogPost::LEGACY_BEST_TIME_SLUGS)
+            ->latest()
+            ->get() as $blog) {
             if (! $blog->slug) {
                 continue;
             }
@@ -75,7 +78,8 @@ class SitemapController extends Controller
         }
 
         return response()->view('public.sitemap', compact('urls'))
-            ->header('Content-Type', 'text/xml; charset=utf-8')
+            ->header('Content-Type', 'application/xml; charset=utf-8')
+            ->header('X-Content-Type-Options', 'nosniff')
             ->header('Cache-Control', 'public, max-age=3600');
     }
 }

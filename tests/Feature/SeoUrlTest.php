@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\Destination;
 use App\Models\Testimonial;
@@ -92,9 +93,48 @@ class SeoUrlTest extends TestCase
         $response = $this->get('/sitemap.xml');
 
         $response->assertOk();
+        $response->assertHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->assertStringContainsString('max-age=3600', (string) $response->headers->get('Cache-Control'));
         $response->assertSee('xmlns:xhtml="http://www.w3.org/1999/xhtml"', false);
         $response->assertSee('hreflang="fr" href="https://twinasafaris.com/?lang=fr"', false);
+    }
+
+    public function test_sitemap_is_well_formed_xml_with_correct_elements(): void
+    {
+        $response = $this->get('/sitemap.xml');
+        $body = $response->getContent();
+
+        $document = new \DOMDocument;
+        $previous = libxml_use_internal_errors(true);
+        $loaded = $document->loadXML($body, LIBXML_NONET);
+        $errors = libxml_get_errors();
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+
+        $this->assertTrue($loaded, 'Sitemap is not well-formed: '.implode('; ', array_map(fn ($error) => trim($error->message), $errors)));
+
+        $namespace = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+        $this->assertSame('urlset', $document->documentElement->localName);
+        $this->assertSame($namespace, $document->documentElement->namespaceURI);
+
+        $nodes = $document->getElementsByTagNameNS($namespace, 'url');
+        $this->assertGreaterThan(0, $nodes->length);
+
+        foreach ($nodes as $node) {
+            $locs = $node->getElementsByTagNameNS($namespace, 'loc');
+            $this->assertSame(1, $locs->length);
+            $this->assertStringStartsWith('https://twinasafaris.com/', trim($locs->item(0)->textContent));
+
+            $this->assertSame(1, $node->getElementsByTagNameNS($namespace, 'changefreq')->length);
+            $this->assertSame(1, $node->getElementsByTagNameNS($namespace, 'priority')->length);
+            $this->assertLessThanOrEqual(1, $node->getElementsByTagNameNS($namespace, 'lastmod')->length);
+        }
+
+        $this->assertStringNotContainsString('savannatrails.com', $body);
+
+        foreach (BlogPost::LEGACY_BEST_TIME_SLUGS as $slug) {
+            $this->assertStringNotContainsString($slug, $body);
+        }
     }
 
     public function test_tour_schema_does_not_invent_a_rating_without_real_reviews(): void
