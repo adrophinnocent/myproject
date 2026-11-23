@@ -178,26 +178,14 @@
 </section>
 
 {{-- ========== 1.5 WHAT WE ARRANGE (NO UNVERIFIED STATISTICS) ========== --}}
-<section class="py-12 bg-white border-b border-gray-100">
+<section class="py-8 bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4">
         <h2 class="sr-only">{{ __('What Twina Safaris arranges') }}</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div class="text-center">
-                <span class="text-3xl" aria-hidden="true">📍</span>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Based in Tanzania') }}</p>
-            </div>
-            <div class="text-center">
-                <span class="text-3xl" aria-hidden="true">🧭</span>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Tailor-made itineraries') }}</p>
-            </div>
-            <div class="text-center">
-                <span class="text-3xl" aria-hidden="true">📝</span>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Clear written quotes') }}</p>
-            </div>
-            <div class="text-center">
-                <span class="text-3xl" aria-hidden="true">🌿</span>
-                <p class="text-[9px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.4em] mt-2">{{ __('Responsible travel practices') }}</p>
-            </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            <p class="text-sm md:text-base text-gray-600 font-medium text-center">{{ __('Based in Tanzania') }}</p>
+            <p class="text-sm md:text-base text-gray-600 font-medium text-center">{{ __('Tailor-made itineraries') }}</p>
+            <p class="text-sm md:text-base text-gray-600 font-medium text-center">{{ __('Clear written quotes') }}</p>
+            <p class="text-sm md:text-base text-gray-600 font-medium text-center">{{ __('Responsible travel practices') }}</p>
         </div>
     </div>
 </section>
@@ -786,17 +774,14 @@
 <section class="py-16 bg-white border-t border-gray-100">
     <div class="max-w-7xl mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-center h-32">
-                <span class="text-3xl" aria-hidden="true">📍</span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">{{ __('Based in Tanzania') }}</span>
+            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 text-center">
+                <span class="text-sm md:text-base text-gray-700 font-medium">{{ __('Based in Tanzania') }}</span>
             </div>
-            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-center h-32">
-                <span class="text-3xl" aria-hidden="true">🧭</span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">{{ __('Tailor-made itineraries') }}</span>
+            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 text-center">
+                <span class="text-sm md:text-base text-gray-700 font-medium">{{ __('Tailor-made itineraries') }}</span>
             </div>
-            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-center h-32">
-                <span class="text-3xl" aria-hidden="true">🌿</span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">{{ __('Responsible travel practices') }}</span>
+            <div class="bg-[#fcfaf7] border border-gray-100 rounded-2xl p-6 text-center">
+                <span class="text-sm md:text-base text-gray-700 font-medium">{{ __('Responsible travel practices') }}</span>
             </div>
         </div>
     </div>

@@ -301,6 +301,21 @@ class SeoUrlTest extends TestCase
         $response->assertSee('$500');
     }
 
+    public function test_homepage_trust_lines_are_plain_text_without_icons(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('Based in Tanzania');
+        $response->assertSee('Tailor-made itineraries');
+        $response->assertSee('Clear written quotes');
+        $response->assertSee('Responsible travel practices');
+        $response->assertDontSee('📍');
+        $response->assertDontSee('🧭');
+        $response->assertDontSee('📝');
+        $response->assertDontSee('🌿');
+    }
+
     public function test_homepage_signature_expedition_is_cleanly_organised(): void
     {
         $this->makeTour([
