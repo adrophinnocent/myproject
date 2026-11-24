@@ -242,7 +242,6 @@ class SeoUrlTest extends TestCase
     public static function guidePageProvider(): array
     {
         return [
-            ['/choose-safari-company', 'How to Choose a Tanzania Safari Company'],
             ['/tanzania-safari-cost', 'Tanzania Safari Cost'],
             ['/best-time-for-tanzania-safari', 'Best Time to Visit Tanzania for Safari'],
             ['/serengeti-safari', 'Serengeti Safari: Routes, Seasons and What to Expect'],
@@ -250,6 +249,13 @@ class SeoUrlTest extends TestCase
             ['/kilimanjaro-trekking-company', 'Climb Kilimanjaro with a Local Moshi Trekking Team'],
             ['/zanzibar-holiday-packages', 'Zanzibar Holiday Packages: Beach, Culture and Safari Combinations'],
         ];
+    }
+
+    public function test_removed_choose_company_guide_returns_gone(): void
+    {
+        $response = $this->get('/choose-safari-company');
+
+        $response->assertStatus(410);
     }
 
     public function test_english_only_guide_does_not_advertise_untranslated_hreflang(): void
@@ -287,6 +293,7 @@ class SeoUrlTest extends TestCase
         foreach (array_column(self::guidePageProvider(), 0) as $path) {
             $response->assertSee('https://twinasafaris.com'.$path, false);
         }
+        $response->assertDontSee('https://twinasafaris.com/choose-safari-company', false);
     }
 
     public function test_safari_cost_guide_uses_published_itinerary_prices(): void

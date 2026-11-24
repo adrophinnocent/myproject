@@ -27,7 +27,6 @@ class SitemapController extends Controller
             ['loc' => $siteUrl.'/faqs', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['loc' => $siteUrl.'/gallery', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['loc' => $siteUrl.'/custom-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
-            ['loc' => $siteUrl.'/choose-safari-company', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
             ['loc' => $siteUrl.'/tanzania-safari-cost', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
             ['loc' => $siteUrl.'/best-time-for-tanzania-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
             ['loc' => $siteUrl.'/serengeti-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],

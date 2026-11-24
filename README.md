@@ -84,6 +84,8 @@ every push / pull request.
 - `APP_ENV=production`, `APP_DEBUG=false`
 - Real `MAIL_*` credentials (SMTP) and a running queue worker
 - `php artisan migrate --force`, `php artisan storage:link`
-- `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+- `php artisan optimize:clear` after deploying changed routes/views/config, then
+  `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+- Purge the CDN/page cache for changed URLs (including `/sitemap.xml`) after deploy
 - `php artisan queue:restart` after each deploy
 - Keep `database/database.sqlite` (or your MySQL DB) backed up before migrating

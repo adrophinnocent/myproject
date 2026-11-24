@@ -11,9 +11,14 @@ use Illuminate\View\View;
 
 class GuideController extends Controller
 {
-    public function chooseCompany(): View
+    /**
+     * The company-selection guide is temporarily unavailable. Keep the URL
+     * registered so it reports 410 Gone rather than redirecting or falling
+     * through to a generic 404.
+     */
+    public function chooseCompany(): never
     {
-        return view('public.guides.choose-company');
+        abort(410);
     }
 
     public function safariCost(): View

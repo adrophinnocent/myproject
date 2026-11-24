@@ -174,6 +174,7 @@ Route::get('/blog/{slug}', function ($slug) {
 Route::get('/faqs', [FaqController::class, 'index'])->name('faqs.index');
 
 // Practical planning guides for the questions tourists search for.
+// The choose-company guide is temporarily removed; its URL returns 410 Gone.
 Route::get('/choose-safari-company', [GuideController::class, 'chooseCompany'])->name('guides.choose-company');
 Route::get('/tanzania-safari-cost', [GuideController::class, 'safariCost'])->name('guides.safari-cost');
 Route::get('/best-time-for-tanzania-safari', [GuideController::class, 'bestTime'])->name('guides.best-time');

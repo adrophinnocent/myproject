@@ -821,8 +821,6 @@
                 <a href="{{ route('guides.safari-cost') }}" class="text-xs font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Safari costs') }}</a>
                 <span class="text-stone-300" aria-hidden="true">·</span>
                 <a href="{{ route('guides.best-time') }}" class="text-xs font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Best time to visit') }}</a>
-                <span class="text-stone-300" aria-hidden="true">·</span>
-                <a href="{{ route('guides.choose-company') }}" class="text-xs font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Choose a safari company') }}</a>
             </div>
         </div>
     </div>

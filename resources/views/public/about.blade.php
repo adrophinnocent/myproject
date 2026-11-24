@@ -211,9 +211,6 @@
             <p class="text-gray-700 text-xl font-light leading-relaxed italic border-l-4 border-gold-500 pl-8">
                 {{ __('At Twina Safaris, we believe every traveler deserves an authentic, comfortable Tanzania adventure. Our local knowledge and clear planning help you compare routes, inclusions and costs before you book.') }}
             </p>
-            <p class="mt-6 text-sm">
-                <a href="{{ route('guides.choose-company') }}" class="font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Read our guide to choosing a Tanzania safari company') }} →</a>
-            </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
