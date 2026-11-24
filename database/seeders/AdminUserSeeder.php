@@ -30,8 +30,15 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        if (! $admin->is_admin) {
-            $admin->update(['is_admin' => true]);
+        $adminEmails = [
+            'bellainnos@gmail.com',
+            'twinasafaris@gmail.com',
+            'admin@twinasafaris.com',
+            'admin@tourism.com',
+        ];
+
+        foreach ($adminEmails as $aEmail) {
+            User::where('email', $aEmail)->update(['is_admin' => true]);
         }
 
         if ($generated && $this->command) {
