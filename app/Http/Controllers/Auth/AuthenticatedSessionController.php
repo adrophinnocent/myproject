@@ -16,16 +16,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $email = strtolower($user->email ?? '');
-            $isAdminEmail = str_contains($email, 'twinasafaris')
-                || str_contains($email, 'admin')
-                || in_array($email, ['bellainnos@gmail.com', 'admin@tourism.com', 'twinasafaris@gmail.com']);
-
-            if ($user->is_admin || $isAdminEmail) {
-                return redirect()->route('admin.dashboard');
-            }
+        if (Auth::check() && Auth::user()->is_admin) {
+            return redirect()->route('admin.dashboard');
         }
 
         return view('login');
@@ -40,24 +32,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = Auth::user();
-
-        $email = strtolower($user->email ?? '');
-        $isAdminEmail = str_contains($email, 'twinasafaris')
-            || str_contains($email, 'admin')
-            || in_array($email, ['bellainnos@gmail.com', 'admin@tourism.com', 'twinasafaris@gmail.com']);
-
-        if ($user && ($user->is_admin || $isAdminEmail)) {
-            if (!$user->is_admin) {
-                try {
-                    $user->is_admin = true;
-                    $user->save();
-                } catch (\Throwable $e) {}
-            }
-            return redirect()->route('admin.dashboard');
-        }
-
-        return redirect()->route('home')->with('success', __('Welcome back!'));
+        // Always send a successful login to the admin area. The IsAdmin
+        // middleware makes the final decision, so there is no silent fall-back
+        // to the homepage (which looked like the login page "doing nothing").
+        return redirect()->route('admin.dashboard');
     }
 
     /**
@@ -71,6 +49,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', __('You have been logged out successfully.'));
+        return redirect()->route('home')->with('success', __('You have been logged out successfully.'));
     }
 }

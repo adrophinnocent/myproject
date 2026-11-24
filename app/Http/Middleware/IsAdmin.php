@@ -17,23 +17,15 @@ class IsAdmin
             return redirect()->guest(route('login'));
         }
 
-        $email = strtolower($user->email ?? '');
-        $isAdminEmail = str_contains($email, 'twinasafaris')
-            || str_contains($email, 'admin')
-            || in_array($email, ['bellainnos@gmail.com', 'admin@tourism.com', 'twinasafaris@gmail.com']);
-
-        if ($user->is_admin || $isAdminEmail) {
-            if (!$user->is_admin) {
-                try {
-                    $user->is_admin = true;
-                    $user->save();
-                } catch (\Throwable $e) {}
-            }
+        // Admin access is determined by the database flag only. Email patterns
+        // are not authorization: any account with "admin" in its address would
+        // otherwise be able to manage the whole site.
+        if ($user->is_admin) {
             return $next($request);
         }
 
         Log::warning("Forbidden 403 access to {$request->path()} by User ID: {$user->id}, Email: {$user->email}, IP: {$request->ip()}");
 
-        return redirect()->route('home')->with('error', __('Restricted Territory: You don\'t have admin permits.'));
+        abort(403);
     }
 }
