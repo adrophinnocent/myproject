@@ -17,7 +17,9 @@ class AuthenticatedSessionController extends Controller
     public function create(): View|RedirectResponse
     {
         if (Auth::check()) {
-            if (Auth::user()->is_admin) {
+            $user = Auth::user();
+            $adminEmails = ['twinasafaris@gmail.com', 'admin@tourism.com', 'bellainnos@gmail.com', 'info@twinasafaris.com'];
+            if ($user->is_admin || in_array(strtolower($user->email), $adminEmails)) {
                 return redirect()->route('admin.dashboard');
             }
         }
@@ -36,8 +38,16 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if ($user && $user->is_admin) {
-            return redirect()->intended(route('admin.dashboard', absolute: false));
+        $adminEmails = ['twinasafaris@gmail.com', 'admin@tourism.com', 'bellainnos@gmail.com', 'info@twinasafaris.com'];
+
+        if ($user && ($user->is_admin || in_array(strtolower($user->email), $adminEmails))) {
+            if (!$user->is_admin) {
+                try {
+                    $user->is_admin = true;
+                    $user->save();
+                } catch (\Throwable $e) {}
+            }
+            return redirect()->route('admin.dashboard');
         }
 
         return redirect()->route('home')->with('success', __('Welcome back!'));

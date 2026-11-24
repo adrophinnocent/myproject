@@ -17,12 +17,20 @@ class IsAdmin
             return redirect()->guest(route('login'));
         }
 
-        if ($user->is_admin) {
+        $adminEmails = ['twinasafaris@gmail.com', 'admin@tourism.com', 'bellainnos@gmail.com', 'info@twinasafaris.com'];
+
+        if ($user->is_admin || in_array(strtolower($user->email), $adminEmails)) {
+            if (!$user->is_admin) {
+                try {
+                    $user->is_admin = true;
+                    $user->save();
+                } catch (\Throwable $e) {}
+            }
             return $next($request);
         }
 
         Log::warning("Forbidden 403 access to {$request->path()} by User ID: {$user->id}, Email: {$user->email}, IP: {$request->ip()}");
 
-        abort(403, 'Restricted Territory: You don\'t have necessary admin permits.');
+        return redirect()->route('home')->with('error', __('Restricted Territory: You don\'t have admin permits.'));
     }
 }
