@@ -38,8 +38,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
-// Admin Login Routes (Path alias for convenience)
+// Admin Login & Route Aliases
+Route::get('/admin', function () {
+    return redirect()->route('admin.dashboard');
+});
+
 Route::get('/admin/login', function () {
+    if (auth()->check() && auth()->user()->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
     return redirect()->route('login');
 });
 
