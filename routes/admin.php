@@ -38,21 +38,17 @@ use Illuminate\Support\Facades\Route;
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
-// Admin Login & Route Aliases
-Route::match(['get', 'post'], '/admin', function () {
-    return redirect()->route('admin.dashboard');
-});
+// Admin Dedicated Login & Route Aliases
+Route::get('/admin/access', [AuthenticatedSessionController::class, 'create'])->name('admin.access');
+Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
+Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:10,1');
 
-Route::get('/admin/login', function () {
+Route::get('/admin', function () {
     if (auth()->check() && auth()->user()->is_admin) {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('login');
 });
-
-Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('throttle:10,1')
-    ->name('admin.login');
 
 Route::match(['get', 'post'], '/admin/logout', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Auth::guard('web')->logout();
