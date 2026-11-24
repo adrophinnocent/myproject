@@ -36,6 +36,7 @@
                 <button type="button" onclick="showTab('itinerary')" id="tab-itinerary" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Itinerary</button>
                 <button type="button" onclick="showTab('inclusions')" id="tab-inclusions" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Inclusions/Exclusions</button>
                 <button type="button" onclick="showTab('extras')" id="tab-extras" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Optional Extras</button>
+                <button type="button" onclick="showTab('accommodations')" id="tab-accommodations" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-amber-600 hover:text-amber-700 hover:border-gray-300">🏨 Accommodation Tiers</button>
                 <button type="button" onclick="showTab('faqs')" id="tab-faqs" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">FAQs</button>
                 <button type="button" onclick="showTab('media')" id="tab-media" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Media</button>
                 <button type="button" onclick="showTab('availability')" id="tab-availability" class="tab-btn pb-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Availability</button>
@@ -399,6 +400,105 @@
 
                 <div id="extras-container" class="space-y-4">
                     {{-- Dynamically added extras --}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Accommodation Options -->
+        <div id="content-accommodations" class="tab-content hidden">
+            <div class="p-6 bg-white border border-gray-200 rounded-xl shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-gray-200">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Accommodation Options & Tiered Pricing</h3>
+                        <p class="text-xs text-gray-500">Fill in accommodation levels (e.g. Budget, Standard, Comfort, Premium, Luxury) for this package if applicable.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="loadSampleAccommodationTiers()" class="px-3.5 py-2 bg-stone-800 hover:bg-stone-900 text-amber-300 font-bold text-xs uppercase tracking-wider rounded-lg shadow transition-all">
+                            ⚡ Load 5-Tier Sample
+                        </button>
+                        <button type="button" onclick="addAccommodationTier()" class="px-4 py-2 bg-[#D4AF37] hover:bg-[#b8920d] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow transition-all">
+                            + Add Tier
+                        </button>
+                    </div>
+                </div>
+
+                <div id="acc-options-container" class="space-y-6">
+                    @php
+                        $editAccOptions = is_array($tour->accommodation_options) ? $tour->accommodation_options : [];
+                    @endphp
+
+                    @forelse($editAccOptions as $aIdx => $aOpt)
+                        <div class="p-5 border border-gray-200 rounded-xl bg-gray-50/80 shadow-xs acc-row space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+                                <div class="flex items-center gap-3">
+                                    <span class="cursor-move text-gray-400 font-bold" title="Drag to reorder">☰</span>
+                                    <h4 class="font-bold text-gray-900 text-sm">Tier #{{ $aIdx + 1 }}: <span class="text-[#D4AF37]">{{ $aOpt['name'] ?? 'Tier Option' }}</span></h4>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <label class="flex items-center gap-1.5 text-xs font-bold text-gray-700 cursor-pointer">
+                                        <input type="radio" name="default_acc_tier_select" value="{{ $aIdx }}" {{ !empty($aOpt['is_default']) ? 'checked' : '' }} onchange="setDefaultAccTier({{ $aIdx }})" class="text-amber-600 focus:ring-amber-500">
+                                        <span>Default Selection</span>
+                                    </label>
+                                    <label class="flex items-center gap-1.5 text-xs font-bold text-gray-700 cursor-pointer">
+                                        <input type="checkbox" name="accommodation_options[{{ $aIdx }}][is_active]" value="1" {{ (!isset($aOpt['is_active']) || !empty($aOpt['is_active'])) ? 'checked' : '' }} class="rounded text-emerald-600 focus:ring-emerald-500">
+                                        <span>Active</span>
+                                    </label>
+                                    <button type="button" onclick="this.closest('.acc-row').remove()" class="text-red-600 hover:text-red-800 text-xs font-bold uppercase">Remove Tier</button>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="accommodation_options[{{ $aIdx }}][id]" value="{{ $aOpt['id'] ?? 'acc_' . $aIdx }}">
+                            <input type="hidden" name="accommodation_options[{{ $aIdx }}][is_default]" id="acc_is_default_{{ $aIdx }}" value="{{ !empty($aOpt['is_default']) ? '1' : '0' }}">
+                            <input type="hidden" name="accommodation_options[{{ $aIdx }}][existing_image]" value="{{ $aOpt['image'] ?? '' }}">
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Option Name *</label>
+                                    <input type="text" name="accommodation_options[{{ $aIdx }}][name]" value="{{ $aOpt['name'] ?? '' }}" required class="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm focus:ring-2 focus:ring-[#D4AF37]" placeholder="e.g. Budget, Standard, Comfort">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Price (USD) *</label>
+                                    <input type="number" step="0.01" name="accommodation_options[{{ $aIdx }}][price]" value="{{ $aOpt['price'] ?? 0 }}" required class="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm focus:ring-2 focus:ring-[#D4AF37]" placeholder="1750.00">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Hotel Thumbnail Photo</label>
+                                    <input type="file" name="accommodation_options[{{ $aIdx }}][image_upload]" accept="image/*" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs bg-white">
+                                    @if(!empty($aOpt['image']))
+                                        <div class="mt-1 flex items-center gap-2">
+                                            <img src="{{ $aOpt['image'] }}" class="w-8 h-8 rounded object-cover border">
+                                            <span class="text-[10px] text-gray-500 truncate">Current Image</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Daily Hotel / Lodge Assignments</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 0 (Arrival)</label>
+                                        <input type="text" name="accommodation_options[{{ $aIdx }}][hotels][day_0]" value="{{ $aOpt['hotels']['day_0'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Hotel in Arusha/Moshi">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 1</label>
+                                        <input type="text" name="accommodation_options[{{ $aIdx }}][hotels][day_1]" value="{{ $aOpt['hotels']['day_1'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Camp / Lodge Day 1">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 2</label>
+                                        <input type="text" name="accommodation_options[{{ $aIdx }}][hotels][day_2]" value="{{ $aOpt['hotels']['day_2'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Camp / Lodge Day 2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 3</label>
+                                        <input type="text" name="accommodation_options[{{ $aIdx }}][hotels][day_3]" value="{{ $aOpt['hotels']['day_3'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Camp / Lodge Day 3">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div id="no-acc-msg" class="p-8 text-center text-gray-400 italic bg-gray-50 border border-dashed border-gray-300 rounded-xl">
+                            No accommodation options added for this package yet. Click <strong>"+ Add Tier"</strong> or <strong>"⚡ Load 5-Tier Sample"</strong> to configure tiers.
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -1038,6 +1138,111 @@ function addGoodToKnow() {
         <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">-</button>
     `;
     container.appendChild(div);
+}
+
+let accTierCount = document.querySelectorAll('.acc-row').length;
+
+function addAccommodationTier(data = null) {
+    const container = document.getElementById('acc-options-container');
+    if (!container) return;
+
+    const noMsg = document.getElementById('no-acc-msg');
+    if (noMsg) noMsg.remove();
+
+    const idx = accTierCount++;
+    const name = data ? (data.name || '') : '';
+    const price = data ? (data.price || '') : '';
+    const isDef = data ? (data.is_default ? 'checked' : '') : (idx === 0 ? 'checked' : '');
+    const isActive = data ? (data.is_active ? 'checked' : '') : 'checked';
+    const day0 = data && data.hotels ? (data.hotels.day_0 || '') : '';
+    const day1 = data && data.hotels ? (data.hotels.day_1 || '') : '';
+    const day2 = data && data.hotels ? (data.hotels.day_2 || '') : '';
+    const day3 = data && data.hotels ? (data.hotels.day_3 || '') : '';
+
+    const html = `
+        <div class="p-5 border border-gray-200 rounded-xl bg-gray-50/80 shadow-xs acc-row space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <span class="cursor-move text-gray-400 font-bold" title="Drag to reorder">☰</span>
+                    <h4 class="font-bold text-gray-900 text-sm">Tier #${idx + 1}: <span class="text-[#D4AF37]">${name || 'New Tier'}</span></h4>
+                </div>
+                <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-1.5 text-xs font-bold text-gray-700 cursor-pointer">
+                        <input type="radio" name="default_acc_tier_select" value="${idx}" ${isDef} onchange="setDefaultAccTier(${idx})" class="text-amber-600 focus:ring-amber-500">
+                        <span>Default Selection</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 text-xs font-bold text-gray-700 cursor-pointer">
+                        <input type="checkbox" name="accommodation_options[${idx}][is_active]" value="1" ${isActive} class="rounded text-emerald-600 focus:ring-emerald-500">
+                        <span>Active</span>
+                    </label>
+                    <button type="button" onclick="this.closest('.acc-row').remove()" class="text-red-600 hover:text-red-800 text-xs font-bold uppercase">Remove Tier</button>
+                </div>
+            </div>
+
+            <input type="hidden" name="accommodation_options[${idx}][id]" value="${data && data.id ? data.id : 'acc_' + Math.random().toString(36).substr(2, 6)}">
+            <input type="hidden" name="accommodation_options[${idx}][is_default]" id="acc_is_default_${idx}" value="${isDef ? '1' : '0'}">
+            <input type="hidden" name="accommodation_options[${idx}][existing_image]" value="${data && data.image ? data.image : ''}">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Option Name *</label>
+                    <input type="text" name="accommodation_options[${idx}][name]" value="${name}" required class="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm focus:ring-2 focus:ring-[#D4AF37]" placeholder="e.g. Budget, Standard, Comfort">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Price (USD) *</label>
+                    <input type="number" step="0.01" name="accommodation_options[${idx}][price]" value="${price}" required class="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm focus:ring-2 focus:ring-[#D4AF37]" placeholder="1750.00">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Hotel Thumbnail Photo</label>
+                    <input type="file" name="accommodation_options[${idx}][image_upload]" accept="image/*" class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs bg-white">
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Daily Hotel / Lodge Assignments</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 0 (Arrival)</label>
+                        <input type="text" name="accommodation_options[${idx}][hotels][day_0]" value="${day0}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Hotel in Arusha/Moshi">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 1</label>
+                        <input type="text" name="accommodation_options[${idx}][hotels][day_1]" value="${day1}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Camp / Lodge Day 1">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 2</label>
+                        <input type="text" name="accommodation_options[${idx}][hotels][day_2]" value="${day2}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Camp / Lodge Day 2">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Day 3</label>
+                        <input type="text" name="accommodation_options[${idx}][hotels][day_3]" value="${day3}" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs bg-white" placeholder="Camp / Lodge Day 3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+}
+
+function setDefaultAccTier(selectedIdx) {
+    document.querySelectorAll('[id^="acc_is_default_"]').forEach((input, i) => {
+        input.value = (i === selectedIdx) ? '1' : '0';
+    });
+}
+
+function loadSampleAccommodationTiers() {
+    if (!confirm('Load the 5-Tier Accommodation Sample (Budget, Standard, Comfort, Premium, Luxury)?')) return;
+
+    const samples = [
+        { name: 'Budget', price: 1672, is_default: false, is_active: true, hotels: { day_0: 'Gate way Hotel, Arusha', day_1: 'Serengeti Queens, Central', day_2: 'Omega View Lodge', day_3: 'Departure' } },
+        { name: 'Standard', price: 1743, is_default: true, is_active: true, hotels: { day_0: 'Summit Lodge, Arusha', day_1: 'Tanzania Bush Camp, Central', day_2: 'Olea Farm Lodge', day_3: 'Departure' } },
+        { name: 'Comfort', price: 1953, is_default: false, is_active: true, hotels: { day_0: 'Kibo Palace Hotel', day_1: 'Tanzania Bush Camp, Central', day_2: "Ang'ata Ngorongoro Camp", day_3: 'Departure' } },
+        { name: 'Premium', price: 2295, is_default: false, is_active: true, hotels: { day_0: 'Arusha Serena', day_1: 'Serengeti Serena Safari Lodge', day_2: 'Ngorongoro Serena Safari Lodge', day_3: 'Departure' } },
+        { name: 'Luxury', price: 3397, is_default: false, is_active: true, hotels: { day_0: 'Gran Melia Arusha', day_1: 'Serengeti Melia Safari Lodge', day_2: 'Ngorongoro Melia Safari Lodge', day_3: 'Departure' } },
+    ];
+
+    samples.forEach(s => addAccommodationTier(s));
 }
 
 let extraCount = 0;

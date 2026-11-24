@@ -487,28 +487,24 @@
                 </div>
             </div>
 
-            {{-- ACCOMMODATION OPTIONS TABLE (Selectable Horizontal Table) --}}
+            {{-- ACCOMMODATION OPTIONS TABLE (Only shown if Admin has added options for this package) --}}
             @php
-                $accOptions = $tour->accommodation_options ?? [];
-                if (!is_array($accOptions) || count($accOptions) === 0) {
-                    $accOptions = [
-                        ['id' => 'acc_budget', 'name' => 'Budget', 'price' => 1672, 'hotels' => ['day_0' => 'Gate way Hotel, Arusha', 'day_1' => 'Serengeti Queens, Central', 'day_2' => 'Omega View Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
-                        ['id' => 'acc_standard', 'name' => 'Standard', 'price' => 1743, 'hotels' => ['day_0' => 'Summit Lodge, Arusha', 'day_1' => 'Tanzania Bush Camp, Central', 'day_2' => 'Olea Farm Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => true],
-                        ['id' => 'acc_comfort', 'name' => 'Comfort', 'price' => 1953, 'hotels' => ['day_0' => 'Kibo Palace Hotel', 'day_1' => 'Tanzania Bush Camp, Central', 'day_2' => 'Ang\'ata Ngorongoro Camp', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
-                        ['id' => 'acc_premium', 'name' => 'Premium', 'price' => 2295, 'hotels' => ['day_0' => 'Arusha Serena', 'day_1' => 'Serengeti Serena Safari Lodge', 'day_2' => 'Ngorongoro Serena Safari Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
-                        ['id' => 'acc_luxury', 'name' => 'Luxury', 'price' => 3397, 'hotels' => ['day_0' => 'Gran Melia Arusha', 'day_1' => 'Serengeti Melia Safari Lodge', 'day_2' => 'Ngorongoro Melia Safari Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
-                    ];
+                $rawAccOptions = is_array($tour->accommodation_options) ? $tour->accommodation_options : [];
+
+                $activeAccOptions = array_values(array_filter($rawAccOptions, function($opt) {
+                    return is_array($opt) && (!isset($opt['is_active']) || !empty($opt['is_active'])) && !empty($opt['name']);
+                }));
+
+                $defaultSelectedId = '';
+                if (count($activeAccOptions) > 0) {
+                    $defaultSelectedId = $activeAccOptions[0]['id'] ?? 'acc_0';
+                    foreach ($activeAccOptions as $ao) {
+                        if (!empty($ao['is_default'])) { $defaultSelectedId = $ao['id']; break; }
+                    }
                 }
 
-                $activeAccOptions = array_values(array_filter($accOptions, fn($opt) => !isset($opt['is_active']) || !empty($opt['is_active'])));
-
-                $defaultSelectedId = $activeAccOptions[0]['id'] ?? 'acc_standard';
-                foreach ($activeAccOptions as $ao) {
-                    if (!empty($ao['is_default'])) { $defaultSelectedId = $ao['id']; break; }
-                }
-
-                $dayKeys = ['day_0', 'day_1', 'day_2', 'day_3'];
-                if (!empty($activeAccOptions[0]['hotels']) && is_array($activeAccOptions[0]['hotels'])) {
+                $dayKeys = [];
+                if (count($activeAccOptions) > 0 && !empty($activeAccOptions[0]['hotels']) && is_array($activeAccOptions[0]['hotels'])) {
                     $dayKeys = array_keys($activeAccOptions[0]['hotels']);
                 }
             @endphp
