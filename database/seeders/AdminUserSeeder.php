@@ -5,46 +5,35 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = env('ADMIN_SEED_EMAIL', 'admin@twinasafaris.com');
-        $password = env('ADMIN_SEED_PASSWORD');
-        $generated = false;
-
-        if (empty($password)) {
-            $password = Str::random(16);
-            $generated = true;
-        }
-
-        $admin = User::firstOrCreate(
-            ['email' => $email],
-            [
-                'name' => 'Twina Safaris Admin',
-                'password' => Hash::make($password),
-                'email_verified_at' => now(),
-                'is_admin' => true,
-            ]
-        );
+        $defaultPassword = env('ADMIN_SEED_PASSWORD', 'TwinaSafaris2026!');
 
         $adminEmails = [
-            'bellainnos@gmail.com',
-            'twinasafaris@gmail.com',
-            'admin@twinasafaris.com',
-            'admin@tourism.com',
+            'twinasafaris@gmail.com' => 'Twina Safaris Admin',
+            'admin@tourism.com' => 'Admin User',
+            'bellainnos@gmail.com' => 'Innocent Bellain',
+            'admin@twinasafaris.com' => 'System Administrator',
+            'info@twinasafaris.com' => 'Twina Support Admin',
         ];
 
-        foreach ($adminEmails as $aEmail) {
-            User::where('email', $aEmail)->update(['is_admin' => true]);
-        }
-
-        if ($generated && $this->command) {
-            $this->command->warn("Admin account created: {$email}");
-            $this->command->warn("Generated password: {$password}");
-            $this->command->warn('Store this password securely and change it after first login. Set ADMIN_SEED_PASSWORD in .env to choose your own.');
+        foreach ($adminEmails as $email => $name) {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                $user->is_admin = true;
+                $user->save();
+            } else {
+                User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => Hash::make($defaultPassword),
+                    'email_verified_at' => now(),
+                    'is_admin' => true,
+                ]);
+            }
         }
     }
 }
