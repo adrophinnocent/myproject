@@ -192,10 +192,11 @@
 
 {{-- ========== 2. FEATURED PACKAGE (KILIMANJARO DYNAMIC) ========== --}}
 @if(isset($heroTour) && $heroTour)
-<section class="py-24 bg-white relative overflow-hidden">
+<section class="py-16 md:py-20 bg-stone-50/60 relative overflow-hidden border-b border-stone-200/80">
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="flex flex-col lg:flex-row gap-16 items-center">
-            <div class="w-full lg:w-1/2 relative" x-data="{
+        <div class="flex flex-col lg:flex-row gap-10 lg:gap-12 items-start lg:items-stretch">
+            {{-- Left Column: Perfectly Height-Balanced Image Carousel Card --}}
+            <div class="w-full lg:w-5/12 relative flex flex-col" x-data="{
                 activeSlide: 0,
                 slides: [
                     '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-1') }}',
@@ -210,31 +211,37 @@
                     }, 5000);
                 }
             }">
-                <div class="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl h-[450px] md:h-[700px]">
+                <div class="relative rounded-[2.5rem] overflow-hidden shadow-xl h-[420px] lg:h-full min-h-[420px] max-h-[560px] bg-stone-900 border border-stone-200">
                     <template x-for="(slide, index) in slides" :key="index">
                         <div x-show="activeSlide === index"
                              x-transition:enter="transition ease-out duration-1000"
-                             x-transition:enter-start="opacity-0 scale-110"
+                             x-transition:enter-start="opacity-0 scale-105"
                              x-transition:enter-end="opacity-100 scale-100"
                              class="absolute inset-0 w-full h-full">
-                            <img :src="slide" width="800" height="700" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy" decoding="async">
+                            <img :src="slide" width="800" height="600" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy" decoding="async">
                         </div>
                     </template>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
-                    <div class="absolute bottom-10 left-10 right-10">
-                        <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl">
-                            <p class="text-white text-lg font-bold mb-2">🏔️ {{ $heroTour->title }}</p>
-                            <p class="text-gold-400 text-sm font-black uppercase tracking-widest">The Ultimate Experience</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
+
+                    {{-- Bottom Glass Card --}}
+                    <div class="absolute bottom-6 left-6 right-6 z-10">
+                        <div class="bg-stone-950/60 backdrop-blur-md border border-white/20 p-4 sm:p-5 rounded-2xl shadow-lg">
+                            <p class="text-white text-base sm:text-lg font-bold mb-1 line-clamp-1">🏔️ {{ $heroTour->title }}</p>
+                            <p class="text-amber-400 text-[10px] sm:text-xs font-black uppercase tracking-widest">The Ultimate Experience</p>
                         </div>
                     </div>
                 </div>
-                <div class="absolute -top-6 -right-6 w-32 h-32 bg-gold-500 rounded-full flex flex-col items-center justify-center shadow-2xl z-20 transform rotate-12">
-                    <span class="text-safari-dark text-[10px] font-black uppercase">From</span>
-                    <span class="text-safari-dark text-xl font-black">{{ $heroTour->display_price_formatted }}</span>
-                    <span class="text-safari-dark text-[8px] font-bold uppercase">Per Person</span>
+
+                {{-- Floating Circular Price Badge --}}
+                <div class="absolute -top-4 -right-4 w-28 h-28 bg-[#d4af37] rounded-full flex flex-col items-center justify-center shadow-xl z-20 border-4 border-white transform rotate-12">
+                    <span class="text-stone-950 text-[9px] font-black uppercase tracking-wider">From</span>
+                    <span class="text-stone-950 text-lg font-black leading-none my-0.5">{{ $heroTour->display_price_formatted }}</span>
+                    <span class="text-stone-950 text-[8px] font-bold uppercase tracking-wider">Per Person</span>
                 </div>
             </div>
-            <div class="w-full lg:w-1/2">
+
+            {{-- Right Column: Balanced Content Card --}}
+            <div class="w-full lg:w-7/12 flex flex-col justify-between">
                 @php
                     $heroText = function ($value, string $separator = ', '): string {
                         if (is_array($value)) {
