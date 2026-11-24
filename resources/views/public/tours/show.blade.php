@@ -1170,29 +1170,16 @@
 
         <aside class="lg:w-96 flex-shrink-0">
             <div class="sticky top-28 space-y-6">
-                {{-- Card 1: TourRadar Style Booking Box --}}
+                {{-- Card 1: Booking Box --}}
                 <div id="booking-card" class="bg-white rounded-3xl p-6 md:p-8 border border-stone-200/90 shadow-lg relative overflow-hidden">
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                        <span class="text-xs text-stone-400 font-semibold line-through">
-                            From {{ \App\Helpers\Currency::format($tour->price * 1.5) }}
-                        </span>
-                        <span class="px-2.5 py-1 bg-red-600 text-white font-black text-[10px] uppercase rounded-md tracking-wider">
-                            50% off
-                        </span>
-                    </div>
-
                     <div class="mb-4">
                         <span class="text-xs font-bold text-stone-900 uppercase tracking-wider">{{ \App\Helpers\Currency::current() }}</span>
-                        <span class="text-3xl md:text-4xl font-black text-stone-900 tracking-tight">{{ $tour->display_price_formatted }}</span>
+                        <span id="sidebar-tour-price" class="text-3xl md:text-4xl font-black text-stone-900 tracking-tight">{{ $tour->display_price_formatted }}</span>
                         <span class="text-xs font-semibold text-stone-500">per person</span>
                     </div>
 
-                    <div class="space-y-1.5 mb-6 text-xs text-stone-600 font-medium">
-                        <p class="flex items-center gap-1.5 text-amber-800 font-semibold">
-                            <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                            <span>Sign up to unlock savings</span>
-                        </p>
-                        <p class="text-stone-400 text-[11px]">
+                    <div class="mb-6 text-xs text-stone-600 font-medium">
+                        <p class="text-stone-500 text-xs font-semibold">
                             Price based on Private Double Room
                         </p>
                     </div>
