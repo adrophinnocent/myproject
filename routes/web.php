@@ -23,13 +23,19 @@ use App\Http\Controllers\Public\TourController;
 use App\Http\Controllers\Public\TripPlanController;
 use Illuminate\Support\Facades\Route;
 
-// Login Routes
+// Login & Logout Routes
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])
-    ->middleware('guest')
     ->name('login');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware(['guest', 'throttle:10,1']);
+    ->middleware('throttle:10,1');
+
+Route::get('/logout', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('login')->with('success', __('You have been logged out.'));
+})->name('logout.get');
 
 // Password reset (admin account recovery)
 require __DIR__.'/auth.php';
