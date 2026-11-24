@@ -111,17 +111,21 @@ class TourController extends Controller
             'itinerary_images.*' => 'nullable|image|max:10240',
             'pickup_locations' => 'nullable|array',
             'extras' => 'nullable|array',
+            'accommodation_options' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images', 'extras']);
+        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images', 'extras', 'accommodation_options']);
 
         // Auto-add extras column if missing on production database
         try {
             if (! Schema::hasColumn('tours', 'extras')) {
                 DB::statement('ALTER TABLE tours ADD COLUMN extras LONGTEXT DEFAULT NULL');
             }
+            if (! Schema::hasColumn('tours', 'accommodation_options')) {
+                DB::statement('ALTER TABLE tours ADD COLUMN accommodation_options LONGTEXT DEFAULT NULL');
+            }
         } catch (\Throwable $e) {
-            Log::error('Auto-adding extras column failed: '.$e->getMessage());
+            Log::error('Auto-adding columns failed: '.$e->getMessage());
         }
 
         if (Schema::hasColumn('tours', 'extras')) {
@@ -142,6 +146,46 @@ class TourController extends Controller
             $data['extras'] = $cleanExtras;
         } else {
             unset($data['extras']);
+        }
+
+        // Process Accommodation Options Repeater
+        if ($request->has('accommodation_options') && is_array($request->accommodation_options)) {
+            $cleanAccOptions = [];
+            foreach ($request->accommodation_options as $index => $opt) {
+                if (!is_array($opt)) continue;
+                $name = trim($opt['name'] ?? '');
+                $price = (float) ($opt['price'] ?? 0);
+                if (!empty($name) && $price > 0) {
+                    $imgUrl = $opt['existing_image'] ?? null;
+                    if ($request->hasFile("accommodation_options.{$index}.image_upload")) {
+                        $imgUrl = asset('storage/' . $request->file("accommodation_options.{$index}.image_upload")->store('tours/accommodations', 'public'));
+                    }
+
+                    $hotels = $opt['hotels'] ?? [];
+
+                    $cleanAccOptions[] = [
+                        'id' => $opt['id'] ?? 'acc_' . Str::random(8),
+                        'name' => $name,
+                        'price' => $price,
+                        'hotels' => is_array($hotels) ? $hotels : [],
+                        'image' => $imgUrl,
+                        'is_active' => !isset($opt['is_active']) || !empty($opt['is_active']),
+                        'is_default' => !empty($opt['is_default']),
+                    ];
+                }
+            }
+
+            if (count($cleanAccOptions) > 0) {
+                $hasDef = false;
+                foreach ($cleanAccOptions as &$co) {
+                    if (!empty($co['is_default'])) { $hasDef = true; break; }
+                }
+                if (!$hasDef) $cleanAccOptions[0]['is_default'] = true;
+            }
+
+            if (Schema::hasColumn('tours', 'accommodation_options')) {
+                $data['accommodation_options'] = $cleanAccOptions;
+            }
         }
 
         // Handle Magic Code Itinerary & Package Data vs Manual Builder
@@ -436,17 +480,21 @@ class TourController extends Controller
             'itinerary_images.*' => 'nullable|image|max:10240',
             'pickup_locations' => 'nullable|array',
             'extras' => 'nullable|array',
+            'accommodation_options' => 'nullable|array',
         ]);
 
-        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images', 'extras']);
+        $data = $request->except(['featured_image', 'featured_image_upload', 'gallery_images', 'translations', 'itinerary_raw', 'itinerary_images', 'extras', 'accommodation_options']);
 
-        // Auto-add extras column if missing on production database
+        // Auto-add extras and accommodation_options column if missing on production database
         try {
             if (! Schema::hasColumn('tours', 'extras')) {
                 DB::statement('ALTER TABLE tours ADD COLUMN extras LONGTEXT DEFAULT NULL');
             }
+            if (! Schema::hasColumn('tours', 'accommodation_options')) {
+                DB::statement('ALTER TABLE tours ADD COLUMN accommodation_options LONGTEXT DEFAULT NULL');
+            }
         } catch (\Throwable $e) {
-            Log::error('Auto-adding extras column failed: '.$e->getMessage());
+            Log::error('Auto-adding columns failed: '.$e->getMessage());
         }
 
         if (Schema::hasColumn('tours', 'extras')) {
@@ -469,6 +517,46 @@ class TourController extends Controller
             unset($data['extras']);
             if (isset($tour)) {
                 $tour->offsetUnset('extras');
+            }
+        }
+
+        // Process Accommodation Options Repeater
+        if ($request->has('accommodation_options') && is_array($request->accommodation_options)) {
+            $cleanAccOptions = [];
+            foreach ($request->accommodation_options as $index => $opt) {
+                if (!is_array($opt)) continue;
+                $name = trim($opt['name'] ?? '');
+                $price = (float) ($opt['price'] ?? 0);
+                if (!empty($name) && $price > 0) {
+                    $imgUrl = $opt['existing_image'] ?? null;
+                    if ($request->hasFile("accommodation_options.{$index}.image_upload")) {
+                        $imgUrl = asset('storage/' . $request->file("accommodation_options.{$index}.image_upload")->store('tours/accommodations', 'public'));
+                    }
+
+                    $hotels = $opt['hotels'] ?? [];
+
+                    $cleanAccOptions[] = [
+                        'id' => $opt['id'] ?? 'acc_' . Str::random(8),
+                        'name' => $name,
+                        'price' => $price,
+                        'hotels' => is_array($hotels) ? $hotels : [],
+                        'image' => $imgUrl,
+                        'is_active' => !isset($opt['is_active']) || !empty($opt['is_active']),
+                        'is_default' => !empty($opt['is_default']),
+                    ];
+                }
+            }
+
+            if (count($cleanAccOptions) > 0) {
+                $hasDef = false;
+                foreach ($cleanAccOptions as &$co) {
+                    if (!empty($co['is_default'])) { $hasDef = true; break; }
+                }
+                if (!$hasDef) $cleanAccOptions[0]['is_default'] = true;
+            }
+
+            if (Schema::hasColumn('tours', 'accommodation_options')) {
+                $data['accommodation_options'] = $cleanAccOptions;
             }
         }
 

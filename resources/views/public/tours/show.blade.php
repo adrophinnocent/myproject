@@ -487,6 +487,157 @@
                 </div>
             </div>
 
+            {{-- ACCOMMODATION OPTIONS TABLE (Selectable Horizontal Table) --}}
+            @php
+                $accOptions = $tour->accommodation_options ?? [];
+                if (!is_array($accOptions) || count($accOptions) === 0) {
+                    $accOptions = [
+                        ['id' => 'acc_budget', 'name' => 'Budget', 'price' => 1672, 'hotels' => ['day_0' => 'Gate way Hotel, Arusha', 'day_1' => 'Serengeti Queens, Central', 'day_2' => 'Omega View Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
+                        ['id' => 'acc_standard', 'name' => 'Standard', 'price' => 1743, 'hotels' => ['day_0' => 'Summit Lodge, Arusha', 'day_1' => 'Tanzania Bush Camp, Central', 'day_2' => 'Olea Farm Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => true],
+                        ['id' => 'acc_comfort', 'name' => 'Comfort', 'price' => 1953, 'hotels' => ['day_0' => 'Kibo Palace Hotel', 'day_1' => 'Tanzania Bush Camp, Central', 'day_2' => 'Ang\'ata Ngorongoro Camp', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
+                        ['id' => 'acc_premium', 'name' => 'Premium', 'price' => 2295, 'hotels' => ['day_0' => 'Arusha Serena', 'day_1' => 'Serengeti Serena Safari Lodge', 'day_2' => 'Ngorongoro Serena Safari Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
+                        ['id' => 'acc_luxury', 'name' => 'Luxury', 'price' => 3397, 'hotels' => ['day_0' => 'Gran Melia Arusha', 'day_1' => 'Serengeti Melia Safari Lodge', 'day_2' => 'Ngorongoro Melia Safari Lodge', 'day_3' => 'Departure'], 'is_active' => true, 'is_default' => false],
+                    ];
+                }
+
+                $activeAccOptions = array_values(array_filter($accOptions, fn($opt) => !isset($opt['is_active']) || !empty($opt['is_active'])));
+
+                $defaultSelectedId = $activeAccOptions[0]['id'] ?? 'acc_standard';
+                foreach ($activeAccOptions as $ao) {
+                    if (!empty($ao['is_default'])) { $defaultSelectedId = $ao['id']; break; }
+                }
+
+                $dayKeys = ['day_0', 'day_1', 'day_2', 'day_3'];
+                if (!empty($activeAccOptions[0]['hotels']) && is_array($activeAccOptions[0]['hotels'])) {
+                    $dayKeys = array_keys($activeAccOptions[0]['hotels']);
+                }
+            @endphp
+
+            @if(count($activeAccOptions) > 0)
+            <div id="accommodation-table-section" class="mb-12 bg-stone-50 border border-stone-200/90 rounded-3xl p-6 md:p-8 shadow-xs"
+                 x-data="{
+                     selectedId: '{{ $defaultSelectedId }}',
+                     selectedName: '{{ $activeAccOptions[0]['name'] }}',
+                     selectedPrice: {{ $activeAccOptions[0]['price'] }}
+                 }"
+                 x-init="
+                     $watch('selectedId', id => {
+                         const opt = @js($activeAccOptions).find(o => o.id === id);
+                         if (opt) {
+                             selectedName = opt.name;
+                             selectedPrice = opt.price;
+                             const priceEl = document.getElementById('displayed-tour-price');
+                             if (priceEl) priceEl.innerText = '$' + Number(opt.price).toLocaleString();
+                             const sidebarPriceEl = document.getElementById('sidebar-tour-price');
+                             if (sidebarPriceEl) sidebarPriceEl.innerText = '$' + Number(opt.price).toLocaleString();
+                         }
+                     })
+                 ">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-200">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold uppercase tracking-wider mb-1">
+                            <span>🏨 Select Accommodation Level</span>
+                        </div>
+                        <h3 class="font-display text-2xl md:text-3xl font-black text-stone-900 leading-tight">
+                            {{ __('Accommodation Level & Pricing') }}
+                        </h3>
+                        <p class="text-xs text-stone-500 font-medium mt-0.5">
+                            {{ __($tour->price_note ?? 'Prices are per person, based on 2 travelers') }}
+                        </p>
+                    </div>
+
+                    <div class="sm:text-right shrink-0">
+                        <span class="text-xs text-stone-400 block uppercase font-bold">{{ __('Selected Tier Price') }}</span>
+                        <span class="text-2xl md:text-3xl font-black text-amber-600 font-display" x-text="'$' + Number(selectedPrice).toLocaleString()">
+                            ${{ number_format($activeAccOptions[0]['price']) }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Mobile Swipe Hint --}}
+                <div class="md:hidden flex items-center gap-1.5 text-[11px] text-amber-600 font-bold mb-2">
+                    <span>↔</span>
+                    <span>Swipe table sideways to view all days</span>
+                </div>
+
+                {{-- Horizontal Accommodation Table --}}
+                <div class="overflow-x-auto rounded-2xl border border-stone-200 bg-white shadow-xs">
+                    <table class="w-full text-left text-xs sm:text-sm border-collapse min-w-[700px]">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-800 uppercase font-black tracking-wider text-[10px] sm:text-xs border-b border-stone-200">
+                                <th class="p-3.5 text-center w-12">Select</th>
+                                <th class="p-3.5">Option Level</th>
+                                <th class="p-3.5 text-right">Price (USD)</th>
+                                @foreach($dayKeys as $dk)
+                                    @php
+                                        $dayNum = (int) str_replace('day_', '', $dk);
+                                        $dayLabel = $dayNum === 0 ? 'Day 0 (Arrival)' : 'Day ' . $dayNum;
+                                    @endphp
+                                    <th class="p-3.5">{{ $dayLabel }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            @foreach($activeAccOptions as $ao)
+                            <tr @click="selectedId = '{{ $ao['id'] }}'"
+                                class="cursor-pointer transition-all hover:bg-amber-50/50"
+                                :class="selectedId === '{{ $ao['id'] }}' ? 'bg-amber-50/90 ring-2 ring-amber-500 font-semibold' : ''">
+
+                                {{-- Radio Selector --}}
+                                <td class="p-3.5 text-center">
+                                    <input type="radio"
+                                           name="acc_tier_select"
+                                           value="{{ $ao['id'] }}"
+                                           x-model="selectedId"
+                                           class="w-4 h-4 text-amber-600 focus:ring-amber-500 border-stone-300">
+                                </td>
+
+                                {{-- Option Level Name + Thumbnail --}}
+                                <td class="p-3.5 font-bold text-stone-900">
+                                    <div class="flex items-center gap-3">
+                                        @if(!empty($ao['image']))
+                                            <img src="{{ $ao['image'] }}" alt="{{ $ao['name'] }}" class="w-10 h-10 rounded-xl object-cover border border-stone-200 shadow-2xs shrink-0 cursor-pointer" onclick="event.stopPropagation(); openLightbox('{{ $ao['image'] }}')">
+                                        @endif
+                                        <div>
+                                            <span class="block text-sm sm:text-base font-black text-stone-900">{{ $ao['name'] }}</span>
+                                            @if(!empty($ao['is_default']))
+                                                <span class="inline-block text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-800">Popular</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+
+                                {{-- Price --}}
+                                <td class="p-3.5 text-right font-black text-amber-600 text-sm sm:text-base whitespace-nowrap">
+                                    ${{ number_format($ao['price']) }}
+                                </td>
+
+                                {{-- Day Columns --}}
+                                @foreach($dayKeys as $dk)
+                                    <td class="p-3.5 text-stone-700 text-xs leading-snug">
+                                        {{ $ao['hotels'][$dk] ?? '-' }}
+                                    </td>
+                                @endforeach
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Bottom Summary & CTA --}}
+                <div class="mt-6 p-4 rounded-2xl bg-stone-100 border border-stone-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs text-stone-500 font-medium">Selected Package Tier:</span>
+                        <span class="font-black text-stone-900 text-sm sm:text-base ml-1" x-text="selectedName + ' ($' + Number(selectedPrice).toLocaleString() + ')'"></span>
+                    </div>
+                    <a :href="'{{ route('booking.create', $tour->slug) }}?tier=' + selectedId"
+                       class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-8 py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md transition-all text-center hover:scale-105">
+                        {{ __('Book This Safari') }}
+                    </a>
+                </div>
+            </div>
+            @endif
+
             <div class="mb-10">
                 <h2 class="font-display text-2xl font-semibold text-gray-900 mb-4">{{ __('Overview') }}</h2>
                 <article class="prose prose-lg prose-gray max-w-none text-gray-600 leading-relaxed">{!! $tour->translate('description') !!}</article>

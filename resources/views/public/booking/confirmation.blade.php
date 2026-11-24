@@ -57,9 +57,16 @@
                     <h2 class="font-display text-2xl font-bold text-stone-900 mb-2">
                         {{ $booking->bookable_item->title ?? 'Custom Safari' }}
                     </h2>
-                    <p class="text-xs text-stone-500 font-medium">
+                    <p class="text-xs text-stone-500 font-medium mb-3">
                         {{ $booking->number_of_adults }} {{ __('Adults') }}, {{ $booking->number_of_children }} {{ __('Children') }} • {{ __('Pickup') }}: {{ $booking->accommodation_preference ?: 'Arusha / Moshi' }}
                     </p>
+
+                    @if(!empty($booking->selected_accommodation_tier) && is_array($booking->selected_accommodation_tier))
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold">
+                        <span>🏨 Tier: {{ $booking->selected_accommodation_tier['name'] ?? 'Custom' }}</span>
+                        <span>(${{ number_format($booking->selected_accommodation_tier['price'] ?? 0) }} / person)</span>
+                    </div>
+                    @endif
                 </div>
             </div>
 

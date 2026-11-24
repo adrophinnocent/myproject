@@ -105,10 +105,31 @@ class BookingController extends Controller
         $children = (int) $booking->number_of_children;
         $totalGuests = max(1, $adults + $children);
 
-        // Base tour price per adult
-        $adultPrice = (float) $tour->price;
+        // Selected Accommodation Tier Calculation
+        $selectedTier = null;
+        $tierId = $request->input('accommodation_tier') ?? $request->input('tier');
+        $accOptions = is_array($tour->accommodation_options) ? $tour->accommodation_options : [];
+
+        if (!empty($tierId) && count($accOptions) > 0) {
+            foreach ($accOptions as $opt) {
+                if (is_array($opt) && ($opt['id'] ?? '') === $tierId) {
+                    $selectedTier = $opt;
+                    break;
+                }
+            }
+        }
+
+        if ($selectedTier && !empty($selectedTier['price']) && (float) $selectedTier['price'] > 0) {
+            $adultPrice = (float) $selectedTier['price'];
+            $booking->accommodation_preference = ($selectedTier['name'] ?? '') . ' Tier';
+        } else {
+            $adultPrice = (float) $tour->price;
+        }
+
+        $booking->selected_accommodation_tier = $selectedTier;
+
         // Children price discount (70% of adult price if not set)
-        $childPrice = (float) ($tour->child_price ?? ($tour->price * 0.7));
+        $childPrice = (float) ($tour->child_price ?? ($adultPrice * 0.7));
 
         $basePrice = ($adultPrice * $adults) + ($childPrice * $children);
 

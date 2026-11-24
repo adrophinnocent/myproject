@@ -39,7 +39,7 @@ class Tour extends Model
         'languages_offered', 'tour_type',
         'seasonal_pricing', 'availability_dates',
         'booking_deadline_days', 'deposit_percent', 'currency',
-        'location_name', 'latitude', 'longitude', 'pickup_locations', 'extras',
+        'location_name', 'latitude', 'longitude', 'pickup_locations', 'extras', 'accommodation_options',
     ];
 
     protected function casts(): array
@@ -51,6 +51,7 @@ class Tour extends Model
             'faqs' => 'array',
             'highlights' => 'array',
             'extras' => 'array',
+            'accommodation_options' => 'array',
             'what_to_bring' => 'array',
             'good_to_know' => 'array',
             'languages_offered' => 'array',

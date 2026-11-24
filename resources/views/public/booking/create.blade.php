@@ -89,6 +89,7 @@
                         get depositRequired() { return (this.totalPrice * this.depositPct) / 100; }
                     }">
                         @csrf
+                        <input type="hidden" name="tier" value="{{ request('tier') }}">
 
                         <div class="mb-10">
                             <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
