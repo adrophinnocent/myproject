@@ -39,7 +39,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 // Admin Login & Route Aliases
-Route::get('/admin', function () {
+Route::match(['get', 'post'], '/admin', function () {
     return redirect()->route('admin.dashboard');
 });
 
@@ -53,6 +53,13 @@ Route::get('/admin/login', function () {
 Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('admin.login');
+
+Route::match(['get', 'post'], '/admin/logout', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('login')->with('success', __('You have been logged out.'));
+})->name('admin.logout');
 
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
     // Priority Booking System Routes

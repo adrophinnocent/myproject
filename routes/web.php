@@ -30,12 +30,12 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('throttle:10,1');
 
-Route::get('/logout', function (\Illuminate\Http\Request $request) {
+Route::match(['get', 'post'], '/logout', function (\Illuminate\Http\Request $request) {
     \Illuminate\Support\Facades\Auth::guard('web')->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     return redirect()->route('login')->with('success', __('You have been logged out.'));
-})->name('logout.get');
+})->name('logout');
 
 // Password reset (admin account recovery)
 require __DIR__.'/auth.php';
