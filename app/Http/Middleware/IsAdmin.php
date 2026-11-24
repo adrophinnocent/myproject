@@ -17,9 +17,12 @@ class IsAdmin
             return redirect()->guest(route('login'));
         }
 
-        $adminEmails = ['twinasafaris@gmail.com', 'admin@tourism.com', 'bellainnos@gmail.com', 'info@twinasafaris.com'];
+        $email = strtolower($user->email ?? '');
+        $isAdminEmail = str_contains($email, 'twinasafaris')
+            || str_contains($email, 'admin')
+            || in_array($email, ['bellainnos@gmail.com', 'admin@tourism.com', 'twinasafaris@gmail.com']);
 
-        if ($user->is_admin || in_array(strtolower($user->email), $adminEmails)) {
+        if ($user->is_admin || $isAdminEmail) {
             if (!$user->is_admin) {
                 try {
                     $user->is_admin = true;
