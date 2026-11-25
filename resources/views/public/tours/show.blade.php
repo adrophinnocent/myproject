@@ -489,11 +489,14 @@
 
             {{-- ACCOMMODATION OPTIONS TABLE (Only shown if Admin has added options for this package) --}}
             @php
-                $dbPackages = \App\Models\TourPackage::where('tour_id', $tour->id)
-                    ->where('is_active', true)
-                    ->with(['itineraryDays.accommodation', 'roomOptions.roomType'])
-                    ->orderBy('sort_order')
-                    ->get();
+                $dbPackages = collect();
+                if (\Illuminate\Support\Facades\Schema::hasTable('tour_packages')) {
+                    $dbPackages = \App\Models\TourPackage::where('tour_id', $tour->id)
+                        ->where('is_active', true)
+                        ->with(['itineraryDays.accommodation', 'roomOptions.roomType'])
+                        ->orderBy('sort_order')
+                        ->get();
+                }
             @endphp
             @if($dbPackages->count() > 0)
             <div class="bg-white rounded-3xl p-6 md:p-8 mb-10 border border-stone-200 shadow-sm space-y-6">
