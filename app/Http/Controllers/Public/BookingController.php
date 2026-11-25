@@ -11,6 +11,8 @@ use App\Models\Booking;
 use App\Models\Safari;
 use App\Models\Setting;
 use App\Models\Tour;
+use App\Models\TourPackage;
+use App\Models\RoomType;
 use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -34,11 +36,18 @@ class BookingController extends Controller
             return redirect()->route('tours.index')->with('error', __('This tour package is no longer available.'));
         }
 
-        // Present the estimate in the visitor's selected currency; the same
-        // conversion is applied server-side in store().
+        // Present the estimate in the visitor's selected currency
         $currency = Currency::current();
         $symbol = Currency::symbol($currency);
         $decimals = in_array($currency, ['TZS', 'KES', 'UGX'], true) ? 0 : 2;
+
+        $packages = TourPackage::where('tour_id', $tour->id)
+            ->where('is_active', true)
+            ->with(['itineraryDays.accommodation', 'roomOptions.roomType'])
+            ->orderBy('sort_order')
+            ->get();
+
+        $roomTypes = RoomType::active()->get();
 
         $extras = [];
         foreach ((array) ($tour->extras ?? []) as $extra) {
@@ -48,7 +57,7 @@ class BookingController extends Controller
             $extras[] = $extra;
         }
 
-        return view('public.booking.create', compact('tour', 'currency', 'symbol', 'decimals', 'extras'));
+        return view('public.booking.create', compact('tour', 'packages', 'roomTypes', 'currency', 'symbol', 'decimals', 'extras'));
     }
 
     public function store(Request $request, $slug)
@@ -72,8 +81,9 @@ class BookingController extends Controller
             'travel_date' => 'required|date|after:today',
             'special_requests' => 'nullable|string|max:2000',
             'accommodation_preference' => 'nullable|string|max:255',
-            // Only manual payment methods are supported until a real gateway is integrated.
-            'payment_method' => 'nullable|in:bank_transfer,mpesa,tigopesa,airtelmoney',
+            'payment_method' => 'nullable|string|max:100',
+            'tour_package_id' => 'nullable|exists:tour_packages,id',
+            'room_type_id' => 'nullable|exists:room_types,id',
         ]);
 
         $booking = new Booking;
@@ -105,33 +115,54 @@ class BookingController extends Controller
         $children = (int) $booking->number_of_children;
         $totalGuests = max(1, $adults + $children);
 
-        // Selected Accommodation Tier Calculation
-        $selectedTier = null;
-        $tierId = $request->input('accommodation_tier') ?? $request->input('tier');
-        $accOptions = is_array($tour->accommodation_options) ? $tour->accommodation_options : [];
+        // 1. Process Accommodation Package Selection
+        $packageId = $request->input('tour_package_id') ?? $request->input('package_id');
+        $selectedPackage = null;
+        if ($packageId) {
+            $selectedPackage = TourPackage::where('id', $packageId)->with('itineraryDays.accommodation')->first();
+        }
 
-        if (!empty($tierId) && count($accOptions) > 0) {
-            foreach ($accOptions as $opt) {
-                if (is_array($opt) && ($opt['id'] ?? '') === $tierId) {
-                    $selectedTier = $opt;
-                    break;
-                }
+        // 2. Process Room Type Selection & Room Supplement
+        $roomTypeId = $request->input('room_type_id');
+        $selectedRoomType = null;
+        $roomSupplement = 0.00;
+        if ($roomTypeId) {
+            $selectedRoomType = RoomType::find($roomTypeId);
+            if ($selectedRoomType) {
+                $roomOption = $selectedPackage ? \App\Models\PackageRoomOption::where('tour_package_id', $selectedPackage->id)->where('room_type_id', $roomTypeId)->first() : null;
+                $roomSupplement = $roomOption ? (float) $roomOption->supplement_price : (float) $selectedRoomType->default_supplement_price;
             }
         }
 
-        if ($selectedTier && !empty($selectedTier['price']) && (float) $selectedTier['price'] > 0) {
-            $adultPrice = (float) $selectedTier['price'];
-            $booking->accommodation_preference = ($selectedTier['name'] ?? '') . ' Tier';
+        $booking->tour_package_id = $selectedPackage?->id;
+        $booking->package_name = $selectedPackage?->name;
+        $booking->room_type_id = $selectedRoomType?->id;
+        $booking->room_type_name = $selectedRoomType?->name;
+        $booking->room_supplement_amount = $roomSupplement;
+
+        if ($selectedPackage) {
+            $adultPrice = (float) $selectedPackage->selling_price;
+            $childPrice = (float) ($selectedPackage->child_price ?? ($adultPrice * 0.7));
+            $booking->accommodation_preference = $selectedPackage->name;
+
+            if ($selectedPackage->itineraryDays->count() > 0) {
+                $hotelSummary = [];
+                foreach ($selectedPackage->itineraryDays as $day) {
+                    $hotelSummary[] = [
+                        'day' => $day->day_number,
+                        'title' => $day->title,
+                        'hotel' => $day->accommodation?->name ?: 'Standard Lodge/Camp',
+                        'category' => $day->accommodation?->category_level ?: 'Standard',
+                    ];
+                }
+                $booking->selected_hotels_summary = $hotelSummary;
+            }
         } else {
             $adultPrice = (float) $tour->price;
+            $childPrice = (float) ($tour->child_price ?? ($tour->price * 0.7));
         }
 
-        $booking->selected_accommodation_tier = $selectedTier;
-
-        // Children price discount (70% of adult price if not set)
-        $childPrice = (float) ($tour->child_price ?? ($adultPrice * 0.7));
-
-        $basePrice = ($adultPrice * $adults) + ($childPrice * $children);
+        $basePrice = ($adultPrice * $adults) + ($childPrice * $children) + $roomSupplement;
 
         // Process selected optional extras
         $selectedExtras = [];

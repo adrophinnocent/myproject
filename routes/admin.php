@@ -58,6 +58,12 @@ Route::match(['get', 'post'], '/admin/logout', function (\Illuminate\Http\Reques
 })->name('admin.logout');
 
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
+    // Universal Tour Package & Accommodation Management System Routes
+    Route::resource('/accommodations', App\Http\Controllers\Admin\AccommodationController::class)->names('admin.accommodations');
+    Route::resource('/room-types', App\Http\Controllers\Admin\RoomTypeController::class)->names('admin.room-types');
+    Route::resource('/tour-packages', App\Http\Controllers\Admin\TourPackageAdminController::class)->names('admin.tour-packages');
+    Route::post('/tour-packages/{tourPackage}/duplicate', [App\Http\Controllers\Admin\TourPackageAdminController::class, 'duplicate'])->name('admin.tour-packages.duplicate');
+
     // Priority Booking System Routes
     Route::get('/bookings/export', [BookingController::class, 'export'])->name('admin.bookings.export');
     Route::post('/bookings/{booking}/approve', [BookingController::class, 'approve'])->name('admin.bookings.approve');

@@ -169,10 +169,11 @@
                             </div>
                         </div>
 
+                        {{-- STEP 2: TRAVEL DATES & GUESTS --}}
                         <div class="mb-10">
                             <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
                                 <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm font-bold">2</span>
-                                {{ __('Trip Details') }}
+                                {{ __('Travel Dates & Guests') }}
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
@@ -189,6 +190,66 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- STEP 3: CHOOSE ACCOMMODATION PACKAGE & ROOM TYPE --}}
+                        @if(isset($packages) && count($packages) > 0)
+                        <div class="mb-10 pt-4 border-t border-gray-100">
+                            <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm font-bold">3</span>
+                                {{ __('Select Accommodation Package') }}
+                            </h3>
+
+                            <div class="grid grid-cols-1 gap-4 mb-6">
+                                @foreach($packages as $pkg)
+                                <label class="relative flex flex-col p-6 rounded-2xl border-2 cursor-pointer transition-all shadow-xs"
+                                       :class="selectedPackageId == {{ $pkg->id }} ? 'border-amber-500 bg-amber-50/20' : 'border-gray-200 bg-white hover:border-gray-300'">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="tour_package_id" value="{{ $pkg->id }}" x-model="selectedPackageId" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+                                            <span class="font-bold text-gray-900 text-base">{{ $pkg->name }}</span>
+                                        </div>
+                                        <span class="font-black text-amber-700 text-lg">{{ $pkg->formatted_selling_price }} / person</span>
+                                    </div>
+
+                                    @if($pkg->description)
+                                    <p class="text-xs text-gray-600 mb-4 pl-8">{{ $pkg->description }}</p>
+                                    @endif
+
+                                    {{-- Nightly Hotel Breakdown --}}
+                                    @if($pkg->itineraryDays->count() > 0)
+                                    <div class="pl-8 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-stone-700">
+                                        @foreach($pkg->itineraryDays as $day)
+                                        <div class="flex items-start gap-2 bg-white/80 p-2 rounded-lg border border-gray-100">
+                                            <span class="font-bold text-amber-800 shrink-0">Day {{ $day->day_number }}:</span>
+                                            <span class="truncate font-semibold">{{ $day->accommodation->name ?? 'Standard Lodge' }}</span>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    @endif
+                                </label>
+                                @endforeach
+                            </div>
+
+                            {{-- Room Preference Selection --}}
+                            @if(isset($roomTypes) && count($roomTypes) > 0)
+                            <div class="space-y-3">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Room Preference') }}</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    @foreach($roomTypes as $rt)
+                                    <label class="p-4 rounded-xl border cursor-pointer transition-all flex flex-col justify-between"
+                                           :class="selectedRoomTypeId == {{ $rt->id }} ? 'border-amber-500 bg-amber-50/30 font-bold' : 'border-gray-200 bg-gray-50'">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="text-xs text-gray-900 font-bold">{{ $rt->name }}</span>
+                                            <input type="radio" name="room_type_id" value="{{ $rt->id }}" x-model="selectedRoomTypeId" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
+                                        </div>
+                                        <span class="text-[10px] text-gray-500">Max {{ $rt->max_occupants }} Guests</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                        @endif
 
                         {{-- SECTION 3: ADD EXTRAS (TOURRADAR STYLE) --}}
                         @if(!empty($tour->extras) && is_array($tour->extras) && count($tour->extras) > 0)

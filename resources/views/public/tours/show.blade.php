@@ -489,6 +489,59 @@
 
             {{-- ACCOMMODATION OPTIONS TABLE (Only shown if Admin has added options for this package) --}}
             @php
+                $dbPackages = \App\Models\TourPackage::where('tour_id', $tour->id)
+                    ->where('is_active', true)
+                    ->with(['itineraryDays.accommodation', 'roomOptions.roomType'])
+                    ->orderBy('sort_order')
+                    ->get();
+            @endphp
+            @if($dbPackages->count() > 0)
+            <div class="bg-white rounded-3xl p-6 md:p-8 mb-10 border border-stone-200 shadow-sm space-y-6">
+                <div class="border-b border-stone-100 pb-4">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-amber-700 block mb-1">CHOOSE YOUR COMFORT LEVEL</span>
+                    <h3 class="font-display text-2xl font-bold text-stone-900">Available Accommodation Packages</h3>
+                    <p class="text-xs text-stone-500 mt-1">Select from our admin-curated hotel options for this expedition.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @foreach($dbPackages as $dp)
+                    <div class="p-6 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl flex flex-col justify-between shadow-xs hover:border-[#b8920d]/60 transition-all space-y-4">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-stone-900 text-base leading-snug">{{ $dp->name }}</h4>
+                                <span class="font-black text-amber-700 text-lg shrink-0">{{ $dp->formatted_selling_price }}</span>
+                            </div>
+                            @if($dp->description)
+                            <p class="text-xs text-stone-600 leading-relaxed mb-4">{{ $dp->description }}</p>
+                            @endif
+
+                            {{-- Night-by-Night Hotel Assignments --}}
+                            @if($dp->itineraryDays->count() > 0)
+                            <div class="space-y-2 pt-3 border-t border-[#f3e8d3]">
+                                <span class="text-[10px] font-black uppercase tracking-wider text-stone-400 block mb-1">NIGHTLY HOTEL ASSIGNMENTS:</span>
+                                @foreach($dp->itineraryDays as $pDay)
+                                <div class="flex items-start gap-2 text-xs text-stone-800">
+                                    <span class="font-bold text-amber-800 shrink-0">Day {{ $pDay->day_number }}:</span>
+                                    <span class="font-semibold">{{ $pDay->accommodation->name ?? 'Standard Lodge/Camp' }}</span>
+                                    @if($pDay->accommodation?->category_level)
+                                        <span class="text-[10px] text-stone-500 capitalize">({{ $pDay->accommodation->category_level }})</span>
+                                    @endif
+                                </div>
+                                @endforeach
+                            </div>
+                            @endif
+                        </div>
+
+                        <a href="{{ route('booking.create', ['slug' => $tour->slug, 'tour_package_id' => $dp->id]) }}"
+                           class="btn-gold w-full text-center py-3 rounded-xl font-black text-xs uppercase tracking-wider shadow-xs">
+                            Select Package & Book
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            @php
                 $rawAccOptions = is_array($tour->accommodation_options) ? $tour->accommodation_options : [];
 
                 $activeAccOptions = array_values(array_filter($rawAccOptions, function($opt) {

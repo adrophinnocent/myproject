@@ -134,6 +134,51 @@
                 </div>
             </div>
 
+            {{-- Selected Accommodation Package & Room Type --}}
+            @if($booking->package_name || $booking->room_type_name || is_array($booking->selected_hotels_summary))
+            <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 space-y-6">
+                <h3 class="font-black text-gray-800 uppercase tracking-tighter text-sm pb-4 border-b border-gray-100">Selected Accommodation Package & Hotel Assignments</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                    @if($booking->package_name)
+                    <div>
+                        <span class="block text-[10px] text-stone-400 uppercase font-bold mb-1">Accommodation Package</span>
+                        <span class="font-bold text-amber-900 text-sm bg-amber-50 px-3 py-1 rounded-lg border border-amber-200/80 inline-block">{{ $booking->package_name }}</span>
+                    </div>
+                    @endif
+
+                    @if($booking->room_type_name)
+                    <div>
+                        <span class="block text-[10px] text-stone-400 uppercase font-bold mb-1">Room Preference</span>
+                        <span class="font-bold text-stone-900 text-sm bg-stone-100 px-3 py-1 rounded-lg inline-block">
+                            {{ $booking->room_type_name }}
+                            @if($booking->room_supplement_amount > 0)
+                                (+${{ number_format($booking->room_supplement_amount, 2) }} supplement)
+                            @endif
+                        </span>
+                    </div>
+                    @endif
+                </div>
+
+                @if(is_array($booking->selected_hotels_summary) && count($booking->selected_hotels_summary) > 0)
+                <div class="pt-4 border-t border-stone-100 space-y-2">
+                    <span class="block text-[10px] font-black text-stone-400 uppercase tracking-wider mb-2">Nightly Assigned Hotels:</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        @foreach($booking->selected_hotels_summary as $hs)
+                        <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-start gap-2">
+                            <span class="font-bold text-amber-800 shrink-0">Day {{ $hs['day'] ?? $loop->iteration }}:</span>
+                            <div>
+                                <span class="font-bold text-stone-900 block">{{ $hs['hotel'] ?? 'Lodge' }}</span>
+                                <span class="text-[10px] text-stone-500 capitalize">{{ $hs['category'] ?? 'Standard' }}</span>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+            @endif
+
             {{-- Traveler Details --}}
             <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 space-y-6">
                 <h3 class="font-black text-gray-800 uppercase tracking-tighter text-sm pb-4 border-b border-gray-100">Customer Details</h3>
