@@ -26,6 +26,9 @@
   "datePublished": "{{ optional($post->published_at)->toIso8601String() ?: optional($post->created_at)->toIso8601String() }}",
   "dateModified": "{{ optional($post->updated_at)->toIso8601String() ?: optional($post->published_at)->toIso8601String() ?: optional($post->created_at)->toIso8601String() }}",
   "description": "{{ $post->meta_description ?? $post->excerpt }}",
+  @if(!empty($post->tags))
+  "keywords": "{{ implode(', ', (array) $post->tags) }}",
+  @endif
   "mainEntityOfPage": {
     "@@type": "WebPage",
     "@@id": "{{ str_replace('://www.', '://', url()->current()) . (str_ends_with(url()->current(), '.html') ? '' : '.html') }}"
@@ -54,6 +57,13 @@
                     <span class="text-white/80">{{ $post->reading_time }} {{ __('min read') }}</span>
                 </div>
                 <h1 class="font-display text-4xl md:text-7xl text-white font-bold leading-tight drop-shadow-lg">{{ $post->translate('title') }}</h1>
+                @if(!empty($post->tags))
+                    <div class="flex flex-wrap gap-2 mt-5">
+                        @foreach((array) $post->tags as $tag)
+                            <span class="px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-white/80 text-[10px] font-bold uppercase tracking-wider">#{{ $tag }}</span>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </header>
@@ -115,7 +125,7 @@
         }
         .article-body figure.image, .article-body figure, .article-body p img, .article-body img {
             margin: 2rem auto;
-            max-width: 640px;
+            max-width: 560px;
             width: 100%;
             display: block;
             border-radius: 1rem;
@@ -128,12 +138,69 @@
             border-radius: 1.25rem;
             text-align: center;
         }
-        .article-body figure.image img {
-            margin: 0 auto;
-            max-height: 420px;
+        /* Inline story photos sit directly after a paragraph in a square frame. */
+        .article-body figure.image img,
+        .article-body p img,
+        .article-body img {
+            aspect-ratio: 1 / 1;
             object-fit: cover;
             border-radius: 0.875rem;
             width: 100%;
+            max-height: none;
+        }
+        .article-body .article-quote {
+            border-left: 4px solid #d4af37;
+            background: #fcfaf7;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 1rem 1rem 0;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.35rem;
+            font-style: italic;
+            color: #44403c;
+        }
+        .article-body .article-quote footer {
+            margin-top: .75rem;
+            font-family: inherit;
+            font-size: .8rem;
+            font-style: normal;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #a88210;
+        }
+        .article-body .article-callout {
+            background: linear-gradient(135deg, #fcfaf7, #f6eedb);
+            border: 1px solid #e8dfcf;
+            border-left: 4px solid #d4af37;
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+        }
+        .article-body .article-callout strong {
+            display: block;
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #a88210;
+            margin-bottom: .4rem;
+        }
+        .article-body .article-video {
+            margin: 2rem auto;
+            max-width: 720px;
+            text-align: center;
+        }
+        .article-body .article-video iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 0;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,.25);
+        }
+        .article-body .article-video p {
+            margin-top: .6rem;
+            font-size: .8rem;
+            color: #78716c;
         }
         .article-body figcaption {
             margin-top: 0.625rem;
@@ -141,7 +208,7 @@
             font-weight: 500;
             color: #57534e;
             font-style: italic;
-            text-align: text-center;
+            text-align: center;
             padding: 0 0.5rem 0.25rem 0.5rem;
         }
     </style>

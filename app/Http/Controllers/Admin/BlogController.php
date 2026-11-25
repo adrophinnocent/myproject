@@ -35,6 +35,9 @@ class BlogController extends Controller
             'category_id' => 'required|exists:blog_categories,id',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:320',
+            'tags' => 'nullable|string|max:500',
             'featured_image' => 'nullable|image|max:5120',
             'is_published' => 'nullable',
         ]);
@@ -45,6 +48,9 @@ class BlogController extends Controller
         $post->category_id = $request->category_id;
         $post->content = $this->processContentImages($request->content);
         $post->excerpt = $request->excerpt;
+        $post->meta_title = $request->meta_title;
+        $post->meta_description = $request->meta_description;
+        $post->tags = $this->parseTags($request->tags);
         $post->author_id = auth()->id();
         $post->is_published = $request->has('is_published');
         $post->published_at = $post->is_published ? now() : null;
@@ -73,6 +79,9 @@ class BlogController extends Controller
             'category_id' => 'required|exists:blog_categories,id',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:320',
+            'tags' => 'nullable|string|max:500',
             'featured_image' => 'nullable|image|max:5120',
             'is_published' => 'nullable',
             'translations' => 'nullable|array',
@@ -83,6 +92,9 @@ class BlogController extends Controller
         $blog->category_id = $request->category_id;
         $blog->content = $this->processContentImages($request->content);
         $blog->excerpt = $request->excerpt;
+        $blog->meta_title = $request->meta_title;
+        $blog->meta_description = $request->meta_description;
+        $blog->tags = $this->parseTags($request->tags);
         $blog->is_published = $request->has('is_published');
 
         if ($blog->is_published && ! $blog->published_at) {
@@ -124,6 +136,36 @@ class BlogController extends Controller
         $blog->delete();
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog post deleted successfully');
+    }
+
+    /**
+     * Upload an inline article image. Stored separately from the featured
+     * image so gallery/photo blocks stay organized and reusable.
+     */
+    public function uploadImage(Request $request)
+    {
+        $validated = $request->validate([
+            'image' => 'required|image|max:5120',
+        ]);
+
+        $path = $validated['image']->store('blog/content', 'public');
+
+        return response()->json([
+            'success' => true,
+            'url' => Storage::disk('public')->url($path),
+        ]);
+    }
+
+    private function parseTags(?string $tags): array
+    {
+        if (empty($tags)) {
+            return [];
+        }
+
+        return array_values(array_unique(array_filter(array_map(
+            fn (string $tag) => trim($tag),
+            explode(',', $tags)
+        ))));
     }
 
     private function processContentImages(?string $content): ?string

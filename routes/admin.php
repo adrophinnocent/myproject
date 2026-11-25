@@ -293,6 +293,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         'destroy' => 'admin.blog-categories.destroy',
     ]);
 
+    Route::post('/blog/upload-image', [BlogController::class, 'uploadImage'])->name('admin.blog.upload-image');
+
     Route::resource('/blog', BlogController::class)->except(['show'])->names([
         'index' => 'admin.blog.index',
         'create' => 'admin.blog.create',
