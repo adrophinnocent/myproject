@@ -125,28 +125,24 @@
         }
         .article-body figure.image, .article-body figure, .article-body p img, .article-body img {
             margin: 2rem auto;
-            max-width: 560px;
+            max-width: 100%;
             width: 100%;
             display: block;
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
-        }
-        .article-body figure.image {
-            background-color: #faf9f6;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
             border: 1px solid #e7e5e4;
             padding: 0.5rem;
-            border-radius: 1.25rem;
-            text-align: center;
+            background-color: #ffffff;
         }
-        /* Inline story photos sit directly after a paragraph in a square frame. */
         .article-body figure.image img,
         .article-body p img,
         .article-body img {
-            aspect-ratio: 1 / 1;
+            aspect-ratio: auto;
             object-fit: cover;
-            border-radius: 0.875rem;
+            border-radius: 1.125rem;
             width: 100%;
-            max-height: none;
+            height: auto;
+            max-height: 560px;
         }
         .article-body .article-quote {
             border-left: 4px solid #d4af37;
