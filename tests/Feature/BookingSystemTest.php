@@ -41,8 +41,8 @@ class BookingSystemTest extends TestCase
             'last_name' => 'Doe',
             'email' => 'john@example.com',
             'total_price' => 4000.00,
-            'deposit_percentage' => 20.00,
-            'deposit_required' => 800.00,
+            'deposit_percentage' => 30.00,
+            'deposit_required' => 1200.00,
             'status' => 'pending',
             'payment_status' => 'unpaid',
         ]);

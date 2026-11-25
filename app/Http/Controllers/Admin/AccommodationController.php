@@ -7,7 +7,6 @@ use App\Models\Accommodation;
 use App\Models\Destination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class AccommodationController extends Controller
 {
@@ -18,8 +17,8 @@ class AccommodationController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('location_name', 'like', "%{$search}%")
-                  ->orWhere('type', 'like', "%{$search}%");
+                ->orWhere('location_name', 'like', "%{$search}%")
+                ->orWhere('type', 'like', "%{$search}%");
         }
 
         if ($request->filled('type')) {
@@ -38,6 +37,7 @@ class AccommodationController extends Controller
     public function create()
     {
         $destinations = Destination::orderBy('name')->get();
+
         return view('admin.accommodations.create', compact('destinations'));
     }
 
@@ -61,7 +61,7 @@ class AccommodationController extends Controller
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
                 $path = $photo->store('accommodations', 'public');
-                $uploadedImages[] = 'storage/' . $path;
+                $uploadedImages[] = 'storage/'.$path;
             }
         }
 
@@ -86,6 +86,7 @@ class AccommodationController extends Controller
     public function edit(Accommodation $accommodation)
     {
         $destinations = Destination::orderBy('name')->get();
+
         return view('admin.accommodations.edit', compact('accommodation', 'destinations'));
     }
 
@@ -111,7 +112,7 @@ class AccommodationController extends Controller
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
                 $path = $photo->store('accommodations', 'public');
-                $currentImages[] = 'storage/' . $path;
+                $currentImages[] = 'storage/'.$path;
             }
         }
 
@@ -141,6 +142,7 @@ class AccommodationController extends Controller
         }
 
         $accommodation->delete();
+
         return redirect()->route('admin.accommodations.index')->with('success', 'Accommodation deleted.');
     }
 }

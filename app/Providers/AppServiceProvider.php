@@ -75,7 +75,7 @@ class AppServiceProvider extends ServiceProvider
                     $table->decimal('adult_price', 10, 2)->nullable();
                     $table->decimal('child_price', 10, 2)->nullable();
                     $table->decimal('single_supplement', 10, 2)->default(0.00);
-                    $table->decimal('deposit_percentage', 5, 2)->default(20.00);
+                    $table->decimal('deposit_percentage', 5, 2)->default(30.00);
                     $table->string('currency', 10)->default('USD');
                     $table->json('images')->nullable();
                     $table->integer('sort_order')->default(0);
@@ -167,7 +167,7 @@ class AppServiceProvider extends ServiceProvider
                         $table->string('currency', 10)->default('USD');
                     }
                     if (! Schema::hasColumn('bookings', 'deposit_percentage')) {
-                        $table->decimal('deposit_percentage', 5, 2)->default(20.00);
+                        $table->decimal('deposit_percentage', 5, 2)->default(30.00);
                     }
                     if (! Schema::hasColumn('bookings', 'deposit_required')) {
                         $table->decimal('deposit_required', 10, 2)->nullable();

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TourPackage;
-use App\Models\Tour;
-use App\Models\Safari;
 use App\Models\Accommodation;
-use App\Models\RoomType;
 use App\Models\PackageItineraryDay;
 use App\Models\PackageRoomOption;
+use App\Models\RoomType;
+use App\Models\Safari;
+use App\Models\Tour;
+use App\Models\TourPackage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -76,14 +76,14 @@ class TourPackageAdminController extends Controller
 
         $package = TourPackage::create([
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name'] . '-' . Str::random(5)),
+            'slug' => Str::slug($validated['name'].'-'.Str::random(5)),
             'tour_id' => $validated['tour_id'] ?? null,
             'safari_id' => $validated['safari_id'] ?? null,
             'selling_price' => $validated['selling_price'],
             'adult_price' => $validated['adult_price'] ?? $validated['selling_price'],
             'child_price' => $validated['child_price'] ?? round($validated['selling_price'] * 0.7, 2),
             'single_supplement' => $validated['single_supplement'] ?? 0.00,
-            'deposit_percentage' => $validated['deposit_percentage'] ?? 20.00,
+            'deposit_percentage' => $validated['deposit_percentage'] ?? 30.00,
             'currency' => $validated['currency'] ?? 'USD',
             'description' => $validated['description'] ?? null,
             'is_active' => $request->has('is_active'),
@@ -100,11 +100,11 @@ class TourPackageAdminController extends Controller
         // Save Itinerary Days & Nightly Hotel Assignments
         if ($request->has('itinerary_days') && is_array($request->itinerary_days)) {
             foreach ($request->itinerary_days as $index => $day) {
-                if (!empty($day['title']) || !empty($day['accommodation_id'])) {
+                if (! empty($day['title']) || ! empty($day['accommodation_id'])) {
                     PackageItineraryDay::create([
                         'tour_package_id' => $package->id,
                         'day_number' => $index + 1,
-                        'title' => $day['title'] ?? ('Day ' . ($index + 1)),
+                        'title' => $day['title'] ?? ('Day '.($index + 1)),
                         'description' => $day['description'] ?? null,
                         'accommodation_id' => $day['accommodation_id'] ?? null,
                         'accommodation_notes' => $day['accommodation_notes'] ?? null,
@@ -177,7 +177,7 @@ class TourPackageAdminController extends Controller
             'adult_price' => $validated['adult_price'] ?? $validated['selling_price'],
             'child_price' => $validated['child_price'] ?? round($validated['selling_price'] * 0.7, 2),
             'single_supplement' => $validated['single_supplement'] ?? 0.00,
-            'deposit_percentage' => $validated['deposit_percentage'] ?? 20.00,
+            'deposit_percentage' => $validated['deposit_percentage'] ?? 30.00,
             'currency' => $validated['currency'] ?? 'USD',
             'description' => $validated['description'] ?? null,
             'is_active' => $request->has('is_active'),
@@ -195,11 +195,11 @@ class TourPackageAdminController extends Controller
         $tourPackage->itineraryDays()->delete();
         if ($request->has('itinerary_days') && is_array($request->itinerary_days)) {
             foreach ($request->itinerary_days as $index => $day) {
-                if (!empty($day['title']) || !empty($day['accommodation_id'])) {
+                if (! empty($day['title']) || ! empty($day['accommodation_id'])) {
                     PackageItineraryDay::create([
                         'tour_package_id' => $tourPackage->id,
                         'day_number' => $index + 1,
-                        'title' => $day['title'] ?? ('Day ' . ($index + 1)),
+                        'title' => $day['title'] ?? ('Day '.($index + 1)),
                         'description' => $day['description'] ?? null,
                         'accommodation_id' => $day['accommodation_id'] ?? null,
                         'accommodation_notes' => $day['accommodation_notes'] ?? null,
@@ -229,8 +229,8 @@ class TourPackageAdminController extends Controller
     public function duplicate(TourPackage $tourPackage)
     {
         $newPackage = $tourPackage->replicate();
-        $newPackage->name = $tourPackage->name . ' (Copy)';
-        $newPackage->slug = Str::slug($newPackage->name . '-' . Str::random(5));
+        $newPackage->name = $tourPackage->name.' (Copy)';
+        $newPackage->slug = Str::slug($newPackage->name.'-'.Str::random(5));
         $newPackage->save();
 
         foreach ($tourPackage->itineraryDays as $day) {
@@ -251,6 +251,7 @@ class TourPackageAdminController extends Controller
     public function destroy(TourPackage $tourPackage)
     {
         $tourPackage->delete();
+
         return redirect()->route('admin.tour-packages.index')->with('success', 'Tour Package deleted.');
     }
 }

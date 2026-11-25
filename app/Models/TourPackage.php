@@ -57,7 +57,7 @@ class TourPackage extends Model
         parent::boot();
         static::creating(function ($model) {
             if (empty($model->slug)) {
-                $model->slug = Str::slug($model->name . '-' . Str::random(5));
+                $model->slug = Str::slug($model->name.'-'.Str::random(5));
             }
         });
     }
@@ -91,7 +91,7 @@ class TourPackage extends Model
             default => '$',
         };
 
-        return $symbol . number_format($this->selling_price, 2);
+        return $symbol.number_format($this->selling_price, 2);
     }
 
     // INTERNAL PRIVATE COSTING COMPUTED ATTRIBUTES (Hidden from Guests)
@@ -113,7 +113,10 @@ class TourPackage extends Model
 
     public function getProfitMarginPercentAttribute(): float
     {
-        if ($this->selling_price <= 0) return 0.0;
+        if ($this->selling_price <= 0) {
+            return 0.0;
+        }
+
         return round(($this->expected_profit / $this->selling_price) * 100, 1);
     }
 

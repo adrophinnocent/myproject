@@ -12,6 +12,7 @@ class RoomTypeController extends Controller
     public function index()
     {
         $roomTypes = RoomType::orderBy('sort_order')->orderBy('name')->get();
+
         return view('admin.room-types.index', compact('roomTypes'));
     }
 
@@ -66,6 +67,7 @@ class RoomTypeController extends Controller
     public function destroy(RoomType $roomType)
     {
         $roomType->delete();
+
         return redirect()->route('admin.room-types.index')->with('success', 'Room type deleted.');
     }
 }

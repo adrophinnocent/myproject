@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Accommodations Table
-        if (!Schema::hasTable('accommodations')) {
+        if (! Schema::hasTable('accommodations')) {
             Schema::create('accommodations', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -29,7 +29,7 @@ return new class extends Migration
         }
 
         // 2. Room Types Table
-        if (!Schema::hasTable('room_types')) {
+        if (! Schema::hasTable('room_types')) {
             Schema::create('room_types', function (Blueprint $table) {
                 $table->id();
                 $table->string('name'); // Single, Double, Twin, Triple, Family Room, Custom
@@ -44,7 +44,7 @@ return new class extends Migration
         }
 
         // 3. Tour Packages Table (Dynamic accommodation packages per tour)
-        if (!Schema::hasTable('tour_packages')) {
+        if (! Schema::hasTable('tour_packages')) {
             Schema::create('tour_packages', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('tour_id')->nullable()->constrained('tours')->onDelete('cascade');
@@ -56,7 +56,7 @@ return new class extends Migration
                 $table->decimal('adult_price', 10, 2)->nullable();
                 $table->decimal('child_price', 10, 2)->nullable();
                 $table->decimal('single_supplement', 10, 2)->default(0.00);
-                $table->decimal('deposit_percentage', 5, 2)->default(20.00);
+                $table->decimal('deposit_percentage', 5, 2)->default(30.00);
                 $table->string('currency', 10)->default('USD');
                 $table->json('images')->nullable();
                 $table->integer('sort_order')->default(0);
@@ -76,7 +76,7 @@ return new class extends Migration
         }
 
         // 4. Package Itinerary Days (Night-by-night hotel assignments)
-        if (!Schema::hasTable('package_itinerary_days')) {
+        if (! Schema::hasTable('package_itinerary_days')) {
             Schema::create('package_itinerary_days', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('tour_package_id')->constrained('tour_packages')->onDelete('cascade');
@@ -92,7 +92,7 @@ return new class extends Migration
         }
 
         // 5. Package Room Options
-        if (!Schema::hasTable('package_room_options')) {
+        if (! Schema::hasTable('package_room_options')) {
             Schema::create('package_room_options', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('tour_package_id')->constrained('tour_packages')->onDelete('cascade');
@@ -105,22 +105,22 @@ return new class extends Migration
 
         // 6. Extend Bookings Table with selected package and room options
         Schema::table('bookings', function (Blueprint $table) {
-            if (!Schema::hasColumn('bookings', 'tour_package_id')) {
+            if (! Schema::hasColumn('bookings', 'tour_package_id')) {
                 $table->foreignId('tour_package_id')->nullable()->constrained('tour_packages')->nullOnDelete();
             }
-            if (!Schema::hasColumn('bookings', 'room_type_id')) {
+            if (! Schema::hasColumn('bookings', 'room_type_id')) {
                 $table->foreignId('room_type_id')->nullable()->constrained('room_types')->nullOnDelete();
             }
-            if (!Schema::hasColumn('bookings', 'package_name')) {
+            if (! Schema::hasColumn('bookings', 'package_name')) {
                 $table->string('package_name')->nullable();
             }
-            if (!Schema::hasColumn('bookings', 'room_type_name')) {
+            if (! Schema::hasColumn('bookings', 'room_type_name')) {
                 $table->string('room_type_name')->nullable();
             }
-            if (!Schema::hasColumn('bookings', 'room_supplement_amount')) {
+            if (! Schema::hasColumn('bookings', 'room_supplement_amount')) {
                 $table->decimal('room_supplement_amount', 10, 2)->default(0.00);
             }
-            if (!Schema::hasColumn('bookings', 'selected_hotels_summary')) {
+            if (! Schema::hasColumn('bookings', 'selected_hotels_summary')) {
                 $table->json('selected_hotels_summary')->nullable();
             }
         });

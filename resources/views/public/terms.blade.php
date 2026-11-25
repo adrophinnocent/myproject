@@ -15,7 +15,7 @@
 <div class="max-w-4xl mx-auto px-4 py-16 text-gray-700 leading-relaxed space-y-8 font-normal">
     <section class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
         <h2 class="text-2xl font-bold font-display text-gray-900">1. Booking Confirmation & Deposits</h2>
-        <p>A 30% deposit is required to confirm your safari reservation. The remaining balance must be settled 30 days prior to the travel arrival date unless otherwise agreed upon in writing.</p>
+        <p>A 30% deposit is required to confirm your safari reservation. The remaining balance must be settled 65 days prior to the travel arrival date unless otherwise agreed upon in writing.</p>
     </section>
 
     <section class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">

@@ -57,8 +57,11 @@ class Accommodation extends Model
     {
         if (is_array($this->images) && count($this->images) > 0) {
             $img = $this->images[0];
-            if (str_starts_with($img, 'http')) return $img;
-            return asset(str_starts_with($img, 'storage/') ? $img : 'storage/' . $img);
+            if (str_starts_with($img, 'http')) {
+                return $img;
+            }
+
+            return asset(str_starts_with($img, 'storage/') ? $img : 'storage/'.$img);
         }
 
         return asset('images/tour-placeholder.jpg');

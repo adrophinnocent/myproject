@@ -403,7 +403,7 @@
                         <div>
                             <h3 class="text-sm font-bold font-serif-title text-stone-900 uppercase tracking-wider mb-2">Payment Terms</h3>
                             <p class="text-xs md:text-sm text-stone-700 leading-relaxed font-normal">
-                                {{ $proposal->payment_terms ?: "A deposit of 30% is required upon booking confirmation. The remaining balance is payable 30 days prior to your arrival date. We accept Bank Wire Transfers and major Credit Cards." }}
+                                {{ $proposal->payment_terms ?: "A deposit of 30% is required upon booking confirmation. The remaining balance is payable 65 days prior to your arrival date. We accept Bank Wire Transfers and major Credit Cards." }}
                             </p>
                         </div>
 

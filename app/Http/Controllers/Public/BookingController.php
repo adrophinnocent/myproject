@@ -8,11 +8,12 @@ use App\Mail\AdminNewBookingNotification;
 use App\Mail\CustomerBookingConfirmation;
 use App\Models\AdminNotification;
 use App\Models\Booking;
+use App\Models\PackageRoomOption;
+use App\Models\RoomType;
 use App\Models\Safari;
 use App\Models\Setting;
 use App\Models\Tour;
 use App\Models\TourPackage;
-use App\Models\RoomType;
 use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -50,30 +51,60 @@ class BookingController extends Controller
         $roomTypes = RoomType::active()->get();
 
         $extras = [];
-        foreach ((array) ($tour->extras ?? []) as $extra) {
+        foreach (array_values((array) ($tour->extras ?? [])) as $eIdx => $extra) {
             if (is_array($extra)) {
+                $extra['id'] = 'ext_'.$eIdx;
                 $extra['price'] = Currency::convert((float) ($extra['price'] ?? 0), $currency);
+                $extras[] = $extra;
+            } elseif (is_string($extra) && trim($extra) !== '') {
+                // Legacy extras stored as plain names.
+                $extras[] = [
+                    'id' => 'ext_'.$eIdx,
+                    'name' => trim($extra),
+                    'price' => 0,
+                    'price_type' => 'per_person',
+                ];
             }
-            $extras[] = $extra;
         }
 
         // Process Tier Parameter from URL if present
-        $selectedTier = null;
-        $tierId = request('tier');
-        if ($tierId && !empty($tour->accommodation_options) && is_array($tour->accommodation_options)) {
-            foreach ($tour->accommodation_options as $opt) {
-                if (is_array($opt) && ($opt['id'] ?? '') === $tierId) {
-                    $selectedTier = $opt;
-                    break;
-                }
-            }
-        }
+        $selectedTier = $this->applyTierPrice($tour, request('tier'));
 
-        if ($selectedTier && !empty($selectedTier['price'])) {
-            $tour->price = (float) $selectedTier['price'];
-        }
+        $selectedPackageId = old('tour_package_id', request('tour_package_id') ?? request('package_id'));
+        $selectedRoomTypeId = old('room_type_id', request('room_type_id'));
 
-        return view('public.booking.create', compact('tour', 'packages', 'roomTypes', 'currency', 'symbol', 'decimals', 'extras', 'selectedTier'));
+        // Prices used by the live summary must match the server-side calculation.
+        $packageOptions = $packages->map(function ($pkg) use ($currency) {
+            $adultPrice = (float) ($pkg->selling_price ?: $pkg->adult_price ?: 0);
+
+            return [
+                'id' => $pkg->id,
+                'adult_price' => Currency::convert($adultPrice, $currency),
+                'child_price' => Currency::convert((float) ($pkg->child_price ?? ($adultPrice * 0.7)), $currency),
+                'room_supplements' => $pkg->roomOptions->mapWithKeys(function ($option) use ($currency) {
+                    return [$option->room_type_id => Currency::convert((float) $option->supplement_price, $currency)];
+                })->all(),
+            ];
+        })->values()->all();
+
+        $roomSupplements = $roomTypes->mapWithKeys(function ($roomType) use ($currency) {
+            return [$roomType->id => Currency::convert((float) $roomType->default_supplement_price, $currency)];
+        })->all();
+
+        return view('public.booking.create', compact(
+            'tour',
+            'packages',
+            'roomTypes',
+            'currency',
+            'symbol',
+            'decimals',
+            'extras',
+            'selectedTier',
+            'selectedPackageId',
+            'selectedRoomTypeId',
+            'packageOptions',
+            'roomSupplements'
+        ));
     }
 
     public function store(Request $request, $slug)
@@ -84,6 +115,9 @@ class BookingController extends Controller
         if ($tour->trashed()) {
             return redirect()->route('tours.index')->with('error', __('This tour package is no longer available.'));
         }
+
+        // Keep the submitted price in sync with the tier shown on the booking page.
+        $selectedTier = $this->applyTierPrice($tour, $request->input('tier'));
 
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
@@ -100,6 +134,10 @@ class BookingController extends Controller
             'payment_method' => 'nullable|string|max:100',
             'tour_package_id' => 'nullable|exists:tour_packages,id',
             'room_type_id' => 'nullable|exists:room_types,id',
+            'tier' => 'nullable|string|max:100',
+            'selected_extras_qty' => 'nullable|array',
+            'selected_extras_qty.*' => 'nullable|integer|min:0|max:50',
+            'selected_extras' => 'nullable|array',
         ]);
 
         $booking = new Booking;
@@ -116,6 +154,7 @@ class BookingController extends Controller
         $booking->accommodation_preference = $validated['accommodation_preference'] ?? null;
         $booking->payment_method = $validated['payment_method'] ?? 'bank_transfer';
         $booking->currency = Currency::current();
+        $booking->selected_accommodation_tier = $selectedTier;
 
         if ($tour instanceof Tour) {
             $booking->tour_id = $tour->id;
@@ -145,7 +184,7 @@ class BookingController extends Controller
         if ($roomTypeId) {
             $selectedRoomType = RoomType::find($roomTypeId);
             if ($selectedRoomType) {
-                $roomOption = $selectedPackage ? \App\Models\PackageRoomOption::where('tour_package_id', $selectedPackage->id)->where('room_type_id', $roomTypeId)->first() : null;
+                $roomOption = $selectedPackage ? PackageRoomOption::where('tour_package_id', $selectedPackage->id)->where('room_type_id', $roomTypeId)->first() : null;
                 $roomSupplement = $roomOption ? (float) $roomOption->supplement_price : (float) $selectedRoomType->default_supplement_price;
             }
         }
@@ -157,7 +196,9 @@ class BookingController extends Controller
         $booking->room_supplement_amount = $roomSupplement;
 
         if ($selectedPackage) {
-            $adultPrice = (float) $selectedPackage->selling_price;
+            // Match the live estimate shown on the booking page: a package may
+            // store its sellable rate in either selling_price or adult_price.
+            $adultPrice = (float) ($selectedPackage->selling_price ?: $selectedPackage->adult_price ?: 0);
             $childPrice = (float) ($selectedPackage->child_price ?? ($adultPrice * 0.7));
             $booking->accommodation_preference = $selectedPackage->name;
 
@@ -184,25 +225,37 @@ class BookingController extends Controller
         $selectedExtras = [];
         $extrasTotal = 0.00;
 
-        $tourExtras = is_array($tour->extras) ? $tour->extras : [];
+        $tourExtras = array_values((array) ($tour->extras ?? []));
         $extrasQtyMap = $request->input('selected_extras_qty', []);
         $extrasList = (array) $request->input('selected_extras', []);
 
-        foreach ($tourExtras as $tExtra) {
-            $name = is_array($tExtra) ? ($tExtra['name'] ?? $tExtra['title'] ?? '') : $tExtra;
-            if (empty($name)) continue;
+        foreach ($tourExtras as $eIdx => $tExtra) {
+            if (! is_array($tExtra)) {
+                continue;
+            }
+            $name = trim($tExtra['name'] ?? $tExtra['title'] ?? '');
+            if (empty($name)) {
+                continue;
+            }
+
+            $extId = 'ext_'.$eIdx;
 
             $qty = 0;
-            if (isset($extrasQtyMap[$name]) && (int) $extrasQtyMap[$name] > 0) {
+            if (isset($extrasQtyMap[$extId]) && (int) $extrasQtyMap[$extId] > 0) {
+                $qty = (int) $extrasQtyMap[$extId];
+            } elseif (isset($extrasQtyMap[$name]) && (int) $extrasQtyMap[$name] > 0) {
                 $qty = (int) $extrasQtyMap[$name];
-            } elseif (in_array($name, $extrasList)) {
+            } elseif (in_array($name, $extrasList) || in_array($extId, $extrasList)) {
                 $qty = $totalGuests;
             }
 
+            $priceType = $tExtra['price_type'] ?? 'per_person';
+            // Never charge for more travellers than the booking actually has.
+            $qty = ($priceType === 'per_group') ? 1 : min($qty, $totalGuests);
+
             if ($qty > 0) {
-                $price = is_array($tExtra) ? (float) ($tExtra['price'] ?? 0) : 0;
-                $priceType = is_array($tExtra) ? ($tExtra['price_type'] ?? 'per_person') : 'per_person';
-                $desc = is_array($tExtra) ? ($tExtra['description'] ?? '') : '';
+                $price = (float) ($tExtra['price'] ?? 0);
+                $desc = $tExtra['description'] ?? '';
 
                 // Extras are priced in USD; charge in the booking currency.
                 $convertedPrice = Currency::convert($price, $booking->currency);
@@ -210,6 +263,7 @@ class BookingController extends Controller
                 $extrasTotal += $itemTotal;
 
                 $selectedExtras[] = [
+                    'id' => $extId,
                     'name' => $name,
                     'price' => $convertedPrice,
                     'price_type' => $priceType,
@@ -226,16 +280,25 @@ class BookingController extends Controller
         $totalPrice = round(Currency::convert($basePrice, $booking->currency) + $extrasTotal, 2);
         $booking->total_price = $totalPrice;
 
-        // Deposit Percentage (Default 30%)
-        $depositPct = (float) ($tour->deposit_percent ?? Setting::get('deposit_percentage', 30.00));
-        if ($depositPct <= 0) $depositPct = 30.00;
+        // Public booking terms: pay 30% today, the rest 65 days before departure.
+        $depositPct = Booking::DEPOSIT_PERCENTAGE;
         $booking->deposit_percentage = $depositPct;
-        $booking->deposit_required = round(($totalPrice * $depositPct) / 100, 2);
+        $depositRequired = round(($totalPrice * $depositPct) / 100, 2);
+        $booking->deposit_required = $depositRequired;
         $booking->deposit_paid = 0.00;
-        $booking->balance_amount = $totalPrice;
+        $booking->balance_amount = round(max(0, $totalPrice - $depositRequired), 2);
 
         if ($booking->travel_date) {
-            $booking->balance_due_date = $booking->travel_date->copy()->subDays(60);
+            $balanceDueDate = $booking->travel_date->copy()
+                ->subDays(Booking::BALANCE_DUE_DAYS_BEFORE_DEPARTURE);
+
+            // If departure is already inside the 65-day window, the balance is
+            // due now rather than showing an impossible overdue date.
+            if ($balanceDueDate->lt(now()->startOfDay())) {
+                $balanceDueDate = now()->startOfDay();
+            }
+
+            $booking->balance_due_date = $balanceDueDate;
         }
 
         $booking->save();
@@ -354,5 +417,28 @@ class BookingController extends Controller
 
             return back()->with('error', 'Sorry, we could not generate the PDF at this moment. Please try again later.');
         }
+    }
+
+    /**
+     * Apply the accommodation tier selected in the URL to the tour price so the
+     * live estimate and the stored booking total always use the same figure.
+     */
+    private function applyTierPrice($tour, $tierId): ?array
+    {
+        if (! $tierId || empty($tour->accommodation_options) || ! is_array($tour->accommodation_options)) {
+            return null;
+        }
+
+        foreach ($tour->accommodation_options as $option) {
+            if (is_array($option) && ($option['id'] ?? '') === (string) $tierId) {
+                if (! empty($option['price'])) {
+                    $tour->price = (float) $option['price'];
+                }
+
+                return $option;
+            }
+        }
+
+        return null;
     }
 }

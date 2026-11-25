@@ -59,7 +59,7 @@
                 @csrf
                 <div class="flex items-center gap-2 bg-white px-4 py-3 rounded-2xl border border-amber-300 shrink-0">
                     <label class="text-xs font-bold text-stone-700 uppercase">Deposit %:</label>
-                    <input type="number" name="deposit_percentage" value="{{ old('deposit_percentage', $booking->deposit_percentage ?? 20) }}" min="5" max="100" class="w-16 text-xs font-bold border-0 focus:ring-0 outline-none">
+                    <input type="number" name="deposit_percentage" value="{{ old('deposit_percentage', $booking->deposit_percentage ?? \App\Models\Booking::DEPOSIT_PERCENTAGE) }}" min="5" max="100" class="w-16 text-xs font-bold border-0 focus:ring-0 outline-none">
                 </div>
                 <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black px-8 py-3.5 rounded-2xl text-xs uppercase tracking-widest shadow-md transition-all flex items-center gap-2 shrink-0">
                     ✓ Approve & Send Payment Link

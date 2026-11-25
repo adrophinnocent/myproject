@@ -21,6 +21,7 @@ use App\Http\Controllers\Public\ReviewController;
 use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\Public\TourController;
 use App\Http\Controllers\Public\TripPlanController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Login & Logout Routes
@@ -30,12 +31,8 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('throttle:10,1');
 
-Route::match(['get', 'post'], '/logout', function (\Illuminate\Http\Request $request) {
-    \Illuminate\Support\Facades\Auth::guard('web')->logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect()->route('login')->with('success', __('You have been logged out.'));
-})->name('logout');
+Route::match(['get', 'post'], '/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout');
 
 // Password reset (admin account recovery)
 require __DIR__.'/auth.php';

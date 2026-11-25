@@ -152,25 +152,27 @@ class TourController extends Controller
         if ($request->has('accommodation_options') && is_array($request->accommodation_options)) {
             $cleanAccOptions = [];
             foreach ($request->accommodation_options as $index => $opt) {
-                if (!is_array($opt)) continue;
+                if (! is_array($opt)) {
+                    continue;
+                }
                 $name = trim($opt['name'] ?? '');
                 $price = (float) ($opt['price'] ?? 0);
-                if (!empty($name) && $price > 0) {
+                if (! empty($name) && $price > 0) {
                     $imgUrl = $opt['existing_image'] ?? null;
                     if ($request->hasFile("accommodation_options.{$index}.image_upload")) {
-                        $imgUrl = asset('storage/' . $request->file("accommodation_options.{$index}.image_upload")->store('tours/accommodations', 'public'));
+                        $imgUrl = asset('storage/'.$request->file("accommodation_options.{$index}.image_upload")->store('tours/accommodations', 'public'));
                     }
 
                     $hotels = $opt['hotels'] ?? [];
 
                     $cleanAccOptions[] = [
-                        'id' => $opt['id'] ?? 'acc_' . Str::random(8),
+                        'id' => $opt['id'] ?? 'acc_'.Str::random(8),
                         'name' => $name,
                         'price' => $price,
                         'hotels' => is_array($hotels) ? $hotels : [],
                         'image' => $imgUrl,
-                        'is_active' => !isset($opt['is_active']) || !empty($opt['is_active']),
-                        'is_default' => !empty($opt['is_default']),
+                        'is_active' => ! isset($opt['is_active']) || ! empty($opt['is_active']),
+                        'is_default' => ! empty($opt['is_default']),
                     ];
                 }
             }
@@ -178,9 +180,14 @@ class TourController extends Controller
             if (count($cleanAccOptions) > 0) {
                 $hasDef = false;
                 foreach ($cleanAccOptions as &$co) {
-                    if (!empty($co['is_default'])) { $hasDef = true; break; }
+                    if (! empty($co['is_default'])) {
+                        $hasDef = true;
+                        break;
+                    }
                 }
-                if (!$hasDef) $cleanAccOptions[0]['is_default'] = true;
+                if (! $hasDef) {
+                    $cleanAccOptions[0]['is_default'] = true;
+                }
             }
 
             if (Schema::hasColumn('tours', 'accommodation_options')) {
@@ -524,25 +531,27 @@ class TourController extends Controller
         if ($request->has('accommodation_options') && is_array($request->accommodation_options)) {
             $cleanAccOptions = [];
             foreach ($request->accommodation_options as $index => $opt) {
-                if (!is_array($opt)) continue;
+                if (! is_array($opt)) {
+                    continue;
+                }
                 $name = trim($opt['name'] ?? '');
                 $price = (float) ($opt['price'] ?? 0);
-                if (!empty($name) && $price > 0) {
+                if (! empty($name) && $price > 0) {
                     $imgUrl = $opt['existing_image'] ?? null;
                     if ($request->hasFile("accommodation_options.{$index}.image_upload")) {
-                        $imgUrl = asset('storage/' . $request->file("accommodation_options.{$index}.image_upload")->store('tours/accommodations', 'public'));
+                        $imgUrl = asset('storage/'.$request->file("accommodation_options.{$index}.image_upload")->store('tours/accommodations', 'public'));
                     }
 
                     $hotels = $opt['hotels'] ?? [];
 
                     $cleanAccOptions[] = [
-                        'id' => $opt['id'] ?? 'acc_' . Str::random(8),
+                        'id' => $opt['id'] ?? 'acc_'.Str::random(8),
                         'name' => $name,
                         'price' => $price,
                         'hotels' => is_array($hotels) ? $hotels : [],
                         'image' => $imgUrl,
-                        'is_active' => !isset($opt['is_active']) || !empty($opt['is_active']),
-                        'is_default' => !empty($opt['is_default']),
+                        'is_active' => ! isset($opt['is_active']) || ! empty($opt['is_active']),
+                        'is_default' => ! empty($opt['is_default']),
                     ];
                 }
             }
@@ -550,9 +559,14 @@ class TourController extends Controller
             if (count($cleanAccOptions) > 0) {
                 $hasDef = false;
                 foreach ($cleanAccOptions as &$co) {
-                    if (!empty($co['is_default'])) { $hasDef = true; break; }
+                    if (! empty($co['is_default'])) {
+                        $hasDef = true;
+                        break;
+                    }
                 }
-                if (!$hasDef) $cleanAccOptions[0]['is_default'] = true;
+                if (! $hasDef) {
+                    $cleanAccOptions[0]['is_default'] = true;
+                }
             }
 
             if (Schema::hasColumn('tours', 'accommodation_options')) {

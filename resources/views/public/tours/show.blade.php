@@ -166,6 +166,9 @@
                 <div class="text-right ml-1">
                     <span class="text-2xl md:text-3xl font-black text-amber-600 leading-none">{{ $tour->display_price_formatted }}</span>
                     <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block mt-0.5">{{ __('FROM') }} {{ \App\Helpers\Currency::current() }}</span>
+                    <span class="text-[9px] font-bold text-emerald-700 tracking-wide block mt-1">
+                        {{ __(':percent% deposit today · balance :days days before departure', ['percent' => (int) \App\Models\Booking::DEPOSIT_PERCENTAGE, 'days' => \App\Models\Booking::BALANCE_DUE_DAYS_BEFORE_DEPARTURE]) }}
+                    </span>
                 </div>
                 <a href="#booking-card" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-7 py-3 rounded-2xl text-xs uppercase tracking-widest shadow-md transition-all hover:scale-105 inline-flex items-center gap-2">
                     {{ __('BOOK NOW') }}
@@ -1296,7 +1299,8 @@
                         <div class="flex items-start gap-2.5">
                             <span class="text-stone-700 font-bold text-sm shrink-0">💳</span>
                             <p class="leading-tight">
-                                <strong>Pay only 20% today.</strong> The rest is due 65 days before departure.
+                                <strong>{{ __('Pay only :percent% today.', ['percent' => (int) \App\Models\Booking::DEPOSIT_PERCENTAGE]) }}</strong>
+                                {{ __('The rest is due :days days before departure.', ['days' => \App\Models\Booking::BALANCE_DUE_DAYS_BEFORE_DEPARTURE]) }}
                             </p>
                         </div>
                         <div class="flex items-start gap-2.5">

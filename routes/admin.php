@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AccommodationController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AiChatController;
 use App\Http\Controllers\Admin\AiImageController;
@@ -21,22 +22,24 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProposalController;
 use App\Http\Controllers\Admin\ProposalTemplateController;
 use App\Http\Controllers\Admin\ReviewAdminController;
+use App\Http\Controllers\Admin\RoomTypeController;
 use App\Http\Controllers\Admin\SafariController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\TourInquiryController;
+use App\Http\Controllers\Admin\TourPackageAdminController;
 use App\Http\Controllers\Admin\TripPlanAdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Middleware\IsAdmin;
 use App\Models\Booking;
 use App\Models\Tour;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Add 'logout' route
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
+// Logout is registered once in routes/web.php (Breeze views use route('logout')).
 
 // Admin Dedicated Login & Route Aliases
 Route::get('/admin/access', [AuthenticatedSessionController::class, 'create'])->name('admin.access');
@@ -47,22 +50,24 @@ Route::get('/admin', function () {
     if (auth()->check() && auth()->user()->is_admin) {
         return redirect()->route('admin.dashboard');
     }
+
     return redirect()->route('login');
 });
 
-Route::match(['get', 'post'], '/admin/logout', function (\Illuminate\Http\Request $request) {
-    \Illuminate\Support\Facades\Auth::guard('web')->logout();
+Route::match(['get', 'post'], '/admin/logout', function (Request $request) {
+    Auth::guard('web')->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
+
     return redirect()->route('login')->with('success', __('You have been logged out.'));
 })->name('admin.logout');
 
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
     // Universal Tour Package & Accommodation Management System Routes
-    Route::resource('/accommodations', App\Http\Controllers\Admin\AccommodationController::class)->names('admin.accommodations');
-    Route::resource('/room-types', App\Http\Controllers\Admin\RoomTypeController::class)->names('admin.room-types');
-    Route::resource('/tour-packages', App\Http\Controllers\Admin\TourPackageAdminController::class)->names('admin.tour-packages');
-    Route::post('/tour-packages/{tourPackage}/duplicate', [App\Http\Controllers\Admin\TourPackageAdminController::class, 'duplicate'])->name('admin.tour-packages.duplicate');
+    Route::resource('/accommodations', AccommodationController::class)->except(['show'])->names('admin.accommodations');
+    Route::resource('/room-types', RoomTypeController::class)->only(['index', 'store', 'update', 'destroy'])->names('admin.room-types');
+    Route::resource('/tour-packages', TourPackageAdminController::class)->except(['show'])->names('admin.tour-packages');
+    Route::post('/tour-packages/{tourPackage}/duplicate', [TourPackageAdminController::class, 'duplicate'])->name('admin.tour-packages.duplicate');
 
     // Priority Booking System Routes
     Route::get('/bookings/export', [BookingController::class, 'export'])->name('admin.bookings.export');

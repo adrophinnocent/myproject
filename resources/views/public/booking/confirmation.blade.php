@@ -83,12 +83,12 @@
                         @endphp
                         <div class="flex justify-between items-center text-stone-700">
                             <span>• {{ $eName }} ({{ $eType === 'per_group' ? 'Fixed Group' : 'Per Person' }})</span>
-                            <span class="font-bold text-stone-900">+${{ number_format($eTotal, 2) }}</span>
+                            <span class="font-bold text-stone-900">+{{ $booking->currency_symbol }}{{ number_format($eTotal, 2) }}</span>
                         </div>
                     @endforeach
                     <div class="flex justify-between items-center text-amber-800 pt-2 border-t border-stone-200 font-bold">
                         <span>{{ __('Extras Subtotal') }}</span>
-                        <span>+${{ number_format($booking->extras_total, 2) }}</span>
+                        <span>+{{ $booking->currency_symbol }}{{ number_format($booking->extras_total, 2) }}</span>
                     </div>
                 </div>
             </div>
@@ -107,7 +107,7 @@
                         <span class="font-bold text-amber-700 text-base">{{ $booking->formatted_deposit_required }}</span>
                     </div>
                     <div class="flex justify-between items-center text-stone-700 pt-3 border-t border-stone-200">
-                        <span>{{ __('Remaining Balance') }} (Due 60 days before trip)</span>
+                        <span>{{ __('Remaining Balance') }} (Due 65 days before departure)</span>
                         <span class="font-bold text-stone-800 text-base">{{ $booking->formatted_balance_amount }}</span>
                     </div>
                 </div>

@@ -22,7 +22,7 @@
                     <span>1. Deposit & Booking Confirmation</span>
                 </h2>
                 <ul class="space-y-2 list-disc pl-5">
-                    <li>A <strong>20% deposit</strong> is required upon approval of your booking request to lock in hotel lodges, national park entry permits, and private safari vehicle allocations.</li>
+                    <li>A <strong>30% deposit</strong> is required upon approval of your booking request to lock in hotel lodges, national park entry permits, and private safari vehicle allocations.</li>
                     <li>Official booking vouchers and payment receipts are issued immediately upon receipt of deposit.</li>
                     <li>Deposits can be paid via SWIFT Direct Bank Transfer or Tanzania Mobile Money (M-Pesa, Tigo Pesa, Airtel Money). All payments are verified manually by our team.</li>
                 </ul>
@@ -34,8 +34,8 @@
                     <span>2. Remaining Balance Payment</span>
                 </h2>
                 <ul class="space-y-2 list-disc pl-5">
-                    <li>The remaining 80% balance is due <strong>60 days prior to your safari start date</strong>.</li>
-                    <li>For bookings made within 60 days of travel, the full trip amount is due upon booking approval.</li>
+                    <li>The remaining 70% balance is due <strong>65 days prior to your safari start date</strong>.</li>
+                    <li>For bookings made within 65 days of travel, the full trip amount is due upon booking approval.</li>
                     <li>Reminders are automatically sent with secure online balance payment links.</li>
                 </ul>
             </div>
@@ -60,7 +60,7 @@
                             </tr>
                             <tr>
                                 <td class="p-3">31 - 60 Days prior to travel</td>
-                                <td class="p-3 font-bold text-amber-800">20% Deposit retained; 80% Balance refunded</td>
+                                <td class="p-3 font-bold text-amber-800">Deposit retained; remaining balance refunded</td>
                             </tr>
                             <tr>
                                 <td class="p-3">15 - 30 Days prior to travel</td>

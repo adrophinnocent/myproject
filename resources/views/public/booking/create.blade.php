@@ -43,7 +43,102 @@
             <span class="text-gray-900">{{ __('Booking Confirmation') }}</span>
         </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {{-- One Alpine component owns the estimate so the form controls and the
+             sticky price summary always read the same live state. --}}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12" x-data="{
+                adults: {{ old('number_of_adults', 1) }},
+                children: {{ old('number_of_children', 0) }},
+                tourPrice: {{ \App\Helpers\Currency::convert((float) $tour->price) }},
+                childPrice: {{ \App\Helpers\Currency::convert((float) ($tour->child_price ?? ($tour->price * 0.7))) }},
+                depositPct: {{ \App\Models\Booking::DEPOSIT_PERCENTAGE }},
+                selectedPackageId: {{ !empty($selectedPackageId) ? (int) $selectedPackageId : 'null' }},
+                selectedRoomTypeId: {{ !empty($selectedRoomTypeId) ? (int) $selectedRoomTypeId : 'null' }},
+                packageOptions: @js($packageOptions),
+                roomSupplements: @js($roomSupplements),
+                selectedExtrasQty: {},
+                extrasList: @js($extras),
+                symbol: '{{ $symbol }}',
+                decimals: {{ $decimals }},
+                money(amount) {
+                    return this.symbol + Number(amount || 0).toLocaleString('en-US', {
+                        minimumFractionDigits: this.decimals,
+                        maximumFractionDigits: this.decimals
+                    });
+                },
+                get totalGuests() { return Math.max(1, (parseInt(this.adults || 0) + parseInt(this.children || 0))); },
+                get activePackage() {
+                    return (this.packageOptions || []).find(p => String(p.id) === String(this.selectedPackageId)) || null;
+                },
+                get activeAdultPrice() { return this.activePackage ? parseFloat(this.activePackage.adult_price || 0) : this.tourPrice; },
+                get activeChildPrice() { return this.activePackage ? parseFloat(this.activePackage.child_price || 0) : this.childPrice; },
+                get roomSupplement() {
+                    if (!this.selectedRoomTypeId) return 0;
+                    const pkg = this.activePackage;
+                    if (pkg && Object.prototype.hasOwnProperty.call(pkg.room_supplements || {}, this.selectedRoomTypeId)) {
+                        return parseFloat((pkg.room_supplements || {})[this.selectedRoomTypeId] || 0);
+                    }
+                    return parseFloat((this.roomSupplements || {})[this.selectedRoomTypeId] || 0);
+                },
+                get baseCost() {
+                    return (parseInt(this.adults || 0) * this.activeAdultPrice)
+                        + (parseInt(this.children || 0) * this.activeChildPrice);
+                },
+                findExtra(id) {
+                    return (this.extrasList || []).find(e => String(e.id) === String(id) || e.name === id) || null;
+                },
+                defaultExtraQty(id) {
+                    const ext = this.findExtra(id);
+                    return (ext && ext.price_type === 'per_group') ? 1 : this.totalGuests;
+                },
+                toggleExtraById(id) {
+                    const key = String(id);
+                    const curr = parseInt((this.selectedExtrasQty && this.selectedExtrasQty[key]) || 0);
+                    const nextQty = curr > 0 ? 0 : this.defaultExtraQty(id);
+                    this.selectedExtrasQty = Object.assign({}, this.selectedExtrasQty, { [key]: nextQty });
+                },
+                setExtraQty(id, val) {
+                    const key = String(id);
+                    const qty = parseInt(val || 0);
+                    this.selectedExtrasQty = Object.assign({}, this.selectedExtrasQty, { [key]: qty });
+                },
+                isExtraSelected(id) {
+                    const key = String(id);
+                    return parseInt((this.selectedExtrasQty && this.selectedExtrasQty[key]) || 0) > 0;
+                },
+                getExtraQty(id) {
+                    const key = String(id);
+                    return parseInt((this.selectedExtrasQty && this.selectedExtrasQty[key]) || 1);
+                },
+                get selectedExtraLines() {
+                    return Object.keys(this.selectedExtrasQty || {})
+                        .map(key => {
+                            const qty = parseInt(this.selectedExtrasQty[key] || 0);
+                            const ext = qty > 0 ? this.findExtra(key) : null;
+                            if (!ext) return null;
+
+                            const price = parseFloat(ext.price || 0);
+                            const perGroup = (ext.price_type || 'per_person') === 'per_group';
+                            const chargeQty = perGroup ? 1 : qty;
+
+                            return {
+                                id: key,
+                                name: ext.name || ext.title || '',
+                                detail: perGroup
+                                    ? '{{ addslashes(__('per Group')) }}'
+                                    : (qty + ' × ' + this.money(price)),
+                                lineTotal: price * chargeQty
+                            };
+                        })
+                        .filter(Boolean);
+                },
+                get extrasCost() {
+                    return this.selectedExtraLines.reduce((sum, line) => sum + line.lineTotal, 0);
+                },
+                get countSelectedExtras() { return this.selectedExtraLines.length; },
+                get totalPrice() { return this.baseCost + this.roomSupplement + this.extrasCost; },
+                get depositRequired() { return (this.totalPrice * this.depositPct) / 100; },
+                get balanceDue() { return Math.max(0, this.totalPrice - this.depositRequired); }
+            }">
             {{-- Left Side: Booking Form --}}
             <div class="lg:col-span-8">
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -52,65 +147,7 @@
                         <p class="text-white/60">{{ __('Complete the details below to secure your Tanzanian adventure.') }}</p>
                     </div>
 
-                    <form action="{{ route('booking.store', $tour->slug) }}" method="POST" class="p-8" x-data="{
-                        adults: {{ old('number_of_adults', 1) }},
-                        children: {{ old('number_of_children', 0) }},
-                        tourPrice: {{ \App\Helpers\Currency::convert((float) $tour->price) }},
-                        childPrice: {{ \App\Helpers\Currency::convert((float) ($tour->child_price ?? ($tour->price * 0.7))) }},
-                        depositPct: {{ (float) ($tour->deposit_percent ?? \App\Models\Setting::get('deposit_percentage', 30)) }},
-                        selectedExtrasQty: {},
-                        extrasList: {{ json_encode($extras) }},
-                        symbol: '{{ $symbol }}',
-                        decimals: {{ $decimals }},
-                        get totalGuests() { return parseInt(this.adults || 0) + parseInt(this.children || 0); },
-                        get baseCost() { return (parseInt(this.adults || 0) * this.tourPrice) + (parseInt(this.children || 0) * this.childPrice); },
-                        toggleExtraByName(name, defaultQty = 1) {
-                            const strName = String(name);
-                            const curr = parseInt((this.selectedExtrasQty && this.selectedExtrasQty[strName]) || 0);
-                            const nextQty = curr > 0 ? 0 : (defaultQty || 1);
-                            this.selectedExtrasQty = Object.assign({}, this.selectedExtrasQty, { [strName]: nextQty });
-                        },
-                        setExtraQty(name, val) {
-                            const strName = String(name);
-                            const qty = parseInt(val || 0);
-                            this.selectedExtrasQty = Object.assign({}, this.selectedExtrasQty, { [strName]: qty });
-                        },
-                        isExtraSelected(name) {
-                            const strName = String(name);
-                            return parseInt((this.selectedExtrasQty && this.selectedExtrasQty[strName]) || 0) > 0;
-                        },
-                        getExtraQty(name) {
-                            const strName = String(name);
-                            return parseInt((this.selectedExtrasQty && this.selectedExtrasQty[strName]) || 1);
-                        },
-                        get extrasCost() {
-                            let sum = 0;
-                            if (this.selectedExtrasQty && this.extrasList) {
-                                Object.keys(this.selectedExtrasQty).forEach(name => {
-                                    const qty = parseInt(this.selectedExtrasQty[name] || 0);
-                                    if (qty > 0) {
-                                        const ext = this.extrasList.find(e => (e.name || e.title) === name);
-                                        if (ext) {
-                                            const price = parseFloat(ext.price || 0);
-                                            sum += (price * qty);
-                                        }
-                                    }
-                                });
-                            }
-                            return sum;
-                        },
-                        get countSelectedExtras() {
-                            let count = 0;
-                            if (this.selectedExtrasQty) {
-                                Object.keys(this.selectedExtrasQty).forEach(name => {
-                                    if (parseInt(this.selectedExtrasQty[name] || 0) > 0) count++;
-                                });
-                            }
-                            return count;
-                        },
-                        get totalPrice() { return this.baseCost + this.extrasCost; },
-                        get depositRequired() { return (this.totalPrice * this.depositPct) / 100; }
-                    }">
+                    <form action="{{ route('booking.store', $tour->slug) }}" method="POST" class="p-8">
                         @csrf
                         <input type="hidden" name="tier" value="{{ request('tier') }}">
 
@@ -293,40 +330,41 @@
                             </div>
 
                             <div class="space-y-4">
-                                @foreach($tour->extras as $eIndex => $ext)
+                                @foreach($extras as $eIndex => $ext)
                                     @php
+                                        $extId = $ext['id'] ?? 'ext_' . $eIndex;
                                         $exName = is_array($ext) ? ($ext['name'] ?? $ext['title'] ?? '') : $ext;
                                         $exDesc = is_array($ext) ? ($ext['description'] ?? '') : '';
-                                        $exPrice = \App\Helpers\Currency::convert(is_array($ext) ? (float)($ext['price'] ?? 0) : 0);
+                                        $exPrice = (float)($ext['price'] ?? 0);
                                         $exType = is_array($ext) ? ($ext['price_type'] ?? 'per_person') : 'per_person';
                                         $unitLabel = ($exType === 'per_group') ? __('per Group') : __('per Traveler');
                                     @endphp
                                     @if(!empty($exName))
                                     <div x-data="{ expanded: false }"
                                          class="p-5 rounded-2xl border transition-all duration-200 shadow-2xs"
-                                         :class="isExtraSelected('{{ addslashes($exName) }}') ? 'bg-amber-50/80 border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'bg-white border-stone-200 hover:border-amber-400/60'">
+                                         :class="isExtraSelected('{{ $extId }}') ? 'bg-amber-50/80 border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'bg-white border-stone-200 hover:border-amber-400/60'">
 
                                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                             {{-- Left Checkbox & Text --}}
                                             <div class="flex items-start gap-3.5 flex-1">
                                                 {{-- Hidden input for form submission --}}
                                                 <input type="hidden"
-                                                       name="selected_extras_qty[{{ $exName }}]"
-                                                       :value="isExtraSelected('{{ addslashes($exName) }}') ? getExtraQty('{{ addslashes($exName) }}') : 0">
+                                                       name="selected_extras_qty[{{ $extId }}]"
+                                                       :value="isExtraSelected('{{ $extId }}') ? getExtraQty('{{ $extId }}') : 0">
 
                                                 <button type="button"
-                                                        @click="toggleExtraByName('{{ addslashes($exName) }}')"
+                                                        @click="toggleExtraById('{{ $extId }}')"
                                                         class="mt-0.5 w-6 h-6 rounded-lg border flex items-center justify-center transition-all shrink-0 cursor-pointer"
-                                                        :class="isExtraSelected('{{ addslashes($exName) }}') ? 'bg-amber-500 border-amber-600 text-stone-950 font-black shadow-xs' : 'bg-stone-100 border-stone-300 text-transparent hover:border-amber-400'">
+                                                        :class="isExtraSelected('{{ $extId }}') ? 'bg-amber-500 border-amber-600 text-stone-950 font-black shadow-xs' : 'bg-stone-100 border-stone-300 text-transparent hover:border-amber-400'">
                                                     ✓
                                                 </button>
 
                                                 <div class="space-y-1">
                                                     <div class="flex items-center gap-2">
-                                                        <h4 class="font-bold text-stone-900 text-base leading-snug cursor-pointer hover:text-amber-800 transition-colors" @click="toggleExtraByName('{{ addslashes($exName) }}')">
+                                                        <h4 class="font-bold text-stone-900 text-base leading-snug cursor-pointer hover:text-amber-800 transition-colors" @click="toggleExtraById('{{ $extId }}')">
                                                             {{ $exName }}
                                                         </h4>
-                                                        <span x-show="isExtraSelected('{{ addslashes($exName) }}')" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                                        <span x-show="isExtraSelected('{{ $extId }}')" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
                                                             ✓ Added
                                                         </span>
                                                     </div>
@@ -357,23 +395,27 @@
                                                     <div class="text-[10px] font-bold text-stone-500 uppercase tracking-wider">{{ $unitLabel }}</div>
                                                 </div>
 
-                                                {{-- Quantity Selector (visible when selected) --}}
-                                                <div x-show="isExtraSelected('{{ addslashes($exName) }}')" class="flex items-center gap-2">
-                                                    <select :value="getExtraQty('{{ addslashes($exName) }}')"
-                                                            @change="setExtraQty('{{ addslashes($exName) }}', $event.target.value)"
+                                                {{-- Quantity Selector (per-person extras only) --}}
+                                                @if($exType === 'per_group')
+                                                    <span x-show="isExtraSelected('{{ $extId }}')" class="text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl">1 {{ __('Group') }}</span>
+                                                @else
+                                                <div x-show="isExtraSelected('{{ $extId }}')" class="flex items-center gap-2">
+                                                    <select :value="getExtraQty('{{ $extId }}')"
+                                                            @change="setExtraQty('{{ $extId }}', $event.target.value)"
                                                             class="bg-white border border-amber-400 rounded-xl px-3 py-2 text-xs font-black text-stone-900 outline-none focus:ring-2 focus:ring-amber-500 shadow-2xs">
-                                                        <template x-for="n in (totalGuests || 1)" :key="n">
-                                                            <option :value="n" x-text="n + ' ' + (n > 1 ? '{{ ($exType === "per_group") ? __("Groups") : __("Travelers") }}' : '{{ ($exType === "per_group") ? __("Group") : __("Traveler") }}')"></option>
+                                                        <template x-for="n in totalGuests" :key="n">
+                                                            <option :value="n" x-text="n + ' ' + (n > 1 ? '{{ __("Travelers") }}' : '{{ __("Traveler") }}')"></option>
                                                         </template>
                                                     </select>
                                                 </div>
+                                                @endif
 
                                                 {{-- Select/Add Toggle Button --}}
                                                 <button type="button"
-                                                        @click="toggleExtraByName('{{ addslashes($exName) }}')"
+                                                        @click="toggleExtraById('{{ $extId }}')"
                                                         class="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
-                                                        :class="isExtraSelected('{{ addslashes($exName) }}') ? 'bg-amber-500 text-stone-950 hover:bg-amber-600' : 'bg-stone-900 hover:bg-stone-800 text-amber-400'">
-                                                    <span x-text="isExtraSelected('{{ addslashes($exName) }}') ? '✓ Selected' : '+ Add Extra'"></span>
+                                                        :class="isExtraSelected('{{ $extId }}') ? 'bg-amber-500 text-stone-950 hover:bg-amber-600' : 'bg-stone-900 hover:bg-stone-800 text-amber-400'">
+                                                    <span x-text="isExtraSelected('{{ $extId }}') ? '✓ Selected' : '+ Add Extra'"></span>
                                                 </button>
                                             </div>
                                         </div>
@@ -487,7 +529,7 @@
                             <div class="flex items-start gap-3 mb-6">
                                 <input type="checkbox" required class="mt-1 w-4 h-4 text-gold-600 rounded border-gray-300">
                                 <p class="text-xs text-gray-500 leading-relaxed font-medium uppercase tracking-tighter">
-                                    {{ __('I agree to the') }} <a href="#" class="text-gold-600 underline">{{ __('Terms and Conditions') }}</a> {{ __('and') }} <a href="#" class="text-gold-600 underline">{{ __('Cancellation Policy') }}</a> {{ __('of Twina Safaris. I understand that my booking is subject to availability and will be confirmed via email.') }}
+                                    {{ __('I agree to the') }} <a href="{{ route('terms.index') }}" target="_blank" class="text-gold-600 underline">{{ __('Terms and Conditions') }}</a> {{ __('and') }} <a href="{{ route('booking.policies') }}" target="_blank" class="text-gold-600 underline">{{ __('Cancellation Policy') }}</a> {{ __('of Twina Safaris. I understand that my booking is subject to availability and will be confirmed via email.') }}
                                 </p>
                             </div>
                             <button type="submit" class="w-full btn-gold py-5 rounded-2xl font-bold text-lg shadow-xl shadow-gold-500/20">
@@ -524,26 +566,50 @@
                             </div>
                             <div class="flex justify-between items-center text-sm">
                                 <span class="text-gray-500 font-medium">{{ __('Price per person') }}</span>
-                                <span class="text-gray-900 font-bold" x-text="symbol + tourPrice.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})">{{ $tour->display_price_formatted }}</span>
+                                <span class="text-gray-900 font-bold" x-text="money(activeAdultPrice)">{{ $tour->display_price_formatted }}</span>
                             </div>
                         </div>
 
                         <div class="py-6 border-t border-b border-gray-100 space-y-3">
                             <div class="flex justify-between items-center text-sm text-gray-600 font-medium">
                                 <span>{{ __('Base Tour Price') }}</span>
-                                <span class="font-bold text-gray-900" x-text="symbol + baseCost.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})"></span>
+                                <span class="font-bold text-gray-900" x-text="money(baseCost)"></span>
+                            </div>
+                            <div x-show="roomSupplement > 0" class="flex justify-between items-center text-sm text-stone-600 font-medium">
+                                <span>{{ __('Room Supplement') }}</span>
+                                <span class="font-bold text-stone-700" x-text="money(roomSupplement)"></span>
                             </div>
                             <div x-show="countSelectedExtras > 0" class="flex justify-between items-center text-sm text-amber-800 font-medium">
                                 <span>{{ __('Selected Extras') }} (<span x-text="countSelectedExtras"></span>)</span>
-                                <span class="font-bold text-amber-800" x-text="'+' + symbol + extrasCost.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})"></span>
+                                <span class="font-bold text-amber-800" x-text="'+' + money(extrasCost)"></span>
                             </div>
+
+                            {{-- Itemised add-ons, shown as soon as a guest adds an extra. --}}
+                            <template x-if="countSelectedExtras > 0">
+                                <div class="rounded-xl bg-amber-50/60 border border-amber-100 px-3 py-2.5 space-y-2">
+                                    <template x-for="line in selectedExtraLines" :key="line.id">
+                                        <div class="flex items-start justify-between gap-3 text-[11px] text-amber-900">
+                                            <span class="font-semibold leading-snug">
+                                                <span x-text="line.name"></span>
+                                                <span class="block text-[10px] font-bold text-stone-400" x-text="line.detail"></span>
+                                            </span>
+                                            <span class="font-bold shrink-0" x-text="money(line.lineTotal)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
                             <div class="flex justify-between items-center pt-2">
                                 <span class="text-base font-bold text-gray-900">{{ __('Estimated Total') }}</span>
-                                <span class="text-2xl font-display font-bold text-gold-600" x-text="symbol + totalPrice.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})">{{ $tour->display_price_formatted }}</span>
+                                <span class="text-2xl font-display font-bold text-gold-600" x-text="money(totalPrice)">{{ $tour->display_price_formatted }}</span>
                             </div>
                             <div class="flex justify-between items-center text-xs text-stone-500 pt-1 font-medium">
                                 <span>{{ __('Deposit Required') }} (<span x-text="depositPct"></span>%)</span>
-                                <span class="font-bold text-amber-700" x-text="symbol + depositRequired.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})"></span>
+                                <span class="font-bold text-amber-700" x-text="money(depositRequired)"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs text-stone-500 font-medium">
+                                <span>{{ __('Remaining Balance') }} ({{ 100 - (int) \App\Models\Booking::DEPOSIT_PERCENTAGE }}% · {{ __('65 days before departure') }})</span>
+                                <span class="font-bold text-stone-700" x-text="money(balanceDue)"></span>
                             </div>
                         </div>
 

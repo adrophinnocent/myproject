@@ -30,6 +30,11 @@ class Booking extends Model
 
     const PAYMENT_REFUNDED = 'refunded';
 
+    /** Public booking deposit terms: 30% today, balance 65 days before departure. */
+    public const DEPOSIT_PERCENTAGE = 30.00;
+
+    public const BALANCE_DUE_DAYS_BEFORE_DEPARTURE = 65;
+
     protected $fillable = [
         'booking_reference',
         'token',
@@ -52,6 +57,7 @@ class Booking extends Model
         'accommodation_preference',
         'status',
         'total_price',
+        'selected_accommodation_tier',
         'currency',
         'deposit_percentage',
         'deposit_required',
@@ -74,6 +80,7 @@ class Booking extends Model
     {
         return [
             'selected_extras' => 'array',
+            'selected_accommodation_tier' => 'array',
             'extras_total' => 'decimal:2',
             'travel_date' => 'date',
             'end_date' => 'date',
@@ -110,7 +117,7 @@ class Booking extends Model
             }
 
             if (empty($booking->deposit_percentage)) {
-                $booking->deposit_percentage = 20.00;
+                $booking->deposit_percentage = self::DEPOSIT_PERCENTAGE;
             }
         });
     }
@@ -206,7 +213,7 @@ class Booking extends Model
             return (float) $this->deposit_required;
         }
 
-        $pct = $this->deposit_percentage ?? 20.00;
+        $pct = $this->deposit_percentage ?? self::DEPOSIT_PERCENTAGE;
 
         return round((($this->total_price ?? 0) * $pct) / 100, 2);
     }
@@ -221,7 +228,11 @@ class Booking extends Model
         $total = (float) ($this->total_price ?? 0);
         $paid = (float) ($this->deposit_paid ?? 0);
 
-        return max(0, $total - $paid);
+        // Before the deposit is paid, show the 70% that will be due later.
+        // Once payments start, reduce the balance by what has actually been paid.
+        $credited = max((float) ($this->deposit_required ?? 0), $paid);
+
+        return max(0, round($total - $credited, 2));
     }
 
     public function getFormattedBalanceAmountAttribute(): string

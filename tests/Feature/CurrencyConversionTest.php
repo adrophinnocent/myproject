@@ -105,7 +105,7 @@ class CurrencyConversionTest extends TestCase
         // 2500 * 2 adults + 1750 child = 6750 USD -> 6210 EUR at 0.92.
         $this->assertSame('EUR', $booking->currency);
         $this->assertEquals(6210.0, (float) $booking->total_price);
-        $this->assertEquals(1242.0, (float) $booking->deposit_required);
+        $this->assertEquals(1863.0, (float) $booking->deposit_required); // 30% of 6210 EUR
     }
 
     public function test_booking_defaults_to_usd_without_currency_selection(): void

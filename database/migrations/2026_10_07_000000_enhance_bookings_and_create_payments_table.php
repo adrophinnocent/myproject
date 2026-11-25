@@ -20,7 +20,7 @@ return new class extends Migration
                 $table->string('currency', 10)->default('USD')->after('total_price');
             }
             if (! Schema::hasColumn('bookings', 'deposit_percentage')) {
-                $table->decimal('deposit_percentage', 5, 2)->default(20.00)->after('currency');
+                $table->decimal('deposit_percentage', 5, 2)->default(30.00)->after('currency');
             }
             if (! Schema::hasColumn('bookings', 'deposit_required')) {
                 $table->decimal('deposit_required', 10, 2)->nullable()->after('deposit_percentage');

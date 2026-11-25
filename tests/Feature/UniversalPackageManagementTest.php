@@ -85,7 +85,7 @@ class UniversalPackageManagementTest extends TestCase
             'is_active' => '1',
             'itinerary_days' => [
                 ['title' => 'Day 1: Arusha Arrival', 'accommodation_id' => $lodge->id, 'accommodation_notes' => 'Bed & Breakfast'],
-            ]
+            ],
         ]);
 
         $this->assertDatabaseHas('tour_packages', [
