@@ -64,25 +64,48 @@
                         decimals: {{ $decimals }},
                         get totalGuests() { return parseInt(this.adults || 0) + parseInt(this.children || 0); },
                         get baseCost() { return (parseInt(this.adults || 0) * this.tourPrice) + (parseInt(this.children || 0) * this.childPrice); },
+                        toggleExtraByName(name, defaultQty = 1) {
+                            const strName = String(name);
+                            const curr = parseInt((this.selectedExtrasQty && this.selectedExtrasQty[strName]) || 0);
+                            const nextQty = curr > 0 ? 0 : (defaultQty || 1);
+                            this.selectedExtrasQty = Object.assign({}, this.selectedExtrasQty, { [strName]: nextQty });
+                        },
+                        setExtraQty(name, val) {
+                            const strName = String(name);
+                            const qty = parseInt(val || 0);
+                            this.selectedExtrasQty = Object.assign({}, this.selectedExtrasQty, { [strName]: qty });
+                        },
+                        isExtraSelected(name) {
+                            const strName = String(name);
+                            return parseInt((this.selectedExtrasQty && this.selectedExtrasQty[strName]) || 0) > 0;
+                        },
+                        getExtraQty(name) {
+                            const strName = String(name);
+                            return parseInt((this.selectedExtrasQty && this.selectedExtrasQty[strName]) || 1);
+                        },
                         get extrasCost() {
                             let sum = 0;
-                            Object.keys(this.selectedExtrasQty).forEach(name => {
-                                const qty = parseInt(this.selectedExtrasQty[name] || 0);
-                                if (qty > 0) {
-                                    const ext = this.extrasList.find(e => (e.name || e.title) === name);
-                                    if (ext) {
-                                        const price = parseFloat(ext.price || 0);
-                                        sum += (price * qty);
+                            if (this.selectedExtrasQty && this.extrasList) {
+                                Object.keys(this.selectedExtrasQty).forEach(name => {
+                                    const qty = parseInt(this.selectedExtrasQty[name] || 0);
+                                    if (qty > 0) {
+                                        const ext = this.extrasList.find(e => (e.name || e.title) === name);
+                                        if (ext) {
+                                            const price = parseFloat(ext.price || 0);
+                                            sum += (price * qty);
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                             return sum;
                         },
                         get countSelectedExtras() {
                             let count = 0;
-                            Object.keys(this.selectedExtrasQty).forEach(name => {
-                                if (parseInt(this.selectedExtrasQty[name] || 0) > 0) count++;
-                            });
+                            if (this.selectedExtrasQty) {
+                                Object.keys(this.selectedExtrasQty).forEach(name => {
+                                    if (parseInt(this.selectedExtrasQty[name] || 0) > 0) count++;
+                                });
+                            }
                             return count;
                         },
                         get totalPrice() { return this.baseCost + this.extrasCost; },
@@ -279,28 +302,9 @@
                                         $unitLabel = ($exType === 'per_group') ? __('per Group') : __('per Traveler');
                                     @endphp
                                     @if(!empty($exName))
-                                    <div x-data="{
-                                            isSelected: false,
-                                            qty: 1,
-                                            expanded: false,
-                                            toggleExtra() {
-                                                this.isSelected = !this.isSelected;
-                                                if (this.isSelected) {
-                                                    this.qty = this.qty || 1;
-                                                    selectedExtrasQty['{{ addslashes($exName) }}'] = this.qty;
-                                                } else {
-                                                    selectedExtrasQty['{{ addslashes($exName) }}'] = 0;
-                                                }
-                                            },
-                                            updateQty(val) {
-                                                this.qty = parseInt(val);
-                                                if (this.isSelected) {
-                                                    selectedExtrasQty['{{ addslashes($exName) }}'] = this.qty;
-                                                }
-                                            }
-                                         }"
+                                    <div x-data="{ expanded: false }"
                                          class="p-5 rounded-2xl border transition-all duration-200 shadow-2xs"
-                                         :class="isSelected ? 'bg-amber-50/70 border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'bg-white border-stone-200 hover:border-amber-400/60'">
+                                         :class="isExtraSelected('{{ addslashes($exName) }}') ? 'bg-amber-50/80 border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'bg-white border-stone-200 hover:border-amber-400/60'">
 
                                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                             {{-- Left Checkbox & Text --}}
@@ -308,21 +312,21 @@
                                                 {{-- Hidden input for form submission --}}
                                                 <input type="hidden"
                                                        name="selected_extras_qty[{{ $exName }}]"
-                                                       :value="isSelected ? qty : 0">
+                                                       :value="isExtraSelected('{{ addslashes($exName) }}') ? getExtraQty('{{ addslashes($exName) }}') : 0">
 
                                                 <button type="button"
-                                                        @click="toggleExtra()"
+                                                        @click="toggleExtraByName('{{ addslashes($exName) }}')"
                                                         class="mt-0.5 w-6 h-6 rounded-lg border flex items-center justify-center transition-all shrink-0 cursor-pointer"
-                                                        :class="isSelected ? 'bg-amber-500 border-amber-600 text-stone-950 font-black shadow-xs' : 'bg-stone-100 border-stone-300 text-transparent hover:border-amber-400'">
+                                                        :class="isExtraSelected('{{ addslashes($exName) }}') ? 'bg-amber-500 border-amber-600 text-stone-950 font-black shadow-xs' : 'bg-stone-100 border-stone-300 text-transparent hover:border-amber-400'">
                                                     ✓
                                                 </button>
 
                                                 <div class="space-y-1">
                                                     <div class="flex items-center gap-2">
-                                                        <h4 class="font-bold text-stone-900 text-base leading-snug cursor-pointer hover:text-amber-800 transition-colors" @click="toggleExtra()">
+                                                        <h4 class="font-bold text-stone-900 text-base leading-snug cursor-pointer hover:text-amber-800 transition-colors" @click="toggleExtraByName('{{ addslashes($exName) }}')">
                                                             {{ $exName }}
                                                         </h4>
-                                                        <span x-show="isSelected" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                                        <span x-show="isExtraSelected('{{ addslashes($exName) }}')" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
                                                             ✓ Added
                                                         </span>
                                                     </div>
@@ -354,9 +358,9 @@
                                                 </div>
 
                                                 {{-- Quantity Selector (visible when selected) --}}
-                                                <div x-show="isSelected" class="flex items-center gap-2">
-                                                    <select x-model="qty"
-                                                            @change="updateQty($event.target.value)"
+                                                <div x-show="isExtraSelected('{{ addslashes($exName) }}')" class="flex items-center gap-2">
+                                                    <select :value="getExtraQty('{{ addslashes($exName) }}')"
+                                                            @change="setExtraQty('{{ addslashes($exName) }}', $event.target.value)"
                                                             class="bg-white border border-amber-400 rounded-xl px-3 py-2 text-xs font-black text-stone-900 outline-none focus:ring-2 focus:ring-amber-500 shadow-2xs">
                                                         <template x-for="n in (totalGuests || 1)" :key="n">
                                                             <option :value="n" x-text="n + ' ' + (n > 1 ? '{{ ($exType === "per_group") ? __("Groups") : __("Travelers") }}' : '{{ ($exType === "per_group") ? __("Group") : __("Traveler") }}')"></option>
@@ -366,10 +370,10 @@
 
                                                 {{-- Select/Add Toggle Button --}}
                                                 <button type="button"
-                                                        @click="toggleExtra()"
+                                                        @click="toggleExtraByName('{{ addslashes($exName) }}')"
                                                         class="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
-                                                        :class="isSelected ? 'bg-amber-500 text-stone-950 hover:bg-amber-600' : 'bg-stone-900 hover:bg-stone-800 text-amber-400'">
-                                                    <span x-text="isSelected ? '✓ Selected' : '+ Add Extra'"></span>
+                                                        :class="isExtraSelected('{{ addslashes($exName) }}') ? 'bg-amber-500 text-stone-950 hover:bg-amber-600' : 'bg-stone-900 hover:bg-stone-800 text-amber-400'">
+                                                    <span x-text="isExtraSelected('{{ addslashes($exName) }}') ? '✓ Selected' : '+ Add Extra'"></span>
                                                 </button>
                                             </div>
                                         </div>
