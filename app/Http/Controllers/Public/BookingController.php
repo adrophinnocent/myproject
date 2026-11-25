@@ -67,8 +67,9 @@ class BookingController extends Controller
             }
         }
 
-        // Process Tier Parameter from URL if present
-        $selectedTier = $this->applyTierPrice($tour, request('tier'));
+        // Process the tier from the URL, or from old input after a validation
+        // redirect (the form posts the tier in a hidden field).
+        $selectedTier = $this->applyTierPrice($tour, old('tier', request('tier')));
 
         $selectedPackageId = old('tour_package_id', request('tour_package_id') ?? request('package_id'));
         $selectedRoomTypeId = old('room_type_id', request('room_type_id'));

@@ -102,6 +102,28 @@
 @endsection
 
 @section('content')
+@php
+    // Accommodation levels drive every price shown here and the tier carried
+    // into checkout, no matter which booking CTA the visitor uses.
+    $rawAccOptions = is_array($tour->accommodation_options) ? $tour->accommodation_options : [];
+    $activeAccOptions = array_values(array_filter($rawAccOptions, function ($opt) {
+        return is_array($opt) && (! isset($opt['is_active']) || ! empty($opt['is_active'])) && ! empty($opt['name']);
+    }));
+
+    $defaultAccOption = null;
+    foreach ($activeAccOptions as $accOption) {
+        if (! empty($accOption['is_default'])) {
+            $defaultAccOption = $accOption;
+            break;
+        }
+    }
+    $defaultAccOption ??= $activeAccOptions[0] ?? null;
+    $defaultSelectedId = $defaultAccOption['id'] ?? '';
+
+    $dayKeys = ! empty($defaultAccOption['hotels']) && is_array($defaultAccOption['hotels'])
+        ? array_keys($defaultAccOption['hotels'])
+        : [];
+@endphp
 {{-- TourRadar Style Light Header & Top Photo Gallery --}}
 <div class="bg-stone-50 border-b border-stone-200/80 pt-28 md:pt-32 pb-8">
     <div class="max-w-7xl mx-auto px-4">
@@ -164,7 +186,7 @@
                     <span x-text="saved ? 'Saved' : 'Save'">{{ __('Save') }}</span>
                 </button>
                 <div class="text-right ml-1">
-                    <span class="text-2xl md:text-3xl font-black text-amber-600 leading-none">{{ $tour->display_price_formatted }}</span>
+                    <span id="displayed-tour-price" class="text-2xl md:text-3xl font-black text-amber-600 leading-none">{{ $defaultAccOption ? \App\Helpers\Currency::format((float) $defaultAccOption['price']) : $tour->display_price_formatted }}</span>
                     <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wider block mt-0.5">{{ __('FROM') }} {{ \App\Helpers\Currency::current() }}</span>
                     <span class="text-[9px] font-bold text-emerald-700 tracking-wide block mt-1">
                         {{ __(':percent% deposit today · balance :days days before departure', ['percent' => (int) \App\Models\Booking::DEPOSIT_PERCENTAGE, 'days' => \App\Models\Booking::BALANCE_DUE_DAYS_BEFORE_DEPARTURE]) }}
@@ -359,7 +381,48 @@
 </div>
 
 <div class="max-w-7xl mx-auto px-4 py-12">
-    <div class="flex flex-col lg:flex-row gap-12">
+    {{-- Shared tier state: the accommodation table, sidebar CTA and mobile CTA
+         must all use the same selected level and price. --}}
+    <div class="flex flex-col lg:flex-row gap-12"
+         x-data="{
+             tiers: @js($activeAccOptions),
+             selectedTierId: '{{ $defaultSelectedId }}',
+             symbol: @js(\App\Helpers\Currency::symbol()),
+             rate: {{ \App\Helpers\Currency::rate(\App\Helpers\Currency::current()) }},
+             decimals: {{ in_array(\App\Helpers\Currency::current(), ['TZS', 'KES', 'UGX'], true) ? 0 : 2 }},
+             tierLabel(price) {
+                 return this.symbol + Number((price || 0) * this.rate).toLocaleString('en-US', {
+                     minimumFractionDigits: this.decimals,
+                     maximumFractionDigits: this.decimals
+                 });
+             },
+             get selectedTier() {
+                 return (this.tiers || []).find(o => String(o.id) === String(this.selectedTierId)) || null;
+             },
+             get bookHref() {
+                 return '{{ route('booking.create', $tour->slug) }}?tier=' + encodeURIComponent(this.selectedTierId);
+             },
+             init() {
+                 if (!this.selectedTierId && this.tiers.length > 0) {
+                     this.selectedTierId = this.tiers[0].id;
+                 }
+                 this.syncExternalUi();
+                 this.$watch('selectedTierId', () => this.syncExternalUi());
+             },
+             syncExternalUi() {
+                 const tier = this.selectedTier;
+                 if (!tier) return;
+
+                 const label = this.tierLabel(tier.price);
+                 ['displayed-tour-price', 'sidebar-tour-price', 'mobile-tour-price'].forEach(id => {
+                     const el = document.getElementById(id);
+                     if (el) el.textContent = label;
+                 });
+
+                 const mobileLink = document.getElementById('mobile-book-link');
+                 if (mobileLink) mobileLink.href = this.bookHref;
+             }
+         }">
         <div class="flex-1">
             {{-- TourRadar Style Quick Specs Grid (Replaces old 4-box layout) --}}
             <div class="bg-white rounded-3xl p-6 md:p-8 mb-10 shadow-sm border border-stone-200/80">
@@ -547,47 +610,8 @@
                 </div>
             </div>
             @endif
-            @php
-                $rawAccOptions = is_array($tour->accommodation_options) ? $tour->accommodation_options : [];
-
-                $activeAccOptions = array_values(array_filter($rawAccOptions, function($opt) {
-                    return is_array($opt) && (!isset($opt['is_active']) || !empty($opt['is_active'])) && !empty($opt['name']);
-                }));
-
-                $defaultSelectedId = '';
-                if (count($activeAccOptions) > 0) {
-                    $defaultSelectedId = $activeAccOptions[0]['id'] ?? 'acc_0';
-                    foreach ($activeAccOptions as $ao) {
-                        if (!empty($ao['is_default'])) { $defaultSelectedId = $ao['id']; break; }
-                    }
-                }
-
-                $dayKeys = [];
-                if (count($activeAccOptions) > 0 && !empty($activeAccOptions[0]['hotels']) && is_array($activeAccOptions[0]['hotels'])) {
-                    $dayKeys = array_keys($activeAccOptions[0]['hotels']);
-                }
-            @endphp
-
             @if(count($activeAccOptions) > 0)
-            <div id="accommodation-table-section" class="mb-12 bg-stone-50 border border-stone-200/90 rounded-3xl p-6 md:p-8 shadow-xs"
-                 x-data="{
-                     selectedId: '{{ $defaultSelectedId }}',
-                     selectedName: '{{ $activeAccOptions[0]['name'] }}',
-                     selectedPrice: {{ $activeAccOptions[0]['price'] }}
-                 }"
-                 x-init="
-                     $watch('selectedId', id => {
-                         const opt = @js($activeAccOptions).find(o => o.id === id);
-                         if (opt) {
-                             selectedName = opt.name;
-                             selectedPrice = opt.price;
-                             const priceEl = document.getElementById('displayed-tour-price');
-                             if (priceEl) priceEl.innerText = '$' + Number(opt.price).toLocaleString();
-                             const sidebarPriceEl = document.getElementById('sidebar-tour-price');
-                             if (sidebarPriceEl) sidebarPriceEl.innerText = '$' + Number(opt.price).toLocaleString();
-                         }
-                     })
-                 ">
+            <div id="accommodation-table-section" class="mb-12 bg-stone-50 border border-stone-200/90 rounded-3xl p-6 md:p-8 shadow-xs">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-200">
                     <div>
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold uppercase tracking-wider mb-1">
@@ -603,9 +627,7 @@
 
                     <div class="sm:text-right shrink-0">
                         <span class="text-xs text-stone-400 block uppercase font-bold">{{ __('Selected Tier Price') }}</span>
-                        <span class="text-2xl md:text-3xl font-black text-amber-600 font-display" x-text="'$' + Number(selectedPrice).toLocaleString()">
-                            ${{ number_format($activeAccOptions[0]['price']) }}
-                        </span>
+                        <span class="text-2xl md:text-3xl font-black text-amber-600 font-display" x-text="selectedTier ? tierLabel(selectedTier.price) : ''">{{ $defaultAccOption ? \App\Helpers\Currency::format((float) $defaultAccOption['price']) : '' }}</span>
                     </div>
                 </div>
 
@@ -634,16 +656,16 @@
                         </thead>
                         <tbody class="divide-y divide-stone-100">
                             @foreach($activeAccOptions as $ao)
-                            <tr @click="selectedId = '{{ $ao['id'] }}'"
+                            <tr @click="selectedTierId = '{{ $ao['id'] }}'"
                                 class="cursor-pointer transition-all hover:bg-amber-50/50"
-                                :class="selectedId === '{{ $ao['id'] }}' ? 'bg-amber-50/90 ring-2 ring-amber-500 font-semibold' : ''">
+                                :class="selectedTierId === '{{ $ao['id'] }}' ? 'bg-amber-50/90 ring-2 ring-amber-500 font-semibold' : ''">
 
                                 {{-- Radio Selector --}}
                                 <td class="p-3.5 text-center">
                                     <input type="radio"
                                            name="acc_tier_select"
                                            value="{{ $ao['id'] }}"
-                                           x-model="selectedId"
+                                           x-model="selectedTierId"
                                            class="w-4 h-4 text-amber-600 focus:ring-amber-500 border-stone-300">
                                 </td>
 
@@ -683,9 +705,9 @@
                 <div class="mt-6 p-4 rounded-2xl bg-stone-100 border border-stone-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
                         <span class="text-xs text-stone-500 font-medium">Selected Package Tier:</span>
-                        <span class="font-black text-stone-900 text-sm sm:text-base ml-1" x-text="selectedName + ' ($' + Number(selectedPrice).toLocaleString() + ')'"></span>
+                        <span class="font-black text-stone-900 text-sm sm:text-base ml-1" x-text="selectedTier ? selectedTier.name + ' (' + tierLabel(selectedTier.price) + ')' : ''">{{ $defaultAccOption ? $defaultAccOption['name'].' ('.\App\Helpers\Currency::format((float) $defaultAccOption['price']).')' : '' }}</span>
                     </div>
-                    <a :href="'{{ route('booking.create', $tour->slug) }}?tier=' + selectedId"
+                    <a :href="bookHref" href="{{ route('booking.create', $tour->slug) }}{{ $defaultSelectedId ? '?tier='.urlencode($defaultSelectedId) : '' }}"
                        class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-8 py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md transition-all text-center hover:scale-105">
                         {{ __('Book This Safari') }}
                     </a>
@@ -1233,7 +1255,7 @@
                 <div id="booking-card" class="bg-white rounded-3xl p-6 md:p-8 border border-stone-200/90 shadow-lg relative overflow-hidden">
                     <div class="mb-4">
                         <span class="text-xs font-bold text-stone-900 uppercase tracking-wider">{{ \App\Helpers\Currency::current() }}</span>
-                        <span id="sidebar-tour-price" class="text-3xl md:text-4xl font-black text-stone-900 tracking-tight">{{ $tour->display_price_formatted }}</span>
+                        <span id="sidebar-tour-price" class="text-3xl md:text-4xl font-black text-stone-900 tracking-tight" x-text="selectedTier ? tierLabel(selectedTier.price) : ''">{{ $defaultAccOption ? \App\Helpers\Currency::format((float) $defaultAccOption['price']) : $tour->display_price_formatted }}</span>
                         <span class="text-xs font-semibold text-stone-500">per person</span>
                     </div>
 
@@ -1291,7 +1313,7 @@
                         </div>
                     @endif
 
-                    <a href="{{ route('booking.create', $tour->slug) }}" class="btn-gold w-full block text-center py-4 rounded-2xl font-black text-sm uppercase tracking-wider shadow-md transition-all mb-6">
+                    <a :href="bookHref" href="{{ route('booking.create', $tour->slug) }}{{ $defaultSelectedId ? '?tier='.urlencode($defaultSelectedId) : '' }}" class="btn-gold w-full block text-center py-4 rounded-2xl font-black text-sm uppercase tracking-wider shadow-md transition-all mb-6">
                         See dates & prices
                     </a>
 
@@ -1347,9 +1369,9 @@
     <div class="flex justify-between items-center gap-4 max-w-lg mx-auto">
         <div>
             <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">{{ __('From') }}</p>
-            <p class="text-xl font-black text-gold-600 leading-none">{{ $tour->formatted_price }}</p>
+            <p id="mobile-tour-price" class="text-xl font-black text-gold-600 leading-none">{{ $defaultAccOption ? \App\Helpers\Currency::format((float) $defaultAccOption['price']) : $tour->formatted_price }}</p>
         </div>
-        <a href="{{ route('booking.create', $tour->slug) }}" class="flex-1 btn-gold py-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg">
+        <a id="mobile-book-link" href="{{ route('booking.create', $tour->slug) }}{{ $defaultSelectedId ? '?tier='.urlencode($defaultSelectedId) : '' }}" class="flex-1 btn-gold py-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg">
             {{ __('Book Now') }}
         </a>
     </div>

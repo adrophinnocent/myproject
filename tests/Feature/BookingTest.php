@@ -266,4 +266,69 @@ class BookingTest extends TestCase
             ->assertSee('30% deposit today · balance 65 days before departure', false)
             ->assertDontSee('Pay only 20% today.', false);
     }
+
+    public function test_accommodation_level_selection_is_shared_by_both_booking_links()
+    {
+        $category = Category::create(['name' => 'Safari', 'slug' => 'safari']);
+        $destination = Destination::create(['name' => 'Tarangire', 'slug' => 'tarangire']);
+
+        $tour = Tour::create([
+            'title' => 'Accommodation Levels Safari',
+            'slug' => 'accommodation-levels-safari',
+            'category_id' => $category->id,
+            'destination_id' => $destination->id,
+            'price' => 1150.00,
+            'duration_days' => 3,
+            'is_published' => true,
+            'accommodation_options' => [
+                ['id' => 'acc_budget', 'name' => 'Budget', 'price' => 1500.00, 'is_active' => true, 'hotels' => ['day_1' => 'Budget Camp']],
+                ['id' => 'acc_comfort', 'name' => 'Comfort', 'price' => 1953.00, 'is_active' => true, 'is_default' => true, 'hotels' => ['day_1' => 'Comfort Lodge']],
+            ],
+        ]);
+
+        $bufferLevel = ob_get_level();
+        $response = $this->get('/tours/tour/'.$tour->slug.'.html');
+        while (ob_get_level() > $bufferLevel) {
+            ob_end_clean();
+        }
+
+        $html = $response->assertOk()->getContent();
+
+        // The default (not merely the first) option must be selected initially.
+        $this->assertStringContainsString("selectedTierId: 'acc_comfort'", $html);
+        $this->assertStringContainsString('Accommodation Level &amp; Pricing', $html);
+
+        // Table CTA, sidebar "See dates & prices" CTA and the mobile CTA.
+        $this->assertSame(3, substr_count($html, '?tier=acc_comfort'));
+        $this->assertStringContainsString('displayed-tour-price', $html);
+        $this->assertStringContainsString('mobile-tour-price', $html);
+    }
+
+    public function test_booking_page_keeps_the_selected_accommodation_level()
+    {
+        $category = Category::create(['name' => 'Safari', 'slug' => 'safari']);
+        $destination = Destination::create(['name' => 'Tarangire', 'slug' => 'tarangire']);
+
+        $tour = Tour::create([
+            'title' => 'Selected Level Safari',
+            'slug' => 'selected-level-safari',
+            'category_id' => $category->id,
+            'destination_id' => $destination->id,
+            'price' => 1150.00,
+            'duration_days' => 3,
+            'is_published' => true,
+            'accommodation_options' => [
+                ['id' => 'acc_comfort', 'name' => 'Comfort', 'price' => 1953.00],
+            ],
+        ]);
+
+        $html = $this->get('/tours/'.$tour->slug.'/book?tier=acc_comfort')
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('name="tier" value="acc_comfort"', $html);
+        $this->assertStringContainsString('Accommodation Level', $html);
+        $this->assertStringContainsString('Comfort', $html);
+        $this->assertStringContainsString('1953', $html);
+    }
 }

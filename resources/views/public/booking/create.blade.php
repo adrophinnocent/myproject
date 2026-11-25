@@ -149,7 +149,7 @@
 
                     <form action="{{ route('booking.store', $tour->slug) }}" method="POST" class="p-8">
                         @csrf
-                        <input type="hidden" name="tier" value="{{ request('tier') }}">
+                        <input type="hidden" name="tier" value="{{ old('tier', request('tier')) }}">
 
                         <div class="mb-10">
                             <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
@@ -568,6 +568,12 @@
                                 <span class="text-gray-500 font-medium">{{ __('Price per person') }}</span>
                                 <span class="text-gray-900 font-bold" x-text="money(activeAdultPrice)">{{ $tour->display_price_formatted }}</span>
                             </div>
+                            @if(!empty($selectedTier['name']))
+                            <div class="flex justify-between items-center text-xs text-amber-800 font-semibold">
+                                <span class="text-gray-500 font-medium">{{ __('Accommodation Level') }}</span>
+                                <span class="text-right">{{ $selectedTier['name'] }}</span>
+                            </div>
+                            @endif
                         </div>
 
                         <div class="py-6 border-t border-b border-gray-100 space-y-3">
