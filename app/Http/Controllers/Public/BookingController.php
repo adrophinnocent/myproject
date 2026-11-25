@@ -164,36 +164,43 @@ class BookingController extends Controller
 
         $basePrice = ($adultPrice * $adults) + ($childPrice * $children) + $roomSupplement;
 
-        // Process selected optional extras
+        // Process selected optional extras (Supports Qty Map & List)
         $selectedExtras = [];
         $extrasTotal = 0.00;
 
-        if ($request->has('selected_extras') && is_array($request->selected_extras)) {
-            $tourExtras = is_array($tour->extras) ? $tour->extras : [];
+        $tourExtras = is_array($tour->extras) ? $tour->extras : [];
+        $extrasQtyMap = $request->input('selected_extras_qty', []);
+        $extrasList = (array) $request->input('selected_extras', []);
 
-            foreach ($request->selected_extras as $extraName) {
-                foreach ($tourExtras as $tExtra) {
-                    $name = is_array($tExtra) ? ($tExtra['name'] ?? $tExtra['title'] ?? '') : $tExtra;
-                    if ($name === $extraName) {
-                        $price = is_array($tExtra) ? (float) ($tExtra['price'] ?? 0) : 0;
-                        $priceType = is_array($tExtra) ? ($tExtra['price_type'] ?? 'per_person') : 'per_person';
-                        $desc = is_array($tExtra) ? ($tExtra['description'] ?? '') : '';
+        foreach ($tourExtras as $tExtra) {
+            $name = is_array($tExtra) ? ($tExtra['name'] ?? $tExtra['title'] ?? '') : $tExtra;
+            if (empty($name)) continue;
 
-                        // Extras are priced in USD; charge in the booking currency.
-                        $price = Currency::convert($price, $booking->currency);
-                        $itemTotal = ($priceType === 'per_person') ? ($price * $totalGuests) : $price;
-                        $extrasTotal += $itemTotal;
+            $qty = 0;
+            if (isset($extrasQtyMap[$name]) && (int) $extrasQtyMap[$name] > 0) {
+                $qty = (int) $extrasQtyMap[$name];
+            } elseif (in_array($name, $extrasList)) {
+                $qty = $totalGuests;
+            }
 
-                        $selectedExtras[] = [
-                            'name' => $name,
-                            'price' => $price,
-                            'price_type' => $priceType,
-                            'description' => $desc,
-                            'item_total' => $itemTotal,
-                        ];
-                        break;
-                    }
-                }
+            if ($qty > 0) {
+                $price = is_array($tExtra) ? (float) ($tExtra['price'] ?? 0) : 0;
+                $priceType = is_array($tExtra) ? ($tExtra['price_type'] ?? 'per_person') : 'per_person';
+                $desc = is_array($tExtra) ? ($tExtra['description'] ?? '') : '';
+
+                // Extras are priced in USD; charge in the booking currency.
+                $convertedPrice = Currency::convert($price, $booking->currency);
+                $itemTotal = ($priceType === 'per_group') ? $convertedPrice : ($convertedPrice * $qty);
+                $extrasTotal += $itemTotal;
+
+                $selectedExtras[] = [
+                    'name' => $name,
+                    'price' => $convertedPrice,
+                    'price_type' => $priceType,
+                    'quantity' => $qty,
+                    'description' => $desc,
+                    'item_total' => $itemTotal,
+                ];
             }
         }
 

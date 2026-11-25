@@ -251,15 +251,25 @@
                         </div>
                         @endif
 
-                        {{-- SECTION 3: ADD EXTRAS (TOURRADAR STYLE) --}}
+                        {{-- SECTION 3: ADD EXTRAS (LUXURY INTERACTIVE CARDS WITH CHECKBOX & REAL-TIME PRICE UPDATE) --}}
                         @if(!empty($tour->extras) && is_array($tour->extras) && count($tour->extras) > 0)
                         <div class="mb-10 pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-3 mb-6">
-                                <span class="w-7 h-7 rounded-md bg-[#0d2818] text-white flex items-center justify-center text-xs font-black">3</span>
-                                <h3 class="text-xl font-black text-gray-900 font-display tracking-tight">{{ __('Add extras') }}</h3>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-sm font-bold">3</span>
+                                    <div>
+                                        <h3 class="text-xl font-black text-gray-900 font-display tracking-tight">{{ __('Add optional extras') }}</h3>
+                                        <p class="text-xs text-stone-500 font-medium mt-0.5">{{ __('Select add-ons to customize your safari experience.') }}</p>
+                                    </div>
+                                </div>
+
+                                <span class="text-xs font-bold text-amber-800 bg-amber-50 px-3 py-1 rounded-full border border-amber-200"
+                                      x-show="countSelectedExtras > 0"
+                                      x-text="countSelectedExtras + ' Extra(s) Selected (+ ' + symbol + Number(extrasCost).toFixed(decimals) + ')'">
+                                </span>
                             </div>
 
-                            <div class="space-y-6">
+                            <div class="space-y-4">
                                 @foreach($tour->extras as $eIndex => $ext)
                                     @php
                                         $exName = is_array($ext) ? ($ext['name'] ?? $ext['title'] ?? '') : $ext;
@@ -269,46 +279,98 @@
                                         $unitLabel = ($exType === 'per_group') ? __('per Group') : __('per Traveler');
                                     @endphp
                                     @if(!empty($exName))
-                                    <div x-data="{ expanded: false }" class="pb-6 border-b border-gray-200 last:border-0 last:pb-0">
-                                        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                                            {{-- Left Details --}}
-                                            <div class="flex-1 space-y-1.5">
-                                                <h4 class="font-bold text-gray-900 text-base leading-snug">{{ $exName }}</h4>
+                                    <div x-data="{
+                                            isSelected: false,
+                                            qty: 1,
+                                            expanded: false,
+                                            toggleExtra() {
+                                                this.isSelected = !this.isSelected;
+                                                if (this.isSelected) {
+                                                    this.qty = this.qty || 1;
+                                                    selectedExtrasQty['{{ addslashes($exName) }}'] = this.qty;
+                                                } else {
+                                                    selectedExtrasQty['{{ addslashes($exName) }}'] = 0;
+                                                }
+                                            },
+                                            updateQty(val) {
+                                                this.qty = parseInt(val);
+                                                if (this.isSelected) {
+                                                    selectedExtrasQty['{{ addslashes($exName) }}'] = this.qty;
+                                                }
+                                            }
+                                         }"
+                                         class="p-5 rounded-2xl border transition-all duration-200 shadow-2xs"
+                                         :class="isSelected ? 'bg-amber-50/70 border-amber-500 ring-2 ring-amber-500/20 shadow-md' : 'bg-white border-stone-200 hover:border-amber-400/60'">
 
-                                                @if(!empty($exDesc))
-                                                    <div class="text-xs text-gray-600 leading-relaxed font-normal">
-                                                        <template x-if="!expanded && '{{ addslashes($exDesc) }}'.length > 130">
-                                                            <span>
-                                                                {{ Str::limit($exDesc, 130) }}
-                                                                <button type="button" @click="expanded = true" class="text-blue-600 hover:underline font-semibold ml-1 cursor-pointer">Read more</button>
-                                                            </span>
-                                                        </template>
-                                                        <template x-if="expanded || '{{ addslashes($exDesc) }}'.length <= 130">
-                                                            <span>
-                                                                {{ $exDesc }}
-                                                                <button type="button" x-show="expanded && '{{ addslashes($exDesc) }}'.length > 130" @click="expanded = false" class="text-blue-600 hover:underline font-semibold ml-1 cursor-pointer">Show less</button>
-                                                            </span>
-                                                        </template>
+                                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                            {{-- Left Checkbox & Text --}}
+                                            <div class="flex items-start gap-3.5 flex-1">
+                                                {{-- Hidden input for form submission --}}
+                                                <input type="hidden"
+                                                       name="selected_extras_qty[{{ $exName }}]"
+                                                       :value="isSelected ? qty : 0">
+
+                                                <button type="button"
+                                                        @click="toggleExtra()"
+                                                        class="mt-0.5 w-6 h-6 rounded-lg border flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                                                        :class="isSelected ? 'bg-amber-500 border-amber-600 text-stone-950 font-black shadow-xs' : 'bg-stone-100 border-stone-300 text-transparent hover:border-amber-400'">
+                                                    ✓
+                                                </button>
+
+                                                <div class="space-y-1">
+                                                    <div class="flex items-center gap-2">
+                                                        <h4 class="font-bold text-stone-900 text-base leading-snug cursor-pointer hover:text-amber-800 transition-colors" @click="toggleExtra()">
+                                                            {{ $exName }}
+                                                        </h4>
+                                                        <span x-show="isSelected" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                                            ✓ Added
+                                                        </span>
                                                     </div>
-                                                @endif
+
+                                                    @if(!empty($exDesc))
+                                                        <div class="text-xs text-stone-600 leading-relaxed font-normal">
+                                                            <template x-if="!expanded && '{{ addslashes($exDesc) }}'.length > 130">
+                                                                <span>
+                                                                    {{ Str::limit($exDesc, 130) }}
+                                                                    <button type="button" @click="expanded = true" class="text-amber-800 hover:underline font-bold ml-1 cursor-pointer">Read more</button>
+                                                                </span>
+                                                            </template>
+                                                            <template x-if="expanded || '{{ addslashes($exDesc) }}'.length <= 130">
+                                                                <span>
+                                                                    {{ $exDesc }}
+                                                                    <button type="button" x-show="expanded && '{{ addslashes($exDesc) }}'.length > 130" @click="expanded = false" class="text-amber-800 hover:underline font-bold ml-1 cursor-pointer">Show less</button>
+                                                                </span>
+                                                            </template>
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
 
-                                            {{-- Middle Price & Unit --}}
-                                            <div class="md:text-right shrink-0">
-                                                <div class="text-lg font-black text-gray-900">{{ $symbol }}{{ number_format($exPrice, $decimals) }}</div>
-                                                <div class="text-[11px] font-medium text-gray-500">{{ $unitLabel }}</div>
-                                            </div>
+                                            {{-- Right Price & Selection Controls --}}
+                                            <div class="flex flex-wrap items-center justify-between md:justify-end gap-3 shrink-0 border-t md:border-t-0 border-stone-100 pt-3 md:pt-0">
+                                                <div class="text-left md:text-right">
+                                                    <div class="text-base sm:text-lg font-black text-stone-900">{{ $symbol }}{{ number_format($exPrice, $decimals) }}</div>
+                                                    <div class="text-[10px] font-bold text-stone-500 uppercase tracking-wider">{{ $unitLabel }}</div>
+                                                </div>
 
-                                            {{-- Right Quantity Dropdown --}}
-                                            <div class="w-full md:w-44 shrink-0">
-                                                <select name="selected_extras_qty[{{ $exName }}]"
-                                                        x-model="selectedExtrasQty['{{ $exName }}']"
-                                                        class="w-full bg-white border border-gray-300 hover:border-gray-400 rounded-xl px-4 py-2.5 text-xs font-bold text-gray-800 outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 cursor-pointer shadow-2xs">
-                                                    <option value="0">0 {{ ($exType === 'per_group') ? __('Group') : __('Traveler') }}</option>
-                                                    <template x-for="n in (totalGuests || 1)" :key="n">
-                                                        <option :value="n" x-text="n + ' ' + (n > 1 ? '{{ ($exType === "per_group") ? __("Groups") : __("Travelers") }}' : '{{ ($exType === "per_group") ? __("Group") : __("Traveler") }}')"></option>
-                                                    </template>
-                                                </select>
+                                                {{-- Quantity Selector (visible when selected) --}}
+                                                <div x-show="isSelected" class="flex items-center gap-2">
+                                                    <select x-model="qty"
+                                                            @change="updateQty($event.target.value)"
+                                                            class="bg-white border border-amber-400 rounded-xl px-3 py-2 text-xs font-black text-stone-900 outline-none focus:ring-2 focus:ring-amber-500 shadow-2xs">
+                                                        <template x-for="n in (totalGuests || 1)" :key="n">
+                                                            <option :value="n" x-text="n + ' ' + (n > 1 ? '{{ ($exType === "per_group") ? __("Groups") : __("Travelers") }}' : '{{ ($exType === "per_group") ? __("Group") : __("Traveler") }}')"></option>
+                                                        </template>
+                                                    </select>
+                                                </div>
+
+                                                {{-- Select/Add Toggle Button --}}
+                                                <button type="button"
+                                                        @click="toggleExtra()"
+                                                        class="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+                                                        :class="isSelected ? 'bg-amber-500 text-stone-950 hover:bg-amber-600' : 'bg-stone-900 hover:bg-stone-800 text-amber-400'">
+                                                    <span x-text="isSelected ? '✓ Selected' : '+ Add Extra'"></span>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
