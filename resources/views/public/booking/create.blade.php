@@ -57,7 +57,7 @@
                         children: {{ old('number_of_children', 0) }},
                         tourPrice: {{ \App\Helpers\Currency::convert((float) $tour->price) }},
                         childPrice: {{ \App\Helpers\Currency::convert((float) ($tour->child_price ?? ($tour->price * 0.7))) }},
-                        depositPct: {{ \App\Models\Setting::get('deposit_percentage', 20) }},
+                        depositPct: {{ (float) ($tour->deposit_percent ?? \App\Models\Setting::get('deposit_percentage', 30)) }},
                         selectedExtrasQty: {},
                         extrasList: {{ json_encode($extras) }},
                         symbol: '{{ $symbol }}',
@@ -524,7 +524,7 @@
                             </div>
                             <div class="flex justify-between items-center text-sm">
                                 <span class="text-gray-500 font-medium">{{ __('Price per person') }}</span>
-                                <span class="text-gray-900 font-bold">{{ $tour->display_price_formatted }}</span>
+                                <span class="text-gray-900 font-bold" x-text="symbol + tourPrice.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})">{{ $tour->display_price_formatted }}</span>
                             </div>
                         </div>
 

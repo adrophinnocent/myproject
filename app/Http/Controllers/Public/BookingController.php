@@ -57,7 +57,23 @@ class BookingController extends Controller
             $extras[] = $extra;
         }
 
-        return view('public.booking.create', compact('tour', 'packages', 'roomTypes', 'currency', 'symbol', 'decimals', 'extras'));
+        // Process Tier Parameter from URL if present
+        $selectedTier = null;
+        $tierId = request('tier');
+        if ($tierId && !empty($tour->accommodation_options) && is_array($tour->accommodation_options)) {
+            foreach ($tour->accommodation_options as $opt) {
+                if (is_array($opt) && ($opt['id'] ?? '') === $tierId) {
+                    $selectedTier = $opt;
+                    break;
+                }
+            }
+        }
+
+        if ($selectedTier && !empty($selectedTier['price'])) {
+            $tour->price = (float) $selectedTier['price'];
+        }
+
+        return view('public.booking.create', compact('tour', 'packages', 'roomTypes', 'currency', 'symbol', 'decimals', 'extras', 'selectedTier'));
     }
 
     public function store(Request $request, $slug)
@@ -210,8 +226,9 @@ class BookingController extends Controller
         $totalPrice = round(Currency::convert($basePrice, $booking->currency) + $extrasTotal, 2);
         $booking->total_price = $totalPrice;
 
-        // Deposit Percentage (20%)
-        $depositPct = (float) Setting::get('deposit_percentage', 20.00);
+        // Deposit Percentage (Default 30%)
+        $depositPct = (float) ($tour->deposit_percent ?? Setting::get('deposit_percentage', 30.00));
+        if ($depositPct <= 0) $depositPct = 30.00;
         $booking->deposit_percentage = $depositPct;
         $booking->deposit_required = round(($totalPrice * $depositPct) / 100, 2);
         $booking->deposit_paid = 0.00;
