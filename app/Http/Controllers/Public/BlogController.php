@@ -31,7 +31,7 @@ class BlogController extends Controller
         $post = BlogPost::where('slug', $slug)->published()->firstOrFail();
         // A pageview is not a content update: increment without touching
         // updated_at so sitemap lastmod stays truthful.
-        DB::table($post->getTable())->whereKey($post->getKey())->increment('views_count');
+        DB::table($post->getTable())->where('id', $post->id)->increment('views_count');
 
         $relatedPosts = BlogPost::where('category_id', $post->category_id)
             ->where('id', '!=', $post->id)
