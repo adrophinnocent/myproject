@@ -56,61 +56,66 @@
     </div>
 </div>
 
-<section class="bg-white border-b border-stone-200/80 py-12">
+<section class="bg-white border-b border-stone-200/80 py-10">
     <div class="max-w-7xl mx-auto px-4">
-        <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-4">Choose your safari with the full picture</h2>
-        <p class="text-stone-600 max-w-4xl leading-relaxed mb-7">
+        <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-3">Choose your safari with the full picture</h2>
+        <p class="text-stone-600 max-w-4xl leading-relaxed mb-6 text-sm md:text-base">
             A Tanzania safari package should show the route, number of days, accommodation style, vehicle, guide and exactly what is included in the price. Use the filters below to browse current itineraries, or start with the planning guides if you are still deciding when and where to go.
         </p>
-        <div class="grid md:grid-cols-3 gap-4">
-            <a href="{{ route('guides.safari-cost') }}" class="p-5 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
-                <h3 class="font-bold text-stone-900 mb-2">Understand safari costs</h3>
-                <p class="text-sm text-stone-600">See what drives price by season, group size, park fees and accommodation.</p>
+        <div class="grid sm:grid-cols-3 gap-4 text-xs md:text-sm">
+            <a href="{{ route('guides.safari-cost') }}" class="p-4 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
+                <h3 class="font-bold text-stone-900 mb-1">Understand safari costs</h3>
+                <p class="text-stone-600 text-xs">See what drives price by season, group size, park fees and accommodation.</p>
             </a>
-            <a href="{{ route('guides.best-time') }}" class="p-5 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
-                <h3 class="font-bold text-stone-900 mb-2">Pick the right season</h3>
-                <p class="text-sm text-stone-600">Compare dry season, calving season, migration timing and green-season value.</p>
+            <a href="{{ route('guides.best-time') }}" class="p-4 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
+                <h3 class="font-bold text-stone-900 mb-1">Pick the right season</h3>
+                <p class="text-stone-600 text-xs">Compare dry season, calving season, migration timing and green-season value.</p>
             </a>
-            <a href="{{ route('custom-safari.create') }}" class="p-5 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
-                <h3 class="font-bold text-stone-900 mb-2">Build your own itinerary</h3>
-                <p class="text-sm text-stone-600">Tell us your dates, parks, pace and budget for a tailor-made plan.</p>
+            <a href="{{ route('custom-safari.create') }}" class="p-4 rounded-2xl border border-stone-200 bg-stone-50 hover:border-[#b8920d] transition-colors">
+                <h3 class="font-bold text-stone-900 mb-1">Build your own itinerary</h3>
+                <p class="text-stone-600 text-xs">Tell us your dates, parks, pace and budget for a tailor-made plan.</p>
             </a>
         </div>
     </div>
 </section>
 
-<div class="max-w-7xl mx-auto px-4 py-16">
-    <div class="flex flex-col lg:flex-row gap-10">
+<div class="max-w-7xl mx-auto px-4 py-12">
+    {{-- 2-Column Main Layout: Left Sidebar + Right Tour Grid --}}
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
 
-        <aside class="lg:w-72 flex-shrink-0">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-24">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="font-semibold text-gray-800">{{ __('Filter Tours') }}</h3>
-                    <a href="{{ route('tours.index') }}" class="text-xs text-gold-500 hover:text-gold-600">{{ __('Clear All') }}</a>
+        {{-- Left Column: Filter Sidebar --}}
+        <aside class="w-full lg:w-72 shrink-0">
+            <div class="bg-white rounded-3xl border border-stone-200/90 shadow-sm p-6 sticky top-24">
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="font-bold text-stone-900 text-base">{{ __('Filter Tours') }}</h3>
+                    <a href="{{ route('tours.index') }}" class="text-xs font-bold text-amber-800 hover:underline">{{ __('Clear All') }}</a>
                 </div>
-                <form method="GET" action="{{ route('tours.index') }}" id="filter-form">
-                    <div class="mb-5">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{{ __('Search') }}</label>
+
+                <form method="GET" action="{{ route('tours.index') }}" id="filter-form" class="space-y-5 text-xs">
+                    <div>
+                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Search') }}</label>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Search tours...') }}"
-                               class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-gold-500">
+                               class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                     </div>
-                    <div class="mb-5">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{{ __('Tour Type') }}</label>
-                        <div class="space-y-2">
+
+                    <div>
+                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Tour Type') }}</label>
+                        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
                             @foreach($categories as $cat)
-                            <label class="flex items-center gap-3 cursor-pointer group">
+                            <label class="flex items-center gap-2.5 cursor-pointer group">
                                 <input type="radio" name="category" value="{{ $cat->id }}"
                                        {{ (request('category') == $cat->id || request('tour_type') == $cat->slug) ? 'checked' : '' }}
-                                       onchange="this.form.submit()" class="text-gold-500 focus:ring-gold-500">
-                                <span class="text-sm text-gray-600 group-hover:text-gold-600 transition-colors">{{ __($cat->name) }}</span>
+                                       onchange="this.form.submit()" class="text-amber-600 focus:ring-amber-500">
+                                <span class="text-stone-700 font-medium group-hover:text-amber-800 transition-colors">{{ __($cat->name) }}</span>
                             </label>
                             @endforeach
                         </div>
                     </div>
-                    <div class="mb-5">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{{ __('Destination') }}</label>
+
+                    <div>
+                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Destination') }}</label>
                         <select name="destination" onchange="this.form.submit()"
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gold-500">
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="">{{ __('All Destinations') }}</option>
                             @foreach($destinations as $dest)
                             <option value="{{ $dest->id }}" {{ (request('destination') == $dest->id || request('tour_type') == $dest->slug) ? 'selected' : '' }}>
@@ -119,30 +124,33 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-5">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{{ __('Duration') }}</label>
+
+                    <div>
+                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Duration') }}</label>
                         <select name="duration" onchange="this.form.submit()"
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gold-500">
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="">{{ __('Any Duration') }}</option>
                             @foreach(['1-3'=>'1-3 Days','4-7'=>'4-7 Days','8-14'=>'8-14 Days','15+'=>'15+ Days'] as $val=>$label)
                             <option value="{{ $val }}" {{ request('duration') === $val ? 'selected' : '' }}>{{ __($label) }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-5">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{{ __('Difficulty') }}</label>
+
+                    <div>
+                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Difficulty') }}</label>
                         <select name="difficulty" onchange="this.form.submit()"
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gold-500">
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="">{{ __('Any Level') }}</option>
                             <option value="easy" {{ request('difficulty')==='easy'?'selected':'' }}>{{ __('Easy') }}</option>
                             <option value="moderate" {{ request('difficulty')==='moderate'?'selected':'' }}>{{ __('Moderate') }}</option>
                             <option value="challenging" {{ request('difficulty')==='challenging'?'selected':'' }}>{{ __('Challenging') }}</option>
                         </select>
                     </div>
-                    <div class="mb-5">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{{ __('Sort By') }}</label>
+
+                    <div>
+                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Sort By') }}</label>
                         <select name="sort" onchange="this.form.submit()"
-                                class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-gold-500">
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="featured" {{ request('sort','featured')==='featured'?'selected':'' }}>{{ __('Featured First') }}</option>
                             <option value="price_asc" {{ request('sort')==='price_asc'?'selected':'' }}>{{ __('Price: Low to High') }}</option>
                             <option value="price_desc" {{ request('sort')==='price_desc'?'selected':'' }}>{{ __('Price: High to Low') }}</option>
@@ -154,8 +162,9 @@
             </div>
         </aside>
 
-        <div class="flex-1">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {{-- Right Column: Tour Cards Grid (FULL 100% Remaining Width) --}}
+        <main class="flex-1 w-full min-w-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @forelse($tours as $tour)
                     @php
                         $rawTitle = $tour->translate('title') ?: $tour->title;
@@ -164,50 +173,75 @@
                         $rawDesc = $tour->translate('short_description') ?: $tour->short_description;
                         $descStr = \App\Helpers\AssetHelper::asString($rawDesc);
                     @endphp
-                    <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}"
-                       class="group relative block w-full rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-64 bg-stone-900 border border-stone-800/50">
 
-                        {{-- Background Cover Image with Zoom Effect --}}
-                        <img src="{{ $tour->featured_image_url }}"
-                             alt="{{ $titleStr }}"
-                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                             loading="lazy" decoding="async">
+                    {{-- TourRadar Style Tour Card --}}
+                    <div class="bg-white border border-[#e8dfcf] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#b8920d]/60">
+                        <div>
+                            {{-- Top Image Widescreen Banner --}}
+                            <div class="relative h-52 overflow-hidden bg-stone-900">
+                                <img src="{{ $tour->featured_image_url }}"
+                                     alt="{{ $titleStr }}"
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                     loading="lazy" decoding="async">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
 
-                        {{-- Dark Overlay Gradient for Readable Text --}}
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:from-black/90 transition-all pointer-events-none"></div>
+                                {{-- Top Left Badge --}}
+                                <div class="absolute top-3 left-3 z-10">
+                                    <span class="px-2.5 py-1 bg-stone-900/80 backdrop-blur-md text-amber-400 font-bold text-[10px] uppercase rounded-lg border border-white/20">
+                                        ⏱️ {{ $tour->duration_text }}
+                                    </span>
+                                </div>
 
-                        {{-- Price Tag Badge at TOP RIGHT --}}
-                        <div class="absolute top-2.5 right-2.5 z-10">
-                            <span class="inline-block bg-[#f8b218] text-stone-950 font-black text-xs px-2.5 py-1 rounded shadow-md uppercase tracking-wider">
-                                From {{ $tour->display_price_formatted }}*
-                            </span>
+                                {{-- Top Right Price Badge (NO ASTERISK *) --}}
+                                <div class="absolute top-3 right-3 z-10">
+                                    <span class="px-3 py-1 bg-[#d4af37] text-stone-950 font-black text-xs uppercase rounded-lg shadow-md tracking-wider">
+                                        From {{ $tour->display_price_formatted }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{-- Card Body --}}
+                            <div class="p-5 space-y-3">
+                                <div class="flex items-center gap-2 text-stone-500 text-[11px] font-semibold">
+                                    <span>📍 {{ $tour->destination?->name ?? 'Tanzania' }}</span>
+                                    <span>•</span>
+                                    <span class="text-amber-800 font-bold">★ 5.0 (Certified Guides)</span>
+                                </div>
+
+                                <h3 class="font-display font-black text-stone-900 text-lg leading-tight group-hover:text-amber-800 transition-colors line-clamp-2">
+                                    <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}">
+                                        {{ $titleStr }}
+                                    </a>
+                                </h3>
+
+                                @if($descStr)
+                                <p class="text-stone-600 text-xs leading-relaxed line-clamp-2">
+                                    {{ $descStr }}
+                                </p>
+                                @endif
+                            </div>
                         </div>
 
-                        {{-- Centered Text Content (Title & Subtitle) --}}
-                        <div class="absolute inset-x-0 bottom-0 top-0 p-4 pb-5 flex flex-col justify-end items-center text-center z-10 pointer-events-none">
-                            <h3 class="font-black text-white text-sm md:text-base leading-tight uppercase tracking-tight group-hover:text-amber-300 transition-colors drop-shadow-md max-w-[90%]">
-                                {{ $titleStr }}
-                            </h3>
-                            @if($descStr)
-                            <p class="text-stone-200 text-xs font-normal leading-snug line-clamp-2 max-w-[92%] mt-1 drop-shadow-xs">
-                                {{ $descStr }}
-                            </p>
-                            @endif
-                        </div>
+                        {{-- Card Footer & CTA Button --}}
+                        <div class="p-5 pt-0 border-t border-stone-100 flex items-center justify-between gap-2">
+                            <div>
+                                <span class="text-[10px] text-stone-400 font-bold uppercase block">Starting From</span>
+                                <span class="text-stone-900 font-black text-base">{{ $tour->display_price_formatted }}</span>
+                            </div>
 
-                        {{-- White Circle Arrow Button at Bottom Right --}}
-                        <div class="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
-                            <svg class="w-4 h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                            </svg>
+                            <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}"
+                               class="btn-gold px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-sm flex items-center gap-1.5 group-hover:scale-105 transition-transform">
+                                <span>VIEW TOUR</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
                         </div>
-                    </a>
+                    </div>
                 @empty
-                    <div class="col-span-full text-center py-24 bg-gray-50 rounded-2xl">
-                        <div class="text-6xl mb-4">🦁</div>
-                        <h3 class="font-display text-xl text-gray-700 mb-2">{{ __('No Tours Found') }}</h3>
-                        <p class="text-gray-400 text-sm mb-6">{{ __('Try adjusting your filters or search term.') }}</p>
-                        <a href="{{ route('tours.index') }}" class="btn-gold px-6 py-3 rounded-full text-sm font-semibold">{{ __('Clear Filters') }}</a>
+                    <div class="col-span-full text-center py-20 bg-stone-50 rounded-3xl border border-stone-200">
+                        <div class="text-6xl mb-3">🦁</div>
+                        <h3 class="font-display text-xl text-stone-800 font-bold mb-1">{{ __('No Tours Found') }}</h3>
+                        <p class="text-stone-500 text-xs mb-5">{{ __('Try adjusting your filters or search term.') }}</p>
+                        <a href="{{ route('tours.index') }}" class="btn-gold px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider">{{ __('Clear Filters') }}</a>
                     </div>
                 @endforelse
             </div>
@@ -217,22 +251,28 @@
                 {{ $tours->links() }}
             </div>
             @endif
+        </main>
+    </div>
+
+    {{-- Safari Package Questions (FAQ) Section - FULL WIDTH STACKED BELOW FLEX ROW --}}
+    <section class="mt-20 pt-12 border-t border-stone-200">
+        <div class="text-center mb-8">
+            <span class="text-amber-800 text-xs font-black uppercase tracking-widest block mb-1">TRAVELER FAQ</span>
+            <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900">Safari package questions</h2>
+            <div class="w-12 h-1 bg-amber-500 rounded-full mx-auto mt-2"></div>
         </div>
 
-        <section class="mt-16 pt-12 border-t border-stone-200">
-            <h2 class="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-6">Safari package questions</h2>
-            <div class="grid md:grid-cols-2 gap-4">
-                @foreach($packageFaqs as $faq)
-                <details class="group bg-white border border-stone-200 rounded-2xl shadow-xs">
-                    <summary class="cursor-pointer list-none p-5 font-bold text-stone-900 text-sm flex items-start justify-between gap-3">
-                        <span>{{ $faq['question'] }}</span>
-                        <span class="text-[#8A6D0B] text-lg leading-none" aria-hidden="true">+</span>
-                    </summary>
-                    <div class="px-5 pb-5 text-stone-600 text-sm leading-relaxed border-t border-stone-100 pt-3">{{ $faq['answer'] }}</div>
-                </details>
-                @endforeach
-            </div>
-        </section>
-    </div>
+        <div class="grid sm:grid-cols-2 gap-4 max-w-5xl mx-auto">
+            @foreach($packageFaqs as $faq)
+            <details class="group bg-white border border-stone-200 rounded-2xl shadow-xs overflow-hidden">
+                <summary class="cursor-pointer list-none p-5 font-bold text-stone-900 text-xs sm:text-sm flex items-start justify-between gap-3 bg-stone-50/50 group-open:bg-amber-50/30">
+                    <span>{{ $faq['question'] }}</span>
+                    <span class="text-amber-800 font-black text-lg leading-none shrink-0" aria-hidden="true">+</span>
+                </summary>
+                <div class="px-5 pb-5 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-stone-100 pt-3 bg-white">{{ $faq['answer'] }}</div>
+            </details>
+            @endforeach
+        </div>
+    </section>
 </div>
 @endsection

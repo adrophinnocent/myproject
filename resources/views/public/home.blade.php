@@ -287,7 +287,7 @@
                     {{-- What's Included Checkmarks --}}
                     @if(count($heroInclusions) > 0)
                     <div>
-                        <span class="block text-[10px] font-black uppercase tracking-wider text-stone-400 mb-2">WHAT IS INCLUDED:</span>
+                        <span class="block text-[10px] font-black uppercase tracking-wider text-stone-400 mb-2">What is included:</span>
                         <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-stone-800">
                             @foreach(array_slice($heroInclusions, 0, 4) as $inc)
                             <li class="flex items-start gap-2">
@@ -303,10 +303,10 @@
                     @if(count($heroItinerary) > 0)
                     <div class="pt-2 border-t border-stone-100" x-data="{ openRoute: false }">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-stone-400">ROUTE SUMMARY:</span>
-                            <button @@click="openRoute = !openRoute" class="text-[10px] font-bold text-amber-800 hover:underline uppercase">
-                                <span x-text="openRoute ? 'Hide Route' : 'View Route Days (' + {{ count($heroItinerary) }} + ' Days)'"></span>
-                            </button>
+                            <span class="text-[10px] font-black uppercase tracking-wider text-stone-400">Route summary:</span>
+                            <a href="{{ route('tours.show', ['type' => $heroTour->item_type ?? 'tour', 'slug' => $heroTour->slug]) }}" class="text-[10px] font-bold text-amber-800 hover:underline uppercase">
+                                {{ __('See full itinerary') }}
+                            </a>
                         </div>
                         <div class="flex flex-wrap gap-1.5 text-[11px] font-bold text-stone-700">
                             @foreach(array_slice($heroItinerary, 0, 5) as $day)
@@ -337,7 +337,10 @@
                             {{ __('BOOK THIS TOUR') }}
                         </a>
                         <a href="{{ route('tours.show', ['type' => $heroTour->item_type ?? 'tour', 'slug' => $heroTour->slug]) }}" class="w-full block text-center py-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs uppercase tracking-wider transition-colors border border-stone-200">
-                            {{ __('VIEW TOUR DETAILS') }}
+                            {{ __('TOUR DETAILS') }}
+                        </a>
+                        <a href="{{ route('tours.index') }}" class="w-full block text-center py-2.5 rounded-xl border border-stone-300 text-stone-700 font-bold text-xs uppercase tracking-wider hover:bg-stone-100 transition-colors">
+                            {{ __('EXPLORE ALL TOURS') }}
                         </a>
                         <a href="{{ route('tours.download-pdf', $heroTour->slug) }}" class="text-[11px] font-bold text-amber-800 hover:underline inline-flex items-center gap-1 mt-1">
                             <span>📥 {{ __('Download Itinerary PDF') }}</span>
