@@ -188,7 +188,7 @@
                                 {{-- Top Left Badge --}}
                                 <div class="absolute top-3 left-3 z-10">
                                     <span class="px-2.5 py-1 bg-stone-900/80 backdrop-blur-md text-amber-400 font-bold text-[10px] uppercase rounded-lg border border-white/20">
-                                        ⏱️ {{ $tour->duration_text }}
+                                        {{ $tour->duration_text }}
                                     </span>
                                 </div>
 
@@ -203,7 +203,7 @@
                             {{-- Card Body --}}
                             <div class="p-5 space-y-3">
                                 <div class="flex items-center gap-2 text-stone-500 text-[11px] font-semibold">
-                                    <span>📍 {{ $tour->destination?->name ?? 'Tanzania' }}</span>
+                                    <span>{{ $tour->destination?->name ?? 'Tanzania' }}</span>
                                     <span>•</span>
                                     <span class="text-amber-800 font-bold">★ 5.0 (Certified Guides)</span>
                                 </div>

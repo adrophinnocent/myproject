@@ -121,19 +121,19 @@
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('First Name') }} *</label>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('First Name') }}</label>
                                     <input type="text" name="first_name" required value="{{ old('first_name') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Last Name') }} *</label>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Last Name') }}</label>
                                     <input type="text" name="last_name" required value="{{ old('last_name') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Email Address') }} *</label>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Email Address') }}</label>
                                     <input type="email" name="email" required value="{{ old('email') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Phone Number') }} *</label>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Phone Number') }}</label>
                                     <input type="tel" name="phone" required value="{{ old('phone') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div class="md:col-span-2" x-data="{
@@ -151,7 +151,7 @@
                                         this.open = false;
                                     }
                                 }">
-                                    <label for="country" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Nationality') }} *</label>
+                                    <label for="country" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Nationality') }}</label>
                                     <div class="relative">
                                         <input type="text"
                                                name="nationality"
@@ -200,11 +200,11 @@
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Travel Date') }} *</label>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('Travel Date') }}</label>
                                     <input type="date" name="travel_date" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" value="{{ old('travel_date') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('No. of Adults') }} *</label>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{{ __('No. of Adults') }}</label>
                                     <input type="number" name="number_of_adults" required min="1" x-model="adults" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                                 </div>
                                 <div>
