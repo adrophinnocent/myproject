@@ -8,15 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('blog_posts', function (Blueprint $table) {
-            $table->string('hero_caption')->nullable()->after('featured_image');
-        });
+        if (Schema::hasTable('blog_posts') && !Schema::hasColumn('blog_posts', 'hero_caption')) {
+            Schema::table('blog_posts', function (Blueprint $table) {
+                $table->string('hero_caption')->nullable()->after('excerpt');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('blog_posts', function (Blueprint $table) {
-            $table->dropColumn('hero_caption');
-        });
+        if (Schema::hasTable('blog_posts') && Schema::hasColumn('blog_posts', 'hero_caption')) {
+            Schema::table('blog_posts', function (Blueprint $table) {
+                $table->dropColumn('hero_caption');
+            });
+        }
     }
 };

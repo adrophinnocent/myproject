@@ -33,6 +33,8 @@ class BlogController extends Controller
 
     public function store(Request $request)
     {
+        $this->ensureTablesExist();
+
         $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
@@ -78,6 +80,8 @@ class BlogController extends Controller
     }
 
     public function update(Request $request, BlogPost $blog)
+    {
+        $this->ensureTablesExist();
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -260,5 +264,18 @@ class BlogController extends Controller
         }
 
         return $content;
+    }
+
+    private function ensureTablesExist(): void
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('blog_posts') && ! \Illuminate\Support\Facades\Schema::hasColumn('blog_posts', 'hero_caption')) {
+                \Illuminate\Support\Facades\Schema::table('blog_posts', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->string('hero_caption')->nullable()->after('excerpt');
+                });
+            }
+        } catch (\Throwable $e) {
+            Log::error('Blog schema update failed: '.$e->getMessage());
+        }
     }
 }
