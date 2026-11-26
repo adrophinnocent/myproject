@@ -74,7 +74,9 @@ class BlogPost extends Model
     public function getReadingTimeAttribute(): string
     {
         $words = str_word_count(strip_tags((string) $this->content));
-        $minutes = max(1, (int) ceil($words / 200));
+
+        // Safari guides are read slowly because readers stop at photos and maps.
+        $minutes = max(1, (int) ceil($words / 125));
 
         return $minutes.' min read';
     }

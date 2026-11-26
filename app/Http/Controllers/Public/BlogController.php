@@ -39,6 +39,14 @@ class BlogController extends Controller
             ->take(3)
             ->get();
 
+        if ($relatedPosts->isEmpty()) {
+            $relatedPosts = BlogPost::where('id', '!=', $post->id)
+                ->published()
+                ->latest('published_at')
+                ->take(3)
+                ->get();
+        }
+
         return view('public.blog.show', compact('post', 'relatedPosts'));
     }
 }

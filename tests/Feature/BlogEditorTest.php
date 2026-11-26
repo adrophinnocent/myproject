@@ -187,6 +187,19 @@ class BlogEditorTest extends TestCase
         $this->assertSame(800, $size[1]);
     }
 
+    public function test_reading_time_allows_for_photo_stops_in_safari_guides(): void
+    {
+        $category = BlogCategory::create(['name' => 'Safari', 'slug' => 'safari']);
+        $post = BlogPost::create([
+            'title' => 'A Long Safari Guide',
+            'slug' => 'a-long-safari-guide',
+            'category_id' => $category->id,
+            'content' => '<p>'.implode(' ', array_fill(0, 1047, 'safari')).'</p>',
+        ]);
+
+        $this->assertSame('9 min read', $post->reading_time);
+    }
+
     public function test_public_story_shows_three_two_images_hero_caption_and_all_blocks(): void
     {
         $category = BlogCategory::create(['name' => 'Guides', 'slug' => 'guides']);

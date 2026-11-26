@@ -36,6 +36,7 @@ use App\Http\Middleware\IsAdmin;
 use App\Models\Booking;
 use App\Models\Tour;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -64,16 +65,16 @@ Route::match(['get', 'post'], '/admin/logout', function (Request $request) {
 
 Route::get('/admin/clear-cache', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('route:clear');
-        \Illuminate\Support\Facades\Artisan::call('config:clear');
-        \Illuminate\Support\Facades\Artisan::call('view:clear');
-        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        Artisan::call('route:clear');
+        Artisan::call('config:clear');
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
 
         return response()->json([
             'success' => true,
             'message' => 'Route, config, view, and application caches cleared successfully!',
         ]);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         return response()->json([
             'success' => false,
             'error' => $e->getMessage(),
@@ -83,16 +84,16 @@ Route::get('/admin/clear-cache', function () {
 
 Route::get('/admin/run-migrations', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('route:clear');
-        \Illuminate\Support\Facades\Artisan::call('config:clear');
-        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('route:clear');
+        Artisan::call('config:clear');
+        Artisan::call('view:clear');
 
         return response()->json([
             'success' => true,
-            'output' => \Illuminate\Support\Facades\Artisan::output(),
+            'output' => Artisan::output(),
         ]);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         return response()->json([
             'success' => false,
             'error' => $e->getMessage(),

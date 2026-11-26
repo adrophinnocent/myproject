@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -269,8 +271,8 @@ class BlogController extends Controller
     private function ensureTablesExist(): void
     {
         try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('blog_posts') && ! \Illuminate\Support\Facades\Schema::hasColumn('blog_posts', 'hero_caption')) {
-                \Illuminate\Support\Facades\Schema::table('blog_posts', function (\Illuminate\Database\Schema\Blueprint $table) {
+            if (Schema::hasTable('blog_posts') && ! Schema::hasColumn('blog_posts', 'hero_caption')) {
+                Schema::table('blog_posts', function (Blueprint $table) {
                     $table->string('hero_caption')->nullable()->after('excerpt');
                 });
             }
