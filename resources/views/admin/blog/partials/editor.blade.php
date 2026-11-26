@@ -4,6 +4,7 @@
         'title' => old('title', $blog->title ?? ''),
         'slug' => old('slug', $blog->slug ?? ''),
         'excerpt' => old('excerpt', $blog->excerpt ?? ''),
+        'heroCaption' => old('hero_caption', $blog->hero_caption ?? ''),
         'metaTitle' => old('meta_title', $blog->meta_title ?? ''),
         'metaDescription' => old('meta_description', $blog->meta_description ?? ''),
         'tags' => old('tags', $editing ? implode(', ', (array) ($blog->tags ?? [])) : ''),
@@ -14,13 +15,12 @@
     ];
 @endphp
 
-{{-- Config is emitted in a script tag so JSON quotes cannot break the HTML attribute. --}}
+{{-- Config lives in a script tag so JSON quotes never break an HTML attribute. --}}
 <script>
     window.blogStoryEditorConfig = @json($editorConfig);
 </script>
 
 <div class="max-w-5xl mx-auto pb-16" x-data="blogStoryEditor(window.blogStoryEditorConfig)">
-    {{-- Page Header --}}
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <h1 class="text-3xl font-serif-title font-bold text-stone-900">{{ $editorTitle }}</h1>
@@ -33,7 +33,7 @@
         @csrf
         @if($editing) @method('PUT') @endif
 
-        {{-- Generated HTML is submitted as one field; blocks above are the source of truth. --}}
+        {{-- Generated HTML is submitted as one field; the blocks above are the source of truth. --}}
         <input type="hidden" name="content" :value="generateHtmlContent()">
 
         {{-- CARD 1: STORY META --}}
@@ -41,7 +41,7 @@
             <div>
                 <label class="block text-xs font-black text-[#a88210] uppercase tracking-wider mb-2">STORY TITLE *</label>
                 <input type="text" name="title" x-model="title" @input="updateSlug()" required
-                       placeholder="e.g. Best Time to Go on Safari in Tanzania"
+                       placeholder="e.g. Kilimanjaro Safety Tips Every Climber Should Know"
                        class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:bg-white focus:ring-2 focus:ring-[#d4af37]/30 focus:border-[#d4af37] outline-none transition-all">
             </div>
 
@@ -67,26 +67,33 @@
 
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="block text-xs font-black text-[#a88210] uppercase tracking-wider">COVER IMAGE</label>
-                        <span class="text-[10px] font-bold text-stone-400">1200x800px · hero banner</span>
+                        <label class="block text-xs font-black text-[#a88210] uppercase tracking-wider">HERO IMAGE</label>
+                        <span class="text-[10px] font-bold text-stone-400">3:2 · min 1600px wide · WebP</span>
                     </div>
                     <input type="file" name="featured_image" id="cover_image_input" accept="image/*" class="hidden" @change="previewCover($event)" @if(!$editing) required @endif>
                     <div @click="document.getElementById('cover_image_input').click()"
                          class="border-2 border-dashed border-[#d4af37]/60 hover:border-[#b8920d] bg-[#fcfaf5] rounded-2xl p-5 text-center cursor-pointer transition-all flex flex-col items-center justify-center min-h-[110px] relative overflow-hidden">
                         <template x-if="coverPreview">
-                            <div class="w-full h-28 relative">
-                                <img :src="coverPreview" class="w-full h-full object-cover rounded-xl shadow-xs" alt="Cover preview">
-                                <span class="absolute bottom-1 right-1 bg-stone-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">Change cover</span>
+                            <div class="w-full aspect-[3/2] relative overflow-hidden rounded-xl">
+                                <img :src="coverPreview" class="w-full h-full object-cover" alt="Hero preview">
+                                <span class="absolute bottom-1 right-1 bg-stone-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">Change hero</span>
                             </div>
                         </template>
                         <template x-if="!coverPreview">
                             <div>
                                 <svg class="w-7 h-7 text-[#d4af37] mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <span class="text-xs font-black text-[#a88210] uppercase tracking-wider">CLICK TO UPLOAD COVER</span>
+                                <span class="text-xs font-black text-[#a88210] uppercase tracking-wider">CLICK TO UPLOAD HERO</span>
                             </div>
                         </template>
                     </div>
                 </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-black text-[#a88210] uppercase tracking-wider mb-2">HERO CAPTION</label>
+                <input type="text" name="hero_caption" x-model="heroCaption" maxlength="255"
+                       placeholder="e.g. Sunrise over the Kilimanjaro summit"
+                       class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-3 text-xs font-semibold text-stone-800 focus:bg-white focus:ring-2 focus:ring-[#d4af37]/30 focus:border-[#d4af37] outline-none">
             </div>
 
             <div>
@@ -100,7 +107,7 @@
         {{-- CARD 2: EXCERPT --}}
         <div class="bg-white rounded-2xl border-2 border-[#e6c278]/60 p-6 md:p-8 shadow-xs mb-6">
             <div class="flex items-center justify-between mb-2">
-                <label class="block text-xs font-black text-[#a88210] uppercase tracking-wider">SHORT SUMMARY (EXCERPT)</label>
+                <label class="block text-xs font-black text-[#a88210] uppercase tracking-wider">SHORT INTRO (EXCERPT)</label>
                 <span class="text-[10px] font-mono font-bold text-stone-400" x-text="excerpt.length + '/180'"></span>
             </div>
             <textarea name="excerpt" x-model="excerpt" rows="3" maxlength="180"
@@ -120,7 +127,7 @@
                     <span class="text-[10px] font-mono font-bold text-stone-400" x-text="metaTitle.length + '/60'"></span>
                 </div>
                 <input type="text" name="meta_title" x-model="metaTitle" maxlength="255"
-                       placeholder="e.g. Best Time for Tanzania Safari | Twina Safaris"
+                       placeholder="e.g. Kilimanjaro Safety Tips | Twina Safaris"
                        class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-3 text-xs font-semibold text-stone-800 focus:bg-white focus:ring-2 focus:ring-[#d4af37]/30 focus:border-[#d4af37] outline-none">
             </div>
             <div>
@@ -139,7 +146,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h3 class="text-xs font-black text-[#a88210] uppercase tracking-wider">FULL STORY CONTENT</h3>
-                    <p class="text-[11px] text-stone-400 mt-0.5">Drag blocks to reorder. Add a square photo right after any paragraph, TourRadar style.</p>
+                    <p class="text-[11px] text-stone-400 mt-0.5">Drag to reorder, or use the arrows. Every photo is automatically cropped to 3:2.</p>
                 </div>
                 <button type="button" @click="previewOpen = !previewOpen"
                         class="px-5 py-2.5 border-2 border-[#d4af37] text-[#8a6a0b] hover:bg-[#d4af37] hover:text-white font-black text-xs uppercase tracking-wider rounded-full transition-all">
@@ -150,10 +157,10 @@
             {{-- Live preview --}}
             <div x-show="previewOpen" x-cloak class="rounded-2xl border border-[#e8dfcf] bg-[#fdfbf7] p-5 md:p-8">
                 <p class="text-[10px] font-black text-[#a88210] uppercase tracking-widest mb-4">Reader preview</p>
-                <div class="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 shadow-xs">
+                <div class="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 shadow-xs max-w-[760px] mx-auto">
                     <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 mb-2" x-text="title || 'Untitled story'"></h2>
                     <p class="text-xs text-stone-400 font-semibold mb-6" x-text="excerpt"></p>
-                    <div class="article-body-preview space-y-4 text-sm text-stone-700 leading-relaxed" x-html="generateHtmlContent()"></div>
+                    <div class="article-body-preview" x-html="generateHtmlContent()"></div>
                 </div>
             </div>
 
@@ -180,36 +187,35 @@
                             </div>
                         </div>
 
-                        {{-- HEADING --}}
-                        <template x-if="block.type === 'heading'">
+                        {{-- HEADINGS --}}
+                        <template x-if="block.type === 'heading_lg' || block.type === 'heading_sm'">
                             <input type="text" x-model="block.content" placeholder="Section heading"
-                                   class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-3 text-base font-serif-title font-bold text-stone-900 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                   class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-3 font-serif-title font-bold text-stone-900 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
                         </template>
 
                         {{-- PARAGRAPH --}}
                         <template x-if="block.type === 'paragraph'">
-                            <div class="space-y-2">
-                                <textarea x-model="block.content" rows="4" placeholder="Write the text for this section"
-                                          class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl p-4 text-xs text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none leading-relaxed"></textarea>
-                                <button type="button" @click="insertPhotoAfter(bIndex)"
-                                        class="text-[10px] font-black text-[#a88210] uppercase tracking-wider hover:text-[#d4af37] transition-all">+ Add square photo after this paragraph</button>
-                            </div>
-                        </template>
-
-                        {{-- BULLET LIST --}}
-                        <template x-if="block.type === 'bullet_list'">
-                            <textarea x-model="block.content" rows="4" placeholder="One item per line"
+                            <textarea x-model="block.content" rows="4" placeholder="Write the text for this section"
                                       class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl p-4 text-xs text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none leading-relaxed"></textarea>
                         </template>
 
-                        {{-- SQUARE PHOTO --}}
+                        {{-- CHECK LIST / BULLET LIST / STEPS --}}
+                        <template x-if="block.type === 'check_list' || block.type === 'bullet_list' || block.type === 'steps'">
+                            <div class="space-y-1">
+                                <textarea x-model="block.content" rows="4" placeholder="One item per line"
+                                          class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl p-4 text-xs text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none leading-relaxed"></textarea>
+                                <p class="text-[10px] text-stone-400 font-semibold">One item per line · 2 columns on desktop, 1 on mobile</p>
+                            </div>
+                        </template>
+
+                        {{-- SQUARE-FREE 3:2 PHOTO --}}
                         <template x-if="block.type === 'photo'">
                             <div class="space-y-3">
                                 <input type="file" accept="image/*" :id="'blog_photo_input_' + bIndex" class="hidden" @change="uploadBlockPhoto($event, bIndex)">
                                 <div @click="document.getElementById('blog_photo_input_' + bIndex).click()"
                                      class="border-2 border-dashed border-[#d4af37]/60 hover:border-[#b8920d] bg-[#fcfaf5] rounded-xl p-4 text-center cursor-pointer transition-all flex flex-col items-center justify-center relative">
                                     <template x-if="block.content">
-                                        <div class="relative w-32 aspect-square overflow-hidden rounded-lg shadow-xs">
+                                        <div class="w-40 aspect-[3/2] relative overflow-hidden rounded-lg shadow-xs">
                                             <img :src="photoSrc(block.content)" class="w-full h-full object-cover" alt="Photo preview">
                                             <span class="absolute bottom-1 right-1 bg-stone-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">Change</span>
                                         </div>
@@ -217,7 +223,7 @@
                                     <template x-if="!block.content">
                                         <div class="py-3">
                                             <svg class="w-6 h-6 text-[#d4af37] mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                            <span class="text-[10px] font-black text-[#a88210] uppercase tracking-wider">CLICK TO UPLOAD SQUARE PHOTO</span>
+                                            <span class="text-[10px] font-black text-[#a88210] uppercase tracking-wider">CLICK TO UPLOAD · AUTO 3:2 · 1200×800 WEBP</span>
                                         </div>
                                     </template>
                                 </div>
@@ -233,58 +239,105 @@
                         {{-- QUOTE --}}
                         <template x-if="block.type === 'quote'">
                             <div class="space-y-3">
-                                <textarea x-model="block.content" rows="3" placeholder="A memorable quote from the story"
+                                <textarea x-model="block.content" rows="3" placeholder="A memorable quote, e.g. Pole Pole"
                                           class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl p-4 text-sm font-serif-title italic text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none"></textarea>
                                 <input type="text" x-model="block.caption" placeholder="Attribution (optional)"
                                        class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-medium text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
                             </div>
                         </template>
 
-                        {{-- CALLOUT --}}
-                        <template x-if="block.type === 'callout'">
+                        {{-- NOTE: TIP / WARNING / INFO --}}
+                        <template x-if="block.type === 'note'">
                             <div class="space-y-3">
-                                <input type="text" x-model="block.caption" placeholder="Callout title (e.g. Traveler Tip)"
-                                       class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-black text-[#a88210] uppercase tracking-wider focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <select x-model="block.variant" class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-bold text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                        <option value="tip">Kidokezo (Tip)</option>
+                                        <option value="warning">Tahadhari (Warning)</option>
+                                        <option value="info">Taarifa (Info)</option>
+                                    </select>
+                                    <input type="text" x-model="block.caption" placeholder="Box title (optional)"
+                                           class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-medium text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                </div>
                                 <textarea x-model="block.content" rows="3" placeholder="Highlighted advice for the reader"
                                           class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl p-4 text-xs text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none leading-relaxed"></textarea>
                             </div>
                         </template>
 
-                        {{-- VIDEO --}}
-                        <template x-if="block.type === 'video'">
+                        {{-- FAQ --}}
+                        <template x-if="block.type === 'faq'">
                             <div class="space-y-3">
-                                <input type="url" x-model="block.content" placeholder="https://www.youtube.com/watch?v=..."
-                                       class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-medium text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
-                                <p class="text-[10px] font-semibold" :class="embedUrl(block.content) ? 'text-emerald-700' : 'text-stone-400'"
-                                   x-text="embedUrl(block.content) ? 'Video ready to embed' : 'Paste a YouTube or Vimeo link'"></p>
-                                <input type="text" x-model="block.caption" placeholder="Caption (optional)"
-                                       class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-medium text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                <input type="text" x-model="block.caption" placeholder="Swali (question)"
+                                       class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-bold text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                <textarea x-model="block.content" rows="3" placeholder="Jibu (answer)"
+                                          class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl p-4 text-xs text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none leading-relaxed"></textarea>
+                                <p class="text-[10px] text-stone-400 font-semibold">Readers can open and close this answer.</p>
                             </div>
+                        </template>
+
+                        {{-- CTA --}}
+                        <template x-if="block.type === 'cta'">
+                            <div class="space-y-3">
+                                <input type="text" x-model="block.title" placeholder="CTA heading"
+                                       class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-bold text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                <textarea x-model="block.content" rows="2" placeholder="Short description"
+                                          class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl p-4 text-xs text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none leading-relaxed"></textarea>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <input type="text" x-model="block.buttonText" placeholder="Button label (e.g. Plan My Safari)"
+                                           class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-medium text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                    <input type="text" x-model="block.url" placeholder="Button link (/tours ...)"
+                                           class="w-full bg-[#fcfaf5] border border-[#e2d5bd] rounded-xl px-4 py-2.5 text-xs font-medium text-stone-800 focus:bg-white focus:ring-1 focus:ring-[#d4af37] outline-none">
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- DIVIDER --}}
+                        <template x-if="block.type === 'divider'">
+                            <p class="text-center text-[#d4af37] tracking-[.5em] text-sm py-2">✦ ✦ ✦</p>
                         </template>
                     </div>
                 </template>
             </div>
 
             {{-- Add block toolbar --}}
-            <div class="pt-2 flex items-center gap-2 flex-wrap">
-                <template x-for="type in ['heading', 'paragraph', 'photo', 'bullet_list', 'quote', 'callout', 'video']" :key="type">
-                    <button type="button" @click="addBlock(type)"
-                            class="px-4 py-2 border-2 border-[#d4af37] hover:bg-[#d4af37] hover:text-white text-[#8a6a0b] font-bold text-[11px] uppercase tracking-wider rounded-full transition-all">
-                        <span x-text="'+ ' + (blockLabels[type] || type)"></span>
-                    </button>
-                </template>
+            <div class="pt-2 border-t border-stone-100">
+                <p class="text-[10px] font-black text-stone-400 uppercase tracking-wider mb-3">Add a block</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <template x-for="type in blockTypes" :key="type">
+                        <button type="button" @click="addBlock(type)"
+                                class="px-3.5 py-2 border-2 border-[#d4af37] hover:bg-[#d4af37] hover:text-white text-[#8a6a0b] font-bold text-[10px] uppercase tracking-wider rounded-full transition-all">
+                            <span x-text="'+ ' + (blockLabels[type] || type)"></span>
+                        </button>
+                    </template>
+                </div>
             </div>
 
             <style>
-                .article-body-preview h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.4rem; font-weight: 700; color: #0d2818; margin: 1.25rem 0 .5rem; }
-                .article-body-preview ul { list-style: disc; padding-left: 1.25rem; margin: .75rem 0; }
+                .article-body-preview h2, .article-body-preview h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #0d2818; }
+                .article-body-preview h2 { font-size: 1.5rem; margin: 1.25rem 0 .5rem; border-bottom: 2px solid #f1f0ea; padding-bottom: .4rem; }
+                .article-body-preview h3 { font-size: 1.2rem; margin: 1rem 0 .5rem; }
+                .article-body-preview p { margin-bottom: .8rem; font-size: .85rem; line-height: 1.7; }
+                .article-body-preview ul, .article-body-preview ol { padding-left: 1.25rem; margin: .75rem 0; font-size: .85rem; }
                 .article-body-preview li { margin-bottom: .25rem; }
-                .article-body-preview figure.image { margin: 1rem 0; text-align: center; }
-                .article-body-preview figure.image img { width: 100%; max-width: 260px; aspect-ratio: 1 / 1; object-fit: cover; border-radius: .75rem; }
-                .article-body-preview figcaption { font-size: 10px; color: #78716c; font-style: italic; margin-top: .35rem; }
-                .article-body-preview blockquote { border-left: 3px solid #d4af37; background: #fcfaf7; padding: .75rem 1rem; font-style: italic; border-radius: 0 .5rem .5rem 0; }
-                .article-body-preview .article-callout { background: #fcfaf7; border: 1px solid #e8dfcf; border-radius: .75rem; padding: .75rem 1rem; }
-                .article-body-preview .article-video iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: .75rem; }
+                .article-body-preview .article-check-list, .article-body-preview .article-bullet-list { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .35rem 1rem; }
+                .article-body-preview .article-check-list li::before { content: '✓'; color: #d4af37; margin-right: .5rem; font-weight: 800; }
+                .article-body-preview .article-bullet-list li::before { content: '•'; color: #8a6a0b; margin-right: .5rem; font-weight: 800; }
+                .article-body-preview .article-steps { list-style: none; padding: 0; }
+                .article-body-preview .article-steps li { padding-left: 2.5rem; position: relative; }
+                .article-body-preview .article-step-num { position: absolute; left: 0; top: -.1rem; width: 1.7rem; height: 1.7rem; border-radius: 9999px; background: #d4af37; color: #1a1209; font-weight: 800; font-size: .7rem; display: grid; place-items: center; }
+                .article-body-preview figure.image { margin: 1rem 0; text-align: center; background: #faf9f6; border: 1px solid #e7e5e4; padding: .35rem; border-radius: 1rem; }
+                .article-body-preview figure.image img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: .7rem; }
+                .article-body-preview figcaption { font-size: .65rem; color: #78716c; font-style: italic; margin-top: .35rem; }
+                .article-body-preview .article-quote { border-left: 3px solid #d4af37; background: #fcfaf7; padding: .75rem 1rem; font-style: italic; border-radius: 0 .5rem .5rem 0; }
+                .article-body-preview .article-note { border-radius: .75rem; padding: .75rem 1rem; border-left: 4px solid; font-size: .8rem; }
+                .article-body-preview .article-note strong { display: block; font-size: .65rem; text-transform: uppercase; letter-spacing: .08em; }
+                .article-body-preview .article-note--tip { background: #f0fdf4; border-color: #86efac; color: #14532d; }
+                .article-body-preview .article-note--warning { background: #fffbeb; border-color: #fcd34d; color: #78350f; }
+                .article-body-preview .article-note--info { background: #eff6ff; border-color: #93c5fd; color: #1e3a8a; }
+                .article-body-preview .article-faq { border: 1px solid #e7e5e4; border-radius: .75rem; padding: .6rem .9rem; margin: .6rem 0; font-size: .8rem; }
+                .article-body-preview .article-cta { background: #0d2818; color: white; border-radius: 1rem; padding: 1rem; text-align: center; }
+                .article-body-preview .article-cta h3 { color: white; }
+                .article-body-preview .article-cta a { display: inline-block; background: #d4af37; color: #1a1209; border-radius: 9999px; padding: .5rem 1rem; font-size: .65rem; font-weight: 800; text-decoration: none; }
+                .article-body-preview .article-divider { text-align: center; color: #d4af37; letter-spacing: .5em; }
             </style>
         </div>
 
@@ -310,21 +363,39 @@ function blogStoryEditor(config) {
         title: config.title || '',
         slug: config.slug || '',
         excerpt: config.excerpt || '',
+        heroCaption: config.heroCaption || '',
         metaTitle: config.metaTitle || '',
         metaDescription: config.metaDescription || '',
-        tags: config.tags || '',
         coverPreview: config.cover || null,
         slugAuto: !config.slug,
         previewOpen: false,
         draggedIndex: null,
+        blockTypes: ['heading_lg', 'heading_sm', 'paragraph', 'check_list', 'bullet_list', 'steps', 'photo', 'quote', 'note', 'faq', 'cta', 'divider'],
         blockLabels: {
-            heading: 'Heading', paragraph: 'Paragraph', photo: 'Square Photo',
-            bullet_list: 'Bullet List', quote: 'Quote', callout: 'Callout', video: 'Video'
+            heading_lg: 'Kichwa Kikubwa', heading_sm: 'Kichwa Kidogo', paragraph: 'Aya',
+            check_list: 'Orodha ya ✓', bullet_list: 'Orodha ya •', steps: 'Hatua 1, 2, 3',
+            photo: 'Picha 3:2', quote: 'Nukuu Kubwa', note: 'Kidokezo / Tahadhari / Taarifa',
+            faq: 'Swali na Jibu', cta: 'Kisanduku cha Kitufe', divider: 'Mstari wa Mapambo'
         },
+        noteLabels: { tip: 'Kidokezo', warning: 'Tahadhari', info: 'Taarifa' },
         blocks: [],
 
         init() {
             this.blocks = this.parseHtmlToBlocks(config.content);
+        },
+
+        newBlock(type) {
+            return {
+                id: Date.now() + Math.random(),
+                type: type,
+                content: '',
+                caption: '',
+                alt: '',
+                variant: 'tip',
+                title: '',
+                buttonText: 'Read More',
+                url: '/blog'
+            };
         },
 
         updateSlug() {
@@ -347,26 +418,13 @@ function blogStoryEditor(config) {
         },
 
         addBlock(type) {
-            const defaults = {
-                heading: 'Section heading',
-                paragraph: '',
-                photo: '',
-                bullet_list: '',
-                quote: '',
-                callout: '',
-                video: ''
-            };
-            this.blocks.push({ id: Date.now() + Math.random(), type: type, content: defaults[type] || '', caption: '', alt: '' });
-        },
-
-        insertPhotoAfter(index) {
-            this.blocks.splice(index + 1, 0, {
-                id: Date.now() + Math.random(), type: 'photo', content: '', caption: '', alt: ''
-            });
+            const block = this.newBlock(type);
+            if (type === 'heading_lg') block.content = 'Section heading';
+            this.blocks.push(block);
         },
 
         deleteBlock(index) {
-            if (this.blocks.length > 1) this.blocks.splice(index, 1);
+            this.blocks.splice(index, 1);
         },
 
         moveBlock(index, direction) {
@@ -436,14 +494,14 @@ function blogStoryEditor(config) {
             return src;
         },
 
+        safeUrl(url) {
+            const value = String(url || '').trim();
+            if (/^(https?:\/\/|\/)/i.test(value)) return value;
+            return '/blog';
+        },
+
         embedUrl(url) {
-            if (!url) return '';
-            const value = String(url);
-            let match = value.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{6,})/);
-            if (match) return 'https://www.youtube-nocookie.com/embed/' + match[1];
-            match = value.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-            if (match) return 'https://player.vimeo.com/video/' + match[1];
-            return '';
+            return this.safeUrl(url);
         },
 
         escapeHtml(str) {
@@ -453,6 +511,12 @@ function blogStoryEditor(config) {
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         },
 
+        listItems(content) {
+            return String(content || '').split('\n')
+                .map(line => line.trim().replace(/^[✓•\-\*]\s*/, ''))
+                .filter(line => line);
+        },
+
         generateHtmlContent() {
             let html = '';
             this.blocks.forEach(block => {
@@ -460,20 +524,29 @@ function blogStoryEditor(config) {
                 const caption = (block.caption || '').trim();
                 const alt = (block.alt || caption).trim();
 
-                if (!content && block.type !== 'photo') return;
-
-                if (block.type === 'heading') {
-                    html += `<h2>${this.escapeHtml(content)}</h2>\n`;
+                if (block.type === 'heading_lg') {
+                    html += `<h2 class="article-heading-lg">${this.escapeHtml(content || 'Section heading')}</h2>\n`;
+                } else if (block.type === 'heading_sm') {
+                    html += `<h3 class="article-heading-sm">${this.escapeHtml(content || 'Section heading')}</h3>\n`;
                 } else if (block.type === 'paragraph') {
                     content.split(/\n\s*\n/).forEach(p => {
                         if (p.trim()) html += `<p>${this.escapeHtml(p.trim()).replace(/\n/g, '<br>')}</p>\n`;
                     });
-                } else if (block.type === 'bullet_list') {
-                    const lines = content.split('\n').map(l => l.trim()).filter(l => l).map(l => l.replace(/^[•\-\*]\s*/, ''));
-                    if (lines.length) {
-                        html += '<ul class="article-list">\n';
-                        lines.forEach(line => { html += `  <li>${this.escapeHtml(line)}</li>\n`; });
+                } else if (block.type === 'check_list' || block.type === 'bullet_list') {
+                    const items = this.listItems(content);
+                    if (items.length) {
+                        html += `<ul class="article-${block.type === 'check_list' ? 'check' : 'bullet'}-list">\n`;
+                        items.forEach(item => { html += `  <li>${this.escapeHtml(item)}</li>\n`; });
                         html += '</ul>\n';
+                    }
+                } else if (block.type === 'steps') {
+                    const items = this.listItems(content);
+                    if (items.length) {
+                        html += '<ol class="article-steps">\n';
+                        items.forEach((item, i) => {
+                            html += `  <li><span class="article-step-num">${i + 1}</span>${this.escapeHtml(item)}</li>\n`;
+                        });
+                        html += '</ol>\n';
                     }
                 } else if (block.type === 'photo') {
                     const src = this.photoSrc(content);
@@ -483,22 +556,32 @@ function blogStoryEditor(config) {
                     if (caption) html += `  <figcaption>${this.escapeHtml(caption)}</figcaption>\n`;
                     html += '</figure>\n';
                 } else if (block.type === 'quote') {
+                    if (!content) return;
                     html += '<blockquote class="article-quote">\n';
                     html += `  <p>${this.escapeHtml(content)}</p>\n`;
                     if (caption) html += `  <footer>${this.escapeHtml(caption)}</footer>\n`;
                     html += '</blockquote>\n';
-                } else if (block.type === 'callout') {
-                    html += '<div class="article-callout">\n';
-                    if (caption) html += `  <strong>${this.escapeHtml(caption)}</strong>\n`;
-                    html += `  <p>${this.escapeHtml(content)}</p>\n`;
+                } else if (block.type === 'note') {
+                    if (!content) return;
+                    const variant = ['tip', 'warning', 'info'].includes(block.variant) ? block.variant : 'tip';
+                    html += `<div class="article-note article-note--${variant}">\n`;
+                    html += `  <strong>${this.escapeHtml(caption || this.noteLabels[variant])}</strong>\n`;
+                    html += `  <p>${this.escapeHtml(content).replace(/\n/g, '<br>')}</p>\n`;
                     html += '</div>\n';
-                } else if (block.type === 'video') {
-                    const embed = this.embedUrl(content);
-                    if (!embed) return;
-                    html += '<div class="article-video">\n';
-                    html += `  <iframe src="${this.escapeHtml(embed)}" title="${this.escapeHtml(caption || 'Safari video')}" loading="lazy" allowfullscreen></iframe>\n`;
-                    if (caption) html += `  <p><em>${this.escapeHtml(caption)}</em></p>\n`;
+                } else if (block.type === 'faq') {
+                    if (!caption && !content) return;
+                    html += '<details class="article-faq">\n';
+                    html += `  <summary>${this.escapeHtml(caption || 'Swali')}</summary>\n`;
+                    html += `  <div class="article-faq-answer"><p>${this.escapeHtml(content).replace(/\n/g, '<br>')}</p></div>\n`;
+                    html += '</details>\n';
+                } else if (block.type === 'cta') {
+                    html += '<div class="article-cta">\n';
+                    if (block.title) html += `  <h3>${this.escapeHtml(block.title)}</h3>\n`;
+                    if (content) html += `  <p>${this.escapeHtml(content)}</p>\n`;
+                    html += `  <a class="btn-gold" href="${this.escapeHtml(this.safeUrl(block.url))}">${this.escapeHtml(block.buttonText || 'Read More')}</a>\n`;
                     html += '</div>\n';
+                } else if (block.type === 'divider') {
+                    html += '<div class="article-divider">✦ ✦ ✦</div>\n';
                 }
             });
             return html;
@@ -507,55 +590,90 @@ function blogStoryEditor(config) {
         parseHtmlToBlocks(html) {
             if (!html || !html.trim()) {
                 return [
-                    { id: 1, type: 'heading', content: 'Introduction', caption: '', alt: '' },
-                    { id: 2, type: 'paragraph', content: '', caption: '', alt: '' }
+                    Object.assign(this.newBlock('heading_lg'), { content: 'Introduction' }),
+                    this.newBlock('paragraph')
                 ];
             }
 
             const temp = document.createElement('div');
             temp.innerHTML = html;
             const parsed = [];
-            let id = 1;
 
             Array.from(temp.children).forEach(node => {
                 const tag = node.tagName ? node.tagName.toLowerCase() : '';
-                const caption = (node.querySelector('figcaption')?.textContent || '').trim();
+                const classes = String(node.className || '');
                 const img = node.querySelector('img');
+                const caption = (node.querySelector('figcaption')?.textContent || '').trim();
+                const text = node.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '').trim();
 
-                if (['h1', 'h2', 'h3', 'h4'].includes(tag)) {
-                    parsed.push({ id: id++, type: 'heading', content: node.textContent.trim(), caption: '', alt: '' });
+                if (['h1', 'h2'].includes(tag)) {
+                    parsed.push(Object.assign(this.newBlock('heading_lg'), { content: node.textContent.trim() }));
+                } else if (['h3', 'h4'].includes(tag)) {
+                    parsed.push(Object.assign(this.newBlock('heading_sm'), { content: node.textContent.trim() }));
                 } else if (tag === 'p') {
-                    const text = node.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '').trim();
-                    if (text) {
-                        parsed.push({ id: id++, type: 'paragraph', content: text, caption: '', alt: '' });
-                    }
-                    if (img) {
-                        parsed.push({ id: id++, type: 'photo', content: img.getAttribute('src') || '', caption: '', alt: img.getAttribute('alt') || '' });
-                    }
+                    if (text) parsed.push(Object.assign(this.newBlock('paragraph'), { content: text }));
+                    if (img) parsed.push(Object.assign(this.newBlock('photo'), {
+                        content: img.getAttribute('src') || '', alt: img.getAttribute('alt') || ''
+                    }));
+                } else if (tag === 'ul' && classes.includes('article-check-list')) {
+                    const items = Array.from(node.querySelectorAll('li')).map(li => li.textContent.trim()).filter(Boolean);
+                    parsed.push(Object.assign(this.newBlock('check_list'), { content: items.join('\n') }));
+                } else if (tag === 'ul' && classes.includes('article-bullet-list')) {
+                    const items = Array.from(node.querySelectorAll('li')).map(li => li.textContent.trim()).filter(Boolean);
+                    parsed.push(Object.assign(this.newBlock('bullet_list'), { content: items.join('\n') }));
+                } else if (tag === 'ol' && classes.includes('article-steps')) {
+                    const items = Array.from(node.querySelectorAll('li')).map(li => {
+                        const clone = li.cloneNode(true);
+                        const num = clone.querySelector('.article-step-num');
+                        if (num) num.remove();
+                        return clone.textContent.trim();
+                    }).filter(Boolean);
+                    parsed.push(Object.assign(this.newBlock('steps'), { content: items.join('\n') }));
                 } else if (tag === 'ul' || tag === 'ol') {
                     const items = Array.from(node.querySelectorAll('li')).map(li => li.textContent.trim()).filter(Boolean);
-                    if (items.length) parsed.push({ id: id++, type: 'bullet_list', content: items.join('\n'), caption: '', alt: '' });
-                } else if (tag === 'figure') {
-                    if (img) {
-                        parsed.push({ id: id++, type: 'photo', content: img.getAttribute('src') || '', caption: caption, alt: img.getAttribute('alt') || '' });
-                    }
-                } else if (tag === 'img') {
-                    parsed.push({ id: id++, type: 'photo', content: node.getAttribute('src') || '', caption: '', alt: node.getAttribute('alt') || '' });
+                    parsed.push(Object.assign(this.newBlock('bullet_list'), { content: items.join('\n') }));
+                } else if (tag === 'figure' || tag === 'img') {
+                    const source = img || node;
+                    parsed.push(Object.assign(this.newBlock('photo'), {
+                        content: source.getAttribute('src') || '', caption: caption, alt: source.getAttribute('alt') || ''
+                    }));
                 } else if (tag === 'blockquote') {
-                    const quoteText = node.querySelector('p')?.textContent || node.textContent;
-                    parsed.push({ id: id++, type: 'quote', content: quoteText.trim(), caption: (node.querySelector('footer')?.textContent || '').trim(), alt: '' });
-                } else if (tag === 'div' && node.classList.contains('article-callout')) {
-                    parsed.push({ id: id++, type: 'callout', content: (node.querySelector('p')?.textContent || node.textContent).trim(), caption: (node.querySelector('strong')?.textContent || '').trim(), alt: '' });
-                } else if (tag === 'div' && node.classList.contains('article-video')) {
-                    const iframe = node.querySelector('iframe');
-                    parsed.push({ id: id++, type: 'video', content: iframe ? (iframe.getAttribute('src') || '') : '', caption: (node.querySelector('p')?.textContent || '').trim(), alt: '' });
+                    parsed.push(Object.assign(this.newBlock('quote'), {
+                        content: (node.querySelector('p')?.textContent || node.textContent).trim(),
+                        caption: (node.querySelector('footer')?.textContent || '').trim()
+                    }));
+                } else if (tag === 'div' && classes.includes('article-note')) {
+                    let variant = 'tip';
+                    if (classes.includes('warning')) variant = 'warning';
+                    if (classes.includes('info')) variant = 'info';
+                    parsed.push(Object.assign(this.newBlock('note'), {
+                        variant: variant,
+                        caption: (node.querySelector('strong')?.textContent || '').trim(),
+                        content: (node.querySelector('p')?.textContent || node.textContent).trim()
+                    }));
+                } else if (tag === 'details' && classes.includes('article-faq')) {
+                    parsed.push(Object.assign(this.newBlock('faq'), {
+                        caption: (node.querySelector('summary')?.textContent || '').trim(),
+                        content: (node.querySelector('.article-faq-answer')?.textContent || '').trim()
+                    }));
+                } else if (tag === 'div' && classes.includes('article-cta')) {
+                    const link = node.querySelector('a');
+                    parsed.push(Object.assign(this.newBlock('cta'), {
+                        title: (node.querySelector('h3')?.textContent || '').trim(),
+                        content: (node.querySelector('p')?.textContent || '').trim(),
+                        buttonText: link ? link.textContent.trim() : 'Read More',
+                        url: link ? (link.getAttribute('href') || '/blog') : '/blog'
+                    }));
+                } else if (tag === 'div' && classes.includes('article-divider')) {
+                    parsed.push(this.newBlock('divider'));
                 }
             });
 
-            return parsed.length ? parsed : [
-                { id: 1, type: 'heading', content: 'Story Content', caption: '', alt: '' },
-                { id: 2, type: 'paragraph', content: html.replace(/<[^>]*>/g, '').trim(), caption: '', alt: '' }
-            ];
+            if (!parsed.length && html.trim()) {
+                parsed.push(Object.assign(this.newBlock('paragraph'), { content: html.replace(/<[^>]*>/g, '').trim() }));
+            }
+
+            return parsed;
         }
     }
 }

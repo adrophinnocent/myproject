@@ -86,10 +86,10 @@
                     <div class="bg-white border border-[#e8dfcf] rounded-3xl p-3 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#b8920d]/60">
                         <div>
                             {{-- Top Image Widescreen Banner with Rounded Corners --}}
-                            <div class="relative h-56 rounded-2xl overflow-hidden bg-stone-900 border border-stone-100/80">
+                            <div class="relative aspect-[3/2] rounded-2xl overflow-hidden bg-stone-900 border border-stone-100/80">
                                 <img src="{{ $post->featured_image_url }}"
                                      alt="{{ $titleStr }}"
-                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                     class="blog-card-image w-full group-hover:scale-105 transition-transform duration-700 ease-out"
                                      loading="lazy" decoding="async">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
 

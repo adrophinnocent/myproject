@@ -207,6 +207,268 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
+    {{-- Blog article system: one rule for every article photo + all block styles. --}}
+    <style>
+        /* Hero and card images always render in 3:2, whatever the source file is. */
+        .article-hero img,
+        .blog-card-image,
+        .more-read-image {
+            aspect-ratio: 3 / 2;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .article-hero img {
+            width: 100%;
+            height: min(66.6667vw, 620px);
+            max-height: 620px;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        /* Every image inside article content is 3:2. Admin never sets this. */
+        .article-body figure,
+        .article-body img,
+        .article-body figure img,
+        .article-body p img {
+            aspect-ratio: 3 / 2 !important;
+            object-fit: cover !important;
+            object-position: center !important;
+            width: 100% !important;
+            height: auto !important;
+            max-width: 100% !important;
+            max-height: none !important;
+            display: block;
+            margin: 0;
+            border-radius: 1rem;
+        }
+        .article-body figure {
+            margin: 2rem 0;
+            background: #faf9f6;
+            border: 1px solid #e7e5e4;
+            padding: .5rem;
+            border-radius: 1.25rem;
+            overflow: hidden;
+        }
+        .article-body figcaption {
+            margin-top: .65rem;
+            font-size: .75rem;
+            font-style: italic;
+            font-weight: 500;
+            color: #78716c;
+            text-align: center;
+            padding: 0 .5rem .25rem;
+        }
+
+        /* Article typography */
+        .article-body {
+            max-width: 760px;
+            margin: 0 auto;
+            color: #292524;
+            font-family: Inter, sans-serif;
+            font-size: 1rem;
+            line-height: 1.85;
+            overflow-wrap: break-word;
+        }
+        .article-body p { margin: 0 0 1.25rem; }
+        .article-body .article-heading-lg,
+        .article-body h2 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0d2818;
+            line-height: 1.2;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: .6rem;
+            border-bottom: 2px solid #f1f0ea;
+        }
+        .article-body .article-heading-sm,
+        .article-body h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #0d2818;
+            margin: 2rem 0 .75rem;
+        }
+        @media (min-width: 768px) {
+            .article-body .article-heading-lg, .article-body h2 { font-size: 2.35rem; }
+        }
+        .article-body a { color: #8A6D0B; text-decoration: underline; text-underline-offset: 3px; }
+        .article-body strong { color: #0d2818; }
+        .article-body ul, .article-body ol { padding-left: 1.25rem; margin: 1.25rem 0; }
+        .article-body li { margin-bottom: .4rem; }
+
+        /* Check list and bullet list: 2 columns on desktop, 1 on mobile. */
+        .article-body .article-check-list,
+        .article-body .article-bullet-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .65rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .article-body .article-check-list li,
+        .article-body .article-bullet-list li {
+            position: relative;
+            padding-left: 1.85rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+        .article-body .article-check-list li::before,
+        .article-body .article-bullet-list li::before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 800;
+        }
+        .article-body .article-check-list li::before { content: '✓'; color: #D4AF37; }
+        .article-body .article-bullet-list li::before { content: '•'; color: #8A6D0B; font-size: 1.2rem; line-height: 1; }
+        @media (max-width: 640px) {
+            .article-body .article-check-list,
+            .article-body .article-bullet-list { grid-template-columns: 1fr; gap: .5rem; }
+        }
+
+        /* Numbered steps */
+        .article-body .article-steps { list-style: none; padding: 0; display: grid; gap: 1rem; margin: 1.5rem 0; }
+        .article-body .article-steps li { position: relative; padding-left: 3.25rem; margin: 0; }
+        .article-body .article-step-num {
+            position: absolute;
+            left: 0;
+            top: -.15rem;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #D4AF37, #8A6D0B);
+            color: #1a1209;
+            font-weight: 800;
+            font-size: .85rem;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 4px 12px rgba(212,175,55,.3);
+        }
+
+        /* Quote */
+        .article-body .article-quote {
+            border-left: 4px solid #D4AF37;
+            background: linear-gradient(135deg, #fcfaf7, #f6eedb);
+            padding: 1.35rem 1.6rem;
+            margin: 2rem 0;
+            border-radius: 0 1rem 1rem 0;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            line-height: 1.4;
+            color: #44403c;
+        }
+        .article-body .article-quote p { margin: 0; }
+        .article-body .article-quote footer {
+            margin-top: .75rem;
+            font-family: Inter, sans-serif;
+            font-size: .72rem;
+            font-style: normal;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #8A6D0B;
+        }
+
+        /* Tip / Warning / Info callouts */
+        .article-body .article-note {
+            border-radius: 1rem;
+            padding: 1.1rem 1.35rem;
+            margin: 1.75rem 0;
+            border: 1px solid;
+            border-left-width: 4px;
+        }
+        .article-body .article-note strong {
+            display: block;
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            margin-bottom: .4rem;
+        }
+        .article-body .article-note p:last-child { margin-bottom: 0; }
+        .article-body .article-note--tip { background: #f0fdf4; border-color: #86efac; color: #14532d; }
+        .article-body .article-note--tip strong { color: #15803d; }
+        .article-body .article-note--warning { background: #fffbeb; border-color: #fcd34d; color: #78350f; }
+        .article-body .article-note--warning strong { color: #b45309; }
+        .article-body .article-note--info { background: #eff6ff; border-color: #93c5fd; color: #1e3a8a; }
+        .article-body .article-note--info strong { color: #1d4ed8; }
+
+        /* FAQ accordion */
+        .article-body .article-faq {
+            border: 1px solid #e7e5e4;
+            border-radius: 1rem;
+            background: #fff;
+            margin: .85rem 0;
+            overflow: hidden;
+        }
+        .article-body .article-faq summary {
+            cursor: pointer;
+            list-style: none;
+            padding: 1rem 3rem 1rem 1.15rem;
+            font-weight: 700;
+            color: #0d2818;
+            position: relative;
+        }
+        .article-body .article-faq summary::-webkit-details-marker { display: none; }
+        .article-body .article-faq summary::after {
+            content: '+';
+            position: absolute;
+            right: 1.15rem;
+            top: .75rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 9999px;
+            background: #f6eedb;
+            color: #8A6D0B;
+            font-weight: 800;
+            display: grid;
+            place-items: center;
+        }
+        .article-body .article-faq[open] summary::after { content: '−'; }
+        .article-body .article-faq-answer { padding: 0 1.15rem 1rem; color: #57534e; }
+        .article-body .article-faq-answer p:last-child { margin-bottom: 0; }
+
+        /* CTA block (works both inside the article and at the end of it) */
+        .article-cta {
+            background: linear-gradient(135deg, #0d2818, #051610);
+            color: #fff;
+            border: 1px solid rgba(212,175,55,.35);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            margin: 2.5rem 0;
+            text-align: center;
+        }
+        .article-cta h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.75rem;
+            color: #fff;
+            margin: 0 0 .5rem;
+        }
+        .article-cta p { color: rgba(255,255,255,.75); margin-bottom: 1.25rem; }
+        .article-cta .btn-gold {
+            display: inline-block;
+            border-radius: 9999px;
+            padding: .8rem 1.75rem;
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        /* Decorative divider */
+        .article-body .article-divider {
+            text-align: center;
+            color: #D4AF37;
+            letter-spacing: .6em;
+            font-size: 1.1rem;
+            margin: 2.5rem 0;
+        }
+    </style>
+
     @yield('styles')
 </head>
 <body class="bg-white text-gray-900 font-body" itemscope itemtype="https://schema.org/WebPage">

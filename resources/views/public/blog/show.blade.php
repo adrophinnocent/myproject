@@ -12,7 +12,7 @@
   "image": "{{ $post->featured_image_url }}",
   "author": {
     "@@type": "Organization",
-    "name": "Twina Safaris",
+    "name": "{{ $post->author->name ?? 'Twina Safaris' }}",
     "url": "https://twinasafaris.com/"
   },
   "publisher": {
@@ -38,253 +38,159 @@
 @endsection
 
 @section('content')
-<article class="bg-white" itemscope itemtype="https://schema.org/BlogPosting">
+<article class="bg-white article-page" itemscope itemtype="https://schema.org/BlogPosting">
     <meta itemprop="headline" content="{{ $post->translate('title') }}">
     <meta itemprop="datePublished" content="{{ $post->published_at }}">
-    <meta itemprop="author" content="Twina Safaris">
+    <meta itemprop="author" content="{{ $post->author->name ?? 'Twina Safaris' }}">
 
-    {{-- Post Hero --}}
-    <header class="relative h-[60vh] min-h-[400px]">
-        <img src="{{ $post->featured_image_url }}" alt="{{ $post->translate('title') }}" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-        <div class="absolute inset-0 flex items-end">
-            <div class="max-w-4xl mx-auto px-4 pb-12 w-full">
-                <div class="flex items-center gap-3 text-gold-400 text-xs font-bold uppercase tracking-widest mb-6">
-                    <span class="bg-gold-500/20 px-3 py-1 rounded-full border border-gold-500/30">
-                        {{ __($post->category->name ?? 'Safari Journal') }}
-                    </span>
-                    <span class="text-white/30">•</span>
-                    <span class="text-white/80">{{ $post->reading_time }} {{ __('min read') }}</span>
-                </div>
-                <h1 class="font-display text-4xl md:text-7xl text-white font-bold leading-tight drop-shadow-lg">{{ $post->translate('title') }}</h1>
-                @if(!empty($post->tags))
-                    <div class="flex flex-wrap gap-2 mt-5">
-                        @foreach((array) $post->tags as $tag)
-                            <span class="px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-white/80 text-[10px] font-bold uppercase tracking-wider">#{{ $tag }}</span>
-                        @endforeach
-                    </div>
-                @endif
+    {{-- 1. Full-width hero, 3:2, cropped and capped at 620px on desktop --}}
+    <figure class="article-hero w-full m-0">
+        <img src="{{ $post->featured_image_url }}"
+             alt="{{ $post->translate('title') }}"
+             class="w-full"
+             loading="eager"
+             fetchpriority="high"
+             decoding="async">
+        @if($post->hero_caption)
+            <figcaption class="max-w-7xl mx-auto px-4 py-3 text-xs italic font-medium text-stone-500">
+                {{ $post->hero_caption }}
+            </figcaption>
+        @endif
+    </figure>
+
+    {{-- 2. Title block --}}
+    <header class="max-w-3xl mx-auto px-4 pt-12 pb-10 text-center">
+        <div class="flex items-center justify-center gap-3 text-[11px] font-black uppercase tracking-[.16em] mb-5">
+            <span class="px-3 py-1 rounded-full bg-[#f6eedb] text-[#8A6D0B] border border-[#e8dfcf]">
+                {{ __($post->category->name ?? 'Safari Journal') }}
+            </span>
+            <span class="text-stone-300">•</span>
+            <span class="text-stone-500">{{ $post->reading_time }}</span>
+        </div>
+
+        <h1 class="font-display text-4xl md:text-6xl font-bold text-[#0d2818] leading-[1.08] tracking-tight">
+            {{ $post->translate('title') }}
+        </h1>
+
+        @if($post->excerpt)
+            <p class="mt-6 text-lg md:text-xl text-stone-600 font-serif-title italic leading-relaxed">
+                {{ $post->translate('excerpt') ?: $post->excerpt }}
+            </p>
+        @endif
+
+        <div class="mt-8 flex items-center justify-center gap-3">
+            <span class="w-10 h-10 rounded-full bg-[#f6eedb] text-[#8A6D0B] font-black flex items-center justify-center font-display text-lg">
+                {{ substr($post->author->name ?? 'T', 0, 1) }}
+            </span>
+            <div class="text-left">
+                <p class="text-xs font-black text-stone-800">{{ $post->author->name ?? __('Twina Safaris') }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                    {{ $post->published_at ? $post->published_at->format('F d, Y') : $post->created_at->format('F d, Y') }}
+                </p>
             </div>
         </div>
+
+        @if(!empty($post->tags))
+            <div class="flex flex-wrap justify-center gap-2 mt-6">
+                @foreach((array) $post->tags as $tag)
+                    <span class="px-2.5 py-1 rounded-full border border-[#e8dfcf] bg-[#fcfaf7] text-[#8A6D0B] text-[10px] font-bold uppercase tracking-wider">#{{ $tag }}</span>
+                @endforeach
+            </div>
+        @endif
     </header>
 
-    <style>
-        .article-body {
-            color: #292524;
-            font-size: 1.05rem;
-            line-height: 1.8;
-        }
-        .article-body p {
-            margin-bottom: 1.5rem;
-        }
-        .article-body h2 {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 1.85rem;
-            font-weight: 700;
-            color: #0d2818;
-            margin-top: 2.25rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #f1f0ea;
-        }
-        @media (min-width: 768px) {
-            .article-body h2 {
-                font-size: 2.25rem;
-            }
-        }
-        .article-body h3 {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0d2818;
-            margin-top: 1.75rem;
-            margin-bottom: 0.75rem;
-        }
-        .article-body ul, .article-body ol {
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-        .article-body ul {
-            list-style-type: disc;
-        }
-        .article-body ol {
-            list-style-type: decimal;
-        }
-        .article-body li {
-            margin-bottom: 0.5rem;
-        }
-        .article-body blockquote {
-            border-left: 4px solid #d4af37;
-            padding: 1rem 1.25rem;
-            margin: 1.5rem 0;
-            background-color: #fcfaf7;
-            font-style: italic;
-            color: #44403c;
-            border-radius: 0 0.75rem 0.75rem 0;
-        }
-        .article-body figure.image, .article-body figure, .article-body p img, .article-body img {
-            margin: 2rem auto;
-            max-width: 100%;
-            width: 100%;
-            display: block;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e7e5e4;
-            padding: 0.5rem;
-            background-color: #ffffff;
-        }
-        .article-body figure.image img,
-        .article-body p img,
-        .article-body img {
-            aspect-ratio: auto;
-            object-fit: cover;
-            border-radius: 1.125rem;
-            width: 100%;
-            height: auto;
-            max-height: 560px;
-        }
-        .article-body .article-quote {
-            border-left: 4px solid #d4af37;
-            background: #fcfaf7;
-            padding: 1.25rem 1.5rem;
-            margin: 2rem 0;
-            border-radius: 0 1rem 1rem 0;
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 1.35rem;
-            font-style: italic;
-            color: #44403c;
-        }
-        .article-body .article-quote footer {
-            margin-top: .75rem;
-            font-family: inherit;
-            font-size: .8rem;
-            font-style: normal;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .08em;
-            color: #a88210;
-        }
-        .article-body .article-callout {
-            background: linear-gradient(135deg, #fcfaf7, #f6eedb);
-            border: 1px solid #e8dfcf;
-            border-left: 4px solid #d4af37;
-            border-radius: 1rem;
-            padding: 1.25rem 1.5rem;
-            margin: 2rem 0;
-        }
-        .article-body .article-callout strong {
-            display: block;
-            font-size: .75rem;
-            text-transform: uppercase;
-            letter-spacing: .1em;
-            color: #a88210;
-            margin-bottom: .4rem;
-        }
-        .article-body .article-video {
-            margin: 2rem auto;
-            max-width: 720px;
-            text-align: center;
-        }
-        .article-body .article-video iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border: 0;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,.25);
-        }
-        .article-body .article-video p {
-            margin-top: .6rem;
-            font-size: .8rem;
-            color: #78716c;
-        }
-        .article-body figcaption {
-            margin-top: 0.625rem;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            color: #57534e;
-            font-style: italic;
-            text-align: center;
-            padding: 0 0.5rem 0.25rem 0.5rem;
-        }
-    </style>
+    {{-- 3. Centred 760px body --}}
+    <div class="max-w-[760px] mx-auto px-4 pb-16">
+        <div class="article-body" itemprop="articleBody">
+            {!! $post->translate('content') !!}
+        </div>
 
-    <div class="max-w-7xl mx-auto px-4 py-12 md:py-16">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            {{-- Content --}}
-            <div class="lg:col-span-8">
-                @if($post->excerpt)
-                <div class="text-lg md:text-xl text-stone-600 font-medium italic mb-8 pb-6 border-b border-stone-200 leading-relaxed font-serif-title">
-                    "{{ $post->translate('excerpt') ?: $post->excerpt }}"
-                </div>
-                @endif
-
-                <div class="article-body max-w-none text-stone-800 leading-relaxed" itemprop="articleBody">
-                    {!! $post->translate('content') !!}
-                </div>
-
-                {{-- Author & Share --}}
-                <div class="mt-16 pt-10 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-gold-100 flex items-center justify-center text-gold-600 font-bold font-display text-lg">
-                            {{ substr($post->author->name ?? 'T', 0, 1) }}
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ __('Published By') }}</p>
-                            <p class="font-bold text-gray-900">{{ $post->author->name ?? __('Twina Safaris') }}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ __('Share story') }}:</span>
-                        <div class="flex gap-2">
-                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank" class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#1877F2] hover:border-[#1877F2] transition-all">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12.073-12-12.073s-12 5.446-12 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                            </a>
-                            <a href="https://twitter.com/intent/tweet?url={{ url()->current() }}&text={{ urlencode($post->translate('title')) }}" target="_blank" class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:text-white hover:bg-black hover:border-black transition-all">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.25h-6.657l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+        {{-- Share --}}
+        <div class="mt-14 pt-8 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-5">
+            <span class="text-[11px] font-black uppercase tracking-widest text-stone-400">{{ __('Share this story') }}</span>
+            <div class="flex gap-2">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank" rel="noopener" aria-label="Share on Facebook" class="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:text-white hover:bg-[#1877F2] hover:border-[#1877F2] transition-all">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12.073-12-12.073s-12 5.446-12 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://twitter.com/intent/tweet?url={{ url()->current() }}&text={{ urlencode($post->translate('title')) }}" target="_blank" rel="noopener" aria-label="Share on X" class="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:text-white hover:bg-black hover:border-black transition-all">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.25h-6.657l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
             </div>
+        </div>
 
-            {{-- Sidebar --}}
-            <aside class="lg:col-span-4 space-y-12">
-                <div class="bg-safari-dark rounded-[2.5rem] p-10 text-white text-center relative overflow-hidden shadow-2xl">
-                    <div class="relative z-10">
-                        <h3 class="font-display text-3xl font-bold mb-4">{{ __('Ready for Adventure?') }}</h3>
-                        <p class="text-white/60 mb-10 leading-relaxed text-sm">{{ __('We can customize a safari experience based on the insights in this article.') }}</p>
-                        <a href="{{ route('custom-safari.create') }}" class="btn-gold w-full block py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg">{{ __('Start Planning') }}</a>
-                    </div>
-                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-gold-500/10 rounded-full blur-3xl"></div>
-                </div>
+        {{-- End-of-article CTA box --}}
+        <div class="article-cta mt-12">
+            <h3>{{ __('Ready for Adventure?') }}</h3>
+            <p>{{ __('Let our local experts plan the safari you have been dreaming about.') }}</p>
+            <a class="btn-gold" href="{{ route('tours.index') }}">{{ __('Explore Our Safaris') }}</a>
+        </div>
 
-                @if(isset($relatedPosts) && $relatedPosts->count() > 0)
-                <div>
-                    <h3 class="font-display text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-                        {{ __('More to Read') }}
-                        <div class="h-px flex-1 bg-gray-100"></div>
-                    </h3>
-                    <div class="space-y-8">
-                        @foreach($relatedPosts as $rel)
-                        <a href="{{ route('blog.show', $rel->slug) }}" class="flex gap-5 group">
-                            <div class="w-24 h-24 shrink-0 rounded-2xl overflow-hidden shadow-sm">
-                                <img src="{{ $rel->featured_image_url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ $rel->translate('title') }}" loading="lazy">
-                            </div>
-                            <div class="flex flex-col justify-center">
-                                <h4 class="font-bold text-gray-900 text-sm leading-tight group-hover:text-gold-600 transition-colors line-clamp-2 mb-1">{{ $rel->translate('title') }}</h4>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ $rel->published_at ? $rel->published_at->format('M d, Y') : '' }}</span>
-                            </div>
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
-            </aside>
+        {{-- Author box --}}
+        <div class="mt-10 rounded-[1.5rem] border border-[#e8dfcf] bg-[#fcfaf7] p-6 md:p-8 flex flex-col sm:flex-row items-center gap-5">
+            <div class="w-16 h-16 shrink-0 rounded-full bg-[#f6eedb] text-[#8A6D0B] font-black flex items-center justify-center font-display text-2xl">
+                {{ substr($post->author->name ?? 'T', 0, 1) }}
+            </div>
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-[#8A6D0B] mb-1">{{ __('Written by') }}</p>
+                <p class="font-display text-xl font-bold text-[#0d2818]">{{ $post->author->name ?? __('Twina Safaris') }}</p>
+                <p class="text-xs text-stone-500 mt-1">{{ __('Safari experts sharing real stories from the heart of Tanzania.') }}</p>
+            </div>
         </div>
     </div>
+
+    {{-- 4. More to Read --}}
+    @if(isset($relatedPosts) && $relatedPosts->count() > 0)
+        <section class="bg-[#fcfaf7] py-16 border-t border-stone-200">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex items-center gap-4 mb-9">
+                    <h2 class="font-display text-3xl font-bold text-[#0d2818]">{{ __('More to Read') }}</h2>
+                    <div class="h-px flex-1 bg-stone-200"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+                    @foreach($relatedPosts as $rel)
+                        <a href="{{ route('blog.show', $rel->slug) }}" class="group bg-white rounded-[1.5rem] overflow-hidden border border-[#e8dfcf] hover:border-[#D4AF37]/60 hover:shadow-xl transition-all duration-300">
+                            <div class="overflow-hidden bg-stone-900">
+                                <img src="{{ $rel->featured_image_url }}"
+                                     alt="{{ $rel->translate('title') }}"
+                                     class="more-read-image w-full group-hover:scale-105 transition-transform duration-700"
+                                     loading="lazy" decoding="async">
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-display text-lg font-bold text-stone-900 leading-snug group-hover:text-[#8A6D0B] transition-colors line-clamp-2">
+                                    {{ $rel->translate('title') }}
+                                </h3>
+                                <p class="mt-3 text-[10px] font-black uppercase tracking-widest text-stone-400">
+                                    {{ $rel->published_at ? $rel->published_at->format('M d, Y') : '' }}
+                                </p>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
 </article>
+
+<script>
+    // Older articles may contain images without a caption, lazy loading or alt text.
+    // The 3:2 crop itself is handled by the one global CSS rule in the site layout.
+    document.querySelectorAll('.article-body img').forEach(function (img) {
+        if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+        if (!img.hasAttribute('alt')) img.setAttribute('alt', @js($post->translate('title')));
+
+        var figure = img.closest('figure');
+        if (!figure) {
+            figure = document.createElement('figure');
+            img.parentNode.insertBefore(figure, img);
+            figure.appendChild(img);
+        }
+        if (!figure.querySelector('figcaption')) {
+            var caption = document.createElement('figcaption');
+            caption.textContent = img.getAttribute('alt') || @js($post->translate('title'));
+            figure.appendChild(caption);
+        }
+    });
+</script>
 
 {{-- Newsletter Section --}}
 <section class="bg-[#fcfaf7] py-24 border-t border-gray-100">

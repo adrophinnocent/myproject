@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\ImageManager;
 
 class BlogController extends Controller
 {
@@ -35,6 +39,7 @@ class BlogController extends Controller
             'category_id' => 'required|exists:blog_categories,id',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
+            'hero_caption' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:320',
             'tags' => 'nullable|string|max:500',
@@ -48,6 +53,7 @@ class BlogController extends Controller
         $post->category_id = $request->category_id;
         $post->content = $this->processContentImages($request->content);
         $post->excerpt = $request->excerpt;
+        $post->hero_caption = $request->hero_caption;
         $post->meta_title = $request->meta_title;
         $post->meta_description = $request->meta_description;
         $post->tags = $this->parseTags($request->tags);
@@ -56,7 +62,7 @@ class BlogController extends Controller
         $post->published_at = $post->is_published ? now() : null;
 
         if ($request->hasFile('featured_image')) {
-            $post->featured_image = $request->file('featured_image')->store('blog', 'public');
+            $post->featured_image = $this->storeCoverPhoto($request->file('featured_image'));
         }
 
         $post->save();
@@ -79,6 +85,7 @@ class BlogController extends Controller
             'category_id' => 'required|exists:blog_categories,id',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
+            'hero_caption' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:320',
             'tags' => 'nullable|string|max:500',
@@ -92,6 +99,7 @@ class BlogController extends Controller
         $blog->category_id = $request->category_id;
         $blog->content = $this->processContentImages($request->content);
         $blog->excerpt = $request->excerpt;
+        $blog->hero_caption = $request->hero_caption;
         $blog->meta_title = $request->meta_title;
         $blog->meta_description = $request->meta_description;
         $blog->tags = $this->parseTags($request->tags);
@@ -105,7 +113,7 @@ class BlogController extends Controller
             if ($blog->featured_image) {
                 Storage::disk('public')->delete($blog->featured_image);
             }
-            $blog->featured_image = $request->file('featured_image')->store('blog', 'public');
+            $blog->featured_image = $this->storeCoverPhoto($request->file('featured_image'));
         }
 
         $blog->save();
@@ -139,8 +147,9 @@ class BlogController extends Controller
     }
 
     /**
-     * Upload an inline article image. Stored separately from the featured
-     * image so gallery/photo blocks stay organized and reusable.
+     * Upload an inline article image. Every inline photo is cropped to the
+     * site-wide 3:2 ratio (1200x800) and compressed to WebP so editors never
+     * have to think about dimensions.
      */
     public function uploadImage(Request $request)
     {
@@ -148,12 +157,47 @@ class BlogController extends Controller
             'image' => 'required|image|max:5120',
         ]);
 
-        $path = $validated['image']->store('blog/content', 'public');
+        $path = $this->storeInlinePhoto($validated['image']);
 
         return response()->json([
             'success' => true,
             'url' => Storage::disk('public')->url($path),
+            'width' => 1200,
+            'height' => 800,
         ]);
+    }
+
+    /**
+     * Hero/cover image: at least 1600px wide, kept in its natural aspect
+     * ratio because the template crops it to 3:2 with CSS.
+     */
+    private function storeCoverPhoto(UploadedFile $file): string
+    {
+        return $this->storeOptimizedPhoto($file, 'blog/cover', 1600, null);
+    }
+
+    private function storeInlinePhoto(UploadedFile $file): string
+    {
+        return $this->storeOptimizedPhoto($file, 'blog/content', 1200, 800);
+    }
+
+    private function storeOptimizedPhoto(UploadedFile $file, string $directory, int $width, ?int $height): string
+    {
+        $manager = new ImageManager(new Driver);
+        $image = $manager->decodePath($file->getPathname());
+
+        if ($height !== null) {
+            $image->cover($width, $height);
+        } else {
+            $image->scale(width: $width);
+        }
+
+        $filename = Str::lower(Str::random(20)).'.webp';
+        $path = $directory.'/'.$filename;
+
+        Storage::disk('public')->put($path, $image->encode(new WebpEncoder(quality: 80))->toString());
+
+        return $path;
     }
 
     private function parseTags(?string $tags): array
