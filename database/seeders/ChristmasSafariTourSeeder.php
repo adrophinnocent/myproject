@@ -21,52 +21,63 @@ class ChristmasSafariTourSeeder extends Seeder
 
     public function run(): void
     {
-        // Never overwrite an editor's tour. Only make sure the bookable package exists.
-        $existing = Tour::withTrashed()->where('slug', self::SLUG)->first();
-        if ($existing) {
-            $this->ensurePackage($existing);
-
-            return;
-        }
-
         $category = Category::firstOrCreate(
             ['slug' => 'safari'],
             ['name' => 'Safari', 'is_active' => true]
         );
 
         $destination = Destination::firstOrCreate(
-            ['slug' => 'serengeti'],
-            ['name' => 'Serengeti National Park', 'is_active' => true, 'is_featured' => true]
+            ['slug' => 'ngorongoro'],
+            ['name' => 'Ngorongoro Crater', 'is_active' => true, 'is_featured' => true]
         );
 
+        // Always (re)produce the same compressed images so the gallery and hero
+        // stay correct after a fresh deployment.
         $source = database_path('seeders/data/blog/christmas-safari');
+        $this->storePhoto($source.'/hero.webp', 1600);
+        $this->storePhoto($source.'/serengeti.webp', 1200, 800);
+        $this->storePhoto($source.'/ngorongoro.webp', 1200, 800);
+        $this->storePhoto($source.'/festive.jpg', 1200, 800);
 
-        $hero = $this->storePhoto($source.'/hero.webp', 1600);
-        $serengeti = $this->storePhoto($source.'/serengeti.webp', 1200, 800);
-        $ngorongoro = $this->storePhoto($source.'/ngorongoro.webp', 1200, 800);
-        $festive = $this->storePhoto($source.'/festive.jpg', 1200, 800);
+        $tourData = $this->tourData($category->id, $destination->id);
 
-        $tour = Tour::create([
+        $tour = Tour::withTrashed()->where('slug', self::SLUG)->first();
+
+        if ($tour) {
+            // This is our own seeded record; bring it up to date without
+            // changing its id, slug, creation date or view count.
+            $tour->update($tourData);
+        } else {
+            $tour = Tour::create($tourData);
+        }
+
+        $this->syncGallery($tour);
+        $this->ensurePackage($tour);
+    }
+
+    private function tourData(int $categoryId, int $destinationId): array
+    {
+        return [
             'title' => 'Christmas & New Year Safari in Tanzania 2026/2027',
             'slug' => self::SLUG,
-            'category_id' => $category->id,
-            'destination_id' => $destination->id,
-            'short_description' => 'Celebrate the festive season on the southern Serengeti plains with green landscapes, migrating herds and a special dinner at camp. Seven days from Arusha to Ndutu, Ngorongoro and Tarangire.',
+            'category_id' => $categoryId,
+            'destination_id' => $destinationId,
+            'short_description' => 'A festive three-day Arusha, Lake Manyara & Ngorongoro safari for Christmas and New Year 2026/2027, with five accommodation levels from $1,185 and private 4x4 guiding.',
             'description' => $this->description(),
             'highlights' => $this->highlights(),
-            'price' => 6450,
-            'child_price' => 4520,
-            'group_discount' => 350,
+            'price' => 1185,
+            'child_price' => 830,
+            'group_discount' => 0,
             'deposit_percent' => 30,
             'currency' => 'USD',
-            'price_note' => 'Per person, based on two travelers. Festive supplements may apply; single supplement $1,250.',
-            'duration_days' => 7,
-            'duration_nights' => 6,
+            'price_note' => 'Per person, based on two travelers. Choose your accommodation level below.',
+            'duration_days' => 3,
+            'duration_nights' => 2,
             'group_size_min' => 2,
             'group_size_max' => 8,
             'difficulty_level' => 'Easy',
             'tour_type' => 'safari',
-            'accommodation_type' => 'Safari lodge & tented camp',
+            'accommodation_type' => 'Lodge & tented camp',
             'transport_type' => 'Private 4x4 Land Cruiser',
             'departure_location' => 'Arusha / Kilimanjaro International Airport',
             'departure_time' => '08:30',
@@ -76,10 +87,10 @@ class ChristmasSafariTourSeeder extends Seeder
             'transport_included' => true,
             'assigned_guide' => 'Professional English/Swahili safari guide',
             'languages_offered' => ['English', 'Swahili'],
-            'special_notes' => 'The exact position of the wildebeest herds follows the rains. Your guide will adjust each day to give you the best chance of finding them.',
+            'special_notes' => 'This short northern route focuses on the resident wildlife of Lake Manyara and Ngorongoro; the Great Migration is not part of this itinerary.',
             'available_slots' => 8,
-            'seasonal_tag' => 'Festive 2026/2027',
-            'availability_notes' => 'Festive departures between 20 December 2026 and 5 January 2027. Christmas Day and New Year departures available on request. Limited to 8 travelers.',
+            'seasonal_tag' => 'Festive 3-Day 2026/2027',
+            'availability_notes' => 'Festive departures between 20 December 2026 and 5 January 2027. Five accommodation levels available. Limited space in peak season.',
             'booking_deadline_days' => 30,
             'min_age' => 5,
             'max_age' => 75,
@@ -91,31 +102,32 @@ class ChristmasSafariTourSeeder extends Seeder
             'good_to_know' => $this->goodToKnow(),
             'extras' => $this->extras(),
             'accommodation_options' => $this->accommodationOptions(),
-            'featured_image' => $hero,
-            'meta_title' => 'Christmas & New Year Safari Tanzania 2026/2027 | Twina Safaris',
-            'meta_description' => 'Join our 7-day Christmas and New Year safari in Tanzania: southern Serengeti, Ndutu, Ngorongoro Crater and Tarangire, with a festive camp dinner and expert guides.',
-            'meta_keywords' => 'Christmas safari Tanzania, New Year safari Tanzania, festive safari 2026, Serengeti December, Ndutu migration, Ngorongoro Crater, Tarangire, family safari, Twina Safaris',
+            'featured_image' => self::IMAGE_DIR.'/hero.webp',
+            'meta_title' => 'Christmas & New Year Safari Tanzania 2026/2027 | 3 Days | Twina Safaris',
+            'meta_description' => 'Christmas & New Year 3-day safari from Arusha to Lake Manyara and Ngorongoro Crater. Five accommodation levels from $1,185. Festive departures 2026/2027 with Twina Safaris.',
+            'meta_keywords' => '3 day Christmas safari Tanzania, New Year safari Tanzania, Arusha Lake Manyara Ngorongoro, Christmas safari 2026, festive safari 2027, Ngorongoro Christmas tour, Lake Manyara festive safari, affordable Tanzania safari, luxury festive safari, family Christmas safari, short safari Tanzania, Twina Safaris',
             'is_published' => true,
             'is_featured' => true,
             'is_new' => true,
             'limited_offer' => true,
             'sort_order' => 1,
-        ]);
+        ];
+    }
 
+    private function syncGallery(Tour $tour): void
+    {
         $gallery = [
-            ['path' => $serengeti, 'alt' => 'Wildebeest herds spread across the southern Serengeti plains', 'order' => 1],
-            ['path' => $ngorongoro, 'alt' => 'The floor of Ngorongoro Crater', 'order' => 2],
-            ['path' => $festive, 'alt' => 'A festive evening at a safari camp', 'order' => 3],
+            ['path' => self::IMAGE_DIR.'/serengeti.webp', 'alt' => 'Wildlife and birdlife along the Lake Manyara and Ngorongoro route', 'order' => 1],
+            ['path' => self::IMAGE_DIR.'/ngorongoro.webp', 'alt' => 'Ngorongoro Crater floor', 'order' => 2],
+            ['path' => self::IMAGE_DIR.'/festive.webp', 'alt' => 'A festive evening at a safari camp', 'order' => 3],
         ];
 
         foreach ($gallery as $item) {
-            TourImage::firstOrCreate(
+            TourImage::updateOrCreate(
                 ['tour_id' => $tour->id, 'image_path' => $item['path']],
                 ['alt_text' => $item['alt'], 'sort_order' => $item['order'], 'is_primary' => false]
             );
         }
-
-        $this->ensurePackage($tour);
     }
 
     private function storePhoto(string $source, int $width, ?int $height = null): string
@@ -128,63 +140,83 @@ class ChristmasSafariTourSeeder extends Seeder
             $image->scale(width: $width);
         }
 
-        $path = self::IMAGE_DIR.'/'.basename($source, pathinfo($source, PATHINFO_EXTENSION) === 'jpg' ? '.jpg' : '.webp').'.webp';
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        $path = self::IMAGE_DIR.'/'.basename($source, '.'.$extension).'.webp';
+
         Storage::disk('public')->put(
             $path,
             $image->encode(new WebpEncoder(quality: 80))->toString()
         );
 
-        // Stored relative so the public URL stays valid if the domain changes.
+        // Relative path keeps the public URL valid if the domain changes.
         return $path;
     }
 
     private function ensurePackage(Tour $tour): void
     {
-        TourPackage::firstOrCreate(
-            ['tour_id' => $tour->id, 'name' => 'Christmas & New Year Safari – Classic Package'],
-            [
-                'slug' => 'christmas-new-year-safari-classic-2026-2027',
-                'description' => 'Our classic festive package: 6 nights in safari lodges and tented camps, a private 4x4 vehicle, all park fees and a special festive dinner at camp.',
-                'selling_price' => 6450,
-                'adult_price' => 6450,
-                'child_price' => 4520,
-                'single_supplement' => 1250,
-                'deposit_percentage' => 30.00,
-                'currency' => 'USD',
-                'images' => [],
-                'sort_order' => 1,
-                'is_active' => true,
-                'supplier_hotel_cost' => 0,
-                'park_fees_cost' => 0,
-                'transport_cost' => 0,
-                'guide_cost' => 0,
-                'meals_cost' => 0,
-                'transfers_cost' => 0,
-                'other_costs' => 0,
-            ]
-        );
+        $data = [
+            'name' => 'Christmas & New Year Safari – Classic Package',
+            'slug' => 'christmas-new-year-safari-classic-2026-2027',
+            'description' => 'Our classic festive package: two nights in carefully selected lodges, a private 4x4 vehicle, all park fees and a relaxed Christmas or New Year dinner at camp.',
+            'selling_price' => 1185,
+            'adult_price' => 1185,
+            'child_price' => 830,
+            'single_supplement' => 0,
+            'deposit_percentage' => 30.00,
+            'currency' => 'USD',
+            'images' => [],
+            'sort_order' => 1,
+            'is_active' => true,
+            'supplier_hotel_cost' => 0,
+            'park_fees_cost' => 0,
+            'transport_cost' => 0,
+            'guide_cost' => 0,
+            'meals_cost' => 0,
+            'transfers_cost' => 0,
+            'other_costs' => 0,
+        ];
+
+        $existing = TourPackage::where('tour_id', $tour->id)
+            ->where(function ($query) {
+                $query->where('name', 'like', 'Christmas%')
+                    ->orWhere('slug', 'like', 'christmas%');
+            })
+            ->orderBy('id')
+            ->get();
+
+        $package = $existing->shift();
+
+        if ($package) {
+            $package->update($data);
+        } else {
+            $package = TourPackage::create(array_merge(['tour_id' => $tour->id], $data));
+        }
+
+        // Remove stale duplicates left by an earlier version of this seeder.
+        foreach ($existing as $duplicate) {
+            $duplicate->delete();
+        }
     }
 
     private function description(): string
     {
         return <<<'HTML'
-<p>Trade the usual holiday routine for lion cubs, endless plains and a sundowner under the African sky. This seven-day festive safari takes you from Arusha through Tarangire, Lake Manyara and the Ngorongoro Crater to the southern Serengeti and Ndutu, where the migration herds gather in December and the calving season begins in January.</p>
-<p>Christmas 2026 falls on a Friday, and so does New Year’s Day 2027. The short rains have turned the landscape green, wildlife is spread across the plains, and the camps are ready for a relaxed, family-friendly celebration. Days are spent on game drives with an expert guide; evenings are spent around the fire, with a special festive dinner arranged by the camp.</p>
-<p>We keep the pace comfortable, use a private 4x4 vehicle, and tailor each day to the wildlife reports. If you want to finish on the beach, we can add a Zanzibar extension after your last game drive.</p>
+<p>Make this Christmas and New Year unforgettable with a compact three-day safari from Arusha to Lake Manyara and the Ngorongoro Crater. Designed for travelers who want big wildlife moments without a long expedition, this festive escape combines flamingo-lined lakes, tree-climbing lions and the Big Five on the Crater floor.</p>
+<p>Arrive in Arusha for Christmas 2026 or New Year 2027, settle into one of five carefully chosen accommodation levels, and let your Twina Safaris guide handle every detail. The short rains leave the landscapes green, the holiday mood is everywhere, and each day ends with a relaxed dinner under the African sky.</p>
+<p>Choose the level that suits you: Charity Hotel with Omega View Lodge at $1,185, Summit Lodge with Olea Farm Lodge at $1,283, Kibo Palace Hotel with Heart and Soul Lodge at $1,370, Arusha Serena with Manyara Serena Safari Lodge at $1,603, or Gran Meliá Arusha with Manyara Best View Hotel at $1,925. Every option includes a private 4x4 safari vehicle, expert guiding, park fees and festive service.</p>
+<p>This is one of the most searched short festive safaris in Tanzania: a genuine Christmas safari, a New Year wildlife break, a Lake Manyara birdwatching trip and a Ngorongoro Crater game drive in one smooth three-day plan. Book early — festive lodges fill quickly in December and January.</p>
 HTML;
     }
 
     private function highlights(): array
     {
         return [
-            'Seven days across Tarangire, Lake Manyara, Ngorongoro and the southern Serengeti',
-            'Christmas and New Year dinner at a safari camp',
-            'Sunrise and sunset game drives on the Ndutu plains',
-            'Great Migration herds arriving in the south',
-            'Full day inside the wildlife-rich Ngorongoro Crater',
-            'Private 4x4 vehicle with a professional English/Swahili guide',
-            'Green, photogenic landscapes after the short rains',
-            'Optional Zanzibar beach extension',
+            'Three-day festive safari from Arusha',
+            'Lake Manyara flamingos and tree-climbing lions',
+            'Ngorongoro Crater Big Five game drive',
+            'Five accommodation levels from budget to luxury',
+            'Christmas and New Year dinner in the wild',
+            'Private 4x4 vehicle with an expert local guide',
         ];
     }
 
@@ -192,53 +224,25 @@ HTML;
     {
         return [
             1 => [
-                'title' => 'Arrival in Arusha & Safari Briefing',
-                'description' => 'Arrive at Kilimanjaro International Airport. Your Twina Safaris guide meets you and transfers you to your hotel in Arusha. Relax, meet your fellow travelers and go through the route, packing and safety briefing before a relaxed dinner.',
-                'accommodation' => 'Arusha lodge',
+                'title' => 'Arrival in Arusha & Festive Welcome',
+                'description' => 'Arrive at Kilimanjaro International Airport. Your Twina Safaris guide meets you and transfers you to your Arusha hotel for the first night. Briefing, pack check and a relaxed welcome dinner to start the festive safari.',
+                'accommodation' => 'Arusha hotel — choose your level below',
                 'meals' => 'Dinner',
                 'activities' => ['Airport pickup', 'Safari briefing', 'Welcome dinner'],
             ],
             2 => [
-                'title' => 'Tarangire National Park',
-                'description' => 'Drive to Tarangire, famous for its large elephant herds and ancient baobab trees. Enjoy a full day of game drives, with a picnic lunch under the shade and excellent birdwatching along the river.',
-                'accommodation' => 'Tarangire lodge or tented camp',
+                'title' => 'Lake Manyara Game Drive & Transfer to Ngorongoro',
+                'description' => 'Drive to Lake Manyara National Park for a morning game drive. Look for flamingos, hippos, baboons and the famous tree-climbing lions. After lunch, continue through the Rift Valley to your lodge near the Ngorongoro highlands.',
+                'accommodation' => 'Lake Manyara / Ngorongoro lodge — choose your level below',
                 'meals' => 'Breakfast, Lunch, Dinner',
-                'activities' => ['Elephant viewing', 'Baobab landscapes', 'Birdwatching'],
+                'activities' => ['Lake Manyara game drive', 'Birdwatching', 'Rift Valley transfer'],
             ],
             3 => [
-                'title' => 'Lake Manyara or Cultural Visit en Route to Ngorongoro',
-                'description' => 'Choose a morning game drive in Lake Manyara National Park, known for its tree-climbing lions and flamingos, or a local cultural visit. Continue to the Ngorongoro highlands for the night.',
-                'accommodation' => 'Ngorongoro highland lodge',
-                'meals' => 'Breakfast, Lunch, Dinner',
-                'activities' => ['Lake Manyara game drive', 'Cultural visit', 'Scenic transfer'],
-            ],
-            4 => [
-                'title' => 'Full Day in Ngorongoro Crater',
-                'description' => 'Descend early into the Crater for a full-day game drive on the floor, one of the best places in Africa to see the Big Five in a single morning. Picnic lunch at the crater, then climb back to the highlands.',
-                'accommodation' => 'Ngorongoro highland lodge',
-                'meals' => 'Breakfast, Lunch, Dinner',
-                'activities' => ['Crater game drive', 'Big Five sightings', 'Picnic lunch'],
-            ],
-            5 => [
-                'title' => 'Into the Southern Serengeti & Ndutu',
-                'description' => 'Travel across the plains to Ndutu in the southern Serengeti. The landscape is green after the short rains and the migration herds are usually arriving. Afternoon game drive on the way to camp.',
-                'accommodation' => 'Ndutu tented camp',
-                'meals' => 'Breakfast, Lunch, Dinner',
-                'activities' => ['Scenic drive', 'Migration tracking', 'Sunset game drive'],
-            ],
-            6 => [
-                'title' => 'Festive Plains Day & Dinner at Camp',
-                'description' => 'A full day in the southern Serengeti with an early sunrise game drive, a relaxed midday break and a sunset game drive. In the evening, enjoy a special festive dinner at camp with your guide and fellow travelers.',
-                'accommodation' => 'Ndutu tented camp',
-                'meals' => 'Breakfast, Lunch, Dinner',
-                'activities' => ['Sunrise game drive', 'Wildlife photography', 'Festive camp dinner'],
-            ],
-            7 => [
-                'title' => 'Return to Arusha or Fly to Zanzibar',
-                'description' => 'One last short drive if time allows, then transfer to Arusha or Kilimanjaro airport for your onward flight. Prefer to keep celebrating? Extend with a three-night Zanzibar beach stay.',
-                'accommodation' => 'Departure / optional Zanzibar extension',
+                'title' => 'Ngorongoro Crater & Return to Arusha',
+                'description' => 'Descend early into the Ngorongoro Crater for a game drive on the floor, home to lions, elephants, buffalo, rhino and leopard. Picnic lunch, then return to Arusha or Kilimanjaro airport for your onward flight.',
+                'accommodation' => 'Departure / Arusha airport',
                 'meals' => 'Breakfast, Lunch',
-                'activities' => ['Final game drive', 'Airport transfer', 'Zanzibar extension'],
+                'activities' => ['Crater game drive', 'Big Five sightings', 'Airport transfer'],
             ],
         ];
     }
@@ -247,15 +251,14 @@ HTML;
     {
         return [
             'Airport pickup and all ground transfers',
-            '6 nights in safari lodges and tented camps',
+            '2 nights in selected lodge or hotel',
             'Private 4x4 Land Cruiser with pop-up roof',
             'Professional English/Swahili safari guide',
-            'All national park and Ngorongoro Crater fees',
-            'Daily game drives as per the itinerary',
-            '6 breakfasts, 6 lunches and 6 dinners',
-            'Bottled drinking water and tea/coffee on game drives',
-            'Special festive dinner at camp, subject to lodge programme',
-            'Pre-departure planning support from Twina Safaris',
+            'Lake Manyara and Ngorongoro Crater fees',
+            'Game drives as per the itinerary',
+            '2 breakfasts, 2 lunches and 2 dinners',
+            'Bottled drinking water on game drives',
+            'Festive dinner arrangement at camp, subject to lodge programme',
         ];
     }
 
@@ -264,10 +267,9 @@ HTML;
         return [
             'International and domestic flights',
             'Tanzania visa fees and travel insurance',
-            'Tips and gratuities for guides and camp staff',
+            'Tips and gratuities for guides and lodge staff',
             'Personal expenses, soft drinks and alcohol',
-            'Optional hot-air balloon safari in the Serengeti',
-            'Zanzibar beach extension and extra nights',
+            'Optional extra nights or Zanzibar extension',
             'Festive supplements charged by lodges where applicable',
         ];
     }
@@ -276,24 +278,24 @@ HTML;
     {
         return [
             [
-                'question' => 'Is December a good time for a safari in Tanzania?',
-                'answer' => 'Yes. The landscapes are green after the short rains, wildlife is plentiful and the migration herds are typically arriving on the southern Serengeti plains.',
+                'question' => 'Is a three-day safari enough for Christmas?',
+                'answer' => 'Yes. This short festive route covers two of northern Tanzania’s best wildlife areas — Lake Manyara and the Ngorongoro Crater — with comfortable pacing and two nights away from the holiday rush.',
             ],
             [
-                'question' => 'Will we see the Great Migration at Christmas?',
-                'answer' => 'The herds are usually arriving around Ndutu and the southern plains at Christmas. Their exact position follows the rains, so no one can guarantee a sighting, but this is one of the best regions to be at that time.',
+                'question' => 'Will we see the Great Migration?',
+                'answer' => 'Not on this itinerary. The migration is in the southern Serengeti and Ndutu at this time. This three-day trip focuses on resident wildlife, birdlife and the Big Five in the Ngorongoro Crater.',
             ],
             [
-                'question' => 'When is calving season?',
-                'answer' => 'Calving begins in January, peaks from mid-January to the end of February and continues into March. A New Year trip that stretches into January gives you the best chance of seeing newborn calves.',
+                'question' => 'How do I choose an accommodation level?',
+                'answer' => 'Pick the level that fits your budget and style. Prices range from $1,185 with Charity Hotel and Omega View Lodge to $1,925 with Gran Meliá Arusha and Manyara Best View Hotel. All levels include the same safari service.',
             ],
             [
                 'question' => 'How do I pay for this festive safari?',
-                'answer' => 'A 30% deposit secures your place and the balance is due 65 days before departure. Because festive camps fill early, we recommend booking as soon as your dates are confirmed.',
+                'answer' => 'A 30% deposit secures your place and the balance is due 65 days before departure. Because festive lodges fill early, we recommend booking as soon as your dates are confirmed.',
             ],
             [
                 'question' => 'Is this safari suitable for children?',
-                'answer' => 'Yes. We use a private vehicle, keep drive days comfortable and can arrange family rooms and child-friendly activities. Minimum age is five, with younger children considered on request.',
+                'answer' => 'Yes. We use a private vehicle and keep the days comfortable. Minimum age is five, with younger children considered on request.',
             ],
         ];
     }
@@ -301,27 +303,24 @@ HTML;
     private function packingList(): array
     {
         return [
-            'Binoculars and a camera with a zoom lens',
-            'Power bank and spare batteries',
             'Light layers for warm days',
-            'Warm fleece for cool early mornings',
+            'Warm fleece for cool Ngorongoro mornings',
             'Lightweight rain jacket',
-            'Personal medications and a small first-aid kit',
+            'Binoculars and a camera',
+            'Personal medications',
             'Insect repellent and sunscreen',
             'Reusable water bottle',
-            'Travel insurance documents',
-            'Passport and visa documents',
+            'Passport, visa and insurance documents',
         ];
     }
 
     private function goodToKnow(): array
     {
         return [
-            'The herds move with the rains, so your guide may change the route to follow fresh wildlife reports.',
-            'Christmas and New Year is peak season; good camps around Ndutu fill months ahead.',
-            'Afternoon showers are normal in December and January. They usually clear quickly and leave the plains green.',
+            'This is a short, comfortable safari — packed but not rushed.',
+            'The Ngorongoro rim is much cooler than Arusha, especially at sunrise.',
+            'Christmas and New Year is peak season; the best lodges fill months ahead.',
             'A 30% deposit secures your place; the balance is due 65 days before departure.',
-            'A Zanzibar beach extension can be added before or after the safari.',
         ];
     }
 
@@ -329,21 +328,21 @@ HTML;
     {
         return [
             [
+                'name' => 'Extra night in Arusha',
+                'description' => 'Arrive a day early or depart a day later with an extra comfortable night in Arusha.',
+                'price' => 180,
+                'price_type' => 'per_person',
+            ],
+            [
                 'name' => 'Zanzibar beach extension (3 nights)',
                 'description' => 'Finish your festive trip on the white sands of Zanzibar with flights, transfers and beach accommodation included.',
                 'price' => 850,
                 'price_type' => 'per_person',
             ],
             [
-                'name' => 'Serengeti hot-air balloon safari',
-                'description' => 'Sunrise balloon flight over the plains with a champagne breakfast after landing.',
-                'price' => 620,
-                'price_type' => 'per_person',
-            ],
-            [
                 'name' => 'Private vehicle upgrade',
                 'description' => 'Extra space and privacy for families or small groups travelling together.',
-                'price' => 450,
+                'price' => 250,
                 'price_type' => 'per_person',
             ],
         ];
@@ -351,60 +350,32 @@ HTML;
 
     private function accommodationOptions(): array
     {
-        $galleryImage = '/storage/'.self::IMAGE_DIR.'/serengeti.webp';
-
-        return [
-            [
-                'id' => 'acc_festive_standard',
-                'name' => 'Standard Camp & Lodge',
-                'price' => 6450,
-                'hotels' => [
-                    'day_0' => 'Arusha Planet Lodge',
-                    'day_1' => 'Tarangire Safari Lodge',
-                    'day_2' => 'Ngorongoro Highland Lodge',
-                    'day_3' => 'Ngorongoro Highland Lodge',
-                    'day_4' => 'Ndutu Safari Lodge',
-                    'day_5' => 'Ndutu Safari Lodge',
-                    'day_6' => 'Departure / Arusha',
-                ],
-                'image' => $galleryImage,
-                'is_active' => true,
-                'is_default' => true,
-            ],
-            [
-                'id' => 'acc_festive_comfort',
-                'name' => 'Comfort Lodge',
-                'price' => 7850,
-                'hotels' => [
-                    'day_0' => 'Kibo Palace Hotel',
-                    'day_1' => 'Maramboi Tented Lodge',
-                    'day_2' => 'Ang’ata Ngorongoro Camp',
-                    'day_3' => 'Ang’ata Ngorongoro Camp',
-                    'day_4' => 'Ndutu Kati Camp',
-                    'day_5' => 'Ndutu Kati Camp',
-                    'day_6' => 'Departure / Arusha',
-                ],
-                'image' => $galleryImage,
-                'is_active' => true,
-                'is_default' => false,
-            ],
-            [
-                'id' => 'acc_festive_luxury',
-                'name' => 'Luxury Tented Camp',
-                'price' => 10250,
-                'hotels' => [
-                    'day_0' => 'Gran Meliá Arusha',
-                    'day_1' => 'Tarangire Treetops',
-                    'day_2' => 'Ngorongoro Serena Safari Lodge',
-                    'day_3' => 'Ngorongoro Serena Safari Lodge',
-                    'day_4' => 'Serengeti Migration Camp',
-                    'day_5' => 'Serengeti Migration Camp',
-                    'day_6' => 'Departure / Arusha',
-                ],
-                'image' => $galleryImage,
-                'is_active' => true,
-                'is_default' => false,
-            ],
+        $levels = [
+            ['name' => 'Bei nafuu zaidi', 'price' => 1185, 'arusha' => 'Charity Hotel, Arusha', 'second' => 'Omega View Lodge'],
+            ['name' => 'Cha kati', 'price' => 1283, 'arusha' => 'Summit Lodge', 'second' => 'Olea Farm Lodge'],
+            ['name' => 'Cha kati juu', 'price' => 1370, 'arusha' => 'Kibo Palace Hotel', 'second' => 'Heart and Soul Lodge'],
+            ['name' => 'Hadhi ya juu', 'price' => 1603, 'arusha' => 'Arusha Serena', 'second' => 'Manyara Serena Safari Lodge'],
+            ['name' => 'Anasa zaidi', 'price' => 1925, 'arusha' => 'Gran Melia Arusha', 'second' => 'Manyara Best View Hotel'],
         ];
+
+        $options = [];
+
+        foreach ($levels as $index => $level) {
+            $options[] = [
+                'id' => 'acc_festive_'.($index + 1),
+                'name' => $level['name'],
+                'price' => $level['price'],
+                'hotels' => [
+                    'day_0' => $level['arusha'],
+                    'day_1' => $level['arusha'],
+                    'day_2' => $level['second'],
+                ],
+                'image' => '/storage/'.self::IMAGE_DIR.'/ngorongoro.webp',
+                'is_active' => true,
+                'is_default' => $index === 0,
+            ];
+        }
+
+        return $options;
     }
 }
