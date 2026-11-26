@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             // ReviewSeeder::class,
             TestimonialSeeder::class,
             BlogPostSeeder::class,
+            ChristmasSafariArticleSeeder::class,
             SliderSeeder::class,
             SettingSeeder::class,
         ]);
