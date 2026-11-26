@@ -62,6 +62,44 @@ Route::match(['get', 'post'], '/admin/logout', function (Request $request) {
     return redirect()->route('login')->with('success', __('You have been logged out.'));
 })->name('admin.logout');
 
+Route::get('/admin/clear-cache', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Route, config, view, and application caches cleared successfully!',
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+})->name('admin.clear-cache');
+
+Route::get('/admin/run-migrations', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+
+        return response()->json([
+            'success' => true,
+            'output' => \Illuminate\Support\Facades\Artisan::output(),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+})->name('admin.run-migrations');
+
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
     // Universal Tour Package & Accommodation Management System Routes
     Route::resource('/accommodations', AccommodationController::class)->except(['show'])->names('admin.accommodations');
