@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             BlogCategorySeeder::class,
             TourSeeder::class,
+            ChristmasSafariTourSeeder::class,
             TourImageSeeder::class,
             BookingSeeder::class,
             // ReviewSeeder::class,

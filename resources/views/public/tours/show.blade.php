@@ -1,6 +1,8 @@
 @extends('public.layouts.app')
 @section('title', $tour->meta_title ?? $tour->title)
 @section('meta_description', $tour->meta_description ?? $tour->short_description)
+@section('meta_keywords', $tour->meta_keywords ?? '')
+@section('og_image', $tour->featured_image_url)
 
 @php
     $canonicalUrl = \App\Helpers\SeoHelper::canonicalUrl(request());
