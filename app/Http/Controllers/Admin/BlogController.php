@@ -82,7 +82,7 @@ class BlogController extends Controller
     public function update(Request $request, BlogPost $blog)
     {
         $this->ensureTablesExist();
-    {
+
         $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
