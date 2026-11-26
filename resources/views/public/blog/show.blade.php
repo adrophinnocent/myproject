@@ -2,6 +2,8 @@
 
 @section('title', $post->meta_title ?? $post->translate('title') . ' - Twina Safaris Blog')
 @section('meta_description', $post->meta_description ?? $post->excerpt)
+@section('meta_keywords', implode(', ', (array) ($post->tags ?? [])))
+@section('og_image', $post->featured_image_url)
 
 @section('schema')
 <script type="application/ld+json">
