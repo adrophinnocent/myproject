@@ -15,7 +15,7 @@
             <div class="flex items-center gap-3">
                 <a href="{{ $proposal->whatsapp_message_url }}" target="_blank"
                    class="px-3.5 py-2 bg-emerald-800/40 hover:bg-emerald-800/60 text-emerald-300 border border-emerald-600/30 rounded-lg text-xs font-semibold transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.105 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    <svg class="w-4 h-4 fill-current text-emerald-400" aria-hidden="true" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.105 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
                     <span class="hidden sm:inline">Contact Twina</span>
                 </a>
                 <a href="{{ route('proposal.pdf', $proposal->token) }}"
@@ -81,7 +81,7 @@
     </section>
 
     {{-- MAIN CONTENT --}}
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-8">
 
         {{-- ROUTE BAR --}}
         <div class="bg-white rounded-2xl p-5 mb-8 border border-stone-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -139,7 +139,8 @@
 
             {{-- SECTION 1: ITINERARY --}}
             <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
-                <button @click="toggleSection('itinerary')"
+                <button type="button" @click="toggleSection('itinerary')"
+                        :aria-expanded="sections.itinerary.toString()" aria-controls="proposal-itinerary"
                         class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
                     <div class="flex items-center gap-3">
                         <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
@@ -147,10 +148,10 @@
                         </span>
                         <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">1. Day-by-Day Safari Itinerary</h2>
                     </div>
-                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.itinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" aria-hidden="true" :class="sections.itinerary ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.itinerary" x-collapse x-cloak class="p-5 md:p-8 space-y-8 bg-[#faf9f6]">
+                <div id="proposal-itinerary" x-show="sections.itinerary" x-collapse x-cloak class="p-5 md:p-8 space-y-8 bg-[#faf9f6]">
                     @if(is_array($proposal->itinerary) && count($proposal->itinerary) > 0)
                         <div class="space-y-8">
                             @foreach($proposal->itinerary as $day)
@@ -202,10 +203,13 @@
                                             @if(!empty($imgUrl))
                                                 <div class="flex flex-col bg-[#faf9f6] border border-stone-200 rounded-xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
                                                     <div class="h-32 sm:h-36 overflow-hidden bg-stone-900 relative">
-                                                        <img src="{{ $imgUrl }}"
-                                                             alt="Figure {{ $loop->iteration }}. {{ $caption }}"
-                                                             class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                                                             @click="lightboxImg = '{{ $imgUrl }}'">
+                                                        <button type="button" aria-label="{{ __('Open proposal itinerary photo') }} {{ $loop->iteration }}" class="w-full h-full block cursor-pointer" @click="lightboxImg = '{{ $imgUrl }}'">
+                                                            <img src="{{ $imgUrl }}"
+                                                                 width="800" height="600"
+                                                                 alt="{{ !empty($caption) ? $caption : ('Proposal itinerary photo ' . $loop->iteration) }}"
+                                                                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                                                 loading="lazy" decoding="async">
+                                                        </button>
                                                     </div>
                                                     <div class="p-2.5 bg-white border-t border-stone-200/60">
                                                         <p class="text-[11px] font-medium text-stone-700 leading-snug">
@@ -251,7 +255,8 @@
 
             {{-- SECTION 2: ACCOMMODATIONS --}}
             <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
-                <button @click="toggleSection('accommodations')"
+                <button type="button" @click="toggleSection('accommodations')"
+                        :aria-expanded="sections.accommodations.toString()" aria-controls="proposal-accommodations"
                         class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
                     <div class="flex items-center gap-3">
                         <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
@@ -259,10 +264,10 @@
                         </span>
                         <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">2. Accommodation Summary</h2>
                     </div>
-                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.accommodations ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" aria-hidden="true" :class="sections.accommodations ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.accommodations" x-collapse x-cloak class="p-5 md:p-8 bg-[#faf9f6]">
+                <div id="proposal-accommodations" x-show="sections.accommodations" x-collapse x-cloak class="p-5 md:p-8 bg-[#faf9f6]">
                     @if(is_array($proposal->accommodations) && count($proposal->accommodations) > 0)
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             @foreach($proposal->accommodations as $acc)
@@ -273,7 +278,7 @@
                                     </span>
                                     <span class="text-xs font-medium text-stone-500">{{ $acc['location'] ?? '' }}</span>
                                 </div>
-                                <h4 class="text-lg font-bold font-serif-title text-stone-900">{{ $acc['property_name'] ?? 'Safari Lodge' }}</h4>
+                                <h3 class="text-lg font-bold font-serif-title text-stone-900">{{ $acc['property_name'] ?? 'Safari Lodge' }}</h3>
                                 <p class="text-xs text-stone-600 mt-1 font-medium">{{ $acc['room_type'] ?? '' }} &bull; {{ $acc['meal_plan'] ?? 'Full Board' }}</p>
                             </div>
                             @endforeach
@@ -288,7 +293,8 @@
 
             {{-- SECTION 3: INCLUSIONS & PRICING --}}
             <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
-                <button @click="toggleSection('pricing')"
+                <button type="button" @click="toggleSection('pricing')"
+                        :aria-expanded="sections.pricing.toString()" aria-controls="proposal-pricing"
                         class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
                     <div class="flex items-center gap-3">
                         <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
@@ -296,15 +302,15 @@
                         </span>
                         <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">3. Inclusions & Safari Investment</h2>
                     </div>
-                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.pricing ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" aria-hidden="true" :class="sections.pricing ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.pricing" x-collapse x-cloak class="p-5 md:p-8 space-y-6 bg-[#faf9f6]">
+                <div id="proposal-pricing" x-show="sections.pricing" x-collapse x-cloak class="p-5 md:p-8 space-y-6 bg-[#faf9f6]">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {{-- Included --}}
                         <div class="bg-white p-6 rounded-xl border border-stone-200/80 shadow-xs">
                             <h3 class="text-base font-bold font-serif-title text-[#0d2818] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <svg class="w-4 h-4 text-emerald-600" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                 What Is Included
                             </h3>
 
@@ -312,7 +318,7 @@
                                 @if(is_array($proposal->inclusions) && count($proposal->inclusions) > 0)
                                     @foreach($proposal->inclusions as $inc)
                                     <li class="flex items-start gap-2.5">
-                                        <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                         <span>{{ $inc }}</span>
                                     </li>
                                     @endforeach
@@ -323,7 +329,7 @@
                         {{-- Excluded --}}
                         <div class="bg-white p-6 rounded-xl border border-stone-200/80 shadow-xs">
                             <h3 class="text-base font-bold font-serif-title text-rose-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <svg class="w-4 h-4 text-rose-600" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                 What Is Excluded
                             </h3>
 
@@ -331,7 +337,7 @@
                                 @if(is_array($proposal->exclusions) && count($proposal->exclusions) > 0)
                                     @foreach($proposal->exclusions as $exc)
                                     <li class="flex items-start gap-2.5">
-                                        <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                        <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                         <span>{{ $exc }}</span>
                                     </li>
                                     @endforeach
@@ -387,7 +393,8 @@
 
             {{-- SECTION 4: PAYMENT TERMS --}}
             <div class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
-                <button @click="toggleSection('terms')"
+                <button type="button" @click="toggleSection('terms')"
+                        :aria-expanded="sections.terms.toString()" aria-controls="proposal-terms"
                         class="w-full p-5 bg-[#0d2818] text-white text-left flex items-center justify-between cursor-pointer">
                     <div class="flex items-center gap-3">
                         <span class="w-7 h-7 rounded-lg bg-[#d4af37] text-[#0d2818] font-bold text-xs flex items-center justify-center shrink-0">
@@ -395,10 +402,10 @@
                         </span>
                         <h2 class="text-base md:text-lg font-bold font-serif-title tracking-wide text-white">4. Payment Terms & Policy</h2>
                     </div>
-                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" :class="sections.terms ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="w-5 h-5 text-[#d4af37] transition-transform duration-300" aria-hidden="true" :class="sections.terms ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="sections.terms" x-collapse x-cloak class="p-5 md:p-8 bg-[#faf9f6]">
+                <div id="proposal-terms" x-show="sections.terms" x-collapse x-cloak class="p-5 md:p-8 bg-[#faf9f6]">
                     <div class="bg-white p-6 rounded-xl border border-stone-200/80 shadow-xs space-y-6">
                         <div>
                             <h3 class="text-sm font-bold font-serif-title text-stone-900 uppercase tracking-wider mb-2">Payment Terms</h3>
@@ -416,9 +423,9 @@
                     </div>
 
                     <div class="flex justify-end pt-4">
-                        <button @click="acceptModal = true"
+                        <button type="button" @click="acceptModal = true"
                                 class="w-full sm:w-auto px-8 py-3.5 bg-[#0d2818] hover:bg-[#143d22] text-[#d4af37] border border-[#d4af37]/60 rounded-xl text-xs uppercase font-bold tracking-wider shadow-md transition-all flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="w-4 h-4 text-[#d4af37]" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                             <span>Accept Proposal</span>
                         </button>
                     </div>
@@ -426,7 +433,7 @@
             </div>
 
         </div>
-    </main>
+    </div>
 
     {{-- BOTTOM STICKY ACTION BAR --}}
     <div class="fixed bottom-0 inset-x-0 bg-[#0d2818] border-t border-stone-800 py-3.5 px-4 sm:px-6 z-40 text-white shadow-lg">
@@ -439,22 +446,22 @@
             <div class="flex items-center gap-3 w-full sm:w-auto">
                 <a href="{{ $proposal->whatsapp_message_url }}" target="_blank"
                    class="px-4 py-2.5 bg-emerald-800/40 hover:bg-emerald-800/60 text-emerald-300 border border-emerald-600/30 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-                    <svg class="w-4 h-4 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.105 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    <svg class="w-4 h-4 fill-current text-emerald-400" aria-hidden="true" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.105 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
                     <span>Contact Twina</span>
                 </a>
 
-                <button @click="changesModal = true"
+                <button type="button" @click="changesModal = true"
                         class="flex-1 sm:flex-none px-4 py-2.5 bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 rounded-lg text-xs font-bold uppercase tracking-wider">
                     Request Changes
                 </button>
 
                 @if($proposal->status === \App\Models\Proposal::STATUS_ACCEPTED)
                     <div class="flex-1 sm:flex-none px-5 py-2.5 bg-emerald-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                         <span>Accepted</span>
                     </div>
                 @else
-                    <button @click="acceptModal = true"
+                    <button type="button" @click="acceptModal = true"
                             class="flex-1 sm:flex-none px-6 py-2.5 bg-[#d4af37] hover:bg-[#b8920d] text-[#0d2818] rounded-lg text-xs font-bold uppercase tracking-wider shadow-sm transition-all">
                         Accept Proposal
                     </button>
@@ -466,8 +473,8 @@
     {{-- ACCEPT PROPOSAL MODAL --}}
     <div x-show="acceptModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
         <div @click.away="acceptModal = false" class="bg-white rounded-2xl max-w-lg w-full p-6 text-stone-900 shadow-xl border border-stone-200 relative">
-            <button @click="acceptModal = false" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button type="button" @click="acceptModal = false" aria-label="{{ __('Close proposal acceptance dialog') }}" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
+                <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
             <h3 class="text-xl font-bold font-serif-title text-stone-900 mb-1">Accept Safari Proposal</h3>
@@ -477,13 +484,13 @@
                 @csrf
                 <div>
                     <label class="block text-xs font-bold uppercase text-stone-700 mb-1">Your Full Name (Electronic Signature) *</label>
-                    <input type="text" name="signature_name" required value="{{ $proposal->client_name }}"
+                    <input type="text" name="signature_name" aria-label="{{ __('Your Full Name (Electronic Signature)') }}" required value="{{ $proposal->client_name }}"
                            class="w-full bg-stone-50 border border-stone-300 rounded-lg px-3.5 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-stone-700 mb-1">Additional Notes (Optional)</label>
-                    <textarea name="client_notes" rows="3"
+                    <textarea name="client_notes" aria-label="{{ __('Additional Notes (Optional)') }}" rows="3"
                               class="w-full bg-stone-50 border border-stone-300 rounded-lg p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#d4af37]"></textarea>
                 </div>
 
@@ -500,8 +507,8 @@
     {{-- REQUEST CHANGES MODAL --}}
     <div x-show="changesModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
         <div @click.away="changesModal = false" class="bg-white rounded-2xl max-w-lg w-full p-6 text-stone-900 shadow-xl border border-stone-200 relative">
-            <button @click="changesModal = false" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button type="button" @click="changesModal = false" aria-label="{{ __('Close change request dialog') }}" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
+                <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
 
             <h3 class="text-xl font-bold font-serif-title text-stone-900 mb-1">Request Changes</h3>
@@ -511,7 +518,7 @@
                 @csrf
                 <div>
                     <label class="block text-xs font-bold uppercase text-stone-700 mb-1">What would you like us to change? *</label>
-                    <textarea name="feedback" rows="4" required
+                    <textarea name="feedback" aria-label="{{ __('What would you like us to change?') }}" rows="4" required
                               class="w-full bg-stone-50 border border-stone-300 rounded-lg p-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#d4af37]"></textarea>
                 </div>
 
@@ -528,10 +535,10 @@
     {{-- LIGHTBOX MODAL --}}
     <div x-show="lightboxImg" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" @click.self="lightboxImg = null">
         <div class="relative max-w-4xl w-full max-h-[90vh]">
-            <button @click="lightboxImg = null" class="absolute -top-10 right-0 text-white hover:text-[#d4af37] text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1">
+            <button type="button" @click="lightboxImg = null" aria-label="{{ __('Close photo viewer') }}" class="absolute -top-10 right-0 text-white hover:text-[#d4af37] text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1">
                 <span>Close &times;</span>
             </button>
-            <img :src="lightboxImg" class="w-full h-auto max-h-[85vh] object-contain rounded-xl shadow-2xl border border-stone-700">
+            <img :src="lightboxImg" width="1200" height="800" alt="{{ __('Enlarged safari proposal photo') }}" class="w-full h-auto max-h-[85vh] object-contain rounded-xl shadow-2xl border border-stone-700" loading="lazy" decoding="async">
         </div>
     </div>
 

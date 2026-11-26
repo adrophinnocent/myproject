@@ -1,6 +1,6 @@
 @extends('public.layouts.app')
 @section('title', 'Contact Us - Twina Safaris')
-@section('meta_description', 'Contact Twina Safaris in Moshi, Tanzania to plan a tailor-made safari, Kilimanjaro trek or Zanzibar holiday. Send your dates, parks and budget.')
+@section('meta_description', 'Contact Twina Safaris in Moshi, Tanzania to plan a tailor-made safari, Kilimanjaro trek or Zanzibar holiday. Tell us your dates, parks and budget today.')
 
 @php
     $socialLinks = array_values(array_filter([
@@ -12,7 +12,7 @@
 
 @section('content')
 <div class="relative h-[40vh] min-h-80 flex items-center bg-safari-dark">
-    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('contact_banner') }}" alt="{{ __('Contact Us') }}" class="absolute inset-0 w-full h-full object-cover opacity-60">
+    <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('contact_banner') }}" width="1920" height="1080" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager" decoding="async">
     <div class="absolute inset-0 bg-black/40"></div>
     <div class="absolute inset-0 flex items-end">
         <div class="max-w-7xl mx-auto px-4 pb-12 w-full text-center md:text-left">
@@ -45,22 +45,22 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{{ __('Full Name') }}</label>
-                            <input type="text" name="name" required placeholder="{{ __('Jambo! Enter your name') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
+                            <input type="text" name="name" aria-label="{{ __('Full Name') }}" required placeholder="{{ __('Jambo! Enter your name') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{{ __('Email Address') }}</label>
-                            <input type="email" name="email" required placeholder="email@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
+                            <input type="email" name="email" aria-label="{{ __('Email Address') }}" required placeholder="email@example.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{{ __('Phone Number (WhatsApp recommended)') }}</label>
-                            <input type="tel" name="phone" placeholder="+1 234 567 890" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
+                            <input type="tel" name="phone" aria-label="{{ __('Phone Number') }}" placeholder="+1 234 567 890" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{{ __('Subject') }}</label>
-                            <select name="subject" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all appearance-none cursor-pointer">
+                            <select name="subject" aria-label="{{ __('Subject') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all appearance-none cursor-pointer">
                                 <option value="general">{{ __('General Inquiry') }}</option>
                                 <option value="safari">{{ __('Safari Booking') }}</option>
                                 <option value="zanzibar">{{ __('Zanzibar Tour') }}</option>
@@ -73,7 +73,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{{ __('Message') }}</label>
-                        <textarea name="message" rows="6" required placeholder="{{ __('Tell us about your dream trip...') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all"></textarea>
+                        <textarea name="message" aria-label="{{ __('Message') }}" rows="6" required placeholder="{{ __('Tell us about your dream trip...') }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 transition-all"></textarea>
                     </div>
 
                     <button type="submit" class="w-full btn-gold py-5 rounded-2xl text-lg font-bold shadow-xl shadow-gold-500/20 flex items-center justify-center gap-3">

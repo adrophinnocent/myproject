@@ -47,8 +47,10 @@
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-8 border-b border-stone-100">
                 <div class="w-24 h-24 rounded-2xl overflow-hidden bg-stone-900 shrink-0">
                     <img src="{{ $booking->bookable_item->featured_image_url ?? asset('images/banners/hero_fallback.webp') }}"
-                         alt="{{ $booking->bookable_item->title ?? 'Safari' }}"
-                         class="w-full h-full object-cover">
+                         width="240" height="240"
+                         alt="{{ $booking->bookable_item->title ?? 'Tanzania safari' }}"
+                         class="w-full h-full object-cover"
+                         loading="lazy" decoding="async">
                 </div>
                 <div class="flex-1">
                     <span class="text-xs font-black text-amber-600 uppercase tracking-widest block mb-1">

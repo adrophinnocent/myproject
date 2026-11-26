@@ -1,6 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'Unsubscribed - Twina Safaris')
+@section('meta_description', 'You have been unsubscribed from the Twina Safaris newsletter. You will no longer receive Tanzania safari news, travel guides or special offers by email.')
 
 @section('content')
 <div class="min-h-[60vh] flex items-center justify-center px-4 py-20 bg-stone-50">

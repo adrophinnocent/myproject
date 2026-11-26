@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
-use App\Models\Category;
-use App\Models\Destination;
 use App\Models\Faq;
 use App\Models\Safari;
 use App\Models\Slider;
@@ -83,18 +81,12 @@ class HomeController extends Controller
 
         $featuredTours = $featuredItems->take(8);
 
-        $allPublishedTours = Tour::published()->count() + Safari::published()->count();
-
-        $destinations = Destination::active()->get();
-
         $publishedTestimonials = Testimonial::published()->latest()->get();
         $testimonials = $publishedTestimonials->take(6);
         $testimonialCount = $publishedTestimonials->count();
         $testimonialAverage = (float) ($publishedTestimonials->avg('rating') ?? 0);
 
         $faqs = Faq::active()->take(10)->get();
-
-        $categories = Category::active()->get();
 
         $latestPosts = BlogPost::published()
             ->with(['category', 'translations'])
@@ -111,6 +103,6 @@ class HomeController extends Controller
                         $q->where('slug', 'kilimanjaro-trekking');
                     })->first();
 
-        return view('public.home', compact('sliders', 'featuredTours', 'allPublishedTours', 'destinations', 'testimonials', 'testimonialCount', 'testimonialAverage', 'faqs', 'latestPosts', 'categories', 'heroTour'));
+        return view('public.home', compact('sliders', 'featuredTours', 'testimonials', 'testimonialCount', 'testimonialAverage', 'faqs', 'latestPosts', 'heroTour'));
     }
 }

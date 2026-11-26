@@ -28,7 +28,10 @@ class BlogController extends Controller
             return redirect()->route('guides.best-time', status: 301);
         }
 
-        $post = BlogPost::where('slug', $slug)->published()->firstOrFail();
+        $post = BlogPost::with(['author', 'category'])
+            ->where('slug', $slug)
+            ->published()
+            ->firstOrFail();
         // A pageview is not a content update: increment without touching
         // updated_at so sitemap lastmod stays truthful.
         DB::table($post->getTable())->where('id', $post->id)->increment('views_count');

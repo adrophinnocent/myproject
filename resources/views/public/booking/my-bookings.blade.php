@@ -20,14 +20,14 @@
                 @csrf
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">{{ __('Booking Reference') }}</label>
-                        <input type="text" name="reference" value="{{ $reference ?? '' }}" required
+                        <label for="booking_reference" class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">{{ __('Booking Reference') }}</label>
+                        <input id="booking_reference" type="text" name="reference" value="{{ $reference ?? '' }}" required
                                placeholder="{{ __('e.g. TWN-2026-A1B2C3') }}"
                                class="w-full bg-stone-50 border border-stone-300 rounded-2xl px-5 py-4 text-sm font-semibold text-stone-800 outline-none focus:border-amber-500 transition-all">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">{{ __('Email Address') }}</label>
-                        <input type="email" name="email" value="{{ $email ?? '' }}" required
+                        <label for="booking_email" class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">{{ __('Email Address') }}</label>
+                        <input id="booking_email" type="email" name="email" value="{{ $email ?? '' }}" required
                                placeholder="{{ __('The email used for booking') }}"
                                class="w-full bg-stone-50 border border-stone-300 rounded-2xl px-5 py-4 text-sm font-semibold text-stone-800 outline-none focus:border-amber-500 transition-all">
                     </div>
@@ -48,7 +48,7 @@
         @if(($reference ?? '') !== '' && ($email ?? '') !== '')
             @if(isset($bookings) && $bookings->count() > 0)
                 <div class="space-y-4">
-                    <h3 class="font-bold text-stone-900 text-xs uppercase tracking-wider">{{ __('Found') }} {{ $bookings->count() }} {{ __('Booking(s)') }}</h3>
+                    <h2 class="font-bold text-stone-900 text-xs uppercase tracking-wider">{{ __('Found') }} {{ $bookings->count() }} {{ __('Booking(s)') }}</h2>
                     @foreach($bookings as $b)
                     <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:border-amber-500/60 transition-all">
                         <div>
@@ -56,14 +56,14 @@
                                 <span class="font-mono text-sm font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200/60">{{ $b->booking_reference }}</span>
                                 {!! $b->status_badge !!}
                             </div>
-                            <h4 class="font-display font-bold text-stone-900 text-base mb-1">{{ $b->bookable_item->title ?? 'Tanzania Safari' }}</h4>
+                            <h3 class="font-display font-bold text-stone-900 text-base mb-1">{{ $b->bookable_item->title ?? 'Tanzania Safari' }}</h3>
                             <p class="text-xs text-stone-500 font-medium">
                                 {{ __('Travel Date') }}: <strong class="text-stone-800">{{ $b->travel_date ? $b->travel_date->format('d M Y') : 'TBD' }}</strong> &middot; {{ __('Total') }}: <strong class="text-stone-800">{{ $b->formatted_total_price }}</strong>
                             </p>
                         </div>
                         <div class="shrink-0 flex items-center gap-3">
                             <a href="{{ route('booking.status', $b->token) }}" class="btn-gold px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider">
-                                {{ __('View Details') }}
+                                {{ __('View Safari Booking Details') }}
                             </a>
                         </div>
                     </div>

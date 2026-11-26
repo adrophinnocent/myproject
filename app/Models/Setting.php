@@ -12,19 +12,25 @@ class Setting extends Model
 
     protected $fillable = ['key', 'value'];
 
-    public static function get($key, $default = null)
+    /**
+     * One cached map instead of one cache lookup plus one SQL query per key.
+     * Defaults stay at read time so a newly added setting is never hidden by
+     * a stale cached default.
+     *
+     * @return array<string, mixed>
+     */
+    public static function allCached(): array
     {
         try {
-            // Cache the stored value only; never cache the fallback default,
-            // otherwise a setting added later keeps returning the stale default.
-            $value = Cache::remember('setting_'.$key, 3600, function () use ($key) {
-                return self::where('key', $key)->value('value');
-            });
-
-            return $value ?? $default;
+            return Cache::remember('all_settings', 3600, fn () => self::query()->pluck('value', 'key')->all());
         } catch (\Throwable $e) {
-            return $default;
+            return [];
         }
+    }
+
+    public static function get($key, $default = null)
+    {
+        return self::allCached()[$key] ?? $default;
     }
 
     /**

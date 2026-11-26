@@ -1,10 +1,10 @@
 @extends('public.layouts.app')
 
-@section('title', 'Kilimanjaro Trekking Company in Moshi | Routes & Prices | Twina Safaris')
-@section('meta_description', 'Compare Machame, Lemosho, Marangu and Rongai Kilimanjaro routes with route lengths, acclimatisation, included services and clear pricing from a local Moshi team.')
+@section('title', 'Kilimanjaro Treks & Routes | Twina Safaris')
+@section('meta_description', 'Compare Machame, Lemosho, Marangu and Rongai Kilimanjaro routes with lengths, acclimatisation, included services and clear pricing from a Moshi team.')
 
 @php
-    $pageTitle = 'Climb Kilimanjaro with a Local Moshi Trekking Team';
+    $pageTitle = 'Kilimanjaro Treks & Routes from Moshi';
     $pagePath = '/kilimanjaro-trekking-company';
     $faqs = [
         [

@@ -1,10 +1,10 @@
 @extends('public.layouts.app')
 
-@section('title', 'Zanzibar Holiday Packages 2026 | Beach, Stone Town & Safari Combos | Twina Safaris')
-@section('meta_description', 'Compare Zanzibar holiday packages by beach region, season and safari combination. See what to include and ask for a tailor-made Tanzania and Zanzibar itinerary.')
+@section('title', 'Zanzibar Holiday Packages 2026 | Twina Safaris')
+@section('meta_description', 'Compare Zanzibar holiday packages by beach region, season and safari combination. See what to include and request a tailor-made Tanzania itinerary.')
 
 @php
-    $pageTitle = 'Zanzibar Holiday Packages: Beach, Culture and Safari Combinations';
+    $pageTitle = 'Zanzibar Holiday Packages: Beaches, Culture and Safaris';
     $pagePath = '/zanzibar-holiday-packages';
     $faqs = [
         [

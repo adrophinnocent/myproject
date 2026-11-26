@@ -101,11 +101,15 @@ class SeoHelper
     }
 
     /**
+     * Language is a session preference on the same English content, not a
+     * separately indexable URL. Advertising x-default without any real
+     * language alternates produces hreflang warnings, so return no alternates.
+     *
      * @return array<string, string>
      */
     public static function alternateUrls(Request $request): array
     {
-        return ['x-default' => self::canonicalUrl($request)];
+        return [];
     }
 
     public static function hasEnglishOnlyContent(Request $request): bool

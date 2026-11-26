@@ -1,6 +1,6 @@
 @extends('public.layouts.app')
 
-@section('title', 'Custom Safari Tanzania | Build Your Own Private Itinerary | Twina Safaris')
+@section('title', 'Custom Safari Tanzania | Build Your Own Itinerary')
 @section('meta_description', 'Design a tailor-made Tanzania safari: choose your parks, pace, accommodation and dates. Tell Twina Safaris what you want and get an itinerary built around it.')
 
 @php
@@ -67,7 +67,7 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
             </div>
             <div>
-                <h3 class="text-base font-black text-emerald-900 mb-1">Request Received!</h3>
+                <h2 class="text-base font-black text-emerald-900 mb-1">Request Received!</h2>
                 <p class="text-xs md:text-sm font-medium leading-relaxed">{{ session('success') }}</p>
             </div>
         </div>
@@ -78,36 +78,36 @@
 
             {{-- SECTION 1: PERSONAL INFORMATION --}}
             <div>
-                <h3 class="text-lg font-black font-serif text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
+                <h2 class="text-lg font-black font-serif text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
                     <span class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-sans">1</span>
                     Your Information
-                </h3>
+                </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Full Name *</label>
-                        <input type="text" name="full_name" required value="{{ old('full_name') }}"
+                        <input type="text" name="full_name" aria-label="Full Name" required value="{{ old('full_name') }}"
                                placeholder="e.g. Sarah Jenkins"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Email Address *</label>
-                        <input type="email" name="email" required value="{{ old('email') }}"
+                        <input type="email" name="email" aria-label="Email Address" required value="{{ old('email') }}"
                                placeholder="e.g. sarah@example.com"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">WhatsApp / Phone Number</label>
-                        <input type="text" name="phone" value="{{ old('phone') }}"
+                        <input type="text" name="phone" aria-label="WhatsApp or Phone Number" value="{{ old('phone') }}"
                                placeholder="e.g. +1 555 234 5678"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Country of Residence</label>
-                        <input type="text" name="country" value="{{ old('country') }}"
+                        <input type="text" name="country" aria-label="Country of Residence" value="{{ old('country') }}"
                                placeholder="e.g. United States, Germany, United Kingdom"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
@@ -116,27 +116,27 @@
 
             {{-- SECTION 2: TRIP & TRAVEL DETAILS --}}
             <div>
-                <h3 class="text-lg font-black font-serif text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
+                <h2 class="text-lg font-black font-serif text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
                     <span class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-sans">2</span>
                     Travelers & Schedule
-                </h3>
+                </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Number of Adults *</label>
-                        <input type="number" name="adults" required min="1" value="{{ old('adults', 2) }}"
+                        <input type="number" name="adults" aria-label="Number of Adults" required min="1" value="{{ old('adults', 2) }}"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Number of Children</label>
-                        <input type="number" name="children" min="0" value="{{ old('children', 0) }}"
+                        <input type="number" name="children" aria-label="Number of Children" min="0" value="{{ old('children', 0) }}"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Children's Ages (If any)</label>
-                        <input type="text" name="children_ages" value="{{ old('children_ages') }}"
+                        <input type="text" name="children_ages" aria-label="Children's Ages" value="{{ old('children_ages') }}"
                                placeholder="e.g. 6, 11 years"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
@@ -145,19 +145,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Preferred Travel Date</label>
-                        <input type="date" name="travel_date" value="{{ old('travel_date') }}"
+                        <input type="date" name="travel_date" aria-label="Preferred Travel Date" value="{{ old('travel_date') }}"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Number of Days *</label>
-                        <input type="number" name="duration_days" required min="1" value="{{ old('duration_days', 7) }}"
+                        <input type="number" name="duration_days" aria-label="Number of Days" required min="1" value="{{ old('duration_days', 7) }}"
                                class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <div class="flex items-center pt-6">
                         <label class="inline-flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" name="flexible_dates" value="1" {{ old('flexible_dates') ? 'checked' : '' }} class="w-5 h-5 text-amber-500 rounded border-slate-300 focus:ring-amber-500">
+                            <input type="checkbox" name="flexible_dates" aria-label="My travel dates are flexible" value="1" {{ old('flexible_dates') ? 'checked' : '' }} class="w-5 h-5 text-amber-500 rounded border-slate-300 focus:ring-amber-500">
                             <span class="text-xs font-bold text-slate-700 uppercase">My travel dates are flexible (+/- 3 days)</span>
                         </label>
                     </div>
@@ -166,15 +166,15 @@
 
             {{-- SECTION 3: SAFARI PREFERENCES --}}
             <div>
-                <h3 class="text-lg font-black font-serif text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
+                <h2 class="text-lg font-black font-serif text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
                     <span class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-sans">3</span>
                     Safari Preferences
-                </h3>
+                </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Trip Type</label>
-                        <select name="trip_type" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <select name="trip_type" aria-label="Trip Type" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="Wildlife Safari">Wildlife Safari</option>
                             <option value="Kilimanjaro Trekking">Kilimanjaro Trekking</option>
                             <option value="Zanzibar Beach Resort">Zanzibar Beach Resort</option>
@@ -185,7 +185,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Traveler Group Style</label>
-                        <select name="group_type" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <select name="group_type" aria-label="Traveler Group Style" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="Couple / Romantic">Couple / Romantic</option>
                             <option value="Honeymoon Special">Honeymoon Special</option>
                             <option value="Family with Children">Family with Children</option>
@@ -197,7 +197,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Accommodation Level</label>
-                        <select name="accommodation_preference" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <select name="accommodation_preference" aria-label="Accommodation Level" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="Comfort / Mid-Range Lodges">Comfort / Mid-Range Lodges</option>
                             <option value="Luxury Safari Camps & Lodges">Luxury Safari Camps & Lodges</option>
                             <option value="Super Luxury / Exclusive Tented Camps">Super Luxury / Exclusive Tented Camps</option>
@@ -208,7 +208,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Target Budget Per Person (Excl. Flights)</label>
-                        <select name="budget_per_person" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <select name="budget_per_person" aria-label="Target Budget Per Person" class="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="$1,500 - $2,500 per person">$1,500 - $2,500 per person</option>
                             <option value="$2,500 - $4,000 per person">$2,500 - $4,000 per person</option>
                             <option value="$4,000 - $6,000 per person">$4,000 - $6,000 per person</option>
@@ -225,7 +225,7 @@
                             @endphp
                             @foreach($acts as $act)
                             <label class="inline-flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer text-xs font-semibold text-slate-700">
-                                <input type="checkbox" name="activities[]" value="{{ $act }}" class="w-4 h-4 text-amber-500 rounded border-slate-300 focus:ring-amber-500">
+                                <input type="checkbox" name="activities[]" aria-label="{{ $act }}" value="{{ $act }}" class="w-4 h-4 text-amber-500 rounded border-slate-300 focus:ring-amber-500">
                                 <span>{{ $act }}</span>
                             </label>
                             @endforeach
@@ -235,7 +235,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Special Requests or Additional Details</label>
-                    <textarea name="special_requests" rows="4"
+                    <textarea name="special_requests" aria-label="Special Requests or Additional Details" rows="4"
                               placeholder="Tell us about specific national parks you wish to visit (Serengeti, Ngorongoro, Tarangire, Manyara), dietary needs, mobility preferences, or flights..."
                               class="w-full bg-slate-50 border border-slate-300 rounded-2xl p-4 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">{{ old('special_requests') }}</textarea>
                 </div>

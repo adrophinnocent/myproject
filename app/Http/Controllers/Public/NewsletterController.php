@@ -91,7 +91,8 @@ class NewsletterController extends Controller
             'is_read' => false,
         ]);
 
-        return response()->view('public.newsletter.confirmed', compact('subscriber'));
+        return response()->view('public.newsletter.confirmed', compact('subscriber'))
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     }
 
     public function unsubscribe(string $token)
@@ -104,6 +105,7 @@ class NewsletterController extends Controller
 
         $subscriber->update(['active' => false]);
 
-        return response()->view('public.newsletter.unsubscribed', compact('subscriber'));
+        return response()->view('public.newsletter.unsubscribed', compact('subscriber'))
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     }
 }

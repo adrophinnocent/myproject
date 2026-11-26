@@ -21,22 +21,22 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Full Name') }} *</label>
-                <input type="text" name="name" value="{{ old('name') }}" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <input type="text" name="name" aria-label="{{ __('Full Name') }}" value="{{ old('name') }}" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                 @error('name')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Email Address') }} *</label>
-                <input type="email" name="email" value="{{ old('email') }}" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <input type="email" name="email" aria-label="{{ __('Email Address') }}" value="{{ old('email') }}" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                 @error('email')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Phone Number') }}</label>
-                <input type="text" name="phone" value="{{ old('phone') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <input type="text" name="phone" aria-label="{{ __('Phone Number') }}" value="{{ old('phone') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                 @error('phone')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Nationality') }} *</label>
-                <select name="nationality" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none appearance-none bg-white">
+                <select name="nationality" aria-label="{{ __('Nationality') }}" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none appearance-none bg-white">
                     <option value="">{{ __('Select your country...') }}</option>
                     <option value="United States" {{ old('nationality') == 'United States' ? 'selected' : '' }}>🇺🇸 United States</option>
                     <option value="United Kingdom" {{ old('nationality') == 'United Kingdom' ? 'selected' : '' }}>🇬🇧 United Kingdom</option>
@@ -75,7 +75,7 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 @foreach($destinations as $destination)
                     <label class="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-gold-500 transition">
-                        <input type="checkbox" name="destination_ids[]" value="{{ $destination->id }}" {{ in_array($destination->id, old('destination_ids', [])) ? 'checked' : '' }} class="w-4 h-4 text-gold-600">
+                        <input type="checkbox" name="destination_ids[]" aria-label="{{ $destination->translate('name') }}" value="{{ $destination->id }}" {{ in_array($destination->id, old('destination_ids', [])) ? 'checked' : '' }} class="w-4 h-4 text-gold-600">
                         <span class="text-sm text-gray-700">{{ $destination->translate('name') }}</span>
                     </label>
                 @endforeach
@@ -86,7 +86,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Travel Style') }}</label>
-                <select name="travel_style" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <select name="travel_style" aria-label="{{ __('Travel Style') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                     <option value="">{{ __('Select...') }}</option>
                     <option value="luxury" {{ old('travel_style') == 'luxury' ? 'selected' : '' }}>{{ __('Luxury') }}</option>
                     <option value="mid-range" {{ old('travel_style') == 'mid-range' ? 'selected' : '' }}>{{ __('Mid-Range') }}</option>
@@ -97,7 +97,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Budget Range (per person)') }}</label>
-                <select name="budget_range" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <select name="budget_range" aria-label="{{ __('Budget Range (per person)') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                     <option value="">{{ __('Select...') }}</option>
                     <option value="under-2000" {{ old('budget_range') == 'under-2000' ? 'selected' : '' }}>{{ __('Under $2,000') }}</option>
                     <option value="2000-4000" {{ old('budget_range') == '2000-4000' ? 'selected' : '' }}>$2,000 - $4,000</option>
@@ -111,7 +111,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Trip Duration') }}</label>
-                <select name="duration" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <select name="duration" aria-label="{{ __('Trip Duration') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                     <option value="">{{ __('Select...') }}</option>
                     <option value="3-5" {{ old('duration') == '3-5' ? 'selected' : '' }}>3-5 {{ __('Days') }}</option>
                     <option value="6-8" {{ old('duration') == '6-8' ? 'selected' : '' }}>6-8 {{ __('Days') }}</option>
@@ -122,7 +122,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Accommodation Level') }}</label>
-                <select name="accommodation_level" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <select name="accommodation_level" aria-label="{{ __('Accommodation Level') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                     <option value="">{{ __('Select...') }}</option>
                     <option value="5-star" {{ old('accommodation_level') == '5-star' ? 'selected' : '' }}>5 {{ __('Star') }}</option>
                     <option value="4-star" {{ old('accommodation_level') == '4-star' ? 'selected' : '' }}>4 {{ __('Star') }}</option>
@@ -139,7 +139,7 @@
                 @php $interests = ['Wildlife', 'Bird Watching', 'Cultural', 'Hiking', 'Beach', 'Photography', 'Family', 'Luxury']; @endphp
                 @foreach($interests as $interest)
                     <label class="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-gold-500 transition">
-                        <input type="checkbox" name="interests[]" value="{{ strtolower($interest) }}" {{ in_array(strtolower($interest), old('interests', [])) ? 'checked' : '' }} class="w-4 h-4 text-gold-600">
+                        <input type="checkbox" name="interests[]" aria-label="{{ __($interest) }}" value="{{ strtolower($interest) }}" {{ in_array(strtolower($interest), old('interests', [])) ? 'checked' : '' }} class="w-4 h-4 text-gold-600">
                         <span class="text-sm text-gray-700">{{ __($interest) }}</span>
                     </label>
                 @endforeach
@@ -150,24 +150,24 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Preferred Travel Date') }}</label>
-                <input type="date" name="travel_date" value="{{ old('travel_date') }}" min="{{ date('Y-m-d', strtotime('+1 day')) }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <input type="date" name="travel_date" aria-label="{{ __('Preferred Travel Date') }}" value="{{ old('travel_date') }}" min="{{ date('Y-m-d', strtotime('+1 day')) }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                 @error('travel_date')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Adults') }} *</label>
-                <input type="number" name="adults" value="{{ old('adults', 1) }}" min="1" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <input type="number" name="adults" aria-label="{{ __('Adults') }}" value="{{ old('adults', 1) }}" min="1" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                 @error('adults')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Children') }}</label>
-                <input type="number" name="children" value="{{ old('children', 0) }}" min="0" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
+                <input type="number" name="children" aria-label="{{ __('Children') }}" value="{{ old('children', 0) }}" min="0" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">
                 @error('children')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
             </div>
         </div>
 
         <div class="mb-8">
             <label class="block text-sm font-semibold text-gray-800 mb-2">{{ __('Additional Information') }}</label>
-            <textarea name="message" rows="5" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">{{ old('message') }}</textarea>
+            <textarea name="message" aria-label="{{ __('Additional Information') }}" rows="5" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none">{{ old('message') }}</textarea>
             @error('message')<span class="text-red-500 text-sm">{{ $message }}</span>@enderror
         </div>
 
@@ -181,7 +181,7 @@
         <div class="bg-safari-dark rounded-[3rem] p-12 md:p-20 relative overflow-hidden text-center shadow-2xl">
             {{-- Background Elements --}}
             <div class="absolute inset-0 opacity-10">
-                <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" class="w-full h-full object-cover" alt="{{ __('Tanzania Background') }}">
+                <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kilimanjaro_bg') }}" width="1920" height="1080" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
             </div>
             <div class="absolute inset-0 bg-gradient-to-br from-amber-900/40 via-transparent to-slate-900/40"></div>
 
@@ -199,7 +199,7 @@
                         {{ __('View Tours') }}
                     </a>
                     <a href="{{ route('tours.index') }}" class="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-safari-dark px-12 py-5 rounded-full text-lg font-black transition-all min-w-[220px]">
-                        {{ __('Book Now') }}
+                        {{ __('Browse Tanzania Safari Packages') }}
                     </a>
                 </div>
             </div>
@@ -221,6 +221,7 @@
 
                         {{-- Background Cover Image with Zoom Effect --}}
                         <img src="{{ $tour->featured_image_url }}"
+                             width="800" height="450"
                              alt="{{ $titleStr }}"
                              class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                              loading="lazy" decoding="async">

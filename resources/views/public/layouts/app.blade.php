@@ -14,24 +14,30 @@
     @php
         $seoLocale = \App\Helpers\SeoHelper::defaultLocale();
         $canonical = \App\Helpers\SeoHelper::canonicalUrl(request());
-        $alternates = \App\Helpers\SeoHelper::alternateUrls(request());
-        $isNoindex = request()->is('admin', 'admin/*', 'booking', 'booking/*', 'my-bookings', 'trip-plan', 'trip-plan/*', 'proposal', 'proposal/*', 'offer', 'offer/*', 'login', 'forgot-password', 'reset-password', 'reset-password/*');
+
+        // Booking policies are public trust content, unlike the booking flow.
+        $isPrivateBooking = request()->is('booking', 'booking/*') && ! request()->is('booking/policies');
+
+        // Filtered tour listings duplicate the clean /tours page. Keep links
+        // followable so crawlers still find the canonical listing.
+        $isFilteredListing = request()->is('tours') && collect(array_keys(request()->query()))
+            ->contains(fn ($key) => ! in_array($key, ['page', 'lang'], true));
+
+        $isNoindex = request()->is('admin', 'admin/*', 'my-bookings', 'trip-plan', 'trip-plan/*', 'proposal', 'proposal/*', 'offer', 'offer/*', 'login', 'forgot-password', 'reset-password', 'reset-password/*')
+            || $isPrivateBooking
+            || request()->is('tours/*/book')
+            || $isFilteredListing;
     @endphp
     <link rel="canonical" href="{{ $canonical }}">
 
-    {{-- Meta Robots: Noindex for booking, client workspaces and auth pages --}}
-    @if($isNoindex)
-        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    {{-- Meta Robots: private flows and filters stay out of the index --}}
+    @hasSection('meta_robots')
+        <meta name="robots" content="@yield('meta_robots')">
+    @elseif($isNoindex)
+        <meta name="robots" content="{{ $isFilteredListing ? 'noindex, follow, noarchive, nosnippet' : 'noindex, nofollow, noarchive, nosnippet' }}">
     @else
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     @endif
-
-    {{-- International SEO: self-referencing hreflang on indexable pages only --}}
-    @unless($isNoindex)
-        @foreach($alternates as $hreflang => $href)
-            <link rel="alternate" hreflang="{{ $hreflang }}" href="{{ $href }}">
-        @endforeach
-    @endunless
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,83 +55,90 @@
     <meta name="theme-color" content="#D4AF37">
 
     {{-- Open Graph / Facebook --}}
-    <meta property="og:type"        content="website">
+    <meta property="og:type"        content="@yield('og_type', 'website')">
     <meta property="og:url"         content="{{ $canonical }}">
-    <meta property="og:site_name"   content="Twina Safaris">
+    <meta property="og:site_name"   content="{{ \App\Models\Setting::get('site_name', 'Twina Safaris') }}">
     <meta property="og:title"       content="@yield('title', \App\Models\Setting::get('seo_title', config('app.name')))">
     <meta property="og:description" content="@yield('meta_description', \App\Models\Setting::get('meta_description'))">
     <meta property="og:image"       content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">
+    <meta property="og:image:alt"   content="@yield('og_image_alt', 'Twina Safaris safari and trekking in Tanzania')">
     <meta property="og:locale"      content="{{ \App\Helpers\SeoHelper::ogLocale($seoLocale) }}">
+    @yield('article_meta')
 
     {{-- Twitter --}}
-    <meta property="twitter:card"    content="summary_large_image">
-    <meta property="twitter:url"     content="{{ $canonical }}">
-    <meta property="twitter:title"   content="@yield('title', config('app.name'))">
-    <meta property="twitter:description" content="@yield('meta_description')">
-    <meta property="twitter:image"   content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:url"         content="{{ $canonical }}">
+    <meta name="twitter:title"       content="@yield('title', \App\Models\Setting::get('seo_title', config('app.name')))">
+    <meta name="twitter:description" content="@yield('meta_description', \App\Models\Setting::get('meta_description'))">
+    <meta name="twitter:image"       content="@yield('og_image', \App\Helpers\AssetHelper::getOgImageUrl())">
+    <meta name="twitter:image:alt"   content="@yield('og_image_alt', 'Twina Safaris safari and trekking in Tanzania')">
     <meta name="twitter:site"        content="@TwinaSafaris">
 
     {{-- Structured Data (Schema.org) for AI & Google --}}
     @php
+        $siteUrl = \App\Helpers\SeoHelper::siteUrl();
         $sameAs = array_values(array_filter([
             \App\Models\Setting::get('facebook_url'),
             \App\Models\Setting::get('instagram_url'),
             \App\Models\Setting::get('youtube_url'),
+            \App\Models\Setting::get('twitter_url'),
+            \App\Models\Setting::get('tiktok_url'),
         ], fn ($url) => is_string($url) && str_starts_with($url, 'http')));
+
+        $organizationSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'TravelAgency',
+            '@id' => $siteUrl.'/#organization',
+            'name' => \App\Models\Setting::get('site_name', 'Twina Safaris'),
+            'alternateName' => 'Twina Safaris Tanzania',
+            'url' => $siteUrl.'/',
+            'logo' => [
+                '@type' => 'ImageObject',
+                'url' => \App\Helpers\AssetHelper::getLogoUrl(),
+            ],
+            'image' => \App\Helpers\AssetHelper::getOgImageUrl(),
+            'description' => \App\Models\Setting::get('meta_description', 'Safari and trekking adventures in Tanzania with local expert guides.'),
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => \App\Models\Setting::get('address_street', 'Moshi'),
+                'addressLocality' => \App\Models\Setting::get('address_locality', 'Kilimanjaro'),
+                'addressRegion' => \App\Models\Setting::get('address_region', 'Kilimanjaro'),
+                'postalCode' => \App\Models\Setting::get('postal_code', '25101'),
+                'addressCountry' => \App\Models\Setting::get('address_country', 'TZ'),
+            ],
+            'geo' => [
+                '@type' => 'GeoCoordinates',
+                'latitude' => \App\Models\Setting::get('latitude', '-3.3444'),
+                'longitude' => \App\Models\Setting::get('longitude', '37.3344'),
+            ],
+            'telephone' => \App\Models\Setting::get('site_phone'),
+            'email' => \App\Models\Setting::publicEmail(),
+            'sameAs' => $sameAs,
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'telephone' => \App\Models\Setting::get('site_phone'),
+                'contactType' => 'customer service',
+                'areaServed' => 'Worldwide',
+                'availableLanguage' => ['English', 'German', 'French', 'Spanish'],
+            ],
+        ];
+
+        $webSiteSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            '@id' => $siteUrl.'/#website',
+            'url' => $siteUrl.'/',
+            'name' => \App\Models\Setting::get('site_name', 'Twina Safaris'),
+            'publisher' => ['@id' => $siteUrl.'/#organization'],
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => $siteUrl.'/tours?search={search_term_string}',
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
     @endphp
     <script type="application/ld+json">
-    [
-        {
-          "@@context": "https://schema.org",
-          "@@type": "TravelAgency",
-          "@@id": "https://twinasafaris.com/#organization",
-          "name": "Twina Safaris",
-          "alternateName": "Twina Safaris Tanzania",
-          "url": "https://twinasafaris.com/",
-          "logo": {
-            "@@type": "ImageObject",
-            "url": "{{ \App\Helpers\AssetHelper::getLogoUrl() }}"
-          },
-          "image": "{{ \App\Helpers\AssetHelper::getOgImageUrl() }}",
-          "description": "Premium Safari and Trekking adventures in Tanzania. Expert local guides for Serengeti, Kilimanjaro, and Zanzibar.",
-          "address": {
-            "@@type": "PostalAddress",
-            "streetAddress": "Moshi",
-            "addressLocality": "Kilimanjaro",
-            "addressRegion": "Kilimanjaro",
-            "postalCode": "25101",
-            "addressCountry": "TZ"
-          },
-          "geo": {
-            "@@type": "GeoCoordinates",
-            "latitude": "-3.3444",
-            "longitude": "37.3344"
-          },
-          "telephone": "{{ \App\Models\Setting::get('site_phone') }}",
-          "email": "twinasafaris@gmail.com",
-          "sameAs": @json($sameAs),
-          "contactPoint": {
-            "@@type": "ContactPoint",
-            "telephone": "{{ \App\Models\Setting::get('site_phone') }}",
-            "contactType": "customer service",
-            "areaServed": "Worldwide",
-            "availableLanguage": ["English", "German", "French", "Spanish"]
-          }
-        },
-        {
-          "@@context": "https://schema.org",
-          "@@type": "WebSite",
-          "@@id": "https://twinasafaris.com/#website",
-          "url": "https://twinasafaris.com/",
-          "name": "Twina Safaris",
-          "publisher": { "@@id": "https://twinasafaris.com/#organization" },
-          "potentialAction": {
-            "@@type": "SearchAction",
-            "target": "https://twinasafaris.com/tours?search={search_term_string}",
-            "query-input": "required name=search_term_string"
-          }
-        }
-    ]
+    @json([$organizationSchema, $webSiteSchema], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
     </script>
 
     {{-- Analytics & Pixels --}}
@@ -172,30 +185,24 @@
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     </noscript>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    gold: { 50:'#fdfbf0',100:'#faf3cc',200:'#f4e48a',300:'#eccf4a',400:'#e3b81a',500:'#D4AF37',600:'#8A6D0B',700:'#704f0f',800:'#5a3f12',900:'#3d2a0b' },
-                    safari: { dark:'#0a0703',mid:'#1a1209',light:'#8B6914' },
-                },
-                fontFamily: {
-                    display: ['"Cormorant Garamond"', 'serif'],
-                    body: ['Inter', 'sans-serif'],
-                }
-            }
-        }
-    }
-    </script>
+    {{-- Built assets replace the render-blocking Tailwind CDN compiler and
+         three separate Alpine CDN requests. --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         [x-cloak] { display: none !important; }
+        :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+            outline: 2px solid #b8920d !important;
+            outline-offset: 2px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
         .nav-transparent { background: linear-gradient(180deg, rgba(10, 7, 3, 0.85) 0%, rgba(10, 7, 3, 0.3) 70%, transparent 100%); transition: all 0.4s ease; }
         .nav-scrolled { background: rgba(10, 7, 3, 0.96) !important; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transition: all 0.4s ease; }
         .btn-gold { background: linear-gradient(135deg,#D4AF37,#8A6D0B); color:#1a1209; transition: all 0.3s; }
@@ -203,6 +210,10 @@
         .btn-outline-gold { border:2px solid #8A6D0B; color:#8A6D0B; transition: all 0.3s; }
         .btn-outline-gold:hover { background:#8A6D0B; color:#ffffff; }
         .text-gold-600 { color: #8A6D0B !important; }
+        {{-- Preserve the exact shades used by the former CDN config. --}}
+        .bg-gold-600 { background-color: #8A6D0B !important; }
+        .to-gold-600 { --tw-gradient-to: #8A6D0B !important; }
+        .text-gold-700 { color: #704f0f !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -473,6 +484,11 @@
 </head>
 <body class="bg-white text-gray-900 font-body" itemscope itemtype="https://schema.org/WebPage">
 
+    <a href="#main-content"
+       class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-safari-dark focus:ring-2 focus:ring-gold-500">
+        {{ __('Skip to main content') }}
+    </a>
+
     <!-- Navigation -->
     @include('public.partials.navigation')
 
@@ -534,6 +550,8 @@
     }"
     x-show="showWidgets"
     x-cloak
+    role="region"
+    aria-label="{{ __('Safari assistance widgets') }}"
     class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
         <!-- AI Chat Widget -->
         <div x-show="isAiOpen"
@@ -544,7 +562,9 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="opacity-0 scale-90 translate-y-4"
-             class="w-80 bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 mb-2">
+             role="region"
+              aria-label="{{ __('Twina AI Assistant chat') }}"
+              class="w-80 bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 mb-2">
             <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -558,14 +578,14 @@
                             <p class="text-xs text-white/80">{{ __('Expert Safari Guide') }}</p>
                         </div>
                     </div>
-                    <button @@click="isAiOpen = false" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+                    <button @@click="isAiOpen = false" aria-label="{{ __('Close chat') }}" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
             </div>
-            <div class="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50" id="ai-chat-messages">
+            <div class="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50" id="ai-chat-messages" role="log" aria-live="polite" aria-relevant="additions">
                 <div class="bg-white p-3 rounded-xl rounded-tl-none shadow-sm max-w-[85%] border border-gray-100">
                     <p class="text-sm text-gray-700 font-medium">{{ __('Jambo! I\'m your Twina Safaris guide. How can I help you today?') }}</p>
                 </div>
@@ -593,10 +613,12 @@
                     <input type="text"
                            x-model="userInput"
                            :disabled="isLoading"
+                           aria-label="{{ __('Ask the safari assistant a question') }}"
                            placeholder="{{ __('Ask about safaris, prices...') }}"
                            class="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-50 transition-all">
                     <button type="submit"
                             :disabled="isLoading || !userInput.trim()"
+                            aria-label="{{ __('Send message') }}"
                             class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-center justify-center hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 shadow-md">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -608,6 +630,8 @@
 
         <!-- AI Chat Button -->
         <button @@click="isAiOpen = !isAiOpen; isChatOpen = false"
+                aria-label="{{ __('Toggle AI safari assistant') }}"
+                :aria-expanded="isAiOpen.toString()"
                 class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xl flex items-center justify-center hover:scale-110 transition-all ring-4 ring-white/50">
             <svg x-show="!isAiOpen" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z"></path>
@@ -620,6 +644,8 @@
         <!-- WhatsApp Button -->
         <a href="https://wa.me/255795482197?text=Hello%20Twina%20Safaris%2C%20I%27m%20interested%20in%20your%20tours!"
            target="_blank"
+           rel="noopener noreferrer"
+           aria-label="{{ __('Chat with us on WhatsApp') }}"
            class="w-14 h-14 rounded-full bg-[#25D366] text-white shadow-xl flex items-center justify-center hover:scale-110 hover:bg-[#20ba56] transition-all ring-4 ring-white/50 group">
             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -629,11 +655,13 @@
     {{-- GDPR Cookie Consent Banner --}}
     <div x-data="{ accepted: localStorage.getItem('cookieConsent') === 'accepted' }"
          x-show="!accepted" x-cloak x-transition
+         role="region"
+         aria-label="{{ __('Cookie and privacy notice') }}"
          class="fixed bottom-4 left-4 right-4 md:left-6 md:right-auto md:max-w-md bg-[#0a0703] border border-gold-500/30 text-white p-5 rounded-2xl shadow-2xl z-50 flex flex-col gap-3">
         <div class="flex items-start gap-3">
             <div class="w-8 h-8 rounded-full bg-gold-500/20 text-gold-400 flex items-center justify-center shrink-0 text-sm font-bold">🍪</div>
             <div>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-gold-400">Cookie & Privacy Notice</h4>
+                <p class="text-xs font-bold uppercase tracking-wider text-gold-400">Cookie & Privacy Notice</p>
                 <p class="text-xs text-gray-300 mt-1 leading-relaxed">
                     We use cookies to analyze traffic and optimize your safari experience. Read our <a href="{{ route('privacy.index') }}" class="underline text-gold-400 font-semibold">Privacy Policy</a>.
                 </p>

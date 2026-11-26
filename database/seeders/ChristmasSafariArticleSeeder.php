@@ -57,7 +57,7 @@ class ChristmasSafariArticleSeeder extends Seeder
             'hero_caption' => 'Sunrise over the southern Serengeti plains',
             'content' => $content,
             'featured_image' => $hero,
-            'meta_title' => 'Christmas & New Year Safari in Tanzania 2026/2027 | Twina Safaris',
+            'meta_title' => 'Christmas & New Year Safari Tanzania 2026/27 | Twina Safaris',
             'meta_description' => 'Plan a Christmas and New Year safari in Tanzania 2026/2027: Serengeti herds, Ndutu calving, Ngorongoro, Zanzibar and expert tips.',
             'tags' => [
                 'Christmas safari Tanzania',

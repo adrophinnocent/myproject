@@ -1,10 +1,10 @@
 @extends('public.layouts.app')
 
-@section('title', 'Tanzania Safari Cost 2026 | Prices per Day & What Affects Them | Twina Safaris')
+@section('title', 'Tanzania Safari Cost 2026 | Twina Safaris')
 @section('meta_description', 'How much does a Tanzania safari cost? Compare published itinerary prices, per-day ranges, park fees, inclusions and practical ways to save with Twina Safaris.')
 
 @php
-    $pageTitle = 'Tanzania Safari Cost';
+    $pageTitle = 'Tanzania Safari Cost 2026';
     $pagePath = '/tanzania-safari-cost';
     $faqs = [
         [

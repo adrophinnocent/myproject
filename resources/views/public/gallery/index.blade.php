@@ -1,6 +1,6 @@
 @extends('public.layouts.app')
 @section('title', 'Visual Journey - Twina Safaris Photo Gallery')
-@section('meta_description', 'Experience the magic of Africa through our lens. Stunning visuals of safaris, peaks, and paradise.')
+@section('meta_description', 'Browse Twina Safaris photos of Serengeti wildlife, Ngorongoro landscapes, Kilimanjaro treks and Zanzibar beaches, then plan your own Tanzania journey.')
 
 @section('content')
 {{-- Enhanced Immersive Header --}}
@@ -8,14 +8,14 @@
     <div class="absolute inset-0 z-0">
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('gallery_banner') }}"
              width="1920" height="600"
-             class="w-full h-full object-cover opacity-40" alt="{{ __('Safari Background') }}" loading="eager">
+             class="w-full h-full object-cover opacity-40" alt="{{ __('Tanzania safari landscape background') }}" loading="eager" decoding="async">
         <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-safari-light"></div>
     </div>
 
     <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
         <span class="inline-block text-gold-400 text-xs md:text-sm font-black uppercase tracking-[0.5em] mb-6 animate-fade-in">{{ __('Visual Chronicles') }}</span>
         <h1 class="font-display text-5xl md:text-8xl text-white font-black leading-tight drop-shadow-2xl mb-8">
-            {{ __('The Spirit of') }} <br> <span class="italic text-gold-500 font-serif">{{ __('The Wild') }}</span>
+            {{ __('Twina Safaris Photo Gallery') }}
         </h1>
         <p class="text-white/80 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md">
             {{ __('Every photo tells a story of adventure, breath-taking landscapes, and unforgettable encounters in the heart of Africa.') }}
@@ -35,7 +35,7 @@
                         @endphp
 
                         @if($coverImg)
-                            <img src="{{ $coverImg }}" width="500" height="400" alt="{{ $album->name }}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy">
+                            <img src="{{ $coverImg }}" width="500" height="400" alt="{{ $album->name }}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy" decoding="async">
                         @else
                             <div class="w-full h-full bg-gray-100 flex items-center justify-center">🦁</div>
                         @endif
@@ -50,16 +50,16 @@
                                     {{ $album->images->count() }} {{ __('Frames') }}
                                 </span>
                             </div>
-                            <h3 class="font-display text-3xl font-black text-white leading-tight group-hover:text-gold-400 transition-colors mb-2">
+                            <h2 class="font-display text-3xl font-black text-white leading-tight group-hover:text-gold-400 transition-colors mb-2">
                                 {{ $album->translate('name') }}
-                            </h3>
+                            </h2>
                             <p class="text-white/70 text-sm font-medium line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
                                 {{ $album->translate('description') ?? __('Explore this collection of moments.') }}
                             </p>
 
                             <div class="mt-6 flex items-center gap-2 text-gold-400 font-bold text-xs uppercase tracking-widest group-hover:gap-4 transition-all">
                                 {{ __('Open Collection') }}
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                             </div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
     @else
         <div class="text-center py-32 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
             <div class="text-8xl mb-8 grayscale">🐘</div>
-            <h3 class="font-display text-3xl font-black text-gray-800 mb-4">{{ __('The Gallery is Preparing') }}</h3>
+            <h2 class="font-display text-3xl font-black text-gray-800 mb-4">{{ __('The Gallery is Preparing') }}</h2>
             <p class="text-gray-500 max-w-md mx-auto">{{ __('We are currently curating the most beautiful moments from recent safaris. Check back very soon.') }}</p>
             <a href="{{ route('home') }}" class="btn-gold inline-block mt-10 px-10 py-4 rounded-full text-sm font-black uppercase tracking-widest">{{ __('Back to Explore') }}</a>
         </div>
@@ -87,13 +87,13 @@
     <div class="absolute inset-0 opacity-10">
         <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('gallery_footer_bg') }}"
              width="1920" height="400"
-             class="w-full h-full object-cover" loading="lazy">
+             class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
     </div>
     <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
         <h2 class="font-display text-4xl text-white font-bold mb-6">{{ __('Want to be in the next frame?') }}</h2>
         <p class="text-gray-400 text-lg mb-10">{{ __('Start planning your customized safari journey and capture your own unforgettable moments.') }}</p>
-        <a href="{{ route('trip-plan.index') }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105">
-            {{ __('Plan My Trip Now') }}
+        <a href="{{ route('custom-safari.create') }}" class="btn-gold px-12 py-5 rounded-full text-lg font-black shadow-2xl transition-all hover:scale-105">
+            {{ __('Plan a Custom Tanzania Safari') }}
         </a>
     </div>
 </section>

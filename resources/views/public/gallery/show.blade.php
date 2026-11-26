@@ -1,6 +1,37 @@
 @extends('public.layouts.app')
-@section('title', $album->name.' Photo Gallery | Twina Safaris')
-@section('meta_description', 'Browse '.($album->description ? strip_tags((string) $album->description).' ' : '').'photos and moments from Twina Safaris in Tanzania.')
+@php
+    $seoTitle = trim(strip_tags((string) ($album->name ?: 'Twina Safaris Photo Gallery'))).' Photo Gallery | Twina Safaris';
+    $seoDescription = trim(strip_tags((string) ($album->description ?: '')));
+    if ($seoDescription !== '') {
+        $seoDescription = 'Browse '.$seoDescription.' photos and moments from Twina Safaris in Tanzania.';
+    } else {
+        $seoDescription = 'Browse Twina Safaris photo galleries with wildlife, landscape and travel moments from Tanzania.';
+    }
+    if (mb_strlen($seoDescription) < 145) {
+        $seoDescription .= str_repeat(' Explore more safari, trekking and Zanzibar moments.', 4);
+    }
+    $seoDescription = \Illuminate\Support\Str::limit($seoDescription, 158, '');
+@endphp
+@section('title', \Illuminate\Support\Str::limit($seoTitle, 60, ''))
+@section('meta_description', $seoDescription)
+
+@php
+    $canonicalUrl = \App\Helpers\SeoHelper::canonicalUrl(request());
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        '@id' => $canonicalUrl.'#breadcrumb',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => __('Home'), 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => __('Photo Gallery'), 'item' => route('gallery.index')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => trim(strip_tags((string) ($album->translate('name') ?: $album->name)))],
+        ],
+    ];
+@endphp
+
+@section('schema')
+<script type="application/ld+json">@json($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
+@endsection
 
 @section('content')
 {{-- Extra CSS for Lightbox --}}
@@ -13,14 +44,21 @@
             $cover = $album->cover_url ?? ($album->images->first() ? $album->images->first()->image_url : null);
         @endphp
         @if($cover)
-            <img src="{{ $cover }}" alt="{{ $album->name }}" class="w-full h-full object-cover opacity-30">
+            <img src="{{ $cover }}" width="1920" height="1080" alt="{{ $album->name }} gallery cover" class="w-full h-full object-cover opacity-30" loading="eager" decoding="async">
         @endif
         <div class="absolute inset-0 bg-gradient-to-t from-safari-dark to-transparent"></div>
     </div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 w-full text-center md:text-left">
+        <nav aria-label="{{ __('Breadcrumb') }}" class="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs text-gray-400 mb-4 font-semibold">
+            <a href="{{ route('home') }}" class="hover:text-gold-400">{{ __('Home') }}</a>
+            <span aria-hidden="true">/</span>
+            <a href="{{ route('gallery.index') }}" class="hover:text-gold-400">{{ __('Photo Gallery') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="text-white" aria-current="page">{{ $album->translate('name') }}</span>
+        </nav>
         <a href="{{ route('gallery.index') }}" class="inline-flex items-center gap-2 text-gold-400 hover:text-white transition-colors mb-6 font-black uppercase tracking-widest text-[10px]">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             {{ __('Back to Collections') }}
         </a>
         <h1 class="font-display text-4xl md:text-7xl text-white font-black leading-tight mb-4 tracking-tighter">{{ $album->translate('name') }}</h1>
@@ -45,9 +83,10 @@
 
                         <div class="relative pb-[125%] w-full h-0">
                             <img src="{{ $image->image_url }}"
-                                 alt="{{ $image->caption ?? $album->name }}"
+                                 width="800" height="1000"
+                                 alt="{{ $image->caption ?? ($album->name . ' gallery photo') }}"
                                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                 loading="lazy">
+                                 loading="lazy" decoding="async">
                         </div>
 
                         {{-- Hover Indicator --}}
@@ -66,7 +105,7 @@
     @else
         <div class="text-center py-40 bg-gray-50 rounded-[4rem] border-2 border-dashed border-gray-200">
             <div class="text-9xl mb-10 grayscale opacity-20">📸</div>
-            <h3 class="font-display text-3xl font-black text-gray-800">{{ __('This collection is coming soon') }}</h3>
+            <h2 class="font-display text-3xl font-black text-gray-800">{{ __('This collection is coming soon') }}</h2>
             <p class="text-gray-500 mt-4 max-w-md mx-auto">{{ __('Our photographers are currently uploading high-resolution frames to this album. Please check back in a few moments.') }}</p>
             <a href="{{ route('gallery.index') }}" class="btn-gold inline-block mt-12 px-10 py-5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">{{ __('Explore Other Collections') }}</a>
         </div>
@@ -76,9 +115,9 @@
 {{-- Footer CTA --}}
 <div class="bg-safari-dark py-20">
     <div class="max-w-4xl mx-auto px-4 text-center">
-        <h3 class="font-display text-3xl text-white font-bold mb-4">{{ __('Capture your own story') }}</h3>
+        <h2 class="font-display text-3xl text-white font-bold mb-4">{{ __('Capture your own story') }}</h2>
         <p class="text-gray-400 mb-10">{{ __('Experience the magic of Tanzania and become part of our visual journey.') }}</p>
-        <a href="{{ route('trip-plan.index') }}" class="btn-gold px-12 py-5 rounded-full text-sm font-black uppercase tracking-widest">{{ __('Plan My Safari') }}</a>
+        <a href="{{ route('custom-safari.create') }}" class="btn-gold px-12 py-5 rounded-full text-sm font-black uppercase tracking-widest">{{ __('Design a Custom Tanzania Safari') }}</a>
     </div>
 </div>
 

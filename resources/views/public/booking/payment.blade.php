@@ -23,7 +23,7 @@
         {{-- Notifications --}}
         @if(session('success'))
             <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center gap-3 text-sm">
-                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <svg class="w-5 h-5 text-emerald-600 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                 <p class="font-bold">{{ session('success') }}</p>
             </div>
         @endif
@@ -58,13 +58,13 @@
 
                     {{-- 1. Select Payment Type (Deposit vs Full) --}}
                     <div>
-                        <h3 class="font-bold text-stone-900 text-sm uppercase tracking-wider mb-4">{{ __('1. Choose Payment Type') }}</h3>
+                        <h2 class="font-bold text-stone-900 text-sm uppercase tracking-wider mb-4">{{ __('1. Choose Payment Type') }}</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <label class="p-5 border-2 rounded-2xl cursor-pointer transition-all flex flex-col justify-between"
                                    :class="payType === 'deposit' ? 'border-amber-500 bg-amber-50/20' : 'border-stone-200 bg-stone-50'">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="font-black text-stone-900 text-sm uppercase">{{ __('Pay Deposit') }} ({{ number_format($booking->deposit_percentage, 0) }}%)</span>
-                                    <input type="radio" name="pay_type_radio" value="deposit" x-model="payType" class="text-amber-600 focus:ring-amber-500">
+                                    <input type="radio" name="pay_type_radio" aria-label="{{ __('Pay Deposit') }}" value="deposit" x-model="payType" class="text-amber-600 focus:ring-amber-500">
                                 </div>
                                 <span class="font-display text-2xl font-bold text-amber-700">{{ $booking->formatted_deposit_required }}</span>
                                 <span class="text-[11px] text-stone-500 mt-1">{{ __('Secures your booking immediately.') }}</span>
@@ -74,7 +74,7 @@
                                    :class="payType === 'full' ? 'border-amber-500 bg-amber-50/20' : 'border-stone-200 bg-stone-50'">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="font-black text-stone-900 text-sm uppercase">{{ __('Pay Full Amount') }}</span>
-                                    <input type="radio" name="pay_type_radio" value="full" x-model="payType" class="text-amber-600 focus:ring-amber-500">
+                                    <input type="radio" name="pay_type_radio" aria-label="{{ __('Pay Full Amount') }}" value="full" x-model="payType" class="text-amber-600 focus:ring-amber-500">
                                 </div>
                                 <span class="font-display text-2xl font-bold text-stone-900">{{ $booking->formatted_total_price }}</span>
                                 <span class="text-[11px] text-stone-500 mt-1">{{ __('Full trip payment in one go.') }}</span>
@@ -84,7 +84,7 @@
 
                     {{-- 2. Select Payment Method --}}
                     <div>
-                        <h3 class="font-bold text-stone-900 text-sm uppercase tracking-wider mb-4">{{ __('2. Choose Payment Method') }}</h3>
+                        <h2 class="font-bold text-stone-900 text-sm uppercase tracking-wider mb-4">{{ __('2. Choose Payment Method') }}</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                             {{-- Bank Wire Transfer --}}
@@ -94,7 +94,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl">🏦</span>
                                     <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Direct Bank Transfer') }}</h4>
+                                        <h3 class="font-bold text-stone-900 text-xs">{{ __('Direct Bank Transfer') }}</h3>
                                         <p class="text-[10px] text-stone-500">{{ __('SWIFT / International Wire') }}</p>
                                     </div>
                                 </div>
@@ -108,7 +108,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl">📱</span>
                                     <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('M-Pesa') }}</h4>
+                                        <h3 class="font-bold text-stone-900 text-xs">{{ __('M-Pesa') }}</h3>
                                         <p class="text-[10px] text-stone-500">{{ __('Vodacom Tanzania') }}</p>
                                     </div>
                                 </div>
@@ -122,7 +122,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl">📲</span>
                                     <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Tigo Pesa') }}</h4>
+                                        <h3 class="font-bold text-stone-900 text-xs">{{ __('Tigo Pesa') }}</h3>
                                         <p class="text-[10px] text-stone-500">{{ __('Tigo Tanzania') }}</p>
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl">💳</span>
                                     <div>
-                                        <h4 class="font-bold text-stone-900 text-xs">{{ __('Airtel Money') }}</h4>
+                                        <h3 class="font-bold text-stone-900 text-xs">{{ __('Airtel Money') }}</h3>
                                         <p class="text-[10px] text-stone-500">{{ __('Airtel Tanzania') }}</p>
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@
 
                     {{-- Bank Wire Details Display --}}
                     <div x-show="method === 'bank_transfer'" x-cloak class="p-6 bg-stone-50 border border-stone-200 rounded-2xl space-y-3 text-xs">
-                        <h4 class="font-bold text-stone-900 text-sm uppercase tracking-wider text-amber-800">{{ __('Twina Safaris Bank Account Details') }}</h4>
+                        <h3 class="font-bold text-stone-900 text-sm uppercase tracking-wider text-amber-800">{{ __('Twina Safaris Bank Account Details') }}</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-stone-700">
                             <div><span class="font-bold text-stone-900">{{ __('Bank Name') }}:</span> {{ $bankDetails['bank_name'] }}</div>
                             <div><span class="font-bold text-stone-900">{{ __('Account Name') }}:</span> {{ $bankDetails['account_name'] }}</div>
@@ -163,7 +163,7 @@
 
                     {{-- Mobile Money Details Display --}}
                     <div x-show="method !== 'bank_transfer'" x-cloak class="p-6 bg-stone-50 border border-stone-200 rounded-2xl space-y-3 text-xs">
-                        <h4 class="font-bold text-stone-900 text-sm uppercase tracking-wider text-amber-800">{{ __('Tanzania Mobile Money Instructions') }}</h4>
+                        <h3 class="font-bold text-stone-900 text-sm uppercase tracking-wider text-amber-800">{{ __('Tanzania Mobile Money Instructions') }}</h3>
                         <p class="text-stone-700 font-medium">
                             {{ __('Send payment to') }}
                             <strong class="text-stone-900 font-bold">
@@ -184,8 +184,8 @@
                         <input type="hidden" name="payment_type" :value="payType">
 
                         <div>
-                            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Payment / Transaction Reference (Optional)') }}</label>
-                            <input type="text" name="transaction_notes" maxlength="1000" placeholder="{{ __('e.g. Bank transfer reference or M-Pesa transaction ID...') }}"
+                            <label for="transaction_notes" class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Payment / Transaction Reference (Optional)') }}</label>
+                            <input id="transaction_notes" type="text" name="transaction_notes" maxlength="1000" placeholder="{{ __('e.g. Bank transfer reference or M-Pesa transaction ID...') }}"
                                    class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-xs focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none">
                         </div>
 
@@ -204,7 +204,7 @@
             {{-- Sidebar Summary --}}
             <div class="lg:col-span-4 space-y-6">
                 <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-sm space-y-4 text-xs">
-                    <h3 class="font-bold text-stone-900 text-sm uppercase tracking-wider mb-3">{{ __('Order Summary') }}</h3>
+                    <h2 class="font-bold text-stone-900 text-sm uppercase tracking-wider mb-3">{{ __('Order Summary') }}</h2>
 
                     <div class="flex justify-between items-center text-stone-600 pb-3 border-b border-stone-100">
                         <span>{{ __('Booking Ref') }}</span>
@@ -228,7 +228,7 @@
                 </div>
 
                 <div class="p-6 bg-[#0a0703] text-white rounded-3xl space-y-3 text-xs">
-                    <h4 class="font-bold text-amber-400 uppercase tracking-widest">{{ __('Twina Safaris Guarantee') }}</h4>
+                    <h3 class="font-bold text-amber-400 uppercase tracking-widest">{{ __('Twina Safaris Guarantee') }}</h3>
                     <p class="text-stone-300 leading-relaxed">
                         {{ __('All payments are protected under our official registration in Tanzania. You will receive a digital receipt and an updated booking voucher after verification.') }}
                     </p>

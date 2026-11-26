@@ -70,15 +70,15 @@
 
                         {{-- Itinerary Preview Accordion --}}
                         <div class="mt-8 border-t border-gray-100 pt-8" x-data="{ openPreview: false }">
-                            <button @click="openPreview = !openPreview" class="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gold-50 transition-colors group">
+                            <button type="button" @click="openPreview = !openPreview" :aria-expanded="openPreview.toString()" aria-controls="itinerary-preview" class="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gold-50 transition-colors group">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl">🗺️</span>
                                     <span class="font-bold text-gray-900">{{ __('Preview My Itinerary') }}</span>
                                 </div>
-                                <svg class="w-5 h-5 text-gray-400 group-hover:text-gold-600 transition-transform" :class="openPreview ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                <svg class="w-5 h-5 text-gray-400 group-hover:text-gold-600 transition-transform" aria-hidden="true" :class="openPreview ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
 
-                            <div x-show="openPreview" x-collapse>
+                            <div id="itinerary-preview" x-show="openPreview" x-collapse>
                                 <div class="mt-4 space-y-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
                                     @php
                                         $itinerary = $booking->bookable_item->itinerary ?? [];
@@ -89,7 +89,7 @@
                                         <div class="flex gap-4 p-4 border-l-2 border-gold-500 bg-white">
                                             <div class="font-black text-gold-600 text-xs shrink-0">{{ __('Day') }} {{ $loop->iteration }}</div>
                                             <div>
-                                                <h4 class="font-bold text-gray-900 text-sm mb-1">{{ is_array($item) ? ($item['title'] ?? '') : $item }}</h4>
+                                                <h3 class="font-bold text-gray-900 text-sm mb-1">{{ is_array($item) ? ($item['title'] ?? '') : $item }}</h3>
                                                 <p class="text-gray-500 text-xs leading-relaxed line-clamp-2">{{ is_array($item) ? ($item['description'] ?? '') : '' }}</p>
                                             </div>
                                         </div>
@@ -104,9 +104,9 @@
 
                 {{-- Right Side: Payment & Next Steps --}}
                 <div class="lg:col-span-5 bg-gray-50/50 p-8 md:p-12">
-                    <h3 class="text-xl font-bold text-safari-dark mb-8 flex items-center gap-2">
+                    <h2 class="text-xl font-bold text-safari-dark mb-8 flex items-center gap-2">
                         {{ __('Payment Details') }}
-                    </h3>
+                    </h2>
 
                     <div class="bg-white border border-gold-500/20 rounded-3xl p-8 shadow-xl shadow-gold-500/5 mb-8 relative">
                         <div class="absolute -top-3 -right-3 w-10 h-10 bg-gold-500 rounded-full flex items-center justify-center text-safari-dark shadow-lg">
@@ -145,14 +145,14 @@
                     {{-- Download PDF Section --}}
                     <div class="mb-10">
                         <a href="{{ route('booking.download', $booking->token) }}" class="w-full btn-gold py-5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-gold-500/10 hover:scale-[1.02] active:scale-95 transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <svg class="w-6 h-6" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             {{ __('Download Full Itinerary (PDF)') }}
                         </a>
                         <p class="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-3">{{ __('Ready to print or save on your device') }}</p>
                     </div>
 
                     <div class="space-y-6">
-                        <h4 class="text-sm font-bold text-safari-dark uppercase tracking-widest">{{ __('Your Next Steps') }}</h4>
+                        <h3 class="text-sm font-bold text-safari-dark uppercase tracking-widest">{{ __('Your Next Steps') }}</h3>
                         <div class="space-y-4">
                             @foreach([
                                 ['num' => '1', 'text' => __('Make payment via Bank Transfer or M-Pesa')],

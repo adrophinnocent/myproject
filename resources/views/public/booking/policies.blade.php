@@ -1,6 +1,7 @@
 @extends('public.layouts.app')
 
-@section('title', 'Booking Terms, Deposit & Cancellation Policies - Twina Safaris')
+@section('title', 'Booking Terms & Policies | Twina Safaris')
+@section('meta_description', 'Review Twina Safaris booking terms, deposit rules, balance deadlines and cancellation policies so you can reserve a Tanzania safari with confidence.')
 
 @section('content')
 <div class="bg-[#fcfaf7] min-h-screen py-16">

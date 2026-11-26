@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Helpers\SeoHelper;
+use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\Destination;
@@ -96,7 +97,7 @@ class SeoUrlTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('<link rel="canonical" href="'.$expected.'">', false);
-        $response->assertSee('hreflang="x-default" href="'.$expected.'"', false);
+        $response->assertDontSee('hreflang=', false);
     }
 
     public static function localizedPageProvider(): array
@@ -111,12 +112,12 @@ class SeoUrlTest extends TestCase
         ];
     }
 
-    public function test_language_pages_do_not_advertise_language_specific_hreflang(): void
+    public function test_language_pages_do_not_advertise_unsupported_hreflang(): void
     {
         $response = $this->get('/?lang=fr');
 
         $response->assertOk();
-        $response->assertSee('hreflang="x-default"', false);
+        $response->assertDontSee('hreflang=', false);
         foreach (SeoHelper::supportedLocales() as $locale) {
             $response->assertDontSee('hreflang="'.$locale.'"', false);
         }
@@ -159,18 +160,17 @@ class SeoUrlTest extends TestCase
             ->assertRedirect('https://twinasafaris.com/tours?tour_type=safari');
     }
 
-    public function test_sitemap_exposes_only_x_default_and_cache_header(): void
+    public function test_sitemap_is_clean_and_uses_cache_header(): void
     {
         $response = $this->get('/sitemap.xml');
 
         $response->assertOk();
         $response->assertHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->assertStringContainsString('max-age=3600', (string) $response->headers->get('Cache-Control'));
-        $response->assertSee('xmlns:xhtml="http://www.w3.org/1999/xhtml"', false);
-        $response->assertSee('hreflang="x-default" href="https://twinasafaris.com/"', false);
-        foreach (SeoHelper::supportedLocales() as $locale) {
-            $response->assertDontSee('hreflang="'.$locale.'"', false);
-        }
+        // English-only content has no real language alternates; a lone
+        // x-default produced search-console warnings and must not be emitted.
+        $response->assertDontSee('xmlns:xhtml', false);
+        $response->assertDontSee('hreflang=', false);
         $response->assertDontSee('?lang=', false);
     }
 
@@ -205,14 +205,170 @@ class SeoUrlTest extends TestCase
             $this->assertLessThanOrEqual(1, $node->getElementsByTagNameNS($namespace, 'lastmod')->length);
 
             $links = $node->getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'link');
-            $this->assertSame(1, $links->length);
-            $this->assertSame('x-default', $links->item(0)->getAttribute('hreflang'));
+            $this->assertSame(0, $links->length);
         }
 
         $this->assertStringNotContainsString('savannatrails.com', $body);
 
         foreach (BlogPost::LEGACY_BEST_TIME_SLUGS as $slug) {
             $this->assertStringNotContainsString($slug, $body);
+        }
+    }
+
+    public function test_filtered_tour_listings_are_noindex_but_still_followable(): void
+    {
+        $response = $this->get('/tours?destination=1&tour_type=safari');
+
+        $response->assertOk();
+        $response->assertSee('<link rel="canonical" href="https://twinasafaris.com/tours">', false);
+        $response->assertSee('noindex, follow', false);
+    }
+
+    public function test_booking_form_is_noindex_while_public_policies_are_indexable(): void
+    {
+        $this->makeTour();
+
+        $this->get('/tours/luxury-serengeti-safari/book')
+            ->assertOk()
+            ->assertSee('noindex, nofollow', false);
+
+        $this->get('/booking/policies')
+            ->assertOk()
+            ->assertDontSee('noindex', false);
+    }
+
+    #[DataProvider('indexablePageProvider')]
+    public function test_indexable_pages_have_unique_seo_metadata_and_one_h1(string $path): void
+    {
+        $response = $this->get($path);
+
+        $response->assertOk();
+
+        $body = (string) $response->getContent();
+
+        preg_match('/<title>(.*?)<\/title>/s', $body, $titleMatch);
+        preg_match('/<meta name="description" content="(.*?)">/s', $body, $descriptionMatch);
+
+        $this->assertNotEmpty($titleMatch[1] ?? null, $path.' has no title tag');
+        $this->assertNotEmpty($descriptionMatch[1] ?? null, $path.' has no meta description');
+
+        $title = html_entity_decode($titleMatch[1], ENT_QUOTES, 'UTF-8');
+        $description = html_entity_decode($descriptionMatch[1], ENT_QUOTES, 'UTF-8');
+
+        $this->assertLessThanOrEqual(60, mb_strlen($title), $path.' title is too long');
+        $this->assertGreaterThanOrEqual(100, mb_strlen($description), $path.' description is too thin');
+        $this->assertLessThanOrEqual(160, mb_strlen($description), $path.' description is too long');
+        $this->assertSame(1, preg_match_all('/<h1\b/i', $body), $path.' must have exactly one H1');
+        $this->assertStringNotContainsString('hreflang=', $body);
+    }
+
+    public static function indexablePageProvider(): array
+    {
+        return array_map(fn (string $path) => [$path], [
+            '/',
+            '/about',
+            '/tours',
+            '/destinations',
+            '/blog',
+            '/faqs',
+            '/gallery',
+            '/custom-safari',
+            '/booking/policies',
+            '/privacy-policy',
+            '/terms-of-service',
+            '/tanzania-safari-cost',
+            '/best-time-for-tanzania-safari',
+            '/serengeti-safari',
+            '/ngorongoro-tour',
+            '/kilimanjaro-trekking-company',
+            '/zanzibar-holiday-packages',
+        ]);
+    }
+
+    public function test_indexable_pages_do_not_share_titles_or_descriptions(): void
+    {
+        $titles = [];
+        $descriptions = [];
+
+        foreach (array_column(self::indexablePageProvider(), 0) as $path) {
+            $body = (string) $this->get($path)->getContent();
+
+            preg_match('/<title>(.*?)<\/title>/s', $body, $titleMatch);
+            preg_match('/<meta name="description" content="(.*?)">/s', $body, $descriptionMatch);
+
+            $titles[] = html_entity_decode($titleMatch[1] ?? '', ENT_QUOTES, 'UTF-8');
+            $descriptions[] = html_entity_decode($descriptionMatch[1] ?? '', ENT_QUOTES, 'UTF-8');
+        }
+
+        $this->assertCount(count($titles), array_unique($titles), 'Duplicate SEO titles found');
+        $this->assertCount(count($descriptions), array_unique($descriptions), 'Duplicate meta descriptions found');
+    }
+
+    public function test_llms_txt_is_plain_text_and_excludes_private_urls(): void
+    {
+        $response = $this->get('/llms.txt');
+
+        $response->assertOk();
+        $response->assertHeader('Content-Type', 'text/plain; charset=utf-8');
+        $response->assertSee('# Twina Safaris', false);
+        $response->assertSee('https://twinasafaris.com/tours', false);
+        $response->assertSee('https://twinasafaris.com/booking/policies', false);
+        $response->assertDontSee('/booking/confirmation', false);
+        $response->assertDontSee('/proposal/', false);
+    }
+
+    public function test_destination_page_has_unique_metadata_and_structured_data(): void
+    {
+        $this->makeTour();
+
+        $response = $this->get('/destinations/serengeti');
+
+        $response->assertOk();
+        $response->assertSee('<title>Serengeti Safari &amp; Tours | Twina Safaris</title>', false);
+        $response->assertSee('TouristDestination', false);
+        $response->assertSee('BreadcrumbList', false);
+    }
+
+    public function test_structured_data_is_valid_json_on_key_indexable_pages(): void
+    {
+        $this->makeTour();
+
+        $category = BlogCategory::create(['name' => 'Guides', 'slug' => 'guides']);
+        BlogPost::create([
+            'title' => 'Planning Guide',
+            'slug' => 'planning-guide',
+            'category_id' => $category->id,
+            'content' => '<p>Practical planning advice.</p>',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        foreach ([
+            '/',
+            '/tours',
+            '/tours/tour/luxury-serengeti-safari.html',
+            '/blog/planning-guide.html',
+            '/destinations/serengeti',
+        ] as $path) {
+            $body = (string) $this->get($path)->getContent();
+
+            preg_match_all('/<script type="application\/ld\+json">(.*?)<\/script>/s', $body, $matches);
+
+            $this->assertNotEmpty($matches[1], $path.' has no structured data');
+
+            foreach ($matches[1] as $json) {
+                $data = json_decode(trim($json), true);
+
+                $this->assertSame(JSON_ERROR_NONE, json_last_error(), $path.' has invalid JSON-LD');
+
+                // The global graph is an array of nodes; page graphs are single
+                // objects. Both must declare the schema.org context.
+                $nodes = array_is_list($data) ? $data : [$data];
+
+                foreach ($nodes as $node) {
+                    $this->assertSame('https://schema.org', $node['@context'] ?? null, $path.' has the wrong schema context');
+                }
+            }
         }
     }
 
@@ -242,12 +398,12 @@ class SeoUrlTest extends TestCase
     public static function guidePageProvider(): array
     {
         return [
-            ['/tanzania-safari-cost', 'Tanzania Safari Cost'],
-            ['/best-time-for-tanzania-safari', 'Best Time to Visit Tanzania for Safari'],
-            ['/serengeti-safari', 'Serengeti Safari: Routes, Seasons and What to Expect'],
-            ['/ngorongoro-tour', 'Ngorongoro Tour: Crater Safari Guide'],
-            ['/kilimanjaro-trekking-company', 'Climb Kilimanjaro with a Local Moshi Trekking Team'],
-            ['/zanzibar-holiday-packages', 'Zanzibar Holiday Packages: Beach, Culture and Safari Combinations'],
+            ['/tanzania-safari-cost', 'Tanzania Safari Cost 2026'],
+            ['/best-time-for-tanzania-safari', 'Best Time for a Tanzania Safari 2026'],
+            ['/serengeti-safari', 'Serengeti Safari Packages, Routes & Costs'],
+            ['/ngorongoro-tour', 'Ngorongoro Crater Tours & Safari Guide'],
+            ['/kilimanjaro-trekking-company', 'Kilimanjaro Treks & Routes from Moshi'],
+            ['/zanzibar-holiday-packages', 'Zanzibar Holiday Packages: Beaches, Culture and Safaris'],
         ];
     }
 
@@ -264,8 +420,7 @@ class SeoUrlTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('<link rel="canonical" href="https://twinasafaris.com/tanzania-safari-cost">', false);
-        $response->assertSee('hreflang="x-default"', false);
-        $response->assertDontSee('hreflang="fr"', false);
+        $response->assertDontSee('hreflang=', false);
     }
 
     #[DataProvider('legacyBestTimeSlugProvider')]

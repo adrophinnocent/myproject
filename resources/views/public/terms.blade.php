@@ -1,7 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'Terms of Service - Twina Safaris')
-@section('meta_description', 'Review the Terms of Service for safari bookings, deposits, cancellations, and travel agreements with Twina Safaris.')
+@section('meta_description', 'Review Twina Safaris terms for bookings, deposits, cancellations, refunds, travel insurance, client responsibilities and responsible travel agreements.')
 
 @section('content')
 <div class="relative pt-32 pb-16 bg-[#0a0703] text-white">

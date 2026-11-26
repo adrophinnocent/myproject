@@ -1,6 +1,6 @@
 @extends('public.layouts.app')
-@section('title', 'Tanzania Safari Packages 2026 | Prices, Routes & Itineraries | Twina Safaris')
-@section('meta_description', 'Browse Tanzania safari packages for Serengeti, Ngorongoro and Tarangire. Compare listed prices, day-by-day routes, inclusions and guide support.')
+@section('title', 'Tanzania Safari Packages & Prices | Twina Safaris')
+@section('meta_description', 'Browse Tanzania safari packages for Serengeti, Ngorongoro and Tarangire. Compare listed prices, day-by-day routes, inclusions and expert local guide support.')
 
 @php
     $packageFaqs = [
@@ -35,21 +35,50 @@
             'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq['answer']],
         ])->values()->all(),
     ];
+
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => __('Home'), 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => __('Safari Packages'), 'item' => route('tours.index')],
+        ],
+    ];
+
+    $itemListSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'ItemList',
+        'name' => __('Tanzania Safari Packages'),
+        'url' => route('tours.index'),
+        'itemListElement' => collect($tours->items())->map(fn ($tour, $index) => [
+            '@type' => 'ListItem',
+            'position' => $index + 1,
+            'name' => trim(strip_tags((string) ($tour->translate('title') ?: $tour->title ?: ''))),
+            'url' => route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']),
+        ])->values()->all(),
+    ];
 @endphp
 
 @section('schema')
-<script type="application/ld+json">@json($packageFaqSchema)</script>
+<script type="application/ld+json">@json($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
+<script type="application/ld+json">@json($packageFaqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
+<script type="application/ld+json">@json($itemListSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
 @endsection
 
 @section('content')
 <div class="relative pt-32 pb-16 bg-safari-dark">
     <div class="absolute inset-0 z-0">
-        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('safari_highlights') }}" class="w-full h-full object-cover opacity-20" alt="{{ __('Safari Packages') }}">
+        <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('safari_highlights') }}" width="1920" height="600" class="w-full h-full object-cover opacity-20" alt="{{ __('Tanzania safari packages background') }}" loading="eager" decoding="async">
     </div>
     <div class="absolute inset-0 bg-gradient-to-br from-slate-800 via-amber-900/20 to-slate-800 opacity-60"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
+        <nav aria-label="{{ __('Breadcrumb') }}" class="flex flex-wrap justify-center items-center gap-2 text-xs text-stone-300 mb-4 font-medium">
+            <a href="{{ route('home') }}" class="hover:text-gold-400 transition-colors">{{ __('Home') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="text-white font-bold" aria-current="page">{{ __('Safari Packages') }}</span>
+        </nav>
         <span class="text-gold-400 text-sm uppercase tracking-widest font-semibold">{{ __('Explore Africa') }}</span>
-        <h1 class="font-display text-4xl md:text-6xl text-white font-bold mt-3">{{ __('Tanzania Safari Packages') }}</h1>
+        <h1 class="font-display text-4xl md:text-6xl text-white font-bold mt-3">{{ __('Tanzania Safari Packages & Prices') }}</h1>
         <p class="text-gray-300 max-w-2xl mx-auto mt-4">
             {{ __('Compare routes, durations and inclusions for Serengeti, Ngorongoro, Tarangire and Kilimanjaro journeys, then ask for a tailored itinerary.') }}
         </p>
@@ -93,17 +122,17 @@
 
                 <form method="GET" action="{{ route('tours.index') }}" id="filter-form" class="space-y-5 text-xs">
                     <div>
-                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Search') }}</label>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Search tours...') }}"
+                        <label for="tour-search" class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Search') }}</label>
+                        <input id="tour-search" type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Search tours...') }}"
                                class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                     </div>
 
                     <div>
-                        <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Tour Type') }}</label>
-                        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <label id="tour-type-label" class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Tour Type') }}</label>
+                        <div role="radiogroup" aria-labelledby="tour-type-label" class="space-y-2 max-h-48 overflow-y-auto pr-1">
                             @foreach($categories as $cat)
                             <label class="flex items-center gap-2.5 cursor-pointer group">
-                                <input type="radio" name="category" value="{{ $cat->id }}"
+                                <input type="radio" name="category" aria-label="{{ $cat->name }}" value="{{ $cat->id }}"
                                        {{ (request('category') == $cat->id || request('tour_type') == $cat->slug) ? 'checked' : '' }}
                                        onchange="this.form.submit()" class="text-amber-600 focus:ring-amber-500">
                                 <span class="text-stone-700 font-medium group-hover:text-amber-800 transition-colors">{{ __($cat->name) }}</span>
@@ -114,7 +143,7 @@
 
                     <div>
                         <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Destination') }}</label>
-                        <select name="destination" onchange="this.form.submit()"
+                        <select name="destination" aria-label="{{ __('Filter by destination') }}" onchange="this.form.submit()"
                                 class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="">{{ __('All Destinations') }}</option>
                             @foreach($destinations as $dest)
@@ -127,7 +156,7 @@
 
                     <div>
                         <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Duration') }}</label>
-                        <select name="duration" onchange="this.form.submit()"
+                        <select name="duration" aria-label="{{ __('Filter by duration') }}" onchange="this.form.submit()"
                                 class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="">{{ __('Any Duration') }}</option>
                             @foreach(['1-3'=>'1-3 Days','4-7'=>'4-7 Days','8-14'=>'8-14 Days','15+'=>'15+ Days'] as $val=>$label)
@@ -138,7 +167,7 @@
 
                     <div>
                         <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Difficulty') }}</label>
-                        <select name="difficulty" onchange="this.form.submit()"
+                        <select name="difficulty" aria-label="{{ __('Filter by difficulty') }}" onchange="this.form.submit()"
                                 class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="">{{ __('Any Level') }}</option>
                             <option value="easy" {{ request('difficulty')==='easy'?'selected':'' }}>{{ __('Easy') }}</option>
@@ -149,7 +178,7 @@
 
                     <div>
                         <label class="block font-bold text-stone-500 uppercase tracking-wider mb-2">{{ __('Sort By') }}</label>
-                        <select name="sort" onchange="this.form.submit()"
+                        <select name="sort" aria-label="{{ __('Sort tours') }}" onchange="this.form.submit()"
                                 class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 font-semibold text-stone-800 focus:outline-none focus:border-amber-500">
                             <option value="featured" {{ request('sort','featured')==='featured'?'selected':'' }}>{{ __('Featured First') }}</option>
                             <option value="price_asc" {{ request('sort')==='price_asc'?'selected':'' }}>{{ __('Price: Low to High') }}</option>
@@ -163,7 +192,7 @@
         </aside>
 
         {{-- Right Column: Tour Cards Grid (FULL 100% Remaining Width) --}}
-        <main class="flex-1 w-full min-w-0">
+        <div class="flex-1 w-full min-w-0">
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @forelse($tours as $tour)
                     @php
@@ -180,7 +209,8 @@
                             {{-- Top Image Widescreen Banner --}}
                             <div class="relative h-52 overflow-hidden bg-stone-900">
                                 <img src="{{ $tour->featured_image_url }}"
-                                     alt="{{ $titleStr }}"
+                                     width="800" height="450"
+                                      alt="{{ $titleStr }}"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                      loading="lazy" decoding="async">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
@@ -232,7 +262,7 @@
                             <a href="{{ route('tours.show', ['type' => $tour->item_type ?? 'tour', 'slug' => $tour->slug ?? 'default']) }}"
                                class="btn-gold px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-sm flex items-center gap-1.5 group-hover:scale-105 transition-transform">
                                 <span>VIEW TOUR</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
                         </div>
                     </div>
@@ -251,7 +281,7 @@
                 {{ $tours->links() }}
             </div>
             @endif
-        </main>
+        </div>
     </div>
 
     {{-- Safari Package Questions (FAQ) Section - FULL WIDTH STACKED BELOW FLEX ROW --}}

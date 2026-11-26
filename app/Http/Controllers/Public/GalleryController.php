@@ -21,6 +21,14 @@ class GalleryController extends Controller
     {
         $album->load('images');
 
-        return view('public.gallery.show', compact('album'));
+        $response = response()->view('public.gallery.show', compact('album'));
+
+        // Placeholder albums with no photos are kept for visitors but should
+        // not compete in search while they are still empty.
+        if ($album->images->isEmpty()) {
+            $response->header('X-Robots-Tag', 'noindex, follow, noarchive, nosnippet');
+        }
+
+        return $response;
     }
 }

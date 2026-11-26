@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="description" content="Secure admin sign-in for the Twina Safaris team.">
+    <link rel="canonical" href="{{ url('/login') }}">
     <title>Twinasafaris - Admin Login</title>
 
     <!-- Fonts -->
@@ -107,8 +109,9 @@
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold">Skip to sign-in form</a>
 
-    <div class="w-full max-w-5xl flex flex-col md:flex-row clay-container overflow-hidden">
+    <main id="main-content" class="w-full max-w-5xl flex flex-col md:flex-row clay-container overflow-hidden">
 
         <!-- Left Side - Decorative -->
         <div class="hidden md:flex md:w-5/12 bg-gradient-to-br from-brand-600 to-brand-900 p-12 flex-col justify-center items-center text-white clay-side-dark z-10">
@@ -116,7 +119,7 @@
                 <div class="w-28 h-28 mx-auto mb-8 bg-white/10 rounded-[35px] flex items-center justify-center shadow-2xl border border-white/20 backdrop-blur-md">
                     <span class="text-5xl">🦁</span>
                 </div>
-                <h1 class="text-4xl font-extrabold mb-4 tracking-tight">Twinasafaris</h1>
+                <p class="text-4xl font-extrabold mb-4 tracking-tight">Twinasafaris</p>
                 <p class="text-brand-100 text-lg font-medium mb-2 uppercase tracking-widest">Admin Dashboard</p>
                 <div class="w-12 h-1.5 bg-brand-400 mx-auto mb-6 rounded-full"></div>
                 <p class="text-sm text-brand-200/80 leading-relaxed max-w-[250px]">Welcome back! Manage your safari business with ease.</p>
@@ -129,11 +132,11 @@
                 <div class="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <span class="text-3xl">🦁</span>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900 leading-tight">Twinasafaris Admin</h1>
+                <p class="text-2xl font-bold text-gray-900 leading-tight">Twinasafaris Admin</p>
             </div>
 
             <div class="mb-8">
-                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back</h2>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back</h1>
                 <p class="text-gray-500 font-medium">Please sign in to access your admin panel</p>
             </div>
 
@@ -158,14 +161,14 @@
 
                 <!-- Email -->
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-3 ml-2">Email Address</label>
+                    <label for="email" class="block text-sm font-bold text-gray-700 mb-3 ml-2">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                             <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 0 9 9 0 009 0zm-4.5 7.5a2.5 2.5 0 005 0v-1.5" />
                             </svg>
                         </div>
-                        <input type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
                             class="w-full pl-14 pr-6 py-4.5 rounded-[22px] clay-input focus:outline-none transition-all text-gray-800 font-medium"
                             placeholder="admin@example.com" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
                     </div>
@@ -173,14 +176,14 @@
 
                 <!-- Password -->
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-3 ml-2">Password</label>
+                    <label for="password" class="block text-sm font-bold text-gray-700 mb-3 ml-2">Password</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                             <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
                         </div>
-                        <input type="password" name="password" required autocomplete="current-password"
+                        <input type="password" id="password" name="password" required autocomplete="current-password"
                             class="w-full pl-14 pr-6 py-4.5 rounded-[22px] clay-input focus:outline-none transition-all text-gray-800 font-medium"
                             placeholder="••••••••" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
                     </div>
@@ -217,7 +220,7 @@
                 </a>
             </div>
         </div>
-    </div>
+    </main>
 
 </body>
 </html>

@@ -15,7 +15,7 @@
         {{-- Hero/Header --}}
         <div class="bg-safari-dark rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl mb-12">
             <div class="absolute inset-0 opacity-20">
-                <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('itinerary_bg') }}" class="w-full h-full object-cover">
+                <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('itinerary_bg') }}" width="1920" height="1080" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
             </div>
             <div class="relative z-10">
                 <span class="inline-block px-4 py-1 bg-gold-500 text-safari-dark text-[10px] font-black uppercase tracking-[0.3em] rounded-full mb-6">
@@ -152,11 +152,11 @@
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Investment Summary</h3>
                         <div class="flex gap-2">
-                            <a href="{{ route('trip-plan.download', $tripPlan->id) }}" class="text-gold-600 hover:text-gold-700 p-1" title="Download PDF">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <a href="{{ route('trip-plan.download', $tripPlan->id) }}" class="text-gold-600 hover:text-gold-700 p-1" aria-label="{{ __('Download itinerary PDF') }}" title="Download PDF">
+                                <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </a>
-                            <button onclick="window.print()" class="text-gold-600 hover:text-gold-700 p-1" title="Print">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                            <button type="button" onclick="window.print()" aria-label="{{ __('Print itinerary') }}" class="text-gold-600 hover:text-gold-700 p-1" title="Print">
+                                <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                             </button>
                         </div>
                     </div>
@@ -195,14 +195,14 @@
                         </form>
 
                         <div x-data="{ open: false }">
-                            <button @@click="open = !open" class="w-full bg-white border-2 border-gray-100 text-gray-500 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-gold-500 hover:text-gold-600 transition-all">
+                            <button type="button" @@click="open = !open" :aria-expanded="open.toString()" aria-controls="request-changes-panel" class="w-full bg-white border-2 border-gray-100 text-gray-500 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-gold-500 hover:text-gold-600 transition-all">
                                 Request Changes
                             </button>
 
-                            <div x-show="open" x-cloak class="mt-4 p-6 bg-gray-50 rounded-2xl border border-gray-100 shadow-inner">
+                            <div id="request-changes-panel" x-show="open" x-cloak class="mt-4 p-6 bg-gray-50 rounded-2xl border border-gray-100 shadow-inner">
                                 <form action="{{ route('trip-plan.changes', $tripPlan->id) }}" method="POST" class="space-y-4">
                                     @csrf
-                                    <textarea name="message" rows="4" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-gold-500" placeholder="What would you like to adjust?"></textarea>
+                                    <textarea name="message" aria-label="{{ __('What would you like to adjust?') }}" rows="4" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-gold-500" placeholder="What would you like to adjust?"></textarea>
                                     <button type="submit" class="w-full bg-gold-500 text-safari-dark py-3 rounded-xl font-black uppercase text-[10px] tracking-widest">Send Request</button>
                                 </form>
                             </div>

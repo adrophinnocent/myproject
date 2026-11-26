@@ -1,7 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'Tanzania Safari FAQs | Twina Safaris')
-@section('meta_description', 'Find answers to common questions about Twina Safaris, booking, travel, and safari experiences in Tanzania.')
+@section('meta_description', 'Find clear answers about Twina Safaris safari bookings, deposits, payments, park permits, travel dates, packing, Kilimanjaro treks and Zanzibar holidays.')
 
 @php
     $faqSchema = [
@@ -27,7 +27,7 @@
 @section('content')
 <section class="relative bg-safari-dark text-white overflow-hidden">
     @if($banner && $banner->image)
-        <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->translate('title') }}" class="absolute inset-0 w-full h-full object-cover opacity-40">
+        <img src="{{ asset('storage/' . $banner->image) }}" width="1920" height="1080" alt="" class="absolute inset-0 w-full h-full object-cover opacity-40" loading="eager" decoding="async">
     @endif
     <div class="absolute inset-0 bg-gradient-to-r from-safari-dark/90 to-safari-dark/60"></div>
     <div class="relative max-w-7xl mx-auto px-4 py-24">
@@ -49,11 +49,11 @@
         <div class="space-y-3">
             @forelse($faqs as $index => $faq)
                 <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
-                    <button type="button" @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50 transition-colors">
+                    <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-controls="faq-panel-{{ $index }}" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50 transition-colors">
                         <span>{{ $faq->translate('question') }}</span>
-                        <span class="text-[#8A6D0B] text-xl font-bold ml-2 shrink-0 transition-transform duration-200" :class="open ? 'rotate-45' : ''">+</span>
+                        <span class="text-[#8A6D0B] text-xl font-bold ml-2 shrink-0 transition-transform duration-200" :class="open ? 'rotate-45' : ''" aria-hidden="true">+</span>
                     </button>
-                    <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
+                    <div id="faq-panel-{{ $index }}" x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
                         {!! $faq->translate('answer') !!}
                     </div>
                 </div>

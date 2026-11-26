@@ -1,10 +1,10 @@
 @extends('public.layouts.app')
 
 @section('title', 'Best Time for Tanzania Safari 2026 | Month-by-Month Guide')
-@section('meta_description', 'Best time for a Tanzania safari: Jun–Oct for game viewing, Jan–Feb for calving, Jul–Sep for Mara crossings. See weather, crowds, prices and park-by-park advice.')
+@section('meta_description', 'Best time for a Tanzania safari: Jun–Oct for game viewing, Jan–Feb for calving, Jul–Sep for Mara crossings. See weather, crowds, prices and park advice.')
 
 @php
-    $pageTitle = 'Best Time to Visit Tanzania for Safari';
+    $pageTitle = 'Best Time for a Tanzania Safari 2026';
     $pagePath = '/best-time-for-tanzania-safari';
     $faqs = [
         [

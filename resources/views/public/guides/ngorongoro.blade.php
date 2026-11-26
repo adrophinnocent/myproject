@@ -1,10 +1,10 @@
 @extends('public.layouts.app')
 
-@section('title', 'Ngorongoro Tour from Arusha | Crater Safari Guide | Twina Safaris')
-@section('meta_description', 'Plan an Ngorongoro Crater tour: how long to spend, when to go, what is included, crater rules and how to combine it with Serengeti or Tarangire.')
+@section('title', 'Ngorongoro Crater Tours | Twina Safaris')
+@section('meta_description', 'Plan an Ngorongoro Crater tour: how long to spend, when to go, what is included, crater rules and how to combine it with Serengeti or Tarangire safaris.')
 
 @php
-    $pageTitle = 'Ngorongoro Tour: Crater Safari Guide';
+    $pageTitle = 'Ngorongoro Crater Tours & Safari Guide';
     $pagePath = '/ngorongoro-tour';
     $faqs = [
         [

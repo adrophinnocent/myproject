@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Public;
 use App\Helpers\SeoHelper;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Models\Destination;
+use App\Models\GalleryAlbum;
 use App\Models\Safari;
 use App\Models\Tour;
 use Illuminate\Http\Response;
@@ -27,12 +29,13 @@ class SitemapController extends Controller
             ['loc' => $siteUrl.'/faqs', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['loc' => $siteUrl.'/gallery', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['loc' => $siteUrl.'/custom-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
-            ['loc' => $siteUrl.'/tanzania-safari-cost', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
-            ['loc' => $siteUrl.'/best-time-for-tanzania-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
-            ['loc' => $siteUrl.'/serengeti-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
-            ['loc' => $siteUrl.'/ngorongoro-tour', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
-            ['loc' => $siteUrl.'/kilimanjaro-trekking-company', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
-            ['loc' => $siteUrl.'/zanzibar-holiday-packages', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8', 'alternates' => false],
+            ['loc' => $siteUrl.'/booking/policies', 'lastmod' => null, 'changefreq' => 'yearly', 'priority' => '0.4'],
+            ['loc' => $siteUrl.'/tanzania-safari-cost', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $siteUrl.'/best-time-for-tanzania-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $siteUrl.'/serengeti-safari', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $siteUrl.'/ngorongoro-tour', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $siteUrl.'/kilimanjaro-trekking-company', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
+            ['loc' => $siteUrl.'/zanzibar-holiday-packages', 'lastmod' => null, 'changefreq' => 'monthly', 'priority' => '0.8'],
             ['loc' => $siteUrl.'/privacy-policy', 'lastmod' => null, 'changefreq' => 'yearly', 'priority' => '0.3'],
             ['loc' => $siteUrl.'/terms-of-service', 'lastmod' => null, 'changefreq' => 'yearly', 'priority' => '0.3'],
         ];
@@ -73,6 +76,31 @@ class SitemapController extends Controller
                 'lastmod' => $blog->updated_at?->toAtomString(),
                 'changefreq' => 'weekly',
                 'priority' => '0.8',
+            ];
+        }
+
+        foreach (Destination::active()->orderBy('sort_order')->get() as $destination) {
+            if (! $destination->slug) {
+                continue;
+            }
+            $urls[] = [
+                'loc' => $siteUrl.'/destinations/'.$destination->slug,
+                'lastmod' => $destination->updated_at?->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ];
+        }
+
+        // Empty albums are user-facing placeholders, not useful indexable pages.
+        foreach (GalleryAlbum::published()->has('images')->orderBy('sort_order')->get() as $album) {
+            if (! $album->slug) {
+                continue;
+            }
+            $urls[] = [
+                'loc' => $siteUrl.'/gallery/'.$album->slug,
+                'lastmod' => $album->updated_at?->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.5',
             ];
         }
 

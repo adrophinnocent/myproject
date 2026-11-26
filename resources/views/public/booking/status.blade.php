@@ -17,7 +17,7 @@
         {{-- Notifications --}}
         @if(session('success'))
             <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center gap-3 text-sm shadow-xs">
-                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <svg class="w-5 h-5 text-emerald-600 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                 <p class="font-bold">{{ session('success') }}</p>
             </div>
         @endif
@@ -41,7 +41,7 @@
 
             {{-- Progress Steps --}}
             <div>
-                <h3 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-4">{{ __('Booking Journey Status') }}</h3>
+                <h2 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-4">{{ __('Booking Journey Status') }}</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     <div class="p-3.5 rounded-2xl border text-center {{ in_array($booking->status, ['pending', 'approved', 'deposit_paid', 'confirmed', 'completed']) ? 'bg-amber-50/50 border-amber-300 text-amber-900 font-bold' : 'bg-stone-50 border-stone-200 text-stone-400' }}">
                         <span>1. Request Received</span>
@@ -78,7 +78,7 @@
             @if($booking->status === 'approved' || $booking->status === 'pending')
                 <div class="p-6 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
-                        <h4 class="font-bold text-amber-900 text-sm mb-1">{{ __('Deposit Required to Confirm') }}</h4>
+                        <h3 class="font-bold text-amber-900 text-sm mb-1">{{ __('Deposit Required to Confirm') }}</h3>
                         <p class="text-xs text-amber-800">{{ __('Pay deposit of') }} <strong>{{ $booking->formatted_deposit_required }}</strong> {{ __('to secure safari vehicle & lodges.') }}</p>
                     </div>
                     <a href="{{ route('booking.payment', $booking->token) }}"
@@ -92,7 +92,7 @@
             <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-stone-100">
                 <a href="{{ route('booking.download', $booking->token) }}"
                    class="flex-1 px-6 py-3.5 bg-stone-900 hover:bg-black text-white rounded-xl font-bold text-xs uppercase tracking-wider text-center transition-colors flex items-center justify-center gap-2 shadow-xs">
-                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <svg class="w-4 h-4 text-amber-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     <span>{{ __('Download Trip PDF Voucher') }}</span>
                 </a>
             </div>
@@ -101,7 +101,7 @@
 
         {{-- Payment History Table --}}
         <div class="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm space-y-4">
-            <h3 class="font-bold text-stone-900 text-sm uppercase tracking-wider">{{ __('Payment History & Records') }}</h3>
+            <h2 class="font-bold text-stone-900 text-sm uppercase tracking-wider">{{ __('Payment History & Records') }}</h2>
             @if($booking->payments->count() > 0)
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-stone-700">

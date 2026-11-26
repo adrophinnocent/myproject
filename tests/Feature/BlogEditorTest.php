@@ -232,10 +232,10 @@ class BlogEditorTest extends TestCase
         $this->assertStringContainsString('article-hero', $html);
         $this->assertStringContainsString('The hero caption under the photo', $html);
         $this->assertStringContainsString('Ready for Adventure?', $html);
-        $this->assertStringContainsString('Explore Our Safaris', $html);
+        $this->assertStringContainsString('Browse Tanzania Safari Packages', $html);
         $this->assertStringContainsString('aspect-ratio: 3 / 2', $html);
         $this->assertStringContainsString('#Serengeti', $html);
-        $this->assertStringContainsString('"keywords": "Serengeti, Big Five"', $html);
+        $this->assertStringContainsString('"keywords":"Serengeti, Big Five"', $html);
         $this->assertStringContainsString('max-width: 760px', $html);
 
         foreach ([

@@ -83,9 +83,17 @@ every push / pull request.
 
 - `APP_ENV=production`, `APP_DEBUG=false`
 - Real `MAIL_*` credentials (SMTP) and a running queue worker
+- `APP_URL=https://twinasafaris.com` and `CANONICAL_URL=https://twinasafaris.com` so
+  canonicals, sitemap and `/llms.txt` never emit `www` or `http://` hosts
 - `php artisan migrate --force`, `php artisan storage:link`
+- One-time data repair: `php artisan db:seed --class=SeoContentCleanupSeeder --force`
+  (idempotent; it only fills known broken/thin SEO fields)
+- `npm ci && npm run build` when public assets change (the site now uses the built
+  CSS/JS bundle instead of the Tailwind CDN)
 - `php artisan optimize:clear` after deploying changed routes/views/config, then
   `php artisan config:cache && php artisan route:cache && php artisan view:cache`
-- Purge the CDN/page cache for changed URLs (including `/sitemap.xml`) after deploy
+- Purge the CDN/page cache for changed URLs (including `/sitemap.xml` and `/llms.txt`) after deploy
+- Confirm Apache serves `mod_brotli` (or `mod_deflate` as fallback) for the
+  compression rules in `public/.htaccess`
 - `php artisan queue:restart` after each deploy
 - Keep `database/database.sqlite` (or your MySQL DB) backed up before migrating

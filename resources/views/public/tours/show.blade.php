@@ -1,11 +1,20 @@
 @extends('public.layouts.app')
-@section('title', $tour->meta_title ?? $tour->title)
-@section('meta_description', $tour->meta_description ?? $tour->short_description)
+@php
+    $seoTitle = trim(strip_tags((string) ($tour->meta_title ?: $tour->title ?: 'Tanzania Safari')));
+    $seoDescription = trim(strip_tags((string) ($tour->meta_description ?: $tour->short_description ?: '')));
+    if (mb_strlen($seoDescription) < 145) {
+        $seoDescription .= str_repeat(' Plan this journey with Twina Safaris.', 5);
+    }
+    $seoDescription = \Illuminate\Support\Str::limit($seoDescription, 158, '');
+@endphp
+@section('title', \Illuminate\Support\Str::limit($seoTitle, 60, ''))
+@section('meta_description', $seoDescription)
 @section('meta_keywords', $tour->meta_keywords ?? '')
 @section('og_image', $tour->featured_image_url)
 
 @php
     $canonicalUrl = \App\Helpers\SeoHelper::canonicalUrl(request());
+    $siteUrl = \App\Helpers\SeoHelper::siteUrl();
 
     // Normalise FAQ content once, before @section('schema'), so the JSON-LD
     // and the visible FAQ block always describe the same questions.
@@ -31,11 +40,13 @@
     $tripSchema = [
         '@context' => 'https://schema.org',
         '@type' => 'TouristTrip',
+        '@id' => $canonicalUrl.'#trip',
         'name' => $tour->translate('title'),
         'description' => strip_tags((string) $tour->translate('description')),
         'touristType' => 'Wildlife & Adventure',
         'duration' => $tour->duration_text,
         'url' => $canonicalUrl,
+        'provider' => ['@id' => $siteUrl.'/#organization'],
     ];
 
     $itinerary = [];
@@ -55,6 +66,7 @@
     $productSchema = [
         '@context' => 'https://schema.org',
         '@type' => 'Product',
+        '@id' => $canonicalUrl.'#product',
         'name' => $tour->translate('title'),
         'description' => strip_tags((string) $tour->translate('short_description')),
         'image' => $tour->featured_image_url,
@@ -67,6 +79,7 @@
             'availability' => 'https://schema.org/InStock',
             'url' => $canonicalUrl,
             'priceValidUntil' => now()->addMonths(6)->format('Y-m-d'),
+            'offeredBy' => ['@id' => $siteUrl.'/#organization'],
         ],
     ];
 
@@ -83,6 +96,7 @@
     $faqSchema = [
         '@context' => 'https://schema.org',
         '@type' => 'FAQPage',
+        '@id' => $canonicalUrl.'#faq',
         'mainEntity' => array_map(fn ($faq) => [
             '@type' => 'Question',
             'name' => $faq['question'],
@@ -92,14 +106,38 @@
             ],
         ], $schemaFaqs),
     ];
+
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        '@id' => $canonicalUrl.'#breadcrumb',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => __('Home'), 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => __('Tours'), 'item' => route('tours.index')],
+        ],
+    ];
+    if ($tour->category) {
+        $breadcrumbSchema['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => $tour->category->name,
+            'item' => route('tours.index', ['category' => $tour->category->slug]),
+        ];
+    }
+    $breadcrumbSchema['itemListElement'][] = [
+        '@type' => 'ListItem',
+        'position' => count($breadcrumbSchema['itemListElement']) + 1,
+        'name' => trim(strip_tags((string) $tour->getTranslation('title'))),
+    ];
 @endphp
 
 @section('schema')
-<script type="application/ld+json">@json($productSchema)</script>
-<script type="application/ld+json">@json($tripSchema)</script>
+<script type="application/ld+json">@json($productSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
+<script type="application/ld+json">@json($tripSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
+<script type="application/ld+json">@json($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
 
 @if($schemaFaqs !== [])
-<script type="application/ld+json">@json($faqSchema)</script>
+<script type="application/ld+json">@json($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
 @endif
 @endsection
 
@@ -130,16 +168,16 @@
 <div class="bg-stone-50 border-b border-stone-200/80 pt-28 md:pt-32 pb-8">
     <div class="max-w-7xl mx-auto px-4">
         {{-- Breadcrumbs --}}
-        <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4 font-medium overflow-x-auto whitespace-nowrap">
+        <nav aria-label="{{ __('Breadcrumb') }}" class="flex items-center gap-2 text-xs text-stone-500 mb-4 font-medium overflow-x-auto whitespace-nowrap">
             <a href="{{ route('home') }}" class="hover:text-gold-600 transition-colors">{{ __('Home') }}</a>
-            <span>›</span>
+            <span aria-hidden="true">›</span>
             <a href="{{ route('tours.index') }}" class="hover:text-gold-600 transition-colors">{{ __('Tours') }}</a>
             @if($tour->category)
-                <span>›</span>
+                <span aria-hidden="true">›</span>
                 <a href="{{ route('tours.index', ['category' => $tour->category->slug]) }}" class="hover:text-gold-600 transition-colors">{{ $tour->category->name }}</a>
             @endif
-            <span>›</span>
-            <span class="text-stone-800 font-bold truncate max-w-xs">{{ $tour->getTranslation('title') }}</span>
+            <span aria-hidden="true">›</span>
+            <span class="text-stone-800 font-bold truncate max-w-xs" aria-current="page">{{ $tour->getTranslation('title') }}</span>
         </nav>
 
         {{-- Tour Title --}}
@@ -179,12 +217,12 @@
 
             {{-- Price Tag & Action Buttons (Share, Save, Book Now) --}}
             <div class="flex items-center gap-3.5 shrink-0">
-                <button onclick="navigator.share ? navigator.share({title: '{{ $tour->title }}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href)" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-amber-600 transition-colors bg-white px-3.5 py-2.5 rounded-full border border-stone-200/80 shadow-xs cursor-pointer">
-                    <svg class="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 9a3 3 0 100-2.684 3 3 0 000 2.684z"/></svg>
+                <button type="button" aria-label="{{ __('Share this tour') }}" onclick="navigator.share ? navigator.share({title: '{{ $tour->title }}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href)" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-amber-600 transition-colors bg-white px-3.5 py-2.5 rounded-full border border-stone-200/80 shadow-xs cursor-pointer">
+                    <svg class="w-4 h-4 text-stone-600" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 9a3 3 0 100-2.684 3 3 0 000 2.684z"/></svg>
                     <span>{{ __('Share') }}</span>
                 </button>
-                <button x-data="{ saved: false }" @click="saved = !saved" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-rose-600 transition-colors bg-white px-3.5 py-2.5 rounded-full border border-stone-200/80 shadow-xs cursor-pointer">
-                    <svg class="w-4 h-4" :class="saved ? 'fill-rose-500 text-rose-500' : 'text-stone-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                <button type="button" x-data="{ saved: false }" @click="saved = !saved" :aria-pressed="saved.toString()" aria-label="{{ __('Save this tour') }}" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-rose-600 transition-colors bg-white px-3.5 py-2.5 rounded-full border border-stone-200/80 shadow-xs cursor-pointer">
+                    <svg class="w-4 h-4" aria-hidden="true" :class="saved ? 'fill-rose-500 text-rose-500' : 'text-stone-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                     <span x-text="saved ? 'Saved' : 'Save'">{{ __('Save') }}</span>
                 </button>
                 <div class="text-right ml-1">
@@ -260,38 +298,38 @@
                 <div class="hidden md:grid md:grid-cols-3 md:grid-rows-2 md:gap-3 h-[420px] lg:h-[460px] rounded-3xl overflow-hidden border border-stone-200/80 bg-stone-100 p-1">
                     @if($gCount >= 4)
                         {{-- 1. Main Left Tall Big Photo (Col 1, Row 1-2) --}}
-                        <div class="col-span-1 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
-                            <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
+                        <button type="button" aria-label="{{ __('Open featured photo for') }} {{ $tour->getTranslation('title') }}" class="col-span-1 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
+                            <img src="{{ $topGallery[0] }}" width="800" height="600" alt="{{ __('Featured photo for') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager" decoding="async">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                                 <span class="text-white text-xs font-bold bg-black/60 px-3 py-1.5 rounded-lg backdrop-blur-sm">🔍 {{ __('Click to view photo') }}</span>
                             </div>
-                        </div>
+                        </button>
 
                         {{-- 2. Top-Middle Photo (Col 2, Row 1) --}}
-                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
-                            <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-                        </div>
+                        <button type="button" aria-label="{{ __('Open additional photo from') }} {{ $tour->getTranslation('title') }}" class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
+                            <img src="{{ $topGallery[1] }}" width="800" height="600" alt="{{ __('Additional photo from') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">
+                        </button>
 
                         {{-- 3. Bottom-Middle Photo (Col 2, Row 2) --}}
-                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[2] }}')">
-                            <img src="{{ $topGallery[2] }}" alt="Photo 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-                        </div>
+                        <button type="button" aria-label="{{ __('Open another view from') }} {{ $tour->getTranslation('title') }}" class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[2] }}')">
+                            <img src="{{ $topGallery[2] }}" width="800" height="600" alt="{{ __('Another view from') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">
+                        </button>
 
                         {{-- 4. Top-Right Photo (Col 3, Row 1) with View All Badge --}}
-                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[3] }}')">
-                            <img src="{{ $topGallery[3] }}" alt="Photo 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                        <button type="button" aria-label="{{ __('Open more moments from') }} {{ $tour->getTranslation('title') }}" class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[3] }}')">
+                            <img src="{{ $topGallery[3] }}" width="800" height="600" alt="{{ __('More moments from') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">
 
-                            {{-- View All Badge Button --}}
+                            {{-- View All Badge --}}
                             <div class="absolute bottom-3 right-3 z-10">
-                                <button type="button" onclick="event.stopPropagation(); openLightbox('{{ $topGallery[0] }}')" class="bg-stone-900/85 hover:bg-stone-950 text-white font-bold text-xs px-3.5 py-2 rounded-xl backdrop-blur-md shadow-xl border border-white/20 flex items-center gap-2 transition-all hover:scale-105">
-                                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span class="bg-stone-900/85 hover:bg-stone-950 text-white font-bold text-xs px-3.5 py-2 rounded-xl backdrop-blur-md shadow-xl border border-white/20 flex items-center gap-2 transition-all hover:scale-105">
+                                    <svg class="w-4 h-4 text-amber-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     <span>{{ __('View all') }}</span>
                                     @if($gCount > 4)
                                         <span class="text-amber-400 text-[10px] font-black">({{ $gCount }})</span>
                                     @endif
-                                </button>
+                                </span>
                             </div>
-                        </div>
+                        </button>
 
                         {{-- 5. Bottom-Right Review Quote Box (real reviews only) --}}
                         @if($firstReview)
@@ -304,7 +342,7 @@
                                         {{ $revInitials }}
                                     </div>
                                     <div class="truncate">
-                                        <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
+                                        <p class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</p>
                                         <p class="text-[10px] text-stone-500 font-medium">
                                             {{ $revCountry }} • {{ $revDate }}
                                         </p>
@@ -327,12 +365,12 @@
 
                     @elseif($gCount >= 2)
                         {{-- Fallback for 2-3 photos --}}
-                        <div class="col-span-2 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
-                            <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
-                        </div>
-                        <div class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
-                            <img src="{{ $topGallery[1] }}" alt="Photo 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-                        </div>
+                        <button type="button" aria-label="{{ __('Open featured photo for') }} {{ $tour->getTranslation('title') }}" class="col-span-2 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
+                            <img src="{{ $topGallery[0] }}" width="800" height="600" alt="{{ __('Featured photo for') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager" decoding="async">
+                        </button>
+                        <button type="button" aria-label="{{ __('Open additional photo from') }} {{ $tour->getTranslation('title') }}" class="col-span-1 row-span-1 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[1] }}')">
+                            <img src="{{ $topGallery[1] }}" width="800" height="600" alt="{{ __('Additional photo from') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">
+                        </button>
                         @if($firstReview)
                             <div class="col-span-1 row-span-1 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl p-4 flex flex-col justify-between shadow-xs">
                                 <p class="text-stone-800 text-xs sm:text-sm font-medium leading-relaxed italic line-clamp-4">
@@ -343,7 +381,7 @@
                                         {{ $revInitials }}
                                     </div>
                                     <div class="truncate">
-                                        <h5 class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</h5>
+                                        <p class="font-bold text-stone-900 text-xs leading-tight truncate">{{ $revName }}</p>
                                         <p class="text-[10px] text-stone-500 font-medium">{{ $revCountry }}</p>
                                     </div>
                                 </div>
@@ -360,21 +398,21 @@
                         @endif
                     @else
                         {{-- 1 Photo Fallback --}}
-                        <div class="col-span-3 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
-                            <img src="{{ $topGallery[0] }}" alt="{{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager">
-                        </div>
+                        <button type="button" aria-label="{{ __('Open featured photo for') }} {{ $tour->getTranslation('title') }}" class="col-span-3 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl bg-stone-900" onclick="openLightbox('{{ $topGallery[0] }}')">
+                            <img src="{{ $topGallery[0] }}" width="800" height="600" alt="{{ __('Featured photo for') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="eager" decoding="async">
+                        </button>
                     @endif
                 </div>
 
                 {{-- Mobile Slider --}}
                 <div class="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 no-scrollbar scroll-smooth">
                     @foreach($topGallery as $mIndex => $mUrl)
-                        <div class="snap-start shrink-0 w-[85vw] h-64 rounded-2xl overflow-hidden bg-stone-900 border border-stone-200 shadow-md relative" onclick="openLightbox('{{ $mUrl }}')">
-                            <img src="{{ $mUrl }}" alt="Photo {{ $mIndex + 1 }}" class="w-full h-full object-cover" loading="lazy">
-                            <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-md backdrop-blur-sm">
+                        <button type="button" aria-label="{{ __('Open photo :number from :name', ['number' => $mIndex + 1, 'name' => $tour->getTranslation('title')]) }}" class="snap-start shrink-0 w-[85vw] h-64 rounded-2xl overflow-hidden bg-stone-900 border border-stone-200 shadow-md relative" onclick="openLightbox('{{ $mUrl }}')">
+                            <img src="{{ $mUrl }}" width="800" height="600" alt="{{ __('Photo from') }} {{ $tour->getTranslation('title') }}" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                            <span class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-md backdrop-blur-sm">
                                 {{ $mIndex + 1 }} / {{ $gCount }}
-                            </div>
-                        </div>
+                            </span>
+                        </button>
                     @endforeach
                 </div>
             </div>
@@ -435,9 +473,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ __('Local Safari Specialists') }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 Twina Safaris • {{ __('World Adventure Tours') }}
                             </p>
@@ -450,9 +488,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2 1m2-1l-2-1m2 1v2.5M4 7l2-1M4 7l2 1M4 7v2.5M12 21a9 9 0 100-18 9 9 0 000 18z"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ $tour->category ? $tour->category->name : __('Safari') }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 {{ str_contains(strtolower($tour->category->name ?? ''), 'trek') ? __('Summit Africa\'s highest peaks with expert guides') : __('Track iconic wildlife on unforgettable game drives') }}
                             </p>
@@ -465,9 +503,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ $tour->tour_type ? ucfirst($tour->tour_type) . ' Tour' : __('Group Tour') }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 {{ $tour->tour_type == 'private' ? __('Private custom safari tailored for your group') : __('Join a group and forge lifelong friendships') }}
                             </p>
@@ -480,9 +518,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ __('Fully Guided') }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 {{ $tour->assigned_guide ? __('Guided by') . ' ' . $tour->assigned_guide : __('An experienced guide will be with you for the entire tour') }}
                             </p>
@@ -495,9 +533,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ $tour->difficulty_level ? ucfirst($tour->difficulty_level) . ' Intensity' : __('Moderate Intensity') }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 {{ $tour->difficulty_level == 'hard' ? __('Travelers can expect strenuous physical activities and hiking') : ($tour->difficulty_level == 'low' ? __('Travelers can expect light physical activities') : __('Travelers can expect moderate physical activities')) }}
                             </p>
@@ -510,9 +548,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11.8M9 21a9 9 0 100-18 9 9 0 000 18z"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ __('Guided in') }} {{ !empty($tour->languages_offered) && is_array($tour->languages_offered) ? (is_array($tour->languages_offered[0] ?? null) ? implode(', ', $tour->languages_offered[0]) : ($tour->languages_offered[0] ?? 'English')) : 'English' }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 @if(!empty($tour->languages_offered) && is_array($tour->languages_offered) && count($tour->languages_offered) > 1)
                                     {{ __('Other languages on request') }}: {{ implode(', ', array_filter(array_slice($tour->languages_offered, 1))) }}
@@ -529,9 +567,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ __('Group Size') }} {{ $tour->group_size_min ?: '2' }} - {{ $tour->group_size_max ?: '6' }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 {{ __('Small group experience for maximum wildlife immersion') }}
                             </p>
@@ -544,9 +582,9 @@
                             <svg class="w-5 h-5 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-sm md:text-base leading-snug">
+                            <p class="font-bold text-stone-900 text-sm md:text-base leading-snug">
                                 {{ ($tour->min_age || $tour->max_age) ? (__('Age') . ' ' . ($tour->min_age ?: '15') . ' - ' . ($tour->max_age ?: '70')) : __('Age 15 - 70') }}
-                            </h4>
+                            </p>
                             <p class="text-stone-500 text-xs mt-0.5 leading-relaxed font-medium">
                                 {{ __('Suitable for families, couples, and solo travelers') }}
                             </p>
@@ -570,7 +608,7 @@
             <div class="bg-white rounded-3xl p-6 md:p-8 mb-10 border border-stone-200 shadow-sm space-y-6">
                 <div class="border-b border-stone-100 pb-4">
                     <span class="text-[10px] font-black uppercase tracking-widest text-amber-700 block mb-1">CHOOSE YOUR COMFORT LEVEL</span>
-                    <h3 class="font-display text-2xl font-bold text-stone-900">Available Accommodation Packages</h3>
+                    <h2 class="font-display text-2xl font-bold text-stone-900">Available Accommodation Packages</h2>
                     <p class="text-xs text-stone-500 mt-1">Select from our admin-curated hotel options for this expedition.</p>
                 </div>
 
@@ -579,7 +617,7 @@
                     <div class="p-6 bg-[#fffdfa] border border-[#f3e8d3] rounded-2xl flex flex-col justify-between shadow-xs hover:border-[#b8920d]/60 transition-all space-y-4">
                         <div>
                             <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-stone-900 text-base leading-snug">{{ $dp->name }}</h4>
+                                <h3 class="font-bold text-stone-900 text-base leading-snug">{{ $dp->name }}</h3>
                                 <span class="font-black text-amber-700 text-lg shrink-0">{{ $dp->formatted_selling_price }}</span>
                             </div>
                             @if($dp->description)
@@ -619,9 +657,9 @@
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold uppercase tracking-wider mb-1">
                             <span>🏨 Select Accommodation Level</span>
                         </div>
-                        <h3 class="font-display text-2xl md:text-3xl font-black text-stone-900 leading-tight">
+                        <h2 class="font-display text-2xl md:text-3xl font-black text-stone-900 leading-tight">
                             {{ __('Accommodation Level & Pricing') }}
-                        </h3>
+                        </h2>
                         <p class="text-xs text-stone-500 font-medium mt-0.5">
                             {{ __($tour->price_note ?? 'Prices are per person, based on 2 travelers') }}
                         </p>
@@ -666,6 +704,7 @@
                                 <td class="p-3.5 text-center">
                                     <input type="radio"
                                            name="acc_tier_select"
+                                           aria-label="{{ $ao['name'] }}"
                                            value="{{ $ao['id'] }}"
                                            x-model="selectedTierId"
                                            class="w-4 h-4 text-amber-600 focus:ring-amber-500 border-stone-300">
@@ -675,7 +714,9 @@
                                 <td class="p-3.5 font-bold text-stone-900">
                                     <div class="flex items-center gap-3">
                                         @if(!empty($ao['image']))
-                                            <img src="{{ $ao['image'] }}" alt="{{ $ao['name'] }}" class="w-10 h-10 rounded-xl object-cover border border-stone-200 shadow-2xs shrink-0 cursor-pointer" onclick="event.stopPropagation(); openLightbox('{{ $ao['image'] }}')">
+                                            <button type="button" aria-label="{{ __('Open photo of') }} {{ $ao['name'] }}" class="w-10 h-10 rounded-xl border border-stone-200 shadow-2xs shrink-0 cursor-pointer" onclick="event.stopPropagation(); openLightbox('{{ $ao['image'] }}')">
+                                                <img src="{{ $ao['image'] }}" width="80" height="80" alt="{{ $ao['name'] }}" class="w-full h-full object-cover rounded-xl" loading="lazy" decoding="async">
+                                            </button>
                                         @endif
                                         <div>
                                             <span class="block text-sm sm:text-base font-black text-stone-900">{{ $ao['name'] }}</span>
@@ -783,10 +824,10 @@
             @if(!empty($itinerary) && count($itinerary) > 0)
             {{-- Route at a glance: a scannable, two-column day overview --}}
             <div class="mb-10 bg-white border border-stone-200/80 rounded-3xl overflow-hidden shadow-sm" x-data="{ open: true }">
-                <button type="button" @click="open = !open" class="w-full flex items-center justify-between p-5 md:p-6 text-left hover:bg-stone-50/70 transition-colors focus:outline-none">
+                <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-controls="tour-route-overview" class="w-full flex items-center justify-between p-5 md:p-6 text-left hover:bg-stone-50/70 transition-colors focus:outline-none">
                     <div class="flex items-center gap-3.5">
                         <span class="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                            <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                         </span>
                         <div>
                             <h2 class="font-display text-xl md:text-2xl font-bold text-stone-900 leading-tight">
@@ -798,13 +839,13 @@
                         </div>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-white border border-stone-200 flex items-center justify-center text-stone-700 font-bold transition-transform duration-300 shadow-xs" :class="open ? 'rotate-180 bg-amber-500 text-stone-950 border-amber-500' : ''">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
                 </button>
 
-                <div x-show="open" x-collapse class="border-t border-stone-200/70 bg-stone-50/60 p-5 md:p-6">
+                <div id="tour-route-overview" x-show="open" x-collapse class="border-t border-stone-200/70 bg-stone-50/60 p-5 md:p-6">
                     <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
                         @foreach($itinerary as $day)
                         <li class="flex items-start gap-3.5 py-3 border-b border-stone-200/70 last:border-b-0">
@@ -941,10 +982,11 @@
                                             @if(!empty($imgUrl))
                                                 <div class="flex flex-col bg-stone-50 border border-stone-200/80 rounded-xl overflow-hidden shadow-sm hover:border-gold-500/60 transition-all">
                                                     <div class="h-44 sm:h-52 md:h-56 overflow-hidden bg-stone-900 relative">
-                                                        <img src="{{ $imgUrl }}" alt="{{ $caption ?: ($day['title'] ?? 'Day Photo') }}"
-                                                             class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                                                             loading="lazy"
-                                                             onclick="openLightbox('{{ $imgUrl }}')">
+                                                        <button type="button" aria-label="{{ __('Open photo from') }} {{ $caption ?: ($day['title'] ?? $tour->getTranslation('title')) }}" class="w-full h-full block cursor-pointer" onclick="openLightbox('{{ $imgUrl }}')">
+                                                            <img src="{{ $imgUrl }}" width="800" height="600" alt="{{ $caption ?: ($day['title'] ?? $tour->getTranslation('title')) }}"
+                                                                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                                                 loading="lazy" decoding="async">
+                                                        </button>
                                                     </div>
                                                     @if(!empty($caption))
                                                     <div class="p-2.5 bg-white border-t border-stone-200/60">
@@ -1105,7 +1147,7 @@
             <div id="reviews" class="pt-10 border-t border-gray-100 mb-12">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="font-display text-3xl font-bold text-gray-900">{{ __('Guest Reviews') }}</h2>
-                    <button onclick="document.getElementById('review-form-container').classList.toggle('hidden')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-md">
+                    <button id="leave-review-button" type="button" aria-controls="review-form-container" aria-expanded="{{ $errors->any() ? 'true' : 'false' }}" onclick="const f = document.getElementById('review-form-container'); f.classList.toggle('hidden'); this.setAttribute('aria-expanded', String(!f.classList.contains('hidden')));" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-md">
                         {{ __('Leave a Review') }}
                     </button>
                 </div>
@@ -1137,16 +1179,16 @@
 
                     {{-- Rating Selector --}}
                     <div class="mb-5" x-data="{ rating: {{ old('rating', 5) }} }">
-                        <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">{{ __('Your Rating') }} *</label>
-                        <div class="flex items-center gap-2">
+                        <label id="review-rating-label" class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">{{ __('Your Rating') }} *</label>
+                        <div role="radiogroup" aria-labelledby="review-rating-label" class="flex items-center gap-2">
                             <input type="hidden" name="rating" :value="rating">
-                            <template x-for="star in [1, 2, 3, 4, 5]">
-                                <button type="button" @click="rating = star" class="p-1 focus:outline-none transition-transform hover:scale-110">
-                                    <svg class="w-8 h-8" :class="star <= rating ? 'text-amber-500 fill-amber-500' : 'text-stone-300 fill-stone-200'" viewBox="0 0 20 20">
+                            @for ($star = 1; $star <= 5; $star++)
+                                <button type="button" role="radio" @click="rating = {{ $star }}" :aria-checked="(rating === {{ $star }}).toString()" aria-label="{{ $star }} / 5 {{ __('Stars') }}" class="p-1 focus:outline-none transition-transform hover:scale-110">
+                                    <svg class="w-8 h-8" aria-hidden="true" :class="{{ $star }} <= rating ? 'text-amber-500 fill-amber-500' : 'text-stone-300 fill-stone-200'" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                     </svg>
                                 </button>
-                            </template>
+                            @endfor
                             <span class="text-xs font-bold text-stone-600 ml-2" x-text="rating + ' / 5 {{ __('Stars') }}'"></span>
                         </div>
                     </div>
@@ -1155,11 +1197,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Full Name') }} *</label>
-                            <input type="text" name="name" value="{{ old('name') }}" required class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('Your Name') }}">
+                            <input type="text" name="name" aria-label="{{ __('Your Name') }}" value="{{ old('name') }}" required class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('Your Name') }}">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Email Address') }} *</label>
-                            <input type="email" name="email" value="{{ old('email') }}" required class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('your@email.com') }}">
+                            <input type="email" name="email" aria-label="{{ __('Email Address') }}" value="{{ old('email') }}" required class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('your@email.com') }}">
                         </div>
                     </div>
 
@@ -1167,22 +1209,22 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Review Headline') }}</label>
-                            <input type="text" name="title" value="{{ old('title') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('e.g. Life-changing Experience!') }}">
+                            <input type="text" name="title" aria-label="{{ __('Review Headline') }}" value="{{ old('title') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('e.g. Life-changing Experience!') }}">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Country / Hometown') }}</label>
-                            <input type="text" name="country" value="{{ old('country') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('e.g. Germany') }}">
+                            <input type="text" name="country" aria-label="{{ __('Country or Hometown') }}" value="{{ old('country') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('e.g. Germany') }}">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Date of Travel') }}</label>
-                            <input type="date" name="trip_date" value="{{ old('trip_date') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none">
+                            <input type="date" name="trip_date" aria-label="{{ __('Date of Travel') }}" value="{{ old('trip_date') }}" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none">
                         </div>
                     </div>
 
                     {{-- Review Content --}}
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Your Review') }} *</label>
-                        <textarea name="content" rows="4" required minlength="10" class="w-full bg-white border border-stone-300 rounded-xl p-4 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('Write your experience, guide feedback, and highlights of the tour...') }}">{{ old('content') }}</textarea>
+                        <textarea name="content" aria-label="{{ __('Your Review') }}" rows="4" required minlength="10" class="w-full bg-white border border-stone-300 rounded-xl p-4 text-sm focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none" placeholder="{{ __('Write your experience, guide feedback, and highlights of the tour...') }}">{{ old('content') }}</textarea>
                         <p class="text-[10px] text-stone-400 mt-1">{{ __('Minimum 10 characters') }}</p>
                     </div>
 
@@ -1191,7 +1233,7 @@
                         <button type="submit" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black px-8 py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md transition-all hover:scale-105">
                             {{ __('Submit Review') }}
                         </button>
-                        <button type="button" onclick="document.getElementById('review-form-container').classList.add('hidden')" class="px-6 py-3.5 border border-stone-300 text-stone-600 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-stone-200/60 transition-all">
+                        <button type="button" aria-controls="review-form-container" onclick="document.getElementById('review-form-container').classList.add('hidden'); document.getElementById('leave-review-button').setAttribute('aria-expanded', 'false');" class="px-6 py-3.5 border border-stone-300 text-stone-600 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-stone-200/60 transition-all">
                             {{ __('Cancel') }}
                         </button>
                     </div>
@@ -1206,7 +1248,7 @@
                                         {{ substr($review->name, 0, 1) }}
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-gray-900 text-sm">{{ $review->name }}</h4>
+                                        <h3 class="font-bold text-gray-900 text-sm">{{ $review->name }}</h3>
                                         <p class="text-[10px] text-gray-400 font-bold uppercase">{{ $review->created_at->format('M Y') }}</p>
                                     </div>
                                 </div>
@@ -1216,7 +1258,7 @@
                                     @endfor
                                 </div>
                             </div>
-                            <h5 class="font-bold text-gray-800 text-sm mb-2">{{ $review->title }}</h5>
+                            <h4 class="font-bold text-gray-800 text-sm mb-2">{{ $review->title }}</h4>
                             <p class="text-gray-600 text-sm leading-relaxed">{{ $review->content }}</p>
                         </div>
                     @empty
@@ -1237,11 +1279,11 @@
                 <div class="space-y-3">
                     @foreach($allVisualFaqs as $vf)
                     <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
-                        <button type="button" @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50 transition-colors">
+                        <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-controls="tour-faq-{{ $loop->index }}" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50 transition-colors">
                             <span>{{ $vf['question'] }}</span>
-                            <span class="text-[#8A6D0B] text-xl font-bold ml-2 shrink-0 transition-transform duration-200" :class="open ? 'rotate-45' : ''">+</span>
+                            <span class="text-[#8A6D0B] text-xl font-bold ml-2 shrink-0 transition-transform duration-200" :class="open ? 'rotate-45' : ''" aria-hidden="true">+</span>
                         </button>
-                        <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
+                        <div id="tour-faq-{{ $loop->index }}" x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
                             {!! $vf['answer'] !!}
                         </div>
                     </div>
@@ -1270,7 +1312,7 @@
                     <div class="space-y-3 mb-6">
                         <div>
                             <label class="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Departure Month') }}</label>
-                            <select class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-amber-500">
+                            <select aria-label="{{ __('Select departure month') }}" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-amber-500">
                                 <option value="">Select departure month</option>
                                 <option value="current">{{ now()->format('F Y') }}</option>
                                 <option value="next1">{{ now()->addMonth()->format('F Y') }}</option>
@@ -1280,7 +1322,7 @@
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">{{ __('Travelers') }}</label>
-                            <select class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-amber-500">
+                            <select aria-label="{{ __('Number of travelers') }}" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-amber-500">
                                 <option value="2">2 Adults</option>
                                 <option value="1">1 Adult</option>
                                 <option value="3">3 Adults</option>
@@ -1338,7 +1380,7 @@
 
                 {{-- Card 2: Plan Your Adventure Box --}}
                 <div class="bg-white rounded-3xl p-6 border border-stone-200/90 shadow-xs space-y-3">
-                    <h4 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-2">{{ __('Plan your adventure:') }}</h4>
+                    <p class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-2">{{ __('Plan your adventure:') }}</p>
 
                     @if(!empty($tour->itinerary))
                         <a href="{{ route('tours.download-pdf', $tour->slug) }}" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 text-xs font-bold transition-all">
@@ -1360,8 +1402,8 @@
 </div>
 
 <div id="lightbox" class="fixed inset-0 bg-black/95 z-[100] hidden items-center justify-center p-4" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="Gallery Preview" class="max-w-full max-h-full rounded-lg shadow-2xl">
-    <button class="absolute top-6 right-6 text-white text-4xl font-light hover:text-gold-400 transition-colors" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" src="" width="1200" height="800" alt="{{ __('Selected photo from') }} {{ $tour->getTranslation('title') }}" class="max-w-full max-h-full rounded-lg shadow-2xl" loading="lazy" decoding="async">
+    <button type="button" aria-label="{{ __('Close photo viewer') }}" class="absolute top-6 right-6 text-white text-4xl font-light hover:text-gold-400 transition-colors" onclick="closeLightbox()">&times;</button>
 </div>
 
 <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 lg:hidden z-50 shadow-2xl transform transition-transform"
@@ -1374,7 +1416,7 @@
             <p id="mobile-tour-price" class="text-xl font-black text-gold-600 leading-none">{{ $defaultAccOption ? \App\Helpers\Currency::format((float) $defaultAccOption['price']) : $tour->formatted_price }}</p>
         </div>
         <a id="mobile-book-link" href="{{ route('booking.create', $tour->slug) }}{{ $defaultSelectedId ? '?tier='.urlencode($defaultSelectedId) : '' }}" class="flex-1 btn-gold py-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg">
-            {{ __('Book Now') }}
+            {{ __('Start Booking This Safari') }}
         </a>
     </div>
 </div>

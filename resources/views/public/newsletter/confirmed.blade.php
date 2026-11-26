@@ -1,6 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'Subscription Confirmed - Twina Safaris')
+@section('meta_description', 'Your Twina Safaris newsletter subscription is confirmed. Get Tanzania safari ideas, seasonal wildlife tips, Kilimanjaro guides and Zanzibar travel advice.')
 
 @section('content')
 <div class="min-h-[60vh] flex items-center justify-center px-4 py-20 bg-stone-50">

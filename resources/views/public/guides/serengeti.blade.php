@@ -1,10 +1,10 @@
 @extends('public.layouts.app')
 
-@section('title', 'Serengeti Safari Packages | Routes, Seasons & Costs | Twina Safaris')
-@section('meta_description', 'Plan a Serengeti safari with private 4x4 routes, migration-season advice, lodge or camp options and clear itinerary prices from Twina Safaris.')
+@section('title', 'Serengeti Safari Packages & Costs | Twina Safaris')
+@section('meta_description', 'Plan a Serengeti safari with private 4x4 routes, migration-season advice, lodge or camp options and clear itinerary prices from a local Tanzania team.')
 
 @php
-    $pageTitle = 'Serengeti Safari: Routes, Seasons and What to Expect';
+    $pageTitle = 'Serengeti Safari Packages, Routes & Costs';
     $pagePath = '/serengeti-safari';
     $faqs = [
         [

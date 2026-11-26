@@ -1,7 +1,15 @@
 @extends('public.layouts.app')
 
-@section('title', $campaign->title)
-@section('meta_description', $campaign->description)
+@php
+    $seoTitle = trim(strip_tags((string) ($campaign->title ?: 'Special Safari Offer')));
+    $seoDescription = trim(strip_tags((string) ($campaign->description ?: '')));
+    if (mb_strlen($seoDescription) < 145) {
+        $seoDescription .= str_repeat(' Explore this limited safari offer with Twina Safaris.', 5);
+    }
+    $seoDescription = \Illuminate\Support\Str::limit($seoDescription, 158, '');
+@endphp
+@section('title', \Illuminate\Support\Str::limit($seoTitle, 60, ''))
+@section('meta_description', $seoDescription)
 
 @section('og_image', $campaign->image_url)
 
@@ -32,7 +40,7 @@
                  x-transition:enter-start="opacity-0 scale-105"
                  x-transition:enter-end="opacity-100 scale-100"
                  class="absolute inset-0 w-full h-full">
-                <img :src="slide" class="w-full h-full object-cover opacity-50">
+                <img :src="slide" width="1920" height="1080" alt="" class="w-full h-full object-cover opacity-50" loading="eager" decoding="async">
             </div>
         </template>
 
@@ -55,7 +63,9 @@
         {{-- Slider Indicators --}}
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20" x-show="slides.length > 1">
             <template x-for="(slide, index) in slides" :key="index">
-                <button @click="activeSlide = index"
+                <button type="button" @click="activeSlide = index"
+                        :aria-label="'Show campaign photo ' + (index + 1)"
+                        :aria-current="activeSlide === index ? 'true' : 'false'"
                         class="w-8 h-1 rounded-full transition-all duration-500"
                         :class="activeSlide === index ? 'bg-gold-500' : 'bg-white/20'"></button>
             </template>
@@ -67,28 +77,28 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-y-8">
                 <div class="flex flex-col items-center text-center px-4">
-                    <h4 class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500" aria-hidden="true"></span>
                         {{ __('Local Experts') }}
-                    </h4>
+                    </p>
                 </div>
                 <div class="flex flex-col items-center text-center px-4 border-l border-gray-100">
-                    <h4 class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500" aria-hidden="true"></span>
                         {{ __('Clear Inclusions') }}
-                    </h4>
+                    </p>
                 </div>
                 <div class="flex flex-col items-center text-center px-4 border-l border-gray-100">
-                    <h4 class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500" aria-hidden="true"></span>
                         {{ __('Local Experts') }}
-                    </h4>
+                    </p>
                 </div>
                 <div class="flex flex-col items-center text-center px-4 border-l border-gray-100">
-                    <h4 class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500"></span>
+                    <p class="text-[11px] font-black uppercase tracking-[0.25em] text-gray-500 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold-500" aria-hidden="true"></span>
                         {{ __('Tailor-Made Trips') }}
-                    </h4>
+                    </p>
                 </div>
             </div>
         </div>
@@ -143,7 +153,7 @@
                                     {{ $index + 1 }}
                                 </div>
                                 <div class="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
-                                    <h4 class="font-display text-xl font-bold text-gray-900 mb-4 tracking-tight uppercase">{{ $day['title'] }}</h4>
+                                    <h3 class="font-display text-xl font-bold text-gray-900 mb-4 tracking-tight uppercase">{{ $day['title'] }}</h3>
                                     <p class="text-gray-600 leading-relaxed text-sm font-medium">{{ $day['desc'] }}</p>
                                 </div>
                             </div>
@@ -216,23 +226,23 @@
                     <form action="{{ route('campaign.lead', $campaign) }}" method="POST" class="space-y-5">
                         @csrf
                         <div class="space-y-1">
-                            <input type="text" name="name" required placeholder="{{ __('Full Name') }}" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 text-gray-900 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-bold">
+                            <input type="text" name="name" aria-label="{{ __('Full Name') }}" required placeholder="{{ __('Full Name') }}" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 text-gray-900 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-bold">
                         </div>
                         <div class="space-y-1">
-                            <input type="email" name="email" required placeholder="{{ __('Email Address') }}" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 text-gray-900 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-bold">
+                            <input type="email" name="email" aria-label="{{ __('Email Address') }}" required placeholder="{{ __('Email Address') }}" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 text-gray-900 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-bold">
                         </div>
                         <div class="space-y-1">
-                            <input type="text" name="phone" required placeholder="{{ __('WhatsApp / Phone') }}" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 text-gray-900 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-bold">
+                            <input type="text" name="phone" aria-label="{{ __('WhatsApp / Phone') }}" required placeholder="{{ __('WhatsApp / Phone') }}" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 text-gray-900 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-bold">
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-1">
-                                <label class="text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{{ __('Date') }}</label>
-                                <input type="date" name="travel_date" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4 text-xs font-bold">
+                                <label for="campaign_travel_date" class="text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{{ __('Date') }}</label>
+                                <input id="campaign_travel_date" type="date" name="travel_date" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4 text-xs font-bold">
                             </div>
                             <div class="space-y-1">
-                                <label class="text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{{ __('Travelers') }}</label>
-                                <input type="number" name="travelers_count" min="1" value="1" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4 text-xs font-bold">
+                                <label for="campaign_travelers" class="text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{{ __('Travelers') }}</label>
+                                <input id="campaign_travelers" type="number" name="travelers_count" min="1" value="1" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4 text-xs font-bold">
                             </div>
                         </div>
 
@@ -246,7 +256,7 @@
                         <a href="https://wa.me/{{ preg_replace('/\D/','',\App\Models\Setting::get('site_phone')) }}?text=Hi! I'm interested in the '{{ $campaign->title }}' offer."
                            onclick="trackWhatsApp()" target="_blank"
                            class="inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#20ba56] text-white px-8 py-4 rounded-2xl font-black transition-all shadow-lg hover:shadow-green-500/30">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                             {{ __('WhatsApp Chat') }}
                         </a>
                     </div>
@@ -265,11 +275,11 @@
                     <h2 class="font-display text-4xl md:text-5xl font-black text-gray-900 leading-tight">{{ __('Recommended Trips') }}</h2>
                 </div>
                 <div class="hidden md:flex gap-3">
-                    <button onclick="scrollRelated(-400)" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-900 hover:bg-gold-500 hover:text-white transition-all shadow-sm">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    <button type="button" aria-label="{{ __('Scroll recommended safaris left') }}" onclick="scrollRelated(-400)" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-900 hover:bg-gold-500 hover:text-white transition-all shadow-sm">
+                        <svg class="w-6 h-6" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
-                    <button onclick="scrollRelated(400)" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-900 hover:bg-gold-500 hover:text-white transition-all shadow-sm">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    <button type="button" aria-label="{{ __('Scroll recommended safaris right') }}" onclick="scrollRelated(400)" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-900 hover:bg-gold-500 hover:text-white transition-all shadow-sm">
+                        <svg class="w-6 h-6" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
             </div>
@@ -279,7 +289,7 @@
                 <div class="snap-start shrink-0 w-full sm:w-[380px]">
                     <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 group h-full flex flex-col">
                         <div class="relative h-64 overflow-hidden">
-                            <img src="{{ $tour->featured_image_url }}" alt="{{ $tour->translate('title') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <img src="{{ $tour->featured_image_url }}" width="800" height="600" alt="{{ $tour->translate('title') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" decoding="async">
                             <div class="absolute top-4 left-4">
                                 <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-safari-dark text-[10px] font-black uppercase tracking-widest">{{ __($tour->category->name ?? 'Safari') }}</span>
                             </div>

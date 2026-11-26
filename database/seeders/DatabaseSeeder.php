@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             ChristmasSafariArticleSeeder::class,
             SliderSeeder::class,
             SettingSeeder::class,
+            // Repairs known thin/broken SEO fields without overwriting valid edits.
+            SeoContentCleanupSeeder::class,
         ]);
     }
 }

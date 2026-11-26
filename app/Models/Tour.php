@@ -146,7 +146,7 @@ class Tour extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return '$'.number_format($this->price, 0);
+        return '$'.number_format((float) ($this->price ?? 0), 0);
     }
 
     /** Price converted to the visitor's selected display currency. */
@@ -170,14 +170,22 @@ class Tour extends Model
 
     public function getAverageRatingAttribute(): float
     {
-        $avg = $this->attributes['reviews_avg_rating'] ?? $this->reviews()->avg('rating');
+        // Prefer an aggregate loaded with withAvg(); otherwise reuse the
+        // reviews relation if a controller already eager-loaded it.
+        $avg = $this->attributes['reviews_avg_rating']
+            ?? ($this->relationLoaded('reviews')
+                ? $this->reviews->avg('rating')
+                : $this->reviews()->avg('rating'));
 
         return $avg === null ? 0.0 : round((float) $avg, 1);
     }
 
     public function getReviewCountAttribute(): int
     {
-        return (int) ($this->attributes['reviews_count'] ?? $this->reviews()->count());
+        return (int) ($this->attributes['reviews_count']
+            ?? ($this->relationLoaded('reviews')
+                ? $this->reviews->count()
+                : $this->reviews()->count()));
     }
 
     public function getCurrentPriceAttribute(): float

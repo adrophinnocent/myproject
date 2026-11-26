@@ -1,7 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'Privacy Policy - Twina Safaris')
-@section('meta_description', 'Read our Privacy Policy to understand how Twina Safaris collects, protects, and uses your personal data.')
+@section('meta_description', 'Read how Twina Safaris collects, uses, stores and protects your personal data, including booking details, newsletter preferences and your privacy choices.')
 
 @section('content')
 <div class="relative pt-32 pb-16 bg-[#0a0703] text-white">

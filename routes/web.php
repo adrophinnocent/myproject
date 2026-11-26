@@ -14,6 +14,7 @@ use App\Http\Controllers\Public\FaqController;
 use App\Http\Controllers\Public\GalleryController;
 use App\Http\Controllers\Public\GuideController;
 use App\Http\Controllers\Public\InquiryController;
+use App\Http\Controllers\Public\LlmsController;
 use App\Http\Controllers\Public\NewsletterController;
 use App\Http\Controllers\Public\PaymentController;
 use App\Http\Controllers\Public\ProposalController;
@@ -144,6 +145,7 @@ Route::get('/about', function () {
 })->name('about');
 
 Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
+Route::get('/destinations/{slug}', [DestinationController::class, 'show'])->name('destinations.show');
 
 Route::get('/privacy-policy', function () {
     return view('public.privacy');
@@ -223,6 +225,10 @@ Route::get('/offer/{campaign}/track', [CampaignController::class, 'trackAction']
 Route::post('/offer/{campaign}/lead', [CampaignController::class, 'submitLead'])
     ->middleware('throttle:5,1')
     ->name('campaign.lead');
+
+// Machine-readable discovery file for AI assistants. Not an HTML document,
+// so it is intentionally absent from sitemap.xml.
+Route::get('/llms.txt', LlmsController::class)->name('llms.txt');
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);

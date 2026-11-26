@@ -31,8 +31,14 @@ class TourController extends Controller
         $tourQuery = Tour::where('is_published', true)->with(['category', 'destination']);
         $safariQuery = Safari::where('is_published', true)->with(['category', 'destination']);
 
+        // The tour_type slug check used to run inside the closure, i.e. twice
+        // (once per model query). Resolve it once; the filter itself is unchanged.
+        $tourTypeIsDestination = $request->tour_type && ! is_numeric($request->tour_type)
+            ? Destination::where('slug', $request->tour_type)->exists()
+            : false;
+
         // Helper to apply filters to both queries
-        $applyFilters = function ($query) use ($request) {
+        $applyFilters = function ($query) use ($request, $tourTypeIsDestination) {
             if ($request->search) {
                 $query->where(function ($q) use ($request) {
                     $q->where('title', 'LIKE', "%{$request->search}%")
@@ -63,13 +69,10 @@ class TourController extends Controller
             }
 
             // Special handling for 'tour_type' if it refers to a destination
-            if ($request->tour_type && ! is_numeric($request->tour_type)) {
-                $destExists = Destination::where('slug', $request->tour_type)->exists();
-                if ($destExists) {
-                    $query->whereHas('destination', function ($q) use ($request) {
-                        $q->where('slug', $request->tour_type);
-                    });
-                }
+            if ($tourTypeIsDestination) {
+                $query->whereHas('destination', function ($q) use ($request) {
+                    $q->where('slug', $request->tour_type);
+                });
             }
 
             if ($request->difficulty) {
@@ -166,6 +169,14 @@ class TourController extends Controller
             $q->where('is_approved', true)->latest();
         }]);
 
+        // Tour's aggregate accessors now reuse the loaded reviews relation.
+        // Safari's model is outside this change's scope, so preload the two
+        // aggregates once instead of letting the view trigger six queries.
+        if ($tour instanceof Safari) {
+            $tour->loadCount('reviews')->loadAvg('reviews', 'rating');
+        }
+
+        // Kept for view compatibility; currently unused by public.tours.show.
         $relatedTours = Tour::where('is_published', true)
             ->where('id', '!=', $tour->id)
             ->where(function ($q) use ($tour) {

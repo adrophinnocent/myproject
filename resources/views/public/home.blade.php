@@ -1,7 +1,7 @@
 @extends('public.layouts.app')
 
 @section('title', 'Twina Safaris | Tanzania Safaris, Kilimanjaro & Zanzibar')
-@section('meta_description', 'Plan Tanzania safaris, Kilimanjaro treks and Zanzibar beach holidays with Twina Safaris. Explore Serengeti and Ngorongoro itineraries, prices and expert local guides.')
+@section('meta_description', 'Plan Tanzania safaris, Kilimanjaro treks and Zanzibar holidays with Twina Safaris. Compare Serengeti and Ngorongoro itineraries, prices and expert guides.')
 
 @section('content')
 
@@ -53,18 +53,22 @@
                             <source src="{{ $slide->image_url }}" type="video/mp4">
                         </video>
                     @else
-                        <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="{{ $slide->title }}" loading="eager" fetchpriority="high">
+                        <img src="{{ $slide->image_url }}" width="1920" height="1080" class="w-full h-full object-cover" alt="" loading="eager" fetchpriority="high" decoding="async">
                     @endif
                 </div>
             @endforeach
         @else
-            <img src="{{ asset('images/banners/hero_fallback.webp') }}" width="1920" height="1080" class="w-full h-full object-cover opacity-60" alt="Tanzania Safari" loading="eager" fetchpriority="high">
+            <img src="{{ asset('images/banners/hero_fallback.webp') }}" width="1920" height="1080" class="w-full h-full object-cover opacity-60" alt="Tanzania safari landscape" loading="eager" fetchpriority="high" decoding="async">
         @endif
     </div>
 
     <div class="relative z-20 flex-grow flex flex-col items-center justify-center text-center px-4 pt-20">
-        {{-- One stable, keyword-focused H1 for the page; slider headlines are H2s. --}}
-        <h1 class="sr-only">{{ __('Tanzania safaris, Kilimanjaro treks and Zanzibar holidays with Twina Safaris') }}</h1>
+        {{-- The first visible slider headline is the page H1; remaining slides are H2s. --}}
+        @if(isset($sliders) && $sliders->count() > 0)
+            <p class="sr-only">{{ __('Tanzania safaris, Kilimanjaro treks and Zanzibar holidays with Twina Safaris') }}</p>
+        @else
+            <h1 class="sr-only">{{ __('Tanzania safaris, Kilimanjaro treks and Zanzibar holidays with Twina Safaris') }}</h1>
+        @endif
         <div class="w-full max-w-5xl">
             @if(isset($sliders) && $sliders->count() > 0)
                 @foreach($sliders as $index => $slide)
@@ -80,14 +84,20 @@
                                 </span>
                             @endif
                             @if($slide->title)
-                                <h2 class="font-display text-3xl sm:text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
-                                    {{ __($slide->title) }}
-                                </h2>
+                                @if($loop->first)
+                                    <h1 class="font-display text-3xl sm:text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
+                                        {{ __($slide->title) }}
+                                    </h1>
+                                @else
+                                    <h2 class="font-display text-3xl sm:text-4xl md:text-8xl lg:text-9xl text-white font-black leading-[0.85] drop-shadow-2xl">
+                                        {{ __($slide->title) }}
+                                    </h2>
+                                @endif
                             @endif
                         </div>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 relative z-50 pt-4 md:pt-0">
                             @if($slide->cta_text)
-                                <a href="{{ $slide->cta_url ?: '#' }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl transition-all hover:scale-105 active:scale-95 min-w-[220px]">
+                                <a href="{{ $slide->cta_url ?: route('tours.index') }}" class="btn-gold px-12 py-5 rounded-full text-base font-black shadow-2xl transition-all hover:scale-105 active:scale-95 min-w-[220px]">
                                     {{ __($slide->cta_text) }}
                                 </a>
                             @endif
@@ -132,29 +142,29 @@
             <div class="bg-black/50 backdrop-blur-3xl rounded-[2rem] md:rounded-full p-3 md:p-1.5 border-2 border-white/20 shadow-[0_20px_50px_-12px_rgba(212,175,55,0.4)]">
                 <form action="{{ route('tours.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 md:gap-0">
                     <div class="relative flex-1">
-                        <select name="destination" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
+                        <select name="destination" aria-label="{{ __('Choose a destination') }}" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
                             <option value="" class="text-gray-900">{{ __('Where to?') }}</option>
                             @foreach(\App\Models\Destination::where('is_active', true)->get() as $dest)
                             <option value="{{ $dest->id }}" class="text-gray-900">{{ __($dest->name) }}</option>
                             @endforeach
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
                     <div class="relative flex-1">
-                        <select name="category" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
+                        <select name="category" aria-label="{{ __('Choose an adventure type') }}" class="w-full bg-white/10 md:bg-transparent border-0 md:border-r border-white/10 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
                             <option value="" class="text-gray-900">{{ __('Adventure Type') }}</option>
                             @foreach(\App\Models\Category::where('is_active', true)->get() as $cat)
                             <option value="{{ $cat->id }}" class="text-gray-900">{{ __($cat->name) }}</option>
                             @endforeach
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
                     <div class="relative flex-1">
-                        <select name="duration" class="w-full bg-white/10 md:bg-transparent border-0 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
+                        <select name="duration" aria-label="{{ __('Choose a trip duration') }}" class="w-full bg-white/10 md:bg-transparent border-0 rounded-2xl md:rounded-none px-6 py-4 text-white text-sm font-bold focus:ring-0 appearance-none cursor-pointer">
                             <option value="" class="text-gray-900">{{ __('How long?') }}</option>
                             <option value="1-3" class="text-gray-900">1-3 {{ __('Days') }}</option>
                             <option value="4-7" class="text-gray-900">4-7 {{ __('Days') }}</option>
@@ -162,12 +172,12 @@
                             <option value="15+" class="text-gray-900">15+ {{ __('Days') }}</option>
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gold-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
                     <div class="md:w-48">
                         <button type="submit" class="w-full h-full bg-gold-500 hover:bg-gold-600 text-safari-dark py-4 px-8 rounded-2xl md:rounded-full font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 group">
-                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             {{ __('SEARCH') }}
                         </button>
                     </div>
@@ -248,7 +258,7 @@
                                  x-transition:enter-start="opacity-0 scale-105"
                                  x-transition:enter-end="opacity-100 scale-100"
                                  class="absolute inset-0 w-full h-full">
-                                <img :src="slide" class="w-full h-full object-cover" alt="{{ $heroTour->title }}" loading="lazy">
+                                <img :src="slide" width="800" height="600" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
                             </div>
                         </template>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
@@ -463,7 +473,7 @@
                 <div>
                     <a href="{{ route('tours.index', ['tour_type' => 'kilimanjaro-trekking']) }}" class="btn-gold w-full sm:w-auto px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest transition-all hover:scale-105 inline-flex items-center justify-center gap-3 shadow-lg">
                         {{ __('Explore All Packages') }}
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
             </div>
@@ -494,7 +504,7 @@
                         </div>
                         <div class="mt-5 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-semibold text-gray-300 group-hover:text-white transition-colors">
                             <span>{{ __('Explore Route') }}</span>
-                            <svg class="w-4 h-4 text-gold-400 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-gold-400 transition-transform group-hover:translate-x-1" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
@@ -525,7 +535,7 @@
                     {{-- USP 1 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-5 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Excellence') }}</span>
-                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Expert Local Guides') }}</h4>
+                        <h3 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Expert Local Guides') }}</h3>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('Travel with local, English-speaking guides who know the parks, wildlife behaviour and seasonal migration patterns, and who explain what you are seeing as you go.') }}
                         </p>
@@ -534,7 +544,7 @@
                     {{-- USP 2 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-5 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Bespoke') }}</span>
-                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Tailor-Made Safaris') }}</h4>
+                        <h3 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Tailor-Made Safaris') }}</h3>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('We believe no two travelers are the same, and neither should their journeys be. Our expert consultants work tirelessly with you to craft bespoke itineraries that match your specific pace, personal interests, and budget. From private photography expeditions to multi-generational family adventures, we personalize every detail to create your dream escape.') }}
                         </p>
@@ -543,7 +553,7 @@
                     {{-- USP 3 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-6 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Value') }}</span>
-                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Direct Local Pricing') }}</h4>
+                        <h3 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('Direct Local Pricing') }}</h3>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('We arrange the vehicle, guide and accommodation as one itinerary, so your quote clearly shows what is included and there are no hidden middleman charges.') }}
                         </p>
@@ -552,7 +562,7 @@
                     {{-- USP 4 --}}
                     <div class="group/item border-l-2 border-gold-500/30 pl-6 hover:border-gold-500 transition-all duration-500 bg-white/50 p-5 rounded-r-2xl hover:bg-white hover:shadow-md">
                         <span class="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em] mb-2 block">{{ __('Reliability') }}</span>
-                        <h4 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('In-Trip Support') }}</h4>
+                        <h3 class="font-black text-gray-900 text-lg mb-2 uppercase tracking-tighter">{{ __('In-Trip Support') }}</h3>
                         <p class="text-gray-600 text-xs leading-relaxed font-medium">
                             {{ __('Before you travel you receive a written itinerary and a contact number. During the trip your guide handles the daily plan, transfers and any changes caused by weather or road conditions.') }}
                         </p>
@@ -591,7 +601,8 @@
 
                     {{-- Background Cover Image with Zoom Effect --}}
                     <img src="{{ $tour->featured_image_url }}"
-                         alt="{{ $titleStr }}"
+                         width="800" height="600"
+                         alt=""
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                          loading="lazy" decoding="async">
 
@@ -619,7 +630,7 @@
 
                     {{-- White Circle Arrow Button at Bottom Right --}}
                     <div class="absolute bottom-2.5 right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-950" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
                     </div>
@@ -630,7 +641,7 @@
         <div class="text-center mt-12">
             <a href="{{ route('tours.index') }}" class="btn-gold px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest inline-flex items-center gap-2 group shadow-lg">
                 View All Packages
-                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
         </div>
     </div>
@@ -662,7 +673,7 @@
                     {{-- Stars come from the real published testimonial --}}
                     <div class="flex text-[#e5b842] gap-1 mb-3">
                         @for($s=0; $s<(int) $rev->rating; $s++)
-                            <svg class="w-3.5 h-3.5 fill-current"><use href="#star"/></svg>
+                            <svg class="w-3.5 h-3.5 fill-current" aria-hidden="true"><use href="#star"/></svg>
                         @endfor
                     </div>
 
@@ -678,9 +689,9 @@
                         {{ mb_strtoupper(mb_substr((string) $rev->name, 0, 2)) }}
                     </div>
                     <div>
-                        <h4 class="font-bold text-[#faf0d9] text-sm leading-tight block">
+                        <h3 class="font-bold text-[#faf0d9] text-sm leading-tight block">
                             {{ $rev->name }}
-                        </h4>
+                        </h3>
                         <span class="text-[#d4af37] text-xs font-medium block mt-0.5">
                             {{ $rev->location ?: __('Guest') }}
                         </span>
@@ -726,7 +737,8 @@
 
                     {{-- Background Cover Image with Zoom Effect --}}
                     <img src="{{ $post->featured_image_url }}"
-                         alt="{{ $titleStr }}"
+                         width="800" height="600"
+                         alt=""
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                          loading="lazy" decoding="async">
 
@@ -754,7 +766,7 @@
 
                     {{-- White Circle Arrow Button at Bottom Right --}}
                     <div class="absolute bottom-2.5 right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-stone-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 group-hover:bg-[#f8b218] transition-all duration-300 z-10">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-950" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
                     </div>
@@ -765,7 +777,7 @@
         <div class="text-center mt-12">
             <a href="{{ route('blog.index') }}" class="btn-gold px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest inline-flex items-center gap-2 group shadow-lg">
                 View All Stories
-                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
         </div>
     </div>
@@ -803,11 +815,11 @@
         <div class="space-y-3">
             @foreach($faqs as $faq)
             <div x-data="{ open: false }" class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:border-[#b8920d]/60 transition-all">
-                <button type="button" @click="open = !open" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50 transition-colors">
+                <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-controls="home-faq-{{ $loop->index }}" class="w-full text-left p-5 md:p-6 font-bold text-stone-900 text-sm sm:text-base flex items-center justify-between cursor-pointer hover:bg-stone-50/50 transition-colors">
                     <span>{{ $faq->translate('question') ?: $faq->question }}</span>
-                    <span class="text-[#8A6D0B] text-xl font-bold ml-2 shrink-0 transition-transform duration-200" :class="open ? 'rotate-45' : ''">+</span>
+                    <span class="text-[#8A6D0B] text-xl font-bold ml-2 shrink-0 transition-transform duration-200" :class="open ? 'rotate-45' : ''" aria-hidden="true">+</span>
                 </button>
-                <div x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
+                <div id="home-faq-{{ $loop->index }}" x-show="open" x-collapse x-cloak class="px-5 pb-5 pt-1 text-stone-600 text-xs sm:text-sm leading-relaxed border-t border-[#e8dfcf]/60 bg-[#fffdf9]">
                     {!! $faq->translate('answer') ?: $faq->answer !!}
                 </div>
             </div>
@@ -817,7 +829,7 @@
         <div class="text-center mt-10">
             <a href="{{ route('faqs.index') }}" class="btn-gold px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest inline-flex items-center gap-2 group shadow-lg">
                 {{ __('View All FAQs') }}
-                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
             <div class="mt-6 flex flex-wrap justify-center gap-3">
                 <a href="{{ route('guides.safari-cost') }}" class="text-xs font-bold text-[#8A6D0B] hover:text-gold-600">{{ __('Safari costs') }}</a>

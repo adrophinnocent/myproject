@@ -11,7 +11,8 @@ Allow: /custom-safari
 
 # Disallow Private, Auth, Session & Workspace Routes
 Disallow: /admin/
-Disallow: /booking
+Disallow: /booking/
+Allow: /booking/policies
 Disallow: /my-bookings
 Disallow: /login
 Disallow: /forgot-password

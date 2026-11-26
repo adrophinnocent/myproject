@@ -1,14 +1,16 @@
 @extends('public.layouts.app')
 
 @section('title', 'About Us - Twina Safaris')
-@section('meta_description', 'Meet Twina Safaris: a Tanzania-based team creating tailor-made safaris, Kilimanjaro treks and Zanzibar holidays.')
+@section('meta_description', 'Meet Twina Safaris, a Tanzania-based team creating tailor-made Serengeti safaris, Kilimanjaro treks and Zanzibar holidays with expert local guides.')
 
 @section('content')
 {{-- 1. HERO BANNER --}}
 <div class="relative h-[70vh] min-h-[500px] flex items-center bg-safari-dark overflow-hidden text-center">
     <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('about_banner') }}"
-         alt="{{ __('Twina Safaris About Us') }}"
-         class="absolute inset-0 w-full h-full object-cover">
+         width="1920" height="1080"
+         alt=""
+         class="absolute inset-0 w-full h-full object-cover"
+         loading="eager" decoding="async">
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4">
         <span class="inline-block text-gold-400 text-xs font-black uppercase tracking-[0.5em] mb-6 animate-pulse bg-black/30 backdrop-blur-sm px-6 py-2 rounded-full border border-gold-500/20">
@@ -50,17 +52,17 @@
             <div class="relative">
                 @if($featuredImage = \App\Models\Setting::get('featured_image'))
                     <div class="w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
-                        <img src="{{ asset('storage/' . $featuredImage) }}" class="w-full h-auto object-cover" alt="{{ __('About Twina Safaris') }}">
+                        <img src="{{ asset('storage/' . $featuredImage) }}" width="1200" height="800" class="w-full h-auto object-cover" alt="{{ __('Twina Safaris team and Tanzania safari scenes') }}" loading="lazy" decoding="async">
                     </div>
                 @else
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-4">
-                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-1') }}" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="{{ __('Safari') }}">
-                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-2') }}" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="{{ __('Culture') }}">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-1') }}" width="800" height="600" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="{{ __('Tanzania safari landscape') }}" loading="lazy" decoding="async">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-2') }}" width="800" height="600" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="{{ __('Local culture and communities in Tanzania') }}" loading="lazy" decoding="async">
                         </div>
                         <div class="space-y-4 pt-12">
-                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-3') }}" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="{{ __('Wildlife') }}">
-                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-4') }}" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="{{ __('Beach') }}">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-3') }}" width="800" height="600" class="rounded-[2rem] shadow-2xl h-80 w-full object-cover" alt="{{ __('Wildlife on a Tanzania safari') }}" loading="lazy" decoding="async">
+                            <img src="{{ \App\Helpers\AssetHelper::getBannerUrl('kili-4') }}" width="800" height="600" class="rounded-[2rem] shadow-2xl h-64 w-full object-cover" alt="{{ __('Zanzibar beach and coast') }}" loading="lazy" decoding="async">
                         </div>
                     </div>
                 @endif
@@ -78,9 +80,11 @@
                     <div class="absolute -inset-4 bg-gold-500/10 rounded-full blur-2xl group-hover:bg-gold-500/20 transition-all"></div>
                     <div class="relative aspect-square rounded-full overflow-hidden shadow-2xl border-4 border-white ring-8 ring-gold-50">
                         <img src="{{ asset('images/founder.jpg') }}"
+                             width="800" height="800"
                              onerror="this.src='{{ asset('images/logo.png') }}'"
                              class="w-full h-full object-cover"
-                             alt="{{ __('Founder of Twina Safaris') }}">
+                             alt="{{ __('Founder of Twina Safaris') }}"
+                             loading="lazy" decoding="async">
                     </div>
                 </div>
             </div>
@@ -217,25 +221,25 @@
             {{-- Column 1 --}}
             <div class="space-y-12">
                 <div class="group">
-                    <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Expertise') }}</h4>
+                    <p class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Expertise') }}</p>
                     <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Expert Local Guides') }}</h3>
                     <p class="text-gray-600 leading-relaxed font-light">{{ __('Our professional guides are the heart of every safari experience. With extensive knowledge of Tanzania\'s wildlife, ecosystems, cultures, and hidden gems, they bring each destination to life. Their expertise ensures you enjoy memorable wildlife sightings, fascinating insights, and a safe journey throughout your adventure.') }}</p>
                 </div>
 
                 <div class="group">
-                    <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Customization') }}</h4>
+                    <p class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Customization') }}</p>
                     <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Personalized Safari Experiences') }}</h3>
                     <p class="text-gray-600 leading-relaxed font-light">{{ __('No two travelers are the same, and neither should their journeys be. We take time to understand your interests, travel style, and budget to create a customized itinerary that perfectly matches your expectations. From luxury safaris to budget-friendly adventures, every trip is designed around you.') }}</p>
                 </div>
 
                 <div class="group">
-                    <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Integrity') }}</h4>
+                    <p class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Integrity') }}</p>
                     <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Competitive and Transparent Pricing') }}</h3>
                     <p class="text-gray-600 leading-relaxed font-light">{{ __('We believe in providing excellent value without compromising quality. Our pricing is clear and transparent, with no hidden costs or unexpected charges. You receive carefully selected accommodations, reliable transportation, and exceptional service at a fair and competitive price.') }}</p>
                 </div>
 
                 <div class="group">
-                    <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Reliability') }}</h4>
+                    <p class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Reliability') }}</p>
                     <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Commitment to Safety and Comfort') }}</h3>
                     <p class="text-gray-600 leading-relaxed font-light">{{ __('Your well-being is our highest priority. We maintain high safety standards across all our tours and work with trusted partners to ensure reliable vehicles, quality accommodations, and professional support throughout your journey. From arrival to departure, we strive to make your experience comfortable and worry-free.') }}</p>
                 </div>
@@ -244,19 +248,19 @@
             {{-- Column 2 --}}
             <div class="space-y-12">
                 <div class="group">
-                    <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Responsibility') }}</h4>
+                    <p class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Responsibility') }}</p>
                     <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Responsible and Sustainable Tourism') }}</h3>
                     <p class="text-gray-600 leading-relaxed font-light">{{ __('We are dedicated to preserving Tanzania\'s natural beauty and supporting local communities. By promoting responsible tourism practices, we help protect wildlife habitats, support conservation efforts, and create positive economic opportunities for local people. Traveling with Twina Safaris means contributing to a more sustainable future for Tanzania.') }}</p>
                 </div>
 
                 <div class="group">
-                    <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Support') }}</h4>
+                    <p class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Support') }}</p>
                     <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Clear Pre-Trip and In-Trip Support') }}</h3>
                     <p class="text-gray-600 leading-relaxed font-light">{{ __('Travel plans can change. Before departure you receive a written itinerary and contact details. During the trip your guide manages the daily plan and any changes caused by weather, roads or flight times.') }}</p>
                 </div>
 
                 <div class="group">
-                    <h4 class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Craftsmanship') }}</h4>
+                    <p class="text-gold-600 text-xs font-black uppercase tracking-[0.2em] mb-3">{{ __('Craftsmanship') }}</p>
                     <h3 class="text-2xl font-black text-gray-900 mb-4">{{ __('Tailor-Made Itineraries') }}</h3>
                     <p class="text-gray-600 leading-relaxed font-light">{{ __('Whether you dream of witnessing the Great Migration in the Serengeti, exploring the Ngorongoro Crater, conquering Mount Kilimanjaro, or relaxing on Zanzibar\'s white-sand beaches, we create itineraries that fit your schedule, interests, and travel goals. Every journey is carefully crafted to deliver the best possible experience.') }}</p>
                 </div>
@@ -289,7 +293,7 @@
                 ['name' => 'Rhino', 'img' => asset('images/big-five/rhino.webp')]
             ] as $animal)
             <div class="group relative h-[450px] overflow-hidden rounded-2xl shadow-2xl">
-                <img src="{{ $animal['img'] }}" alt="{{ __($animal['name']) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <img src="{{ $animal['img'] }}" width="800" height="600" alt="{{ __($animal['name']) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" decoding="async">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-8 text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <h3 class="text-2xl font-display font-bold text-white mb-2 tracking-widest uppercase">{{ __($animal['name']) }}</h3>

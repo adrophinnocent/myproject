@@ -49,7 +49,7 @@
         <div class="flex items-center gap-4">
             <!-- Currency Switcher -->
             <div class="relative" x-data="{open: false}">
-                <button x-on:click="open = !open" x-on:click.outside="open = false" class="flex items-center gap-1.5 text-gray-400 hover:text-gold-400 transition-colors">
+                <button x-on:click="open = !open" x-on:click.outside="open = false" aria-label="{{ __('Choose currency') }}" :aria-expanded="open.toString()" class="flex items-center gap-1.5 text-gray-400 hover:text-gold-400 transition-colors">
                     {{ session('currency', 'USD') }}
                     <svg class="w-3 h-3 transition-transform" x-bind:class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
@@ -64,7 +64,7 @@
                  indexable page per route. Hidden on English-only guides. --}}
             @unless(\App\Helpers\SeoHelper::hasEnglishOnlyContent(request()))
             <div class="relative" x-data="{open: false}">
-                <button x-on:click="open = !open" x-on:click.outside="open = false" class="flex items-center gap-1.5 text-gray-400 hover:text-gold-400 transition-colors">
+                <button x-on:click="open = !open" x-on:click.outside="open = false" aria-label="{{ __('Choose language') }}" :aria-expanded="open.toString()" class="flex items-center gap-1.5 text-gray-400 hover:text-gold-400 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9-9c1.657 0 3 1.343 3 3s-1.343 3-3 3m0-6H7m10 0v6m0 6H7m10 0v-6M3 12a9 9 0 019-9m-9 9a9 9 0 009 9m-9-9c1.657 0-3 1.343-3 3s1.343 3 3 3m0-6h10"></path></svg>
                     <span class="uppercase">{{ app()->getLocale() }}</span>
                     <svg class="w-3 h-3 transition-transform" x-bind:class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -114,10 +114,10 @@
 
                 <!-- Tours Mega Menu -->
                 <div class="relative" x-data="{open: false}" x-on:mouseenter="open=true" x-on:mouseleave="open=false">
-                    <button class="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('tours.*')?'text-gold-400':'' }}">
+                    <button x-on:click="open = !open" :aria-expanded="open.toString()" aria-controls="safaris-menu" class="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white/90 hover:text-gold-400 transition-colors rounded-lg {{ request()->routeIs('tours.*')?'text-gold-400':'' }}">
                         {{ __('Safaris') }} <svg class="w-3.5 h-3.5 transition-transform" x-bind:class="open?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                    <div id="safaris-menu" x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
                          class="absolute top-full left-0 mt-2 w-[720px] bg-safari-dark/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50" x-cloak>
                         <div class="p-6 grid grid-cols-3 gap-2">
                             @foreach($navCategories as $cat)
@@ -152,7 +152,7 @@
             <div class="flex items-center gap-3">
                 <a href="{{ route('trip-plan.index') }}" class="hidden lg:block btn-outline-gold px-4 py-2 rounded-full text-sm font-semibold"><span>{{ __('Plan My Trip') }}</span></a>
                 <a href="{{ route('tours.index') }}" class="btn-gold px-5 py-2.5 rounded-full text-sm font-semibold hidden sm:block">{{ __('Book Now') }}</a>
-                <button x-on:click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors focus:outline-none">
+                <button x-on:click="mobileMenuOpen = !mobileMenuOpen" aria-label="{{ __('Toggle navigation menu') }}" :aria-expanded="mobileMenuOpen.toString()" aria-controls="mobile-menu" class="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors focus:outline-none">
                     <svg x-show="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <svg x-show="mobileMenuOpen" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -179,11 +179,13 @@
                 <!-- Mobile Accordion for Safaris -->
                 <div class="space-y-1">
                     <button x-on:click="activeAccordion = activeAccordion === 'safaris' ? null : 'safaris'"
+                            :aria-expanded="(activeAccordion === 'safaris').toString()"
+                            aria-controls="mobile-safaris-menu"
                             class="w-full flex items-center justify-between px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">
                         <span>{{ __('Safaris') }}</span>
                         <svg class="w-4 h-4 transition-transform duration-300" x-bind:class="activeAccordion === 'safaris' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <div x-show="activeAccordion === 'safaris'"
+                    <div id="mobile-safaris-menu" x-show="activeAccordion === 'safaris'"
                          x-collapse
                          class="pl-4 space-y-1">
                         @foreach($navCategories as $cat)
