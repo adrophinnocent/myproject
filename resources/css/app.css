@@ -96,4 +96,37 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
+
+    /* ==========================================================================
+       STRICT BLOG IMAGE SYSTEM (3:2 Aspect Ratio, Sharp Corners, No Frames/Borders)
+       ========================================================================== */
+    .ph,
+    .article-image-ph {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 3 / 2 !important;
+        background-color: #e7e5e4;
+        overflow: hidden;
+        border-radius: 0 !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    .ph img,
+    .article-image-ph img,
+    .blog-card-image,
+    .more-read-image,
+    .article-body figure img,
+    .article-body p img,
+    .article-body img {
+        width: 100% !important;
+        aspect-ratio: 3 / 2 !important;
+        object-fit: cover !important;
+        border-radius: 0 !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        outline: none !important;
+        background: transparent !important;
+    }
 }

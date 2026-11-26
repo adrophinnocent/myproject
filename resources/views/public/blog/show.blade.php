@@ -44,19 +44,93 @@
     <meta itemprop="author" content="{{ $post->author->name ?? 'Twina Safaris' }}">
 
     {{-- 1. Full-width hero, 3:2, cropped and capped at 620px on desktop --}}
-    <figure class="article-hero w-full m-0">
-        <img src="{{ $post->featured_image_url }}"
-             alt="{{ $post->translate('title') }}"
-             class="w-full"
-             loading="eager"
-             fetchpriority="high"
-             decoding="async">
+    <figure class="article-hero w-full m-0 p-0 border-none">
+        <div class="ph relative aspect-[3/2] w-full max-h-[620px] bg-stone-200 overflow-hidden rounded-none border-none p-0">
+            <img src="{{ $post->featured_image_url }}"
+                 alt="{{ $post->translate('title') }}"
+                 class="w-full h-full object-cover rounded-none border-none p-0 shadow-none"
+                 loading="eager"
+                 fetchpriority="high"
+                 decoding="async">
+        </div>
         @if($post->hero_caption)
-            <figcaption class="max-w-7xl mx-auto px-4 py-3 text-xs italic font-medium text-stone-500">
+            <figcaption class="max-w-4xl mx-auto px-4 py-3 text-xs italic font-medium text-stone-500 text-center">
                 {{ $post->hero_caption }}
             </figcaption>
         @endif
     </figure>
+
+    <style>
+        /* 1. Article Hero Image: Edge-to-Edge, Sharp 3:2, Capped at 620px, No Frame */
+        .article-hero img {
+            width: 100% !important;
+            max-height: 620px !important;
+            aspect-ratio: 3 / 2 !important;
+            object-fit: cover !important;
+            border-radius: 0 !important;
+            border: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+
+        /* 2. Article Body Images: 3:2 Aspect Ratio, Sharp Corners (rounded-none), No Frame/Border/Padding/Shadow */
+        .article-body figure.image,
+        .article-body figure,
+        .article-body p img,
+        .article-body img {
+            width: 100% !important;
+            aspect-ratio: 3 / 2 !important;
+            object-fit: cover !important;
+            border-radius: 0 !important;
+            border: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+            margin: 2rem 0 0.5rem 0 !important;
+            background: transparent !important;
+        }
+
+        /* 3. More to Read Images: Sharp 3:2 Aspect Ratio, No Rounded Corners, No Borders */
+        .more-read-image {
+            width: 100% !important;
+            aspect-ratio: 3 / 2 !important;
+            object-fit: cover !important;
+            border-radius: 0 !important;
+            border: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        /* 4. Article Captions */
+        .article-body figcaption,
+        figcaption {
+            margin-top: 0.5rem;
+            margin-bottom: 1.75rem;
+            font-size: 0.8125rem;
+            font-style: italic;
+            color: #78716c;
+            text-align: center;
+        }
+
+        /* 5. 2-Column Lists for ✓ and • */
+        .article-body ul.two-col,
+        .article-body ol.two-col,
+        .article-body .grid-list-2col {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.75rem;
+        }
+        @media (min-width: 768px) {
+            .article-body ul.two-col,
+            .article-body ol.two-col,
+            .article-body .grid-list-2col {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
 
     {{-- 2. Title block --}}
     <header class="max-w-3xl mx-auto px-4 pt-12 pb-10 text-center">

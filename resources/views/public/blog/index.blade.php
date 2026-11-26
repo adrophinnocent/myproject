@@ -82,14 +82,14 @@
                         $excerptStr = \App\Helpers\AssetHelper::asString($rawExcerpt);
                     @endphp
 
-                    {{-- TourRadar Style Blog Card --}}
-                    <div class="bg-white border border-[#e8dfcf] rounded-3xl p-3 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#b8920d]/60">
+                    {{-- Blog Card (3:2 Aspect Ratio, Sharp Corners, No Image Frame) --}}
+                    <div class="bg-white border border-[#e8dfcf] rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#b8920d]/60">
                         <div>
-                            {{-- Top Image Widescreen Banner with Rounded Corners --}}
-                            <div class="relative aspect-[3/2] rounded-2xl overflow-hidden bg-stone-900 border border-stone-100/80">
+                            {{-- Top Image Widescreen 3:2 Frame with Sharp Corners --}}
+                            <div class="ph relative aspect-[3/2] w-full bg-stone-200 overflow-hidden border-none p-0 rounded-none">
                                 <img src="{{ $post->featured_image_url }}"
                                      alt="{{ $titleStr }}"
-                                     class="blog-card-image w-full group-hover:scale-105 transition-transform duration-700 ease-out"
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out border-none p-0 rounded-none"
                                      loading="lazy" decoding="async">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
 
