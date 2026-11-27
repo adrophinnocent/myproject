@@ -152,12 +152,12 @@
 
                 {{-- 3-Line Hamburger Menu Toggle Button --}}
                 <button type="button"
-                        @click.stop="mobileMenuOpen = !mobileMenuOpen"
+                        @click="mobileMenuOpen = !mobileMenuOpen"
                         aria-label="{{ __('Toggle navigation menu') }}"
-                        :aria-expanded="mobileMenuOpen.toString()"
-                        class="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors focus:outline-none cursor-pointer">
-                    <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    <svg x-show="mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        :aria-expanded="mobileMenuOpen"
+                        class="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors focus:outline-none cursor-pointer select-none">
+                    <svg x-show="!mobileMenuOpen" class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6 text-gold-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
         </div>
@@ -166,20 +166,21 @@
     <!-- Mobile Drawer Menu -->
     <div id="mobile-menu"
          x-show="mobileMenuOpen"
-         :style="mobileMenuOpen ? 'display: block !important;' : 'display: none !important;'"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 -translate-y-4"
+         @click.outside="mobileMenuOpen = false"
+         x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-2"
          x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-4"
+         x-transition:leave-end="opacity-0 -translate-y-2"
          class="lg:hidden bg-[#0a0703]/98 border-t border-gold-500/20 backdrop-blur-2xl max-h-[calc(100vh-80px)] overflow-y-auto shadow-2xl">
 
         <div class="max-w-7xl mx-auto px-4 py-6 space-y-4">
             {{-- Navigation Links --}}
             <div class="space-y-1">
-                <a href="{{ route('home') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('home')?'text-gold-400 bg-white/5':'' }}">{{ __('Home') }}</a>
-                <a href="{{ route('about') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('about')?'text-gold-400 bg-white/5':'' }}">{{ __('About') }}</a>
+                <a href="{{ route('home') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('home')?'text-gold-400 bg-white/5':'' }}">{{ __('Home') }}</a>
+                <a href="{{ route('about') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('about')?'text-gold-400 bg-white/5':'' }}">{{ __('About') }}</a>
 
                 <!-- Mobile Accordion for Safaris -->
                 <div class="space-y-1">
@@ -194,7 +195,7 @@
                          x-collapse
                          class="pl-4 space-y-1">
                         @foreach($navCategories as $cat)
-                        <a href="{{ route('tours.index', ['tour_type' => $cat->slug]) }}" class="flex flex-col px-4 py-3 text-gray-400 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors">
+                        <a href="{{ route('tours.index', ['tour_type' => $cat->slug]) }}" @click="mobileMenuOpen = false" class="flex flex-col px-4 py-3 text-gray-400 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors">
                             <span class="text-sm font-semibold">{{ $cat->name }}</span>
                             <span class="text-[10px] opacity-60 leading-tight">{{ $categoriesWithMeta[$cat->slug]['desc'] ?? __('Explore Africa') }}</span>
                         </a>
@@ -202,13 +203,13 @@
                     </div>
                 </div>
 
-                <a href="{{ route('destinations.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('destinations.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Destinations') }}</a>
-                <a href="{{ route('guides.best-time') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">{{ __('Best Time') }}</a>
-                <a href="{{ route('guides.safari-cost') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">{{ __('Safari Costs') }}</a>
-                <a href="{{ route('tours.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('tours.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Itineraries') }}</a>
-                <a href="{{ route('gallery.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('gallery.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Gallery') }}</a>
-                <a href="{{ route('blog.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('blog.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Blog') }}</a>
-                <a href="{{ route('contact.index') }}" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('contact.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Contact') }}</a>
+                <a href="{{ route('destinations.index') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('destinations.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Destinations') }}</a>
+                <a href="{{ route('guides.best-time') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">{{ __('Best Time') }}</a>
+                <a href="{{ route('guides.safari-cost') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium">{{ __('Safari Costs') }}</a>
+                <a href="{{ route('tours.index') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('tours.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Itineraries') }}</a>
+                <a href="{{ route('gallery.index') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('gallery.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Gallery') }}</a>
+                <a href="{{ route('blog.index') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('blog.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Blog') }}</a>
+                <a href="{{ route('contact.index') }}" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-gray-200 hover:text-gold-400 hover:bg-white/5 rounded-xl transition-colors text-base font-medium {{ request()->routeIs('contact.*')?'text-gold-400 bg-white/5':'' }}">{{ __('Contact') }}</a>
             </div>
 
             {{-- Mobile Currency & Language Selector Section --}}
