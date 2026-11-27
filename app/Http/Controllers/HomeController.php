@@ -107,10 +107,6 @@ class HomeController extends Controller
                     ?? Tour::with(['category', 'destination', 'translations'])
                     ->published()
                     ->featured()
-                    ->first();
-                    ?? Tour::with(['category', 'destination', 'translations'])
-                    ->published()
-                    ->featured()
                     ->first()
                     ?? Tour::with(['category', 'destination', 'translations'])
                     ->published()
