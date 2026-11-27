@@ -185,8 +185,34 @@
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     </noscript>
 
-    {{-- Built assets replace the render-blocking Tailwind CDN compiler and
-         three separate Alpine CDN requests. --}}
+    {{-- Tailwind CSS CDN Fallback for Production --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'safari-dark': '#0a0a0a',
+              'safari-light': '#faf9f6',
+              'gold': {
+                50: '#fcfaf7',
+                100: '#fbf4dc',
+                400: '#e5c358',
+                500: '#D4AF37',
+                600: '#8A6D0B',
+                700: '#704f0f',
+              }
+            },
+            fontFamily: {
+              display: ['Playfair Display', 'serif'],
+              body: ['Inter', 'sans-serif'],
+              serifTitle: ['Cormorant Garamond', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
