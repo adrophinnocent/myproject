@@ -94,15 +94,20 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        // Find the "Hero Tour" Spotlight (Festive Christmas & New Year Safari 2026/2027)
+        // Find the specific "Hero Tour" Spotlight requested by user: christmas-new-year-tanzania-safari-2026-2027
         $heroTour = Tour::with(['category', 'destination', 'translations'])
-                    ->where(function ($q) {
-                        $q->where('slug', 'christmas-and-new-year-safari-in-tanzania-20262027')
-                          ->orWhere('slug', 'christmas-new-year-tanzania-safari-2026-2027')
-                          ->orWhere('title', 'like', '%Christmas%')
-                          ->orWhere('title', 'like', '%New Year%');
-                    })
+                    ->where('slug', 'christmas-new-year-tanzania-safari-2026-2027')
                     ->first()
+                    ?? Safari::with(['category', 'destination', 'translations'])
+                    ->where('slug', 'christmas-new-year-tanzania-safari-2026-2027')
+                    ->first()
+                    ?? Tour::with(['category', 'destination', 'translations'])
+                    ->where('slug', 'christmas-and-new-year-safari-in-tanzania-20262027')
+                    ->first()
+                    ?? Tour::with(['category', 'destination', 'translations'])
+                    ->published()
+                    ->featured()
+                    ->first();
                     ?? Tour::with(['category', 'destination', 'translations'])
                     ->published()
                     ->featured()
