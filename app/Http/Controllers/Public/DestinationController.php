@@ -17,7 +17,7 @@ class DestinationController extends Controller
      *
      * @var array<string, array<string, mixed>>
      */
-    private const FACTS = [
+    public const FACTS = [
         'serengeti' => [
             'summary' => 'Plan a Serengeti safari: migration routes, big cats, the best months to visit and itineraries led by local guides.',
             'best_time' => 'June to October is the driest game-viewing window. January to March is best for calving on the southern plains around Ndutu.',

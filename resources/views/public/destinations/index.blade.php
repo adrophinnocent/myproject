@@ -2,6 +2,15 @@
 @section('title', 'Our Destinations - Twina Safaris')
 @section('meta_description', 'Explore Tanzania\'s top safari destinations with Twina Safaris, from the Serengeti and Ngorongoro Crater to Tarangire, Kilimanjaro and Zanzibar\'s beaches.')
 
+@section('schema')
+    @include('public.partials.schema-breadcrumb', [
+        'crumbs' => [
+            ['name' => 'Home', 'url' => \App\Helpers\SeoHelper::siteUrl().'/'],
+            ['name' => 'Destinations', 'url' => \App\Helpers\SeoHelper::canonicalUrl(request())],
+        ],
+    ])
+@endsection
+
 @section('content')
 <div class="relative pt-32 pb-16 bg-safari-dark">
     <div class="absolute inset-0 bg-gradient-to-br from-slate-800 via-amber-900/20 to-slate-800"></div>

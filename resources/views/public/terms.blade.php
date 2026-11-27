@@ -3,6 +3,15 @@
 @section('title', 'Terms of Service - Twina Safaris')
 @section('meta_description', 'Review Twina Safaris terms for bookings, deposits, cancellations, refunds, travel insurance, client responsibilities and responsible travel agreements.')
 
+@section('schema')
+    @include('public.partials.schema-breadcrumb', [
+        'crumbs' => [
+            ['name' => 'Home', 'url' => \App\Helpers\SeoHelper::siteUrl().'/'],
+            ['name' => 'Terms of Service', 'url' => \App\Helpers\SeoHelper::canonicalUrl(request())],
+        ],
+    ])
+@endsection
+
 @section('content')
 <div class="relative pt-32 pb-16 bg-[#0a0703] text-white">
     <div class="max-w-4xl mx-auto px-4 text-center">

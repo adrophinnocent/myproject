@@ -3,6 +3,15 @@
 @section('title', 'Booking Terms & Policies | Twina Safaris')
 @section('meta_description', 'Review Twina Safaris booking terms, deposit rules, balance deadlines and cancellation policies so you can reserve a Tanzania safari with confidence.')
 
+@section('schema')
+    @include('public.partials.schema-breadcrumb', [
+        'crumbs' => [
+            ['name' => 'Home', 'url' => \App\Helpers\SeoHelper::siteUrl().'/'],
+            ['name' => 'Booking Policies', 'url' => \App\Helpers\SeoHelper::canonicalUrl(request())],
+        ],
+    ])
+@endsection
+
 @section('content')
 <div class="bg-[#fcfaf7] min-h-screen py-16">
     <div class="max-w-4xl mx-auto px-4 space-y-8">

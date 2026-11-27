@@ -2,6 +2,15 @@
 @section('title', 'Visual Journey - Twina Safaris Photo Gallery')
 @section('meta_description', 'Browse Twina Safaris photos of Serengeti wildlife, Ngorongoro landscapes, Kilimanjaro treks and Zanzibar beaches, then plan your own Tanzania journey.')
 
+@section('schema')
+    @include('public.partials.schema-breadcrumb', [
+        'crumbs' => [
+            ['name' => 'Home', 'url' => \App\Helpers\SeoHelper::siteUrl().'/'],
+            ['name' => 'Gallery', 'url' => \App\Helpers\SeoHelper::canonicalUrl(request())],
+        ],
+    ])
+@endsection
+
 @section('content')
 {{-- Enhanced Immersive Header --}}
 <div class="relative min-h-[60vh] flex items-center justify-center bg-safari-dark overflow-hidden pt-20">

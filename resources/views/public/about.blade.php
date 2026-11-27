@@ -3,6 +3,15 @@
 @section('title', 'About Us - Twina Safaris')
 @section('meta_description', 'Meet Twina Safaris, a Tanzania-based team creating tailor-made Serengeti safaris, Kilimanjaro treks and Zanzibar holidays with expert local guides.')
 
+@section('schema')
+    @include('public.partials.schema-breadcrumb', [
+        'crumbs' => [
+            ['name' => 'Home', 'url' => \App\Helpers\SeoHelper::siteUrl().'/'],
+            ['name' => 'About', 'url' => \App\Helpers\SeoHelper::canonicalUrl(request())],
+        ],
+    ])
+@endsection
+
 @section('content')
 {{-- 1. HERO BANNER --}}
 <div class="relative h-[70vh] min-h-[500px] flex items-center bg-safari-dark overflow-hidden text-center">

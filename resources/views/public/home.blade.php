@@ -206,7 +206,7 @@
     <div class="max-w-7xl mx-auto px-4">
         {{-- Section Header --}}
         <div class="text-center mb-8 md:mb-10">
-            <span class="text-amber-700 text-xs font-black uppercase tracking-[0.3em] block mb-1">Signature Expedition</span>
+            <span class="text-amber-700 text-xs font-black uppercase tracking-[0.3em] block mb-1">Festive Season Expedition</span>
             <h2 class="font-display text-3xl md:text-4xl font-black text-stone-900">Featured Tour Spotlight</h2>
             <div class="w-12 h-1 bg-amber-500 rounded-full mx-auto mt-3"></div>
         </div>
@@ -240,10 +240,10 @@
                 <div class="lg:col-span-4 relative flex flex-col" x-data="{
                     activeSlide: 0,
                     slides: [
-                        '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-1') }}',
-                        '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-2') }}',
-                        '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-3') }}',
-                        '{{ \App\Helpers\AssetHelper::getBannerUrl('kili-4') }}'
+                        '{{ $heroTour->featured_image_url }}',
+                        '{{ \App\Helpers\AssetHelper::getBannerUrl('serengeti_bg') }}',
+                        '{{ \App\Helpers\AssetHelper::getBannerUrl('ngorongoro_bg') }}',
+                        '{{ \App\Helpers\AssetHelper::getBannerUrl('zanzibar_bg') }}'
                     ],
                     init() {
                         setInterval(() => {
@@ -258,7 +258,7 @@
                                  x-transition:enter-start="opacity-0 scale-105"
                                  x-transition:enter-end="opacity-100 scale-100"
                                  class="absolute inset-0 w-full h-full">
-                                <img :src="slide" width="800" height="600" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+                                <img :src="slide" width="800" height="600" class="w-full h-full object-cover" alt="{{ $heroTour->translate('title') }}" loading="lazy" decoding="async">
                             </div>
                         </template>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
@@ -266,12 +266,12 @@
                         {{-- Floating Badges --}}
                         <div class="absolute top-3 left-3 z-10">
                             <span class="px-3 py-1 bg-amber-500 text-stone-950 font-black text-[10px] uppercase rounded-lg shadow-md tracking-wider">
-                                🔥 BESTSELLER
+                                FESTIVE HIGHLIGHT
                             </span>
                         </div>
 
-                        <div class="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-center text-white text-xs font-bold bg-black/50 backdrop-blur-sm p-2.5 rounded-xl border border-white/20">
-                            <span>⏱️ {{ $heroTour->duration_text }}</span>
+                        <div class="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-center text-white text-xs font-bold bg-black/60 backdrop-blur-sm p-2.5 rounded-xl border border-white/20">
+                            <span>{{ $heroTour->duration_text }}</span>
                             <span class="text-amber-400 font-extrabold">★ 5.0 (Certified Guides)</span>
                         </div>
                     </div>
@@ -281,9 +281,9 @@
                 <div class="lg:col-span-5 space-y-4">
                     <div>
                         <div class="flex items-center gap-2 text-stone-500 text-xs font-semibold mb-1">
-                            <span>📍 {{ $heroTour->destination?->name ?? 'Tanzania' }}</span>
+                            <span>{{ $heroTour->destination?->name ?? 'Tanzania' }}</span>
                             <span>•</span>
-                            <span class="text-amber-800 font-bold">{{ $heroTour->category?->name ?? 'Safari' }}</span>
+                            <span class="text-amber-800 font-bold">{{ $heroTour->category?->name ?? 'Festive Safari' }}</span>
                         </div>
                         <h3 class="font-display text-2xl md:text-3xl font-black text-stone-900 leading-tight">
                             {{ $heroTour->translate('title') }}
@@ -291,7 +291,7 @@
                     </div>
 
                     <p class="text-stone-600 text-xs sm:text-sm leading-relaxed line-clamp-3">
-                        {{ $heroTour->translate('short_description') }}
+                        {{ $heroTour->translate('short_description') ?: __('Celebrate the festive season with an unforgettable adventure in Tanzania. From the wildlife-rich Serengeti to the Ngorongoro Crater and Zanzibar beaches.') }}
                     </p>
 
                     {{-- What's Included Checkmarks --}}
@@ -305,6 +305,16 @@
                                 <span class="line-clamp-1">{{ $inc }}</span>
                             </li>
                             @endforeach
+                        </ul>
+                    </div>
+                    @else
+                    <div>
+                        <span class="block text-[10px] font-black uppercase tracking-wider text-stone-400 mb-2">What is included:</span>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-stone-800">
+                            <li class="flex items-start gap-2"><span class="text-amber-700 font-bold shrink-0">✓</span><span>Serengeti Wildebeest Migration</span></li>
+                            <li class="flex items-start gap-2"><span class="text-amber-700 font-bold shrink-0">✓</span><span>Ngorongoro Crater Game Drive</span></li>
+                            <li class="flex items-start gap-2"><span class="text-amber-700 font-bold shrink-0">✓</span><span>Festive Holiday Celebration</span></li>
+                            <li class="flex items-start gap-2"><span class="text-amber-700 font-bold shrink-0">✓</span><span>Zanzibar Beach Relaxation</span></li>
                         </ul>
                     </div>
                     @endif
@@ -351,9 +361,6 @@
                         </a>
                         <a href="{{ route('tours.index') }}" class="w-full block text-center py-2.5 rounded-xl border border-stone-300 text-stone-700 font-bold text-xs uppercase tracking-wider hover:bg-stone-100 transition-colors">
                             {{ __('EXPLORE ALL TOURS') }}
-                        </a>
-                        <a href="{{ route('tours.download-pdf', $heroTour->slug) }}" class="text-[11px] font-bold text-amber-800 hover:underline inline-flex items-center gap-1 mt-1">
-                            <span>📥 {{ __('Download Itinerary PDF') }}</span>
                         </a>
                     </div>
                 </div>

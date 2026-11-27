@@ -1,0 +1,5 @@
+# Agent Skills are plain Markdown with YAML frontmatter.
+AddType text/markdown .md
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>

@@ -3,6 +3,15 @@
 @section('title', 'Privacy Policy - Twina Safaris')
 @section('meta_description', 'Read how Twina Safaris collects, uses, stores and protects your personal data, including booking details, newsletter preferences and your privacy choices.')
 
+@section('schema')
+    @include('public.partials.schema-breadcrumb', [
+        'crumbs' => [
+            ['name' => 'Home', 'url' => \App\Helpers\SeoHelper::siteUrl().'/'],
+            ['name' => 'Privacy Policy', 'url' => \App\Helpers\SeoHelper::canonicalUrl(request())],
+        ],
+    ])
+@endsection
+
 @section('content')
 <div class="relative pt-32 pb-16 bg-[#0a0703] text-white">
     <div class="max-w-4xl mx-auto px-4 text-center">

@@ -2,6 +2,15 @@
 @section('title', 'Contact Us - Twina Safaris')
 @section('meta_description', 'Contact Twina Safaris in Moshi, Tanzania to plan a tailor-made safari, Kilimanjaro trek or Zanzibar holiday. Tell us your dates, parks and budget today.')
 
+@section('schema')
+    @include('public.partials.schema-breadcrumb', [
+        'crumbs' => [
+            ['name' => 'Home', 'url' => \App\Helpers\SeoHelper::siteUrl().'/'],
+            ['name' => 'Contact', 'url' => \App\Helpers\SeoHelper::canonicalUrl(request())],
+        ],
+    ])
+@endsection
+
 @php
     $socialLinks = array_values(array_filter([
         ['label' => 'Facebook', 'url' => \App\Models\Setting::get('facebook_url')],

@@ -16,7 +16,7 @@
         $items[] = [
             '@type' => 'TouristTrip',
             'name' => $tour->translate('title') ?: $tour->title,
-            'url' => $siteUrl.'/tours/tour/'.$tour->slug.'.html',
+            'url' => $siteUrl.\App\Helpers\SeoHelper::preferredTourPath($tour->slug),
         ];
         $position++;
     }
@@ -24,7 +24,7 @@
         $items[] = [
             '@type' => 'TouristTrip',
             'name' => $safari->title,
-            'url' => $siteUrl.'/tours/safari/'.$safari->slug.'.html',
+            'url' => $siteUrl.\App\Helpers\SeoHelper::preferredTourPath($safari->slug),
         ];
     }
 
@@ -83,11 +83,13 @@
     $schema = ['@context' => 'https://schema.org', '@graph' => $graph];
 @endphp
 
-@section('content')
+@section('schema')
 <script type="application/ld+json">
 @json($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
 </script>
+@endsection
 
+@section('content')
 <div class="relative pt-32 pb-20 bg-safari-dark">
     <div class="absolute inset-0 z-0">
         <img src="{{ $destination->featured_image_url }}" alt="" width="1920" height="800" class="w-full h-full object-cover opacity-30">

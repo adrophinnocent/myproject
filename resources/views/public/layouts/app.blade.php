@@ -77,6 +77,7 @@
     {{-- Structured Data (Schema.org) for AI & Google --}}
     @php
         $siteUrl = \App\Helpers\SeoHelper::siteUrl();
+        $phone = \App\Models\Setting::get('site_phone') ?: '+255 795 482 197';
         $sameAs = array_values(array_filter([
             \App\Models\Setting::get('facebook_url'),
             \App\Models\Setting::get('instagram_url'),
@@ -111,12 +112,12 @@
                 'latitude' => \App\Models\Setting::get('latitude', '-3.3444'),
                 'longitude' => \App\Models\Setting::get('longitude', '37.3344'),
             ],
-            'telephone' => \App\Models\Setting::get('site_phone'),
+            'telephone' => $phone,
             'email' => \App\Models\Setting::publicEmail(),
             'sameAs' => $sameAs,
             'contactPoint' => [
                 '@type' => 'ContactPoint',
-                'telephone' => \App\Models\Setting::get('site_phone'),
+                'telephone' => $phone,
                 'contactType' => 'customer service',
                 'areaServed' => 'Worldwide',
                 'availableLanguage' => ['English', 'German', 'French', 'Spanish'],
@@ -136,9 +137,31 @@
                 'query-input' => 'required name=search_term_string',
             ],
         ];
+
+        // Every public page gets a WebPage node, including static pages that
+        // have no page-specific schema of their own.
+        $pageTitle = trim(app('view')->yieldContent('title'))
+            ?: \App\Models\Setting::get('seo_title', config('app.name', 'Twina Safaris'));
+        $pageDescription = trim(app('view')->yieldContent('meta_description'))
+            ?: \App\Models\Setting::get('meta_description', 'Safari and trekking adventures in Tanzania.');
+        $webPageSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebPage',
+            '@id' => $canonical.'#webpage',
+            'url' => $canonical,
+            'name' => $pageTitle,
+            'description' => $pageDescription,
+            'inLanguage' => $seoLocale,
+            'isPartOf' => ['@id' => $siteUrl.'/#website'],
+            'about' => ['@id' => $siteUrl.'/#organization'],
+            'primaryImageOfPage' => [
+                '@type' => 'ImageObject',
+                'url' => \App\Helpers\AssetHelper::getOgImageUrl(),
+            ],
+        ];
     @endphp
     <script type="application/ld+json">
-    @json([$organizationSchema, $webSiteSchema], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+    @json([$organizationSchema, $webSiteSchema, $webPageSchema], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
     </script>
 
     {{-- Analytics & Pixels --}}

@@ -15,7 +15,9 @@ use App\Http\Controllers\Public\GalleryController;
 use App\Http\Controllers\Public\GuideController;
 use App\Http\Controllers\Public\InquiryController;
 use App\Http\Controllers\Public\LlmsController;
+use App\Http\Controllers\Public\MarkdownController;
 use App\Http\Controllers\Public\NewsletterController;
+use App\Http\Controllers\Public\RobotsController;
 use App\Http\Controllers\Public\PaymentController;
 use App\Http\Controllers\Public\ProposalController;
 use App\Http\Controllers\Public\ReviewController;
@@ -69,6 +71,22 @@ Route::get('/currency/{code}', function ($code) {
 
     return back();
 })->middleware('throttle:30,1')->name('currency.switch');
+
+// Markdown representations. Registered before the legacy ".html" redirect
+// routes so a request for "/blog/post.md" is never swallowed by "/blog/{slug}".
+// The HTML URL remains canonical; these are alternate representations only.
+Route::get('/tours.md', [MarkdownController::class, 'tours'])->name('markdown.tours');
+Route::get('/tours/{type}/{slug}.md', [MarkdownController::class, 'tour'])->name('markdown.tour');
+Route::get('/destinations.md', [MarkdownController::class, 'destinations'])->name('markdown.destinations');
+Route::get('/destinations/{slug}.md', [MarkdownController::class, 'destination'])->name('markdown.destination');
+Route::get('/blog.md', [MarkdownController::class, 'blogIndex'])->name('markdown.blog-index');
+Route::get('/blog/{slug}.md', [MarkdownController::class, 'blog'])->name('markdown.blog');
+Route::get('/{guide}.md', [MarkdownController::class, 'guide'])
+    ->whereIn('guide', [
+        'tanzania-safari-cost', 'best-time-for-tanzania-safari', 'serengeti-safari',
+        'ngorongoro-tour', 'kilimanjaro-trekking-company', 'zanzibar-holiday-packages',
+    ])
+    ->name('markdown.guide');
 
 // Public Routes
 Route::get('/tours', [TourController::class, 'index'])->name('tours.index');
@@ -229,6 +247,9 @@ Route::post('/offer/{campaign}/lead', [CampaignController::class, 'submitLead'])
 // Machine-readable discovery file for AI assistants. Not an HTML document,
 // so it is intentionally absent from sitemap.xml.
 Route::get('/llms.txt', LlmsController::class)->name('llms.txt');
+
+// Generated so the sitemap host can never drift from the canonical domain.
+Route::get('/robots.txt', RobotsController::class)->name('robots.txt');
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);

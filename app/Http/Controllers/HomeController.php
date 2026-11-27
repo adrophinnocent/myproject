@@ -94,14 +94,22 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        // Find a specific "Hero Tour" (ONLY Kilimanjaro Trekking Category)
-        $heroTour = Tour::with(['category', 'destination', 'translations'])->where('slug', '8-day-machame-route')->first()
-                    ?? Tour::with(['category', 'destination', 'translations'])->featured()->published()->whereHas('category', function ($q) {
-                        $q->where('slug', 'kilimanjaro-trekking');
-                    })->first()
-                    ?? Tour::with(['category', 'destination', 'translations'])->published()->whereHas('category', function ($q) {
-                        $q->where('slug', 'kilimanjaro-trekking');
-                    })->first();
+        // Find the "Hero Tour" Spotlight (Festive Christmas & New Year Safari 2026/2027)
+        $heroTour = Tour::with(['category', 'destination', 'translations'])
+                    ->where(function ($q) {
+                        $q->where('slug', 'christmas-and-new-year-safari-in-tanzania-20262027')
+                          ->orWhere('slug', 'christmas-new-year-tanzania-safari-2026-2027')
+                          ->orWhere('title', 'like', '%Christmas%')
+                          ->orWhere('title', 'like', '%New Year%');
+                    })
+                    ->first()
+                    ?? Tour::with(['category', 'destination', 'translations'])
+                    ->published()
+                    ->featured()
+                    ->first()
+                    ?? Tour::with(['category', 'destination', 'translations'])
+                    ->published()
+                    ->first();
 
         return view('public.home', compact('sliders', 'featuredTours', 'testimonials', 'testimonialCount', 'testimonialAverage', 'faqs', 'latestPosts', 'heroTour'));
     }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Middleware\DiscoveryHeaders;
 use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\NegotiateMarkdown;
 use App\Http\Middleware\RedirectWww;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
@@ -23,6 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
             RedirectWww::class,
             SetLocale::class,
             SecurityHeaders::class,
+            NegotiateMarkdown::class,
+            DiscoveryHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
