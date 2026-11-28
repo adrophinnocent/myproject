@@ -10,30 +10,33 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Trip plans need an unguessable public token instead of a sequential ID.
-        if (! Schema::hasColumn('trip_plans', 'token')) {
-            Schema::table('trip_plans', function (Blueprint $table) {
-                $table->string('token', 64)->nullable()->after('id');
-            });
+        // Every operation is guarded by table/column/index existence so a
+        // partially migrated production database can safely re-run this file.
+        if (Schema::hasTable('trip_plans')) {
+            if (! Schema::hasColumn('trip_plans', 'token')) {
+                Schema::table('trip_plans', function (Blueprint $table) {
+                    $table->string('token', 64)->nullable()->after('id');
+                });
+            }
+
+            DB::table('trip_plans')
+                ->whereNull('token')
+                ->orWhere('token', '')
+                ->orderBy('id')
+                ->each(function ($plan) {
+                    DB::table('trip_plans')
+                        ->where('id', $plan->id)
+                        ->update(['token' => Str::random(48)]);
+                });
+
+            if (! $this->hasIndex('trip_plans', 'token')) {
+                Schema::table('trip_plans', function (Blueprint $table) {
+                    $table->unique('token');
+                });
+            }
         }
 
-        DB::table('trip_plans')
-            ->whereNull('token')
-            ->orWhere('token', '')
-            ->orderBy('id')
-            ->each(function ($plan) {
-                DB::table('trip_plans')
-                    ->where('id', $plan->id)
-                    ->update(['token' => Str::random(48)]);
-            });
-
-        if (! $this->hasIndex('trip_plans', 'token')) {
-            Schema::table('trip_plans', function (Blueprint $table) {
-                $table->unique('token');
-            });
-        }
-
-        if (! Schema::hasColumn('reviews', 'trip_date')) {
+        if (Schema::hasTable('reviews') && ! Schema::hasColumn('reviews', 'trip_date')) {
             Schema::table('reviews', function (Blueprint $table) {
                 $table->date('trip_date')->nullable()->after('content');
             });
@@ -58,7 +61,7 @@ return new class extends Migration
 
         // Legacy bookings were created before tokens existed; backfill before
         // adding the unique index or it fails on duplicate empty values.
-        if (Schema::hasColumn('bookings', 'token')) {
+        if (Schema::hasTable('bookings') && Schema::hasColumn('bookings', 'token')) {
             DB::table('bookings')
                 ->whereNull('token')
                 ->orWhere('token', '')
@@ -72,12 +75,12 @@ return new class extends Migration
                         ->where('id', $booking->id)
                         ->update(['token' => $token]);
                 });
-        }
 
-        if (! $this->hasIndex('bookings', 'token')) {
-            Schema::table('bookings', function (Blueprint $table) {
-                $table->unique('token');
-            });
+            if (! $this->hasIndex('bookings', 'token')) {
+                Schema::table('bookings', function (Blueprint $table) {
+                    $table->unique('token');
+                });
+            }
         }
     }
 
@@ -88,6 +91,10 @@ return new class extends Migration
 
     private function hasIndex(string $table, string $column): bool
     {
+        if (! Schema::hasTable($table)) {
+            return false;
+        }
+
         return collect(Schema::getIndexes($table))
             ->contains(fn (array $index) => in_array($column, $index['columns'], true));
     }

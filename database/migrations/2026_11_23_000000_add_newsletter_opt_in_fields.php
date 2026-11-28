@@ -10,6 +10,12 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // A production database without the newsletter table must not break the
+        // rest of the migration queue; there is simply nothing to backfill.
+        if (! Schema::hasTable('newsletter_subscribers')) {
+            return;
+        }
+
         Schema::table('newsletter_subscribers', function (Blueprint $table) {
             if (! Schema::hasColumn('newsletter_subscribers', 'confirmation_token')) {
                 $table->string('confirmation_token', 64)->nullable()->after('email');
@@ -58,13 +64,19 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('newsletter_subscribers', function (Blueprint $table) {
-            $table->dropColumn(['confirmation_token', 'confirmed_at', 'unsubscribe_token']);
-        });
+        if (Schema::hasTable('newsletter_subscribers')) {
+            Schema::table('newsletter_subscribers', function (Blueprint $table) {
+                $table->dropColumn(['confirmation_token', 'confirmed_at', 'unsubscribe_token']);
+            });
+        }
     }
 
     private function hasIndex(string $table, string $column): bool
     {
+        if (! Schema::hasTable($table)) {
+            return false;
+        }
+
         return collect(Schema::getIndexes($table))
             ->contains(fn (array $index) => in_array($column, $index['columns'], true));
     }

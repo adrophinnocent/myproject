@@ -496,7 +496,7 @@ class SeoUrlTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk();
-        $response->assertSee('Signature Expedition');
+        $response->assertSee('Featured Tour Spotlight');
         $response->assertSee('A scenic and well-paced route to the summit.');
         $response->assertSee('What is included');
         $response->assertSee('Professional English-speaking mountain guide');

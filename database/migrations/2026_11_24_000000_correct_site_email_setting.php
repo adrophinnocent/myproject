@@ -2,6 +2,7 @@
 
 use App\Models\Setting;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,6 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('settings')) {
+            return;
+        }
+
         $current = Setting::get('site_email');
 
         if ($current === null || strtolower(trim((string) $current)) === 'info@twinasafaris.com') {

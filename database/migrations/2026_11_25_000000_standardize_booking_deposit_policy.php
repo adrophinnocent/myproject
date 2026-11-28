@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,6 +14,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('settings')) {
+            return;
+        }
+
         DB::table('settings')->updateOrInsert(
             ['key' => 'deposit_percentage'],
             ['value' => '30', 'updated_at' => now(), 'created_at' => now()]
