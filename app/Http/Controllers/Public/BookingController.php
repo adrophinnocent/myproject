@@ -110,6 +110,8 @@ class BookingController extends Controller
 
     public function store(Request $request, $slug)
     {
+        $this->ensureTablesExist();
+
         $tour = Tour::withTrashed()->where('slug', $slug)->first()
                 ?? Safari::withTrashed()->where('slug', $slug)->firstOrFail();
 
@@ -441,5 +443,18 @@ class BookingController extends Controller
         }
 
         return null;
+    }
+
+    private function ensureTablesExist(): void
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('bookings') && ! \Illuminate\Support\Facades\Schema::hasColumn('bookings', 'selected_accommodation_tier')) {
+                \Illuminate\Support\Facades\Schema::table('bookings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->json('selected_accommodation_tier')->nullable();
+                });
+            }
+        } catch (\Throwable $e) {
+            Log::error('Bookings schema update failed: '.$e->getMessage());
+        }
     }
 }
